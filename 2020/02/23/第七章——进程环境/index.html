@@ -99,7 +99,9 @@
 
       
       <ol>
-<li><p>进程开始<br><code>int main(int argc, char *argv[]);</code><br>以main函数开始执行。当内核执行C程序时，在调用main前先调用一个特殊的启动例程。可执行程序将此启动例程指定为程序的起始地址——这是由链接编辑器设置的，而链接编辑器则由C编译器调用。启动例程从内核取得命令行参数和环境变量值，然后为按上述方式调用做好安排。</p>
+<li><p>进程开始</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc, char *argv[]);</span><br></pre></td></tr></table></figure>
+<p>以main函数开始执行。当内核执行C程序时，在调用main前先调用一个特殊的启动例程。可执行程序将此启动例程指定为程序的起始地址——这是由链接编辑器设置的，而链接编辑器则由C编译器调用。启动例程从内核取得命令行参数和环境变量值，然后为按上述方式调用做好安排。</p>
 </li>
 <li><p>进程终止<br>有8种终止方式，前5种为正常终止：</p>
 <ol>
