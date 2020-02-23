@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-     akaQin&#39;s Blog
+    Archives: 2020 |  akaQin&#39;s Blog
   </title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   
@@ -35,55 +35,34 @@
 <body>
   <div id="app">
     <main class="content">
-      
-<section class="cover">
-    
-      
-      <a class="forkMe" href="https://github.com/akaQin"
-        target="_blank"><img width="149" height="149" src="/images/forkme.png"
-          class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
-    
-  <div class="cover-frame">
-    <div class="bg-box">
-      <img src="/images/cover1.jpg" alt="image frame" />
-    </div>
-    <div class="cover-inner text-center text-white">
-      <h1><a href="/">akaQin&#39;s Blog</a></h1>
-      <div id="subtitle-box">
-        
-        <span id="subtitle"></span>
-        
-      </div>
-      <div>
-        
-      </div>
-    </div>
-  </div>
-  <div class="cover-learn-more">
-    <a href="javascript:void(0)" class="anchor"><i class="ri-arrow-down-line"></i></a>
-  </div>
-</section>
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js"></script>
-
-<div id="main">
-  <section class="outer">
+      <section class="outer">
   <article class="articles">
     
     
+    <h1 class="page-type-title">2020</h1>
     
     
-    <article id="post-第七章——进程环境" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
+  
+  
+  
+  
+  
+  
+  <div class="archives-wrap">
+    <div class="archive-year-wrap">
+      <a href="/archives/2020" class="archive-year">2020</a>
+    </div>
+    <div class="archives">
+      
+      <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2020/02/23/%E7%AC%AC%E4%B8%83%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/" class="archive-article-date">
+  <time datetime="2020-02-23T08:03:39.000Z" itemprop="datePublished">02/23</time>
+</a>
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2020/02/23/%E7%AC%AC%E4%B8%83%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/"
+  <a class="archive-article-title" href="/2020/02/23/%E7%AC%AC%E4%B8%83%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/"
     >第七章——进程环境</a
   >
 </h2>
@@ -91,89 +70,21 @@
 
     </header>
     
-
     
-    <div class="article-meta">
-      <a href="/2020/02/23/%E7%AC%AC%E4%B8%83%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/" class="article-date">
-  <time datetime="2020-02-23T08:03:39.000Z" itemprop="datePublished">2020-02-23</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>1.进程开始</p>
-<p>   以main函数开始执行。当内核执行C程序时，在调用main前先调用一个特殊的启动例程。可执行程序将此启动例程指定为程序的起始地址——这是由链接编辑器设置的，而链接编辑器则由C编译器调用。启动例程从内核取得命令行参数和环境变量值，然后为按上述方式调用做好安排。</p>
-<p>2.进程终止<br>   有8种终止方式，前5种为正常终止：</p>
-<ol>
-<li>从main返回</li>
-<li>调用exit</li>
-<li>调用_exit或_Exit</li>
-<li>最后一个线程从启动例程返回</li>
-<li>从最后一个线程调用pthread_exit<br>异常终止有3种：</li>
-<li>调用abort</li>
-<li>遇到一个信号</li>
-<li>最后一个线程对取消请求做出响应</li>
-</ol>
-<ol start="3">
-<li><p><code>atexit</code>函数</p>
-<p>一个进程可以通过<code>atexit</code>函数登记至多32个函数作为终止处理程序（exit handler），这些函数将在程序终止时有<code>exit</code>自动调用。</p>
-<p>调用顺序与登记顺序相反，登记多次也会调用多次。</p>
-<p>如若程序调用<code>exec</code>函数族中任一函数，则将清除所有已安装的终止处理程序。</p>
-</li>
-<li><p><code>exit</code>函数7-2.png<br><code>_exit</code>和<code>_Exit</code>立即进入内核，<code>exit</code>首先调用各终止处理程序，然后通过<code>fclose</code>关闭所有打开流，这造成输出缓冲中的所有数据都被冲洗（写到文件上）。</p>
-</li>
-<li><p><img src="7-2.png" alt="">内核使程序执行的唯一方法是调用一个<code>exec</code>函数。进程自愿终止的唯一方法是显示或隐式地（通过调用<code>exit</code>）调用<code>_exit</code>或<code>_Exit</code>。进程也可非自愿地由一个信号使其终止。</p>
-</li>
-</ol>
-
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-
-    </footer>
-
   </div>
-
-  
-
-  
-  
-  
-
-  
-
 </article>
-    
-    <article id="post-first-post" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
+      
+  
+  
+      <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2020/02/23/first-post/" class="archive-article-date">
+  <time datetime="2020-02-23T07:26:11.000Z" itemprop="datePublished">02/23</time>
+</a>
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2020/02/23/first-post/"
+  <a class="archive-article-title" href="/2020/02/23/first-post/"
     >first post</a
   >
 </h2>
@@ -181,64 +92,18 @@
 
     </header>
     
-
     
-    <div class="article-meta">
-      <a href="/2020/02/23/first-post/" class="article-date">
-  <time datetime="2020-02-23T07:26:11.000Z" itemprop="datePublished">2020-02-23</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>I love you, Joyce!</p>
-
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-
-    </footer>
-
   </div>
-
-  
-
-  
-  
-  
-
-  
-
 </article>
-    
-  </article>
+      
+      
+    </div>
+  </div>
+  
   
 
   
 </section>
-</div>
-
       <footer class="footer">
   <div class="outer">
     <ul class="list-inline">
