@@ -22,7 +22,7 @@
 </ol>
 </li>
 <li><p><code>atexit</code>函数</p>
-<p><code>一个进程可以通过</code>atexit<code>函数登记至多32个函数作为终止处理程序（exit handler），这些函数将在程序终止时有</code>exit`自动调用。</p>
+<p>一个进程可以通过<code>atexit</code>函数登记至多32个函数作为终止处理程序（exit handler），这些函数将在程序终止时有<code>exit</code>自动调用。</p>
 <p>调用顺序与登记顺序相反，登记多次也会调用多次。</p>
 <p>如若程序调用<code>exec</code>函数族中任一函数，则将清除所有已安装的终止处理程序。</p>
 </li>
