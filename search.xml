@@ -75,7 +75,7 @@
 <li><code>calloc</code>分配的每一位都初始化为0。</li>
 <li><code>realloc</code>增加或减少分配区长度。新增区域内初始值不确定</li>
 <li>这些分配例程通常通过<code>sbrk</code>系统调用实现</li>
-<li><a href="为什么calloc会比malloc-memset快.md">为什么calloc会比malloc-memset快</a></li>
+<li><a href="../为什么calloc会比malloc-memset快">为什么calloc会比malloc-memset快</a></li>
 </ul>
 ]]></content>
       <categories>
