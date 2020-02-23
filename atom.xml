@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>akaQin&#39;s Blog</title>
+  
+  <subtitle>面朝大海，春暖花开</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://yoursite.com/"/>
+  <updated>2020-02-23T06:16:10.434Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>Arron Qin</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>first_post</title>
+    <link href="http://yoursite.com/2020/02/23/first-post/"/>
+    <id>http://yoursite.com/2020/02/23/first-post/</id>
+    <published>2020-02-23T06:08:02.000Z</published>
+    <updated>2020-02-23T06:16:10.434Z</updated>
+    
+    <content type="html"><![CDATA[<p>about me</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;about me&lt;/p&gt;
+
+      
+    
+    </summary>
+    
+    
+      <category term="cateb wae,e" scheme="http://yoursite.com/categories/cateb-wae-e/"/>
+    
+    
+      <category term="taga,awe awe" scheme="http://yoursite.com/tags/taga-awe-awe/"/>
+    
+  </entry>
+  
+</feed>
