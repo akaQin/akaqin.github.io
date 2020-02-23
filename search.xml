@@ -1,6 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>第七章——进程环境</title>
+    <url>/2020/02/23/%E7%AC%AC%E4%B8%83%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/</url>
+    <content><![CDATA[<ol>
+<li><p>进程开始<br>以main函数开始执行。当内核执行C程序时，在调用main前先调用一个特殊的启动例程。可执行程序将此启动例程指定为程序的起始地址——这是由链接编辑器设置的，而链接编辑器则由C编译器调用。启动例程从内核取得命令行参数和环境变量值，然后为按上述方式调用做好安排。</p>
+</li>
+<li><p>进程终止<br>有8种终止方式，前5种为正常终止：</p>
+<ol>
+<li>从main返回</li>
+<li>调用exit</li>
+<li>调用_exit或_Exit</li>
+<li>最后一个线程从启动例程返回</li>
+<li>从最后一个线程调用pthread_exit</li>
+</ol>
+<p>异常终止有3种：</p>
+<ol start="6">
+<li>调用abort</li>
+<li>遇到一个信号</li>
+<li>最后一个线程对取消请求做出响应</li>
+</ol>
+</li>
+<li><p><code>atexit</code>函数</p>
+<p><code>一个进程可以通过</code>atexit<code>函数登记至多32个函数作为终止处理程序（exit handler），这些函数将在程序终止时有</code>exit`自动调用。</p>
+<p>调用顺序与登记顺序相反，登记多次也会调用多次。</p>
+<p>如若程序调用<code>exec</code>函数族中任一函数，则将清除所有已安装的终止处理程序。</p>
+</li>
+<li><p><code>exit</code>函数<br><code>_exit</code>和<code>_Exit</code>立即进入内核，<code>exit</code>首先调用各终止处理程序，然后通过<code>fclose</code>关闭所有打开流，这造成输出缓冲中的所有数据都被冲洗（写到文件上）。</p>
+</li>
+<li><p><img src="https://holy-nirvana.oss-cn-beijing.aliyuncs.com/blog-pic/7-2.png" alt="">内核使程序执行的唯一方法是调用一个<code>exec</code>函数。进程自愿终止的唯一方法是显示或隐式地（通过调用<code>exit</code>）调用<code>_exit</code>或<code>_Exit</code>。进程也可非自愿地由一个信号使其终止。</p>
+</li>
+</ol>
+]]></content>
+  </entry>
+  <entry>
     <title>first post</title>
     <url>/2020/02/23/first-post/</url>
     <content><![CDATA[<p>I love you, Joyce!</p>
