@@ -137,9 +137,9 @@
 <p>调用顺序与登记顺序相反，登记多次也会调用多次。</p>
 <p>如若程序调用<code>exec</code>函数族中任一函数，则将清除所有已安装的终止处理程序。</p>
 </li>
-<li><p><code>exit</code>函数<br><code>_exit</code>和<code>_Exit</code>立即进入内核，<code>exit</code>首先调用各终止处理程序，然后通过<code>fclose</code>关闭所有打开流，这造成输出缓冲中的所有数据都被冲洗（写到文件上）。</p>
+<li><p><code>exit</code>函数7-2.png<br><code>_exit</code>和<code>_Exit</code>立即进入内核，<code>exit</code>首先调用各终止处理程序，然后通过<code>fclose</code>关闭所有打开流，这造成输出缓冲中的所有数据都被冲洗（写到文件上）。</p>
 </li>
-<li><p><img src="https://holy-nirvana.oss-cn-beijing.aliyuncs.com/blog-pic/7-2.png" alt="">内核使程序执行的唯一方法是调用一个<code>exec</code>函数。进程自愿终止的唯一方法是显示或隐式地（通过调用<code>exit</code>）调用<code>_exit</code>或<code>_Exit</code>。进程也可非自愿地由一个信号使其终止。</p>
+<li><p><img src="7-2.png" alt="">内核使程序执行的唯一方法是调用一个<code>exec</code>函数。进程自愿终止的唯一方法是显示或隐式地（通过调用<code>exit</code>）调用<code>_exit</code>或<code>_Exit</code>。进程也可非自愿地由一个信号使其终止。</p>
 </li>
 </ol>
 
