@@ -6,10 +6,12 @@
     <content><![CDATA[<p>about me</p>
 ]]></content>
       <categories>
-        <category>c1 c2</category>
+        <category>c2</category>
+        <category>c3</category>
       </categories>
       <tags>
-        <tag>-t1 -t2</tag>
+        <tag>t2</tag>
+        <tag>t3</tag>
       </tags>
   </entry>
 </search>
