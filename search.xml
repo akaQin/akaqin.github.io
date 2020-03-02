@@ -1,6 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>strlen与sizeof区别</title>
+    <url>/2020/03/02/strlen%E4%B8%8Esizeof%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<ul>
+<li>strlen计算不包含终止null字节的字符串长度，而sizeof则计算包括终止null字节的缓冲区长度</li>
+<li>strlen需要进行一次函数调用，而对于sizeof，缓冲区长度在编译时计算，是固定的</li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
+    <title>第八章——进程控制</title>
+    <url>/2020/03/02/%E7%AC%AC8%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6/</url>
+    <content><![CDATA[<h3 id="进程标识"><a href="#进程标识" class="headerlink" title="进程标识"></a>进程标识</h3><ul>
+<li>每个进程都有一个非负整型表示的唯一进程ID</li>
+<li>ID为0的进程通常是调度进程，常常被称为交换进程（swapper）。该进程是内核的一部分，它并不执行任何磁盘上的程序，因此也被称为系统进程。</li>
+<li>进程ID 1通常是init进程，在自举过程结束时由内核调用。该进程的程序文件是/etc/init或/sbin/init。此进程负责在自举内核后启动一个UNIX系统。</li>
+<li>init读取与系统有关的初始化文件，并将系统引导到一个状态。</li>
+<li>init进程不会终止，它是一个普通的用户进程，以超级用户特权运行；交换进程是内核中的系统进程。</li>
+</ul>
+<h3 id="fork函数"><a href="#fork函数" class="headerlink" title="fork函数"></a>fork函数</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">fork</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>调用一次，返回两次。子进程返回0，父进程返回子进程ID，出错返回-1</li>
+<li>子进程和父进程继续执行fork之后的指令；子进程获得父进程数据空间、堆、栈的副本；子进程和父进程共享正文段</li>
+<li>fork时用到<code>写时复制（Copy-On-Write）</code>技术，这些区域由父进程和子进程共享，内核将他们的访问权限改为只读，当任一进程尝试修改时，内核只为修改区域的那块内存制作一个副本，通常是虚拟内存中的一“页”</li>
+<li>fork后先执行哪个进程是不确定的，取决于内核所使用的调度算法</li>
+<li>文件共享。父进程的所有打开文件描述符都被复制到子进程中，父进程和子进程每个相同的打开描述符共享一个文件表项（包括文件偏移量）。<br><img src="8-2.png" alt=""></li>
+</ul>
+]]></content>
+      <categories>
+        <category>读书笔记</category>
+      </categories>
+      <tags>
+        <tag>APUE</tag>
+        <tag>进程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>为什么calloc会比malloc+memset快</title>
     <url>/2020/02/23/%E4%B8%BA%E4%BB%80%E4%B9%88calloc%E4%BC%9A%E6%AF%94malloc-memset%E5%BF%AB/</url>
     <content><![CDATA[<ol>
@@ -99,7 +135,6 @@
       <tags>
         <tag>APUE</tag>
         <tag>进程</tag>
-        <tag>技术</tag>
       </tags>
   </entry>
   <entry>
