@@ -204,37 +204,6 @@
 <li>fork后先执行哪个进程是不确定的，取决于内核所使用的调度算法</li>
 <li>文件共享。父进程的所有打开文件描述符都被复制到子进程中，父进程和子进程每个相同的打开描述符共享一个文件表项（包括文件偏移量）。<br><img src="8-2.png" alt=""></li>
 </ul>
-<h4 id="子进程从父进程继承"><a href="#子进程从父进程继承" class="headerlink" title="子进程从父进程继承"></a>子进程从父进程继承</h4><ul>
-<li>实际用户ID、实际组ID、有效用户ID、有效组ID</li>
-<li>附属组ID</li>
-<li>进程组ID</li>
-<li>会话ID</li>
-<li>控制终端</li>
-<li>设置用户ID标志和设置组ID标志</li>
-<li>当前工作目录</li>
-<li>根目录</li>
-<li>文件模式创建屏蔽字</li>
-<li>信号屏蔽和安排</li>
-<li>对任一打开间描述符的执行时关闭（close-on-exec）标志</li>
-<li>环境</li>
-<li>连接的共享存储段</li>
-<li>存储映像</li>
-<li>资源限制</li>
-</ul>
-<h4 id="父进程与子进程的区别"><a href="#父进程与子进程的区别" class="headerlink" title="父进程与子进程的区别"></a>父进程与子进程的区别</h4><ul>
-<li>fork的返回值不同</li>
-<li>进程ID不同</li>
-<li>这两个进程的父进程ID不同</li>
-<li>子进程的tms_utime、tms_stime、tms_cutime和tms_ustime的值设置为0</li>
-<li>子进程不继承父进程设置的文件锁</li>
-<li>子进程的未处理闹钟被清除</li>
-<li>子进程的未处理信号集设置为空集<ul>
-<li>fork失败的两个主要原因：</li>
-</ul>
-</li>
-<li>系统中已经有了太多的进程</li>
-<li>该用户ID的进程总数超过了系统的限制</li>
-</ul>
       
       <a class="article-more-link" href="/2020/03/02/%E7%AC%AC8%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6/">阅读更多...</a>
       
