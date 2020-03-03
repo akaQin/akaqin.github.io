@@ -101,6 +101,25 @@
 <li>在一个子进程终止前，wait使其调用者阻塞，而waitpid有一选项，可使调用者不阻塞</li>
 <li>waitpid并不等待其调用之后的第一个子进程终止，它有若干选项，可以控制它所等待的进程</li>
 </ul>
+<h4 id="其他相关函数"><a href="#其他相关函数" class="headerlink" title="其他相关函数"></a>其他相关函数</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">waitid</span><span class="params">(<span class="keyword">idtype_t</span> idtype, <span class="keyword">id_t</span> id, <span class="keyword">siginfo_t</span> *infop, <span class="keyword">int</span> options)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>与waitpid相似，waitid允许一个进程指定要等待的子进程。但它使用两个单独的参数表示要等待的子进程所属的类型，而不是将此与进程ID或进程组ID组合成一个参数。<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">wait3</span><span class="params">(<span class="keyword">int</span> *statloc, <span class="keyword">int</span> options, struct rusage *resage)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">wait4</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">int</span> *statloc, <span class="keyword">int</span> options, struct rusage *rusage)</span></span>;</span><br></pre></td></tr></table></figure></li>
+<li>这两个函数提供的功能比wait、waitpid和waitid要多一个，与附加参数有关。该参数允许内核返回由终止进程及其所有子进程所使用的资源概况。</li>
+</ul>
+<h3 id="竞争条件"><a href="#竞争条件" class="headerlink" title="竞争条件"></a>竞争条件</h3><ul>
+<li>当多个进程都企图对共享数据进行某种处理，而最后的结果又取决于进程运行的顺序时，我们认为发生了竞争条件。</li>
+<li>如果一个进程希望等待一个子进程终止，则它必须调用wait函数中的一个。</li>
+<li>如果一个进程要等待其父进程终止，则可使用下列形式的循环：<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span>(getppid() != <span class="number">1</span>) &#123;</span><br><span class="line">  sleep(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+这种形式的循环称为<code>轮询（polling）</code>，它的问题是浪费了CPU时间，因为调用者每隔1s都被唤醒，然后进行条件测试</li>
+<li>为了避免竞争条件和轮询，在多个进程之间需要某种形式的信号发送和接收的方法。包括信号机制和进程间通信（IPC）</li>
+</ul>
+<h3 id="exec函数"><a href="#exec函数" class="headerlink" title="exec函数"></a>exec函数</h3><h4 id="函数说明-2"><a href="#函数说明-2" class="headerlink" title="函数说明"></a>函数说明</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="comment">//此处省略参数声明</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">execl</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">execv</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">execle</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">execve</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">execlp</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">execvp</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fexecve</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>当进程调用一种exec函数时，该进程执行的程序完全替换为新程序，从main函数开始执行。</li>
+<li>exec不创建新进程，进程ID不变。</li>
+<li>exec只是用磁盘上的一个新程序替换了当前进程的正文段、数据段、堆段和栈段</li>
+<li>7个函数的关系：<br><img src="8-15.png" alt=""></li>
+</ul>
 ]]></content>
       <categories>
         <category>读书笔记</category>
