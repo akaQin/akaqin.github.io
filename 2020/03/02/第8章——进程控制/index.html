@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.7k字</span>
+            <span class="post-count">1.9k字</span>
         </span>
     </span>
 
@@ -77,7 +77,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">5分钟</span>
+            <span class="post-count">6分钟</span>
         </span>
     </span>
 </div>
@@ -112,7 +112,7 @@
 <li>init进程不会终止，它是一个普通的用户进程，以超级用户特权运行；交换进程是内核中的系统进程。</li>
 </ul>
 <h3 id="fork函数"><a href="#fork函数" class="headerlink" title="fork函数"></a>fork函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">fork</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
-<ul>
+<h4 id="函数说明"><a href="#函数说明" class="headerlink" title="函数说明"></a>函数说明</h4><ul>
 <li>调用一次，返回两次。子进程返回0，父进程返回子进程ID，出错返回-1</li>
 <li>子进程和父进程继续执行fork之后的指令；子进程获得父进程数据空间、堆、栈的副本；子进程和父进程共享正文段</li>
 <li>fork时用到<code>写时复制（Copy-On-Write）</code>技术，这些区域由父进程和子进程共享，内核将他们的访问权限改为只读，当任一进程尝试修改时，内核只为修改区域的那块内存制作一个副本，通常是虚拟内存中的一“页”</li>
@@ -176,9 +176,23 @@
 </ul>
 <h4 id="终止进程如何通知父进程它是如何终止的？"><a href="#终止进程如何通知父进程它是如何终止的？" class="headerlink" title="终止进程如何通知父进程它是如何终止的？"></a>终止进程如何通知父进程它是如何终止的？</h4><p>对于三个终止函数（exit、_exit和_Exit），将其<code>退出状态</code>作为参数传递给函数。对于异常终止情况，内核（不是进程本身）产生一个指示其终止原因的<code>终止状态</code>。在任意一种情况下，该终止进程的父进程都能用wait和waitpid函数取得其终止状态。</p>
 <h4 id="父进程在子进程之前终止会怎样？"><a href="#父进程在子进程之前终止会怎样？" class="headerlink" title="父进程在子进程之前终止会怎样？"></a>父进程在子进程之前终止会怎样？</h4><p>对于父进程已经终止的所有进程，它们的父进程都改变为init进程（称为由init进程收养）。操作过程大致是：在一个进程终止时，内核逐个检查所有活动进程，如果是正要终止进程的子进程，则将该进程的父进程ID改为1。</p>
-<h4 id="如果子进程在父进程之前终止，父进程如何能在做相应检查时得到子进程的终止状态？"><a href="#如果子进程在父进程之前终止，父进程如何能在做相应检查时得到子进程的终止状态？" class="headerlink" title="如果子进程在父进程之前终止，父进程如何能在做相应检查时得到子进程的终止状态？"></a>如果子进程在父进程之前终止，父进程如何能在做相应检查时得到子进程的终止状态？</h4><p>如果子进程完全消失了，父进程在最终准备好检查子进程是否终止时是无法获取它的终止状态的。内核为每个终止子进程保存了一定量的信息，所以当终止进程的父进程调用wait或waitpid时，可以得到这些信息。包括进程ID、终止状态和CPU时间总量。</p>
+<h4 id="如果子进程在父进程之前终止，父进程如何获得子进程的终止状态？"><a href="#如果子进程在父进程之前终止，父进程如何获得子进程的终止状态？" class="headerlink" title="如果子进程在父进程之前终止，父进程如何获得子进程的终止状态？"></a>如果子进程在父进程之前终止，父进程如何获得子进程的终止状态？</h4><p>如果子进程完全消失了，父进程在最终准备好检查子进程是否终止时是无法获取它的终止状态的。内核为每个终止子进程保存了一定量的信息，所以当终止进程的父进程调用wait或waitpid时，可以得到这些信息。包括进程ID、终止状态和CPU时间总量。</p>
 <h4 id="什么是僵尸进程？"><a href="#什么是僵尸进程？" class="headerlink" title="什么是僵尸进程？"></a>什么是僵尸进程？</h4><p>内核可以释放终止进程所使用的所有存储区，关闭其所有打开文件。一个已经终止、但是其父进程尚未对其进行善后处理（获取终止子进程的有关信息、释放它仍占用的资源）的进程被称为僵尸进程。如果编写一个长期运行的程序，它fork了很多子进程，那么除非父进程等待取得子进程的终止状态，不然这些子进程终止后就会变成僵尸进程。</p>
-<h4 id="一个由init进程收养的进程终止后会发生什么，会不会变成僵尸进程？"><a href="#一个由init进程收养的进程终止后会发生什么，会不会变成僵尸进程？" class="headerlink" title="一个由init进程收养的进程终止后会发生什么，会不会变成僵尸进程？"></a>一个由init进程收养的进程终止后会发生什么，会不会变成僵尸进程？</h4><p>不会的。因为init被编写成无论何时只要有一个子进程终止，init就会调用一个wait函数取得其终止状态。</p>
+<h4 id="一个由init进程收养的进程终止后会不会变成僵尸进程？"><a href="#一个由init进程收养的进程终止后会不会变成僵尸进程？" class="headerlink" title="一个由init进程收养的进程终止后会不会变成僵尸进程？"></a>一个由init进程收养的进程终止后会不会变成僵尸进程？</h4><p>不会的。因为init被编写成无论何时只要有一个子进程终止，init就会调用一个wait函数取得其终止状态。</p>
+<h3 id="wait和waitpid函数"><a href="#wait和waitpid函数" class="headerlink" title="wait和waitpid函数"></a>wait和waitpid函数</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">wait</span><span class="params">(<span class="keyword">int</span> *statloc)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">waitpid</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">int</span> *statloc, <span class="keyword">int</span> options)</span></span>;</span><br></pre></td></tr></table></figure>
+<h4 id="函数说明-1"><a href="#函数说明-1" class="headerlink" title="函数说明"></a>函数说明</h4><ul>
+<li>成功返回进程id，出错返回0或-1</li>
+<li>statloc是一个整型指针，保存终止进程的终止状态，当它是一个空指针时，则不保存</li>
+</ul>
+<h4 id="调用wait或waitpid会发生什么？"><a href="#调用wait或waitpid会发生什么？" class="headerlink" title="调用wait或waitpid会发生什么？"></a>调用wait或waitpid会发生什么？</h4><ul>
+<li>如果所有子进程都还在运行，则阻塞</li>
+<li>如果一个子进程已经终止，正等待父进程获取其终止状态，则取得该子进程的终止状态立即返回</li>
+<li>如果它没有任何子进程，则立即出错返回</li>
+</ul>
+<h4 id="两个函数的区别"><a href="#两个函数的区别" class="headerlink" title="两个函数的区别"></a>两个函数的区别</h4><ul>
+<li>在一个子进程终止前，wait使其调用者阻塞，而waitpid有一选项，可使调用者不阻塞</li>
+<li>waitpid并不等待其调用之后的第一个子进程终止，它有若干选项，可以控制它所等待的进程</li>
+</ul>
 
       
       <!-- reward -->
