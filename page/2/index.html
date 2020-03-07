@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+   
+  <meta name="keywords" content="生活,旅行,思考,代码,博客" />
+   
+  <meta name="description" content="一座孤岛" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+     akaQin&#39;s Blog
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<script src="/js/pace.min.js"></script>
+
+
+  
+
+  
+
+<link rel="alternate" href="/atom.xml" title="akaQin's Blog" type="application/atom+xml">
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      
+<section class="cover">
+    
+      
+      <a class="forkMe" href="https://github.com/akaQin"
+        target="_blank"><img width="149" height="149" src="/images/forkme.png"
+          class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
+    
+  <div class="cover-frame">
+    <div class="bg-box">
+      <img src="/images/cover1.jpg" alt="image frame" />
+    </div>
+    <div class="cover-inner text-center text-white">
+      <h1><a href="/">akaQin&#39;s Blog</a></h1>
+      <div id="subtitle-box">
+        
+        <span id="subtitle"></span>
+        
+      </div>
+      <div>
+        
+      </div>
+    </div>
+  </div>
+  <div class="cover-learn-more">
+    <a href="javascript:void(0)" class="anchor"><i class="ri-arrow-down-line"></i></a>
+  </div>
+</section>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js"></script>
+
+<div id="main">
+  <section class="outer">
+  <article class="articles">
+    
+    
+    
+    
+    <article id="post-优惠券服务拆分-反思总结" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2018/11/06/%E4%BC%98%E6%83%A0%E5%88%B8%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86-%E5%8F%8D%E6%80%9D%E6%80%BB%E7%BB%93/"
+    >反思总结：优惠券服务拆分</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2018/11/06/%E4%BC%98%E6%83%A0%E5%88%B8%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86-%E5%8F%8D%E6%80%9D%E6%80%BB%E7%BB%93/" class="article-date">
+  <time datetime="2018-11-06T10:35:09.000Z" itemprop="datePublished">2018-11-06</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%8F%8D%E6%80%9D%E6%80%BB%E7%BB%93/">反思总结</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="过程中出现的问题："><a href="#过程中出现的问题：" class="headerlink" title="过程中出现的问题："></a>过程中出现的问题：</h2><p><strong>思考问题</strong></p>
+<p>​    安全意识还是不够，不能因为这块是朝沛拆的就不怎么看，导致要上线了才发现回滚逻辑有这么多问题，临上线又重构代码，给测试也带来很多麻烦；想的不够细，有些逻辑靠衍雷提出来才想到，这一点感觉还是得靠多实践去改变。</p>
+<p><strong>买家端无法提供服务</strong></p>
+<p>​    虽然不是我的主要问题，但出问题时看到nginx的error_log：recv() failed (104: Connection reset by peer) while reading response header from upstream，应该能及时联想到是fpm的问题，然后随手ps下看看进程就能及时发现子进程只有5个；使用新机器时先看下机器配置。</p>
+<p><strong>一些要注意的点：</strong></p>
+<p>​    做服务这块一定要多了解业务，多思考可能存在的问题，心思要缜密，考虑全面，想的越多，出问题的概率才越小。尤其是涉及到事务相关的部分要考虑到成功失败的各种情况。</p>
+<p>​    涉及多项目的服务与接口代码上线，要保证各种case都测过没问题了，先把服务上了，再逐个上客户端。尽量避免后期改动服务的情况，一旦服务有改动，就得各项目都测一遍，带来不必不要的成本与风险。</p>
+<p>​    上线后及时的观察有没有各种异常，做好监控。</p>
+<p>​</p>
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
+    <article id="post-Go语言学习笔记整理" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2018/11/01/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E6%95%B4%E7%90%86/"
+    >Go语言学习笔记整理</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2018/11/01/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E6%95%B4%E7%90%86/" class="article-date">
+  <time datetime="2018-11-01T04:08:15.000Z" itemprop="datePublished">2018-11-01</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h3 id="Printf-转换动词"><a href="#Printf-转换动词" class="headerlink" title="Printf 转换动词"></a>Printf 转换动词</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">%d			十进制整数</span><br><span class="line">%x, %o, %b	十六进制，八进制，二进制整数。</span><br><span class="line">%f, %g, %e	浮点数: 3.141593 3.141592653589793 3.141593e+00 </span><br><span class="line">%t			布尔:true或false</span><br><span class="line">%c			字符(rune) (Unicode码点)</span><br><span class="line">%s			字符串</span><br><span class="line">%q			带双引号的字符串&quot;abc&quot;或带单引号的字符&#39;c&#39; </span><br><span class="line">%v			变量的自然形式(natural format)</span><br><span class="line">%T			变量的类型</span><br><span class="line">%%			字面上的百分号标志(无操作数)</span><br></pre></td></tr></table></figure>
+
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
+    <article id="post-arts-12" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2018/10/29/arts-12/"
+    >arts-12</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2018/10/29/arts-12/" class="article-date">
+  <time datetime="2018-10-29T02:49:32.000Z" itemprop="datePublished">2018-10-29</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/ARTS/">ARTS</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>Given a string, find the length of the <strong>longest substring</strong> without repeating characters.</p>
+<p><strong>Example 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: &quot;abcabcbb&quot;</span><br><span class="line">Output: 3</span><br><span class="line">Explanation: The answer is &quot;abc&quot;, with the length of 3.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: &quot;bbbbb&quot;</span><br><span class="line">Output: 1</span><br><span class="line">Explanation: The answer is &quot;b&quot;, with the length of 1.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 3:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Input: &quot;pwwkew&quot;</span><br><span class="line">Output: 3</span><br><span class="line">Explanation: The answer is &quot;wke&quot;, with the length of 3.</span><br><span class="line">             Note that the answer must be a substring, &quot;pwke&quot; is a subsequence and not a substring.</span><br></pre></td></tr></table></figure>
+
+<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><p><strong>Approach 1:Brute Force</strong></p>
+<p>​    暴力破解：从头开始检查每一个可能的子数组，记录其中最长的。要想求一个字符串中最长子字符串的长度，就得先能判断一个字符串是不是不重复的唯一字符串（allUnique函数），而要判断字符串是不是唯一的，除了迭代遍历每一个元素（contains函数），我暂时没想到什么别的好办法（这里是说C语言，Java里有HashSet）。这个算法的时间复杂度是很差的，套了4层for循环，但还是有几个可以优化的点，写在下面的注释里：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断一个字符串是否包含某个字符</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">contains</span><span class="params">(<span class="keyword">char</span> *substr, <span class="keyword">int</span> length, <span class="keyword">char</span> c)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (; i &lt; length; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (substr[i] == c) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 判断一个字符串是否是唯一的（不重复的）</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">allUnique</span><span class="params">(<span class="keyword">char</span> *substr, <span class="keyword">int</span> length)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (; i &lt; length; i++) &#123;</span><br><span class="line">        <span class="comment">// i从1开始，也就是第二个元素，依次判断第i个字符是否包含在i前面的子字符中</span></span><br><span class="line">        <span class="keyword">if</span> (contains(substr, i, substr[i])) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lengthOfLongestSubstring</span><span class="params">(<span class="keyword">char</span> *s)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 给定的字符串长度</span></span><br><span class="line">    <span class="keyword">int</span> strLength = (<span class="keyword">int</span>) <span class="built_in">strlen</span>(s);</span><br><span class="line">    <span class="keyword">if</span> (strLength == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (strLength == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// maxLength是当前已求出来的最长子字符串长度，初始值给1</span></span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>, maxLength = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 当已知的最大子字符长度大于等于剩下的字符长度时，就没必要循环了，</span></span><br><span class="line">    <span class="comment">// 因为剩下的部分即使都是唯一的也不可能超过当前的最大子字符长度</span></span><br><span class="line">    <span class="keyword">for</span> (; i &lt; strLength - maxLength; i++) &#123;</span><br><span class="line">        <span class="comment">// j表示要迭代检查的子字符串长度，初始值直接用maxLength，</span></span><br><span class="line">        <span class="comment">// 因为小于maxLength的长度没必要检测</span></span><br><span class="line">        <span class="keyword">int</span> j = maxLength;</span><br><span class="line">        <span class="keyword">for</span> (; j &lt; strLength - i; j++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (allUnique(s + i, j + <span class="number">1</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> ((j + <span class="number">1</span>) &gt; maxLength) &#123;</span><br><span class="line">                maxLength = j + <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> maxLength;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARTS/" rel="tag">ARTS</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
+    <article id="post-最近的问题反思" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2018/10/18/%E6%9C%80%E8%BF%91%E7%9A%84%E9%97%AE%E9%A2%98%E5%8F%8D%E6%80%9D/"
+    >最近的问题反思</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2018/10/18/%E6%9C%80%E8%BF%91%E7%9A%84%E9%97%AE%E9%A2%98%E5%8F%8D%E6%80%9D/" class="article-date">
+  <time datetime="2018-10-18T10:11:07.000Z" itemprop="datePublished">2018-10-18</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%8F%8D%E6%80%9D%E6%80%BB%E7%BB%93/">反思总结</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>关于最近的问题：</p>
+<p>1、要解决问题，首先得学会分析一个问题具体出在哪个环节，越细越好</p>
+<p>2、每个人都有犯错的机会，但是犯同类的错误会降低别人对你的信任，一定要会反思</p>
+<p>3、你对每一个问题的责任心和态度都会有人记在心上，尽量给每个关注问题的人及时的反馈</p>
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8F%8D%E6%80%9D%E6%80%BB%E7%BB%93/" rel="tag">反思总结</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
+    <article id="post-arts-11" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2018/10/16/arts-11/"
+    >arts-11</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2018/10/16/arts-11/" class="article-date">
+  <time datetime="2018-10-16T04:18:52.000Z" itemprop="datePublished">2018-10-16</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/ARTS/">ARTS</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>You are given two <strong>non-empty</strong> linked lists representing two non-negative integers. The digits are stored in <strong>reverse order</strong> and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.</p>
+<p>You may assume the two numbers do not contain any leading zero, except the number 0 itself.</p>
+<p><strong>Example:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: (2 -&gt; 4 -&gt; 3) + (5 -&gt; 6 -&gt; 4)</span><br><span class="line">Output: 7 -&gt; 0 -&gt; 8</span><br><span class="line">Explanation: 342 + 465 &#x3D; 807.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Approach:</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     struct ListNode *next;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"> <span class="function">struct ListNode *<span class="title">addTwoNumbers</span><span class="params">(struct ListNode *l1, struct ListNode *l2)</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ListNode</span> *<span class="title">dummyHead</span> = (<span class="title">struct</span> <span class="title">ListNode</span>*)<span class="title">calloc</span>(1, <span class="title">sizeof</span>(<span class="title">struct</span> <span class="title">ListNode</span>));</span></span><br><span class="line">    dummyHead-&gt;val = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> carry = <span class="number">0</span>, x, y, sum;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ListNode</span> *<span class="title">p</span> = <span class="title">l1</span>, *<span class="title">q</span> = <span class="title">l2</span>, *<span class="title">curr</span> = <span class="title">dummyHead</span>;</span></span><br><span class="line">    <span class="keyword">while</span> (p || q) &#123;</span><br><span class="line">        x = p ? p-&gt;val : <span class="number">0</span>;</span><br><span class="line">        y = q ? q-&gt;val : <span class="number">0</span>;</span><br><span class="line">        sum = x + y + carry;</span><br><span class="line">        carry = sum / <span class="number">10</span>;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">ListNode</span> *<span class="title">next</span> = (<span class="title">struct</span> <span class="title">ListNode</span>*)<span class="title">calloc</span>(1, <span class="title">sizeof</span>(<span class="title">struct</span> <span class="title">ListNode</span>));</span></span><br><span class="line">        next-&gt;val = sum % <span class="number">10</span>;</span><br><span class="line">        curr-&gt;next = next;</span><br><span class="line">        curr = curr-&gt;next;</span><br><span class="line">        <span class="keyword">if</span> (p) &#123;</span><br><span class="line">            p = p-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (q) &#123;</span><br><span class="line">            q = q-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (carry &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">ListNode</span> *<span class="title">next</span> = (<span class="title">struct</span> <span class="title">ListNode</span>*)<span class="title">calloc</span>(1, <span class="title">sizeof</span>(<span class="title">struct</span> <span class="title">ListNode</span>));</span>;</span><br><span class="line">        next-&gt;val = carry;</span><br><span class="line">        curr-&gt;next = next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummyHead-&gt;next;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARTS/" rel="tag">ARTS</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
+    <article id="post-工作心得总结" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2018/10/13/%E5%B7%A5%E4%BD%9C%E5%BF%83%E5%BE%97%E6%80%BB%E7%BB%93/"
+    >工作心得总结</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2018/10/13/%E5%B7%A5%E4%BD%9C%E5%BF%83%E5%BE%97%E6%80%BB%E7%BB%93/" class="article-date">
+  <time datetime="2018-10-13T04:09:43.000Z" itemprop="datePublished">2018-10-13</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%8F%8D%E6%80%9D%E6%80%BB%E7%BB%93/">反思总结</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h3 id="时间评估"><a href="#时间评估" class="headerlink" title="时间评估"></a>时间评估</h3><p>​    当leader给你一个任务问你多久能完成时，不要简单的看一看就给一个估摸的大概的时间，要培养对工作量评估的能力，这很重要。评估时要做到尽量准确，具体注意以下几点：</p>
+<ol>
+<li>不要想着三个小时的工作,我加加班赶一赶两个小时搞定——在仓促状态下赶工，质量必然会收到影响，你做的每一件事的质量代表着你的个人水平，它直接影响着你在别人心中的看法，而且一旦再出什么额外状况，这个任务就会delay。</li>
+<li>两个小时的工作量，不要想着我给自己估宽松点，估三个小时——该是多少就是多少，这直接影响别人对你的信任，如果同一份工作你给估了一个月，老板去问另一个开发，他只估了半个月，那老板以后可能就不会再找你分配工作。一天八小时工作制，由于各种各样的原因实际可支配的时间其实并没有这么多，那你可以提前说明比如我每天要给别人解决各种各样的问题或者晚上想留出两小时的时间学习，所以每天实际的开发时间只有5h，那一份40h工作量的任务对我来说就需要8day，但一定不要把这些额外事情的时间算到这个任务里。</li>
+<li>评估任务尽量拆解的细一些，想的全面一些。一个需求中复杂的坑和细节尽量一开始就考虑到搞清楚，并留出相应的时间，以避免做到一半发现有坑再delay，承诺过的事情要有契约精神。我知道这很难，但尽量做，其实每个任务实际完成的时间比预期差个一天半天都是正常的，关键是要总结经验，想想这次评估中有哪些不足，让下次的评估可以更准确。如果每次评估都是糊弄了事，你会逐渐丧失时间评估的能力。</li>
+</ol>
+<h3 id="时间管理"><a href="#时间管理" class="headerlink" title="时间管理"></a>时间管理</h3><p>​       时间是你最宝贵的财富，所以一定要利用好。要学会主动管理，对于学习上，每天一定要抽出整块的不被打扰的时间用来学习，提升个人技术能力和自身价值，是走技术这条路最最重要的一步，活到老学到老。对于工作上，学会使用任务管理工具（如tower），一些小的零碎的事情，短时间能解决的优先解决，别给自己攒太多压力，然后集中精力去做那些大块的工作。如果一个任务的工作是一周或两周，那就提前拆解好每天要做到什么程度，每晚review一下工作情况，对总体的进度有个把控，如果感觉搞不完要delay就加加班或者提前向上反馈，因为什么什么原因，这个任务要delay多久，并给出解决方案，要么加班，要么整体延期。一定不要等到deadline了才发现做不完，影响整个团队的进度。</p>
+<h3 id="同事之间的交往"><a href="#同事之间的交往" class="headerlink" title="同事之间的交往"></a>同事之间的交往</h3><p>​    大家一起共事都是缘分，一个团队中每个人的技术肯定是有高有低参差不齐的，性格也是多种多样。相处时要做到谦虚和尊敬他人，学会倾听和站在他人的角度思考问题，每个人身上肯定都有比自己强值得学习的地方，要学会发现这些闪光点。当别人来找自己问问题的时候，要注意自己的态度，对事不对人，如果一个人对同一个问题或类似的问题找你问很多遍，你可以说这个问题我给你讲过很多次了，你先自己想一下有没有思路，该怎么解决，想好方案再来找我；但如果他带来的是个新问题还是要耐心解答的，不能因为他老问问题就不理他。</p>
+<h3 id="责任与心态"><a href="#责任与心态" class="headerlink" title="责任与心态"></a>责任与心态</h3><p>​    出现问题时leader询问情况，要先快速定位问题，并给出解决方案，分析利弊；如出的问题跟自己没关系，也可以待命看看有什么能帮的上忙的，帮忙思考下解决方案；问题解决后，思考问题是怎么造成的，以后怎么避免，总结经验；如果是自身的原因主动承担错误，如果是别人的原因，自己也要引以为戒。一定不要出了问题先说这代码是谁谁谁写的，把自己撇的一干二净，这给人感觉很不好，直接决定了你做事的高度。出问题是在所难免的，这并不可怕，很多时候leader也只是问问想搞清楚情况，并没有要责怪谁的意思，关键是不要让范过的错误重复的发生在自己身上。</p>
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8F%8D%E6%80%9D%E6%80%BB%E7%BB%93/" rel="tag">反思总结</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
+    <article id="post-arts-10" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2018/10/07/arts-10/"
+    >arts-10</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2018/10/07/arts-10/" class="article-date">
+  <time datetime="2018-10-07T06:35:26.000Z" itemprop="datePublished">2018-10-07</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>Given an integer array <code>nums</code>, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.</p>
+<p><strong>Example:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: [-2,1,-3,4,-1,2,1,-5,4],</span><br><span class="line">Output: 6</span><br><span class="line">Explanation: [4,-1,2,1] has the largest sum &#x3D; 6.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Follow up:</strong></p>
+<p>If you have figured out the O(<em>n</em>) solution, try coding another solution using the divide and conquer approach, which is more subtle.</p>
+<p><strong>Summary:</strong></p>
+<p>想问题没有思路时可以试着把负责的问题简单化，比如这道题求<code>maxSubArray(int A[], int i, int j)</code>，我们可以简化成求<code>maxSubArray(int A[], int i)</code>，也就是<code>A[0:i ]</code>——以A[0]开头A[i]结尾的最大子集，然后再观察总结，我们得出：</p>
+<blockquote>
+<p>maxSubArray(A, i) = maxSubArray(A, i - 1) &gt; 0 ? maxSubArray(A, i - 1) : 0 + A[i]; </p>
+</blockquote>
+<p><strong>Approach:</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">maxSubArray</span><span class="params">(<span class="keyword">int</span>* nums, <span class="keyword">int</span> numsSize)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> temp[numsSize];</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> <span class="built_in">max</span> = temp[<span class="number">0</span>] = nums[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">for</span> (; i&lt; numsSize; i++) &#123;</span><br><span class="line">        temp[i] = nums[i] + (temp[i<span class="number">-1</span>] &gt; <span class="number">0</span> ? temp[i<span class="number">-1</span>] : <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (; i&lt; numsSize; i++) &#123;</span><br><span class="line">        <span class="built_in">max</span> = <span class="built_in">max</span> &lt; temp[i] ? temp[i] : <span class="built_in">max</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">max</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARTS/" rel="tag">ARTS</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
+    <article id="post-arts-9" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2018/10/06/arts-9/"
+    >arts-9</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2018/10/06/arts-9/" class="article-date">
+  <time datetime="2018-10-06T05:52:34.000Z" itemprop="datePublished">2018-10-06</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>The count-and-say sequence is the sequence of integers with the first five terms as following:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1.     1</span><br><span class="line">2.     11</span><br><span class="line">3.     21</span><br><span class="line">4.     1211</span><br><span class="line">5.     111221</span><br></pre></td></tr></table></figure>
+
+<p><code>1</code> is read off as <code>&quot;one 1&quot;</code> or <code>11</code>.<br><code>11</code> is read off as <code>&quot;two 1s&quot;</code> or <code>21</code>.<br><code>21</code> is read off as <code>&quot;one 2</code>, then <code>one 1&quot;</code> or <code>1211</code>.</p>
+<p>Given an integer <em>n</em> where 1 ≤ <em>n</em> ≤ 30, generate the <em>n</em>th term of the count-and-say sequence.</p>
+<p>Note: Each term of the sequence of integers will be represented as a string.</p>
+<p><strong>Example 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: 1</span><br><span class="line">Output: &quot;1&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: 4</span><br><span class="line">Output: &quot;1211&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Approach</strong>:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">change</span><span class="params">(<span class="keyword">char</span> *ret)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> *ret_temp = (<span class="keyword">char</span> *) <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">char</span>) * <span class="number">5000</span>);</span><br><span class="line">    <span class="keyword">int</span> count = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">char</span> flag = ret[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">int</span> j = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> bug = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; <span class="built_in">strlen</span>(ret); i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (flag == ret[i]) &#123;</span><br><span class="line">            count++;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            j += <span class="built_in">sprintf</span>(ret_temp + j, <span class="string">"%d%c"</span>, count, flag);</span><br><span class="line">            flag = ret[i];</span><br><span class="line">            count = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">sprintf</span>(ret_temp + j, <span class="string">"%d%c"</span>, count, flag);</span><br><span class="line">    <span class="built_in">free</span>(ret);</span><br><span class="line">    <span class="keyword">return</span> ret_temp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">countAndSay</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> *ret = (<span class="keyword">char</span> *) <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">char</span>) * <span class="number">5000</span>);</span><br><span class="line">    ret[<span class="number">0</span>] = <span class="string">'1'</span>;</span><br><span class="line">    ret[<span class="number">1</span>] = <span class="string">'\0'</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; n; i++) &#123;</span><br><span class="line">        ret = change(ret);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARTS/" rel="tag">ARTS</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
+    <article id="post-关于Mac升级Mojave后的一些坑" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2018/10/04/%E5%85%B3%E4%BA%8EMac%E5%8D%87%E7%BA%A7Mojave%E5%90%8E%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/"
+    >关于Mac升级Mojave后的一些坑</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2018/10/04/%E5%85%B3%E4%BA%8EMac%E5%8D%87%E7%BA%A7Mojave%E5%90%8E%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/" class="article-date">
+  <time datetime="2018-10-04T05:58:18.000Z" itemprop="datePublished">2018-10-04</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/">踩坑记录</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <ol>
+<li><p>Git无法使用，原因是每次大版本升级后，CommandLineTools回被卸载，而Git这种命令行工具依赖于CommandLineTools，解决方案是重新安装CommandLineTools。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcode-select --install</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>gcc编译文件时找不到头文件，报类似于 stdio.h file not found 的错误，具体情况可以看<a href="https://stackoverflow.com/questions/52509602/cant-compile-c-program-on-a-mac-after-upgrade-to-mojave" target="_blank" rel="noopener">StackOverflow</a>上这个提问。解决方案是使用brew安装或升级gcc最新版本，并在你的IDE中配置它，这里给出CLion的<a href="https://www.jetbrains.com/help/clion/how-to-switch-compilers-in-clion.html" target="_blank" rel="noopener">配置教程</a>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew install gcc</span><br><span class="line">brew upgrade gcc</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ol>
+<p>如果你遇到了一些其他问题，欢迎给我留言讨论。</p>
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/" rel="tag">macOS</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
+    <article id="post-arts-8" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2018/10/03/arts-8/"
+    >arts-8</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2018/10/03/arts-8/" class="article-date">
+  <time datetime="2018-10-03T06:30:47.000Z" itemprop="datePublished">2018-10-03</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>Given a sorted array <em>nums</em>, remove the duplicates <a href="https://en.wikipedia.org/wiki/In-place_algorithm" target="_blank" rel="noopener"><strong>in-place</strong></a> such that each element appear only <em>once</em> and return the new length.</p>
+<p>Do not allocate extra space for another array, you must do this by <strong>modifying the input array in-place</strong> with O(1) extra memory.</p>
+<p><strong>Example 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Given nums &#x3D; [1,1,2],</span><br><span class="line"></span><br><span class="line">Your function should return length &#x3D; 2, with the first two elements of nums being 1 and 2 respectively.</span><br><span class="line"></span><br><span class="line">It doesn&#39;t matter what you leave beyond the returned length.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Given nums &#x3D; [0,0,1,1,1,2,2,3,3,4],</span><br><span class="line"></span><br><span class="line">Your function should return length &#x3D; 5, with the first five elements of nums being modified to 0, 1, 2, 3, and 4 respectively.</span><br><span class="line"></span><br><span class="line">It doesn&#39;t matter what values are set beyond the returned length.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Approach 1: two pointer</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">removeDuplicates</span><span class="params">(<span class="keyword">int</span>* nums, <span class="keyword">int</span> numsSize)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (numsSize ==<span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt; numsSize; j++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (nums[i] != nums[j]) &#123;</span><br><span class="line">            nums[++i] = nums[j];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ++i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>用双指针遍历这个数组，一个指针用来迭代，另一个记录不重复的值的索引。时间复杂度O(n)，空间复杂度O(1)。</p>
+<p>Given an array <em>nums</em> and a value <em>val</em>, remove all instances of that value <a href="https://en.wikipedia.org/wiki/In-place_algorithm" target="_blank" rel="noopener"><strong>in-place</strong></a> and return the new length.</p>
+<p>Do not allocate extra space for another array, you must do this by <strong>modifying the input array in-place</strong> with O(1) extra memory.</p>
+<p>The order of elements can be changed. It doesn’t matter what you leave beyond the new length.</p>
+<p><strong>Example 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Given nums &#x3D; [3,2,2,3], val &#x3D; 3,</span><br><span class="line"></span><br><span class="line">Your function should return length &#x3D; 2, with the first two elements of nums being 2.</span><br><span class="line"></span><br><span class="line">It doesn&#39;t matter what you leave beyond the returned length.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Given nums &#x3D; [0,1,2,2,3,0,4,2], val &#x3D; 2,</span><br><span class="line"></span><br><span class="line">Your function should return length &#x3D; 5, with the first five elements of nums containing 0, 1, 3, 0, and 4.</span><br><span class="line"></span><br><span class="line">Note that the order of those five elements can be arbitrary.</span><br><span class="line"></span><br><span class="line">It doesn&#39;t matter what values are set beyond the returned length.</span><br></pre></td></tr></table></figure>
+
+<p><strong>approach 1:two pointer</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">removeElement</span><span class="params">(<span class="keyword">int</span>* nums, <span class="keyword">int</span> numsSize, <span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>, j = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (; i&lt; numsSize; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (nums[i] != val) &#123;</span><br><span class="line">            nums[j++] = nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> j;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Approach-2-Two-Pointers-when-elements-to-remove-are-rare"><a href="#Approach-2-Two-Pointers-when-elements-to-remove-are-rare" class="headerlink" title="Approach 2: Two Pointers - when elements to remove are rare"></a><strong>Approach 2: Two Pointers - when elements to remove are rare</strong></h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">removeElement</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> n = nums.length;</span><br><span class="line">    <span class="keyword">while</span> (i &lt; n) &#123;</span><br><span class="line">        <span class="keyword">if</span> (nums[i] == val) &#123;</span><br><span class="line">            nums[i] = nums[n - <span class="number">1</span>];</span><br><span class="line">            <span class="comment">// reduce array size by one</span></span><br><span class="line">            n--;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            i++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> n;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Intuition</strong></p>
+<p>Now consider cases where the array contains few elements to remove. For example, nums = [1,2,3,5,4], val = 4nums=[1,2,3,5,4],val=4. The previous algorithm will do unnecessary copy operation of the first four elements. Another example is nums = [4,1,2,3,5], val = 4nums=[4,1,2,3,5],val=4. It seems unnecessary to move elements [1,2,3,5][1,2,3,5] one step left as the problem description mentions that the order of elements could be changed.</p>
+<p><strong>Algorithm</strong></p>
+<p>When we encounter nums[i] = valnums[i]=val, we can swap the current element out with the last element and dispose the last one. This essentially reduces the array’s size by 1.</p>
+<p>Note that the last element that was swapped in could be the value you want to remove itself. But don’t worry, in the next iteration we will still check this element.</p>
+<p><strong>Complexity analysis</strong></p>
+<ul>
+<li>Time complexity : O(n)O(n). Both ii and nn traverse at most nn steps. In this approach, the number of assignment operation is equal to the number of elements to remove. So it is more efficient if elements to remove are rare.</li>
+<li>Space complexity : O(1)O(1).</li>
+</ul>
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARTS/" rel="tag">ARTS</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
+  </article>
+  
+
+  
+  <nav class="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/">上一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">下一页</a>
+  </nav>
+  
+</section>
+</div>
+
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2019-2020
+        Arron Qin
+      </li>
+      <li>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <span>
+  <i>PV:<span id="busuanzi_value_page_pv"></span></i>
+  <i>UV:<span id="busuanzi_value_site_uv"></span></i>
+</span>
+        
+      </li>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+    <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+      <aside class="sidebar">
+        <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="akaQin&#39;s Blog"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about/me">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+      </aside>
+      <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+      
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<script src="/js/share.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script>
+  try {
+    var typed = new Typed("#subtitle", {
+    strings: ['面朝大海，春暖花开','愿你一生努力，一生被爱','想要的都拥有，得不到的都释怀'],
+    startDelay: 0,
+    typeSpeed: 200,
+    loop: true,
+    backSpeed: 100,
+    showCursor: true
+    });
+  } catch (err) {
+  }
+  
+</script>
+
+
+
+
+<script>
+  var ayerConfig = {
+    mathjax: false
+  }
+</script>
+
+
+<script src="/js/ayer.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+  </div>
+</body>
+
+</html>
