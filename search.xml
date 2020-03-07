@@ -242,6 +242,8 @@
 <li>共享存储（允许多个进程共享一个给定的存储区。因为数据不需要在进程之间复制，所以这是最快的一种 IPC）</li>
 <li>套接字（与其它通信机制不同的是，它可用于不同机器间的进程通信）</li>
 </ol>
+<a id="more"></a>
+
 <h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h3><p><strong>必要条件</strong></p>
 <ul>
 <li>互斥：每个资源要么已经分配给了一个进程，要么就是可用的。</li>
@@ -279,6 +281,8 @@
 <li>如果表中绝大多数都只是读查询，可以考虑MyISAM，如果既有读写也挺频繁，请使用InnoDB。</li>
 <li>系统奔溃后，MyISAM恢复起来更困难，能否接受；</li>
 </ol>
+<a id="more"></a>
+
 <h3 id="varchar和char的区别："><a href="#varchar和char的区别：" class="headerlink" title="varchar和char的区别："></a>varchar和char的区别：</h3><ol>
 <li>char(M)类型的数据列里，每个值都占用M个字节，如果某个长度小于M，MySQL就会在它的右边用空格字符补足．（在检索操作中那些填补出来的空格字符将被去掉）</li>
 <li>在varchar(M)类型的数据列里，每个值只占用刚好够用的字节再加上一个用来记录其长度的字节（即总长度为L+1字节）．</li>
@@ -296,7 +300,7 @@
 <li>utf-8中，一个字符最多3字节（汉字3字节，英文字母1字节）。</li>
 <li>utf8_mb4是utf8的超集，一个字符最多4字节，支持补充字符。</li>
 </ol>
-<p><strong>3、varchar物理存储</strong></p>
+<p>** 3、varchar物理存储 **</p>
 <p><strong>在物理存储上，varchar使用1到2个额外的字节表示实际存储的字符串长度（bytes）。如果列的最大长度小于256个字节，用一个字节表示（标识）。如果最大长度大于等于256，使用两个字节。</strong></p>
 <p><strong>当选择的字符集为latin1，一个字符占用一个byte</strong></p>
 <p><strong>varchar(255)存储一个字符，一共使用2个bytes物理空间存储数据实际数据长度和数据值。</strong></p>
@@ -436,35 +440,12 @@
       </tags>
   </entry>
   <entry>
-    <title>C语言编程心得</title>
-    <url>/2019/02/23/C%E8%AF%AD%E8%A8%80%E7%BC%96%E7%A8%8B%E5%BF%83%E5%BE%97/C%E8%AF%AD%E8%A8%80%E7%BC%96%E7%A8%8B%E5%BF%83%E5%BE%97/</url>
-    <content><![CDATA[<ol>
-<li><p>字符’0’ 不等于0， 截断字符串时，a[n] = 0 与 a[n] = ‘\0’效果相同;</p>
-</li>
-<li><p>函数里直接声明结构体比声明结构体指针方便，因为指针要手动为它分配空间，不用后还需要手动释放；结构体自动分配，函数返回后自动释放</p>
-</li>
-<li><p>声明变量后一定要记得赋初识值，尤其是数组</p>
-</li>
-<li><p>变量就近声明</p>
-</li>
-<li><p>文件内使用的函数要习惯声明static</p>
-</li>
-<li><p>char *a = “ac”; 指针声明的字符串存在可执行文件的只读段，修改会产生段错误。</p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>C</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ORM和QueryBuilder哪个好</title>
     <url>/2019/01/08/ORM%E5%92%8CQueryBuilder%E5%93%AA%E4%B8%AA%E5%A5%BD/</url>
     <content><![CDATA[<h3 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h3><p>​    最近准备将跑PHP5的老项目升PHP7，用的是CI2.x的框架，烂的一笔。主要障碍是php7删除了mysqli的相关函数，于是准备自己封装一个DAO层。看了一下主流的 <a href="https://github.com/doctrine/orm/" target="_blank" rel="noopener">doctrine/orm</a> ORM封装，发现用法特别繁琐，要在代码里描述每个表的每个字段：</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// src/Product.php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Product</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@var</span> int</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> $id;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@var</span> string</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> $name;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getId</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getName</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setName</span><span class="params">($name)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;name = $name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php7"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// src/Product.php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Product</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@var</span> int</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> $id;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@var</span> string</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> $name;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getId</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getName</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setName</span><span class="params">($name)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;name = $name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
 
 <p>​    感觉特别繁琐，不禁思考一个问题🤔：我们到底要不要用ORM，ORM真的比QueryBilder或原生sql的形式好吗？</p>
 <h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><p>​    从一开始写原生sql，到后来用TP、CI框架里的QueryBuilder，然后接触了Laravel和它的Eloquent后成为了ORM的狂热爱好者，再后来又开始脱离这些框架或工具自己试着造轮子写东西，经历这些后，我是这样想的：<strong>ORM和其他那些框架一样，就是为了让你从底层操作中解脱出来，去专心做业务逻辑</strong>。</p>
@@ -526,12 +507,20 @@
 <p>If there is no cycle in the list, the fast pointer will eventually reach the end and we can return false in this case.</p>
 <p>Now consider a cyclic list and imagine the slow and fast pointers are two runners racing around a circle track. The fast runner will eventually meet the slow runner. Why? Consider this case (we name it case A) - The fast runner is just one step behind the slow runner. In the next iteration, they both increment one and two steps respectively and meet each other.</p>
 <p>How about other cases? For example, we have not considered cases where the fast runner is two or three steps behind the slow runner yet. This is simple, because in the next or next’s next iteration, this case will be reduced to case A mentioned above.</p>
+<a id="more"></a>
+
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdbool.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ListNode</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> val;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ListNode</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">hasCycle</span><span class="params">(struct ListNode *head)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!head || !head-&gt;next) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ListNode</span> *<span class="title">slow</span> = <span class="title">head</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ListNode</span> *<span class="title">fast</span> = <span class="title">head</span>-&gt;<span class="title">next</span>;</span></span><br><span class="line">    <span class="keyword">while</span> (slow != fast) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!fast || !fast-&gt;next) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        slow = slow-&gt;next;</span><br><span class="line">        fast = fast-&gt;next-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ListNode</span>* <span class="title">a</span> = (<span class="title">struct</span> <span class="title">ListNode</span>*) <span class="title">calloc</span>(1, <span class="title">sizeof</span>(<span class="title">struct</span> <span class="title">ListNode</span>));</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ListNode</span>* <span class="title">b</span> = (<span class="title">struct</span> <span class="title">ListNode</span>*) <span class="title">calloc</span>(1, <span class="title">sizeof</span>(<span class="title">struct</span> <span class="title">ListNode</span>));</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ListNode</span>* <span class="title">c</span> = (<span class="title">struct</span> <span class="title">ListNode</span>*) <span class="title">calloc</span>(1, <span class="title">sizeof</span>(<span class="title">struct</span> <span class="title">ListNode</span>));</span></span><br><span class="line">    a-&gt;val = <span class="number">1</span>;</span><br><span class="line">    a-&gt;next = b;</span><br><span class="line">    b-&gt;next = c;</span><br><span class="line">    c-&gt;next = b;</span><br><span class="line">    <span class="keyword">if</span> (hasCycle(a)) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"1"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"0"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">free</span>(a);</span><br><span class="line">    <span class="built_in">free</span>(b);</span><br><span class="line">    <span class="built_in">free</span>(c);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>总结：</p>
 <p>​    malloc和calloc都是在堆中申请内从（两者的区别是calloc可以指定数量，并初始化内从的值，性能会比malloc慢一点，但可忽略不计），用完要用free释放掉。</p>
 <p>​    c中没有HashTable或Map之类的结构，只能用这种算法，好处是空间复杂度是O(1)，时间复杂度和前者一样是O(n)</p>
 ]]></content>
+      <categories>
+        <category>ARTS</category>
+      </categories>
+      <tags>
+        <tag>ARTS</tag>
+      </tags>
   </entry>
   <entry>
     <title>反思总结：优惠券服务拆分</title>
@@ -566,6 +555,8 @@
     <content><![CDATA[<h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>Given a string, find the length of the <strong>longest substring</strong> without repeating characters.</p>
 <p><strong>Example 1:</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Input: &quot;abcabcbb&quot;</span><br><span class="line">Output: 3</span><br><span class="line">Explanation: The answer is &quot;abc&quot;, with the length of 3.</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
 
 <p><strong>Example 2:</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Input: &quot;bbbbb&quot;</span><br><span class="line">Output: 1</span><br><span class="line">Explanation: The answer is &quot;b&quot;, with the length of 1.</span><br></pre></td></tr></table></figure>
@@ -607,6 +598,8 @@
 <p><strong>Example:</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Input: (2 -&gt; 4 -&gt; 3) + (5 -&gt; 6 -&gt; 4)</span><br><span class="line">Output: 7 -&gt; 0 -&gt; 8</span><br><span class="line">Explanation: 342 + 465 &#x3D; 807.</span><br></pre></td></tr></table></figure>
 
+<a id="more"></a>
+
 <p><strong>Approach:</strong></p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     struct ListNode *next;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"> <span class="function">struct ListNode *<span class="title">addTwoNumbers</span><span class="params">(struct ListNode *l1, struct ListNode *l2)</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ListNode</span> *<span class="title">dummyHead</span> = (<span class="title">struct</span> <span class="title">ListNode</span>*)<span class="title">calloc</span>(1, <span class="title">sizeof</span>(<span class="title">struct</span> <span class="title">ListNode</span>));</span></span><br><span class="line">    dummyHead-&gt;val = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> carry = <span class="number">0</span>, x, y, sum;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">ListNode</span> *<span class="title">p</span> = <span class="title">l1</span>, *<span class="title">q</span> = <span class="title">l2</span>, *<span class="title">curr</span> = <span class="title">dummyHead</span>;</span></span><br><span class="line">    <span class="keyword">while</span> (p || q) &#123;</span><br><span class="line">        x = p ? p-&gt;val : <span class="number">0</span>;</span><br><span class="line">        y = q ? q-&gt;val : <span class="number">0</span>;</span><br><span class="line">        sum = x + y + carry;</span><br><span class="line">        carry = sum / <span class="number">10</span>;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">ListNode</span> *<span class="title">next</span> = (<span class="title">struct</span> <span class="title">ListNode</span>*)<span class="title">calloc</span>(1, <span class="title">sizeof</span>(<span class="title">struct</span> <span class="title">ListNode</span>));</span></span><br><span class="line">        next-&gt;val = sum % <span class="number">10</span>;</span><br><span class="line">        curr-&gt;next = next;</span><br><span class="line">        curr = curr-&gt;next;</span><br><span class="line">        <span class="keyword">if</span> (p) &#123;</span><br><span class="line">            p = p-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (q) &#123;</span><br><span class="line">            q = q-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (carry &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">ListNode</span> *<span class="title">next</span> = (<span class="title">struct</span> <span class="title">ListNode</span>*)<span class="title">calloc</span>(1, <span class="title">sizeof</span>(<span class="title">struct</span> <span class="title">ListNode</span>));</span>;</span><br><span class="line">        next-&gt;val = carry;</span><br><span class="line">        curr-&gt;next = next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dummyHead-&gt;next;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
@@ -626,6 +619,8 @@
 <li>两个小时的工作量，不要想着我给自己估宽松点，估三个小时——该是多少就是多少，这直接影响别人对你的信任，如果同一份工作你给估了一个月，老板去问另一个开发，他只估了半个月，那老板以后可能就不会再找你分配工作。一天八小时工作制，由于各种各样的原因实际可支配的时间其实并没有这么多，那你可以提前说明比如我每天要给别人解决各种各样的问题或者晚上想留出两小时的时间学习，所以每天实际的开发时间只有5h，那一份40h工作量的任务对我来说就需要8day，但一定不要把这些额外事情的时间算到这个任务里。</li>
 <li>评估任务尽量拆解的细一些，想的全面一些。一个需求中复杂的坑和细节尽量一开始就考虑到搞清楚，并留出相应的时间，以避免做到一半发现有坑再delay，承诺过的事情要有契约精神。我知道这很难，但尽量做，其实每个任务实际完成的时间比预期差个一天半天都是正常的，关键是要总结经验，想想这次评估中有哪些不足，让下次的评估可以更准确。如果每次评估都是糊弄了事，你会逐渐丧失时间评估的能力。</li>
 </ol>
+<a id="more"></a>
+
 <h3 id="时间管理"><a href="#时间管理" class="headerlink" title="时间管理"></a>时间管理</h3><p>​       时间是你最宝贵的财富，所以一定要利用好。要学会主动管理，对于学习上，每天一定要抽出整块的不被打扰的时间用来学习，提升个人技术能力和自身价值，是走技术这条路最最重要的一步，活到老学到老。对于工作上，学会使用任务管理工具（如tower），一些小的零碎的事情，短时间能解决的优先解决，别给自己攒太多压力，然后集中精力去做那些大块的工作。如果一个任务的工作是一周或两周，那就提前拆解好每天要做到什么程度，每晚review一下工作情况，对总体的进度有个把控，如果感觉搞不完要delay就加加班或者提前向上反馈，因为什么什么原因，这个任务要delay多久，并给出解决方案，要么加班，要么整体延期。一定不要等到deadline了才发现做不完，影响整个团队的进度。</p>
 <h3 id="同事之间的交往"><a href="#同事之间的交往" class="headerlink" title="同事之间的交往"></a>同事之间的交往</h3><p>​    大家一起共事都是缘分，一个团队中每个人的技术肯定是有高有低参差不齐的，性格也是多种多样。相处时要做到谦虚和尊敬他人，学会倾听和站在他人的角度思考问题，每个人身上肯定都有比自己强值得学习的地方，要学会发现这些闪光点。当别人来找自己问问题的时候，要注意自己的态度，对事不对人，如果一个人对同一个问题或类似的问题找你问很多遍，你可以说这个问题我给你讲过很多次了，你先自己想一下有没有思路，该怎么解决，想好方案再来找我；但如果他带来的是个新问题还是要耐心解答的，不能因为他老问问题就不理他。</p>
 <h3 id="责任与心态"><a href="#责任与心态" class="headerlink" title="责任与心态"></a>责任与心态</h3><p>​    出现问题时leader询问情况，要先快速定位问题，并给出解决方案，分析利弊；如出的问题跟自己没关系，也可以待命看看有什么能帮的上忙的，帮忙思考下解决方案；问题解决后，思考问题是怎么造成的，以后怎么避免，总结经验；如果是自身的原因主动承担错误，如果是别人的原因，自己也要引以为戒。一定不要出了问题先说这代码是谁谁谁写的，把自己撇的一干二净，这给人感觉很不好，直接决定了你做事的高度。出问题是在所难免的，这并不可怕，很多时候leader也只是问问想搞清楚情况，并没有要责怪谁的意思，关键是不要让范过的错误重复的发生在自己身上。</p>
@@ -651,6 +646,8 @@
 <blockquote>
 <p>maxSubArray(A, i) = maxSubArray(A, i - 1) &gt; 0 ? maxSubArray(A, i - 1) : 0 + A[i];</p>
 </blockquote>
+<a id="more"></a>
+
 <p><strong>Approach:</strong></p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">maxSubArray</span><span class="params">(<span class="keyword">int</span>* nums, <span class="keyword">int</span> numsSize)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> temp[numsSize];</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> <span class="built_in">max</span> = temp[<span class="number">0</span>] = nums[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">for</span> (; i&lt; numsSize; i++) &#123;</span><br><span class="line">        temp[i] = nums[i] + (temp[i<span class="number">-1</span>] &gt; <span class="number">0</span> ? temp[i<span class="number">-1</span>] : <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (; i&lt; numsSize; i++) &#123;</span><br><span class="line">        <span class="built_in">max</span> = <span class="built_in">max</span> &lt; temp[i] ? temp[i] : <span class="built_in">max</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">max</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
@@ -668,8 +665,10 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1.     1</span><br><span class="line">2.     11</span><br><span class="line">3.     21</span><br><span class="line">4.     1211</span><br><span class="line">5.     111221</span><br></pre></td></tr></table></figure>
 
 <p><code>1</code> is read off as <code>&quot;one 1&quot;</code> or <code>11</code>.<br><code>11</code> is read off as <code>&quot;two 1s&quot;</code> or <code>21</code>.<br><code>21</code> is read off as <code>&quot;one 2</code>, then <code>one 1&quot;</code> or <code>1211</code>.</p>
-<p>Given an integer <em>n</em> where 1 ≤ <em>n</em> ≤ 30, generate the <em>n</em>th term of the count-and-say sequence.</p>
+<p>Given an integer <em>n</em> where 1 ≤ <em>n</em> ≤ 30, generate the <em>n</em> th term of the count-and-say sequence.</p>
 <p>Note: Each term of the sequence of integers will be represented as a string.</p>
+<a id="more"></a>
+
 <p><strong>Example 1:</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Input: 1</span><br><span class="line">Output: &quot;1&quot;</span><br></pre></td></tr></table></figure>
 
@@ -717,6 +716,8 @@
 <p><strong>Example 1:</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Given nums &#x3D; [1,1,2],</span><br><span class="line"></span><br><span class="line">Your function should return length &#x3D; 2, with the first two elements of nums being 1 and 2 respectively.</span><br><span class="line"></span><br><span class="line">It doesn&#39;t matter what you leave beyond the returned length.</span><br></pre></td></tr></table></figure>
 
+<a id="more"></a>
+
 <p><strong>Example 2:</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Given nums &#x3D; [0,0,1,1,1,2,2,3,3,4],</span><br><span class="line"></span><br><span class="line">Your function should return length &#x3D; 5, with the first five elements of nums being modified to 0, 1, 2, 3, and 4 respectively.</span><br><span class="line"></span><br><span class="line">It doesn&#39;t matter what values are set beyond the returned length.</span><br></pre></td></tr></table></figure>
 
@@ -749,6 +750,9 @@
 <li>Space complexity : O(1)O(1).</li>
 </ul>
 ]]></content>
+      <categories>
+        <category>ARTS</category>
+      </categories>
       <tags>
         <tag>ARTS</tag>
       </tags>
@@ -762,6 +766,9 @@
 <p>所谓异步：</p>
 <p>1.(fd)阻塞调用 + select/pool, epool  （IO事件通知方式：IO复用）</p>
 <p>2.(fd)非阻塞调用 + SIGIO （IO事件通知方式：SIGIO 信号）</p>
+<a id="more"></a>
+
+
 <p>文中涉及接口调用的部分，都是指Linux系统的接口调用。共分为5部分：</p>
 <p>I/O模型</p>
 <p>从基础的系统调用方法出发，给大家从头回顾一下最基本的I/O模型，虽然简单，但是不可或缺的基础；</p>
@@ -1111,136 +1118,13 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux学习笔记</title>
-    <url>/2018/09/24/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
-    <content><![CDATA[<h1 id="Linux学习笔记"><a href="#Linux学习笔记" class="headerlink" title="Linux学习笔记"></a>Linux学习笔记</h1><h2 id="Linux中，Ctrl组合键"><a href="#Linux中，Ctrl组合键" class="headerlink" title="Linux中，Ctrl组合键"></a>Linux中，Ctrl组合键</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Ctrl+c 结束正在运行的程序</span><br><span class="line"></span><br><span class="line">Ctrl+d 结束输入或退出shell</span><br><span class="line"></span><br><span class="line">Ctrl+s 暂停屏幕输出【锁住终端】</span><br><span class="line"></span><br><span class="line">Ctrl+q 恢复屏幕输出【解锁终端】</span><br><span class="line"></span><br><span class="line">Ctrl+l 清屏，【是字母L的小写】等同于Clear</span><br><span class="line"></span><br><span class="line">Ctrl+a 切换到命令行开始</span><br><span class="line"></span><br><span class="line">trl+e 切换到命令行末尾</span><br><span class="line"></span><br><span class="line">Ctrl+u 清除剪切光标之前的内容</span><br><span class="line"></span><br><span class="line">Ctrl+k 清除剪切光标及光标之后的内容</span><br><span class="line"></span><br><span class="line">Ctrl+y 在光标处粘贴剪切的内容</span><br><span class="line"></span><br><span class="line">Ctrl+r 查找历史命令【输入关键字，就能调出以前执行过的命令】</span><br><span class="line"></span><br><span class="line">Ctrl+t 调换光标所在处与其之前字符位置，并把光标移到下个字符</span><br><span class="line"></span><br><span class="line">Ctrl+x+u 撤销操作</span><br></pre></td></tr></table></figure>
-<h2 id="第四章、基础操作入门"><a href="#第四章、基础操作入门" class="headerlink" title="第四章、基础操作入门"></a>第四章、基础操作入门</h2><h3 id="关机或重启"><a href="#关机或重启" class="headerlink" title="关机或重启"></a>关机或重启</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">数据同步写入磁盘：</span><br><span class="line">sync</span><br><span class="line"></span><br><span class="line">关机：</span><br><span class="line">shutdown</span><br><span class="line">halt</span><br><span class="line">poweroff</span><br><span class="line"></span><br><span class="line">重启：</span><br><span class="line">reboot</span><br></pre></td></tr></table></figure>
-<h3 id="基础指令"><a href="#基础指令" class="headerlink" title="基础指令"></a>基础指令</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">日期和时间：date</span><br><span class="line">日历：cal</span><br><span class="line">计算器：bc</span><br></pre></td></tr></table></figure>
-
-<h3 id="热键"><a href="#热键" class="headerlink" title="热键"></a>热键</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[Tab]:命令补全或文件补齐</span><br><span class="line">[Ctrl]-c:中断目前程序</span><br><span class="line">[Ctrl]-d:（键盘输入结束，End Of File，EOF 或 End Of Input），相当于输入exit</span><br><span class="line">[shift]+&#123;[PageUP]|[Page Down]&#125;:翻页</span><br></pre></td></tr></table></figure>
-
-<h3 id="帮助"><a href="#帮助" class="headerlink" title="帮助"></a>帮助</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">--help</span><br><span class="line">man page</span><br><span class="line">info page</span><br></pre></td></tr></table></figure>
-
-<h2 id="第五章、文件权限与目录配置"><a href="#第五章、文件权限与目录配置" class="headerlink" title="第五章、文件权限与目录配置"></a>第五章、文件权限与目录配置</h2><h3 id="修改文件或目录属组"><a href="#修改文件或目录属组" class="headerlink" title="修改文件或目录属组"></a>修改文件或目录属组</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chgrp [-R] group dirname&#x2F;filename   </span><br><span class="line">chown [-R] user dirname&#x2F;filename    </span><br><span class="line">chown [-R] user:group dirname&#x2F;filename</span><br></pre></td></tr></table></figure>
-
-<h3 id="修改文件或目录权限"><a href="#修改文件或目录权限" class="headerlink" title="修改文件或目录权限"></a>修改文件或目录权限</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chmod [-R] [ugoa][+-&#x3D;][rwx] dirname&#x2F;filename</span><br><span class="line">chmod [-R] [xyz] dirname&#x2F;filename (xyz为0-7的数字)</span><br></pre></td></tr></table></figure>
-
-<h3 id="操作与权限的关系"><a href="#操作与权限的关系" class="headerlink" title="操作与权限的关系"></a>操作与权限的关系</h3><p> <img src="http://note.youdao.com/yws/public/resource/91f49489e63185046c6483d6ca66c85a/xmlnote/DB45115B20484E5D93435C808DEA4B6C/31" alt="image"></p>
-<h3 id="文件种类"><a href="#文件种类" class="headerlink" title="文件种类"></a>文件种类</h3><ul>
-<li>正规文件（regular file)：第一个字符为[-],包括纯文本文档（ASCII），二进制文件（binary），数据格式文件（data）；</li>
-<li>目录（directory）：第一个字符为[d]；</li>
-<li>连接档（link）：第一个字符为[l]；</li>
-<li>设备与装置文件（device）：通常都集中在/dev目录下，分为区块(block)设备档[b]和字符(character)设备文件[c];</li>
-<li>资料接口文件（sockets）：第一个字符为[s]；</li>
-<li>数据传输文件（FIFO，pipe）：第一个字符为[p];<h3 id="目录配置"><a href="#目录配置" class="headerlink" title="目录配置"></a>目录配置</h3></li>
-<li>/（root，根目录）：与开机系统有关；</li>
-<li>/usr(unix software recourse):与软件安装／执行有关</li>
-<li>/var(variable):与系统运作过程有关；</li>
-<li>/bin:很多配置文件和指令的目录；</li>
-<li>/boot:开机用到的文件；</li>
-<li>/dev:装置与接口设备；</li>
-<li>/etc:系统主要配置文件；</li>
-<li>/lib:系统函数库；</li>
-<li>/media:可移除装置，如光盘，软盘，DVD；</li>
-<li>/opt:第三方协力软件目录；</li>
-<li>/run:早起的FHS规定系统开机后所产生的各项信息放置目录;</li>
-<li>/sbin:设定系统环境的指令;</li>
-<li>/srv:一些网络服务启动后，需要取用的数据目录;</li>
-<li>/tmp:临时文件目录;</li>
-<li>/home:家目录;</li>
-<li>/lost+found:系统发生错误时，遗失片段放置目录；</li>
-</ul>
-<h2 id="第六章、文件与目录管理"><a href="#第六章、文件与目录管理" class="headerlink" title="第六章、文件与目录管理"></a>第六章、文件与目录管理</h2><h3 id="目录管理"><a href="#目录管理" class="headerlink" title="目录管理"></a>目录管理</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#显示当前目录</span><br><span class="line">pwd [-P]    </span><br><span class="line">-P:显示真实路径，而非链接（link）路径</span><br><span class="line"></span><br><span class="line">#建立新目录</span><br><span class="line">mkdir 【-mp] dirname    </span><br><span class="line">-m:配置文件权限</span><br><span class="line">-p：递归建立</span><br><span class="line"></span><br><span class="line">#删除空目录</span><br><span class="line">rmdir [-p] dirname  </span><br><span class="line">-p：连同上层的空目录一起删除</span><br></pre></td></tr></table></figure>
-<h3 id="执行文件所在路径的变量-PATH"><a href="#执行文件所在路径的变量-PATH" class="headerlink" title="执行文件所在路径的变量$PATH"></a>执行文件所在路径的变量$PATH</h3><p>只有在$PATH中的指令才可以在任意地方执行</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">echo $PATH  #查看</span><br><span class="line"></span><br><span class="line">PATH&#x3D;&quot;$PATH:&#x2F;root&quot;  #把&#x2F;root加入到$PATH中</span><br></pre></td></tr></table></figure>
-
-<h3 id="文件管理"><a href="#文件管理" class="headerlink" title="文件管理"></a>文件管理</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#查看</span><br><span class="line">ls [-aAdfFhilnrRSt] filename&#x2F;dirname    </span><br><span class="line">ls [--color&#x3D;&#123;never,auto,always&#125;] filename&#x2F;dirname</span><br><span class="line">ls [--full-time] filename&#x2F;dirname</span><br><span class="line">-a : 全部文件，包括隐藏文件（.开头)</span><br><span class="line">-d : 仅列出目录本身，而不是目录内文件</span><br><span class="line">-l : 长数据串输出，包含文件属性、权限等数据</span><br><span class="line"></span><br><span class="line">#复制</span><br><span class="line">cp [-adfilprsu] 来源文件(source) 目标文件(destination)  </span><br><span class="line">cp [options] source1 source2 source3 .... directory</span><br><span class="line">-a : 相当于-dr --preserve&#x3D;all的意思</span><br><span class="line">-d : 若源文件为链接文件属性(link file),则复制链接文件属性，而非文件本身</span><br><span class="line">-f : 强制（force),若文件已存在，删除后再尝试一次</span><br><span class="line">-i ：若目标文件已存在，覆盖前先询问</span><br><span class="line">-l : 建立硬连接，而非复制文件本身</span><br><span class="line">-p : 连同属性（权限，用户，时间）一起复制，而非使用默认属性</span><br><span class="line">-r : 递归</span><br><span class="line">-s ：软链</span><br><span class="line">-u : destination 比 source旧才更新，或destination不存在才复制</span><br><span class="line"></span><br><span class="line">#移除</span><br><span class="line">rm [-fir] filename&#x2F;dirname</span><br><span class="line">-f : force,忽略不存在的文件，不报错</span><br><span class="line">-i : 互动模式，删前确认</span><br><span class="line">-r ：递归</span><br><span class="line"></span><br><span class="line">#移动</span><br><span class="line">mv [-fiu] source destination</span><br><span class="line">mv [options] source1 source2 source3 ... directory</span><br><span class="line">-f : force</span><br><span class="line">-i : 若目标文件已存在，询问是否覆盖</span><br><span class="line">-u : 若目标已存在，且source比较新，才会更新</span><br></pre></td></tr></table></figure>
-
-<h3 id="取得路径和文件名"><a href="#取得路径和文件名" class="headerlink" title="取得路径和文件名"></a>取得路径和文件名</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#路径</span><br><span class="line">basename &#x2F;a&#x2F;b&#x2F;c     #c</span><br><span class="line">#文件名</span><br><span class="line">dirname &#x2F;a&#x2F;b&#x2F;c      #&#x2F;a&#x2F;b</span><br></pre></td></tr></table></figure>
-
-<h3 id="文件内容查阅"><a href="#文件内容查阅" class="headerlink" title="文件内容查阅"></a>文件内容查阅</h3><ul>
-<li>cat(con++cat++enate)<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cat [-AbEnTv]</span><br><span class="line">-n : 打印行号</span><br></pre></td></tr></table></figure></li>
-<li>tac(反向的cat)</li>
-<li>nl</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">nl [-bnw] filename</span><br></pre></td></tr></table></figure>
-<ul>
-<li>more(一页一页翻动)</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">more filename</span><br><span class="line">空格（space）：向下翻一页</span><br><span class="line">回车（Enter）：向下翻一行</span><br><span class="line">&#x2F;字符串：查找</span><br><span class="line">:f ：显示文件名和目前显示行数</span><br><span class="line">q：离开</span><br><span class="line">b：往回翻页</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>less（一页一页反动）</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">less filename</span><br><span class="line">空格（space）：向下翻一页</span><br><span class="line">回车（Enter）：向下翻一行</span><br><span class="line">&#x2F;字符串：向下查找</span><br><span class="line">?字符串：向上查找</span><br><span class="line">n：重复前一个搜寻</span><br><span class="line">N：反向重复前一个搜寻</span><br><span class="line">g：去第一行</span><br><span class="line">G：去最后一行</span><br><span class="line">:f ：显示文件名和目前显示行数</span><br><span class="line">q：离开</span><br><span class="line">[pagedown]:下一页</span><br><span class="line">[pageup]:上一页</span><br></pre></td></tr></table></figure></li>
-<li><p>head（取出前面几行）</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">head [-n number] file</span><br><span class="line">head [-n +number] file  #取反，后n行不显示</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>tail（取后面几行）</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tail [-n number] [-f] file</span><br><span class="line">head [-n -number] file  #取反，前n行不显示</span><br><span class="line">-f：动态输出</span><br></pre></td></tr></table></figure></li>
-<li><p>od（非纯文本文档）</p>
-</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">od [-t TYPE] file</span><br></pre></td></tr></table></figure>
-<h3 id="新建文档或修改文件时间"><a href="#新建文档或修改文件时间" class="headerlink" title="新建文档或修改文件时间"></a>新建文档或修改文件时间</h3><ul>
-<li>mtime（modification time）：文件内容变更时间(ls默认时间)</li>
-<li>ctime（status time）：文件状态（权限、属性）变更时间</li>
-<li>atime（access time）：文件读取时间</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">touch [-acdmt] file #建立一个新文件或更新文件的mtime和atime</span><br></pre></td></tr></table></figure>
-<h3 id="默认权限和隐藏权限"><a href="#默认权限和隐藏权限" class="headerlink" title="默认权限和隐藏权限"></a>默认权限和隐藏权限</h3><ul>
-<li>文件预设权限<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">umask</span><br></pre></td></tr></table></figure></li>
-<li>文件隐藏属性<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chattr [+-&#x3D;][ASacdistu] file&#x2F;dir    #配置文件或目录隐藏属性</span><br><span class="line">lsattr [-adR] file&#x2F;dir  #查看隐藏属性</span><br></pre></td></tr></table></figure></li>
-<li>文件特殊权限：SUID，SGID，SBIT</li>
-<li>观察文件类型：fie</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">file filename</span><br></pre></td></tr></table></figure>
-<h3 id="指令与文件的搜寻"><a href="#指令与文件的搜寻" class="headerlink" title="指令与文件的搜寻"></a>指令与文件的搜寻</h3><ul>
-<li>which（寻找【指令文件】）<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">which [-a] command</span><br></pre></td></tr></table></figure></li>
-<li>whereis(在特定目录搜寻系统文件，不实用)<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">whereis [-bmsu] file&#x2F;dir</span><br></pre></td></tr></table></figure></li>
-<li>locate/updatedb（依靠db快速查询）<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">locate [-ir] keyword</span><br><span class="line">updatedb    #locate是靠db快速查询，所以查询较新文件时需要手动updatedb</span><br></pre></td></tr></table></figure>
-find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">find [PATH] [option] [action]</span><br><span class="line">1.time(-atime,-ctime,-mtime)</span><br><span class="line">    -mtime n : n天前（一天内）被改动过的文件</span><br><span class="line">    -mtime +n : n天前（不含n本身）被改动过的文件</span><br><span class="line">    -mtime -n : n天内（含n本身）被改动过的文件</span><br><span class="line">2.属组相关参数</span><br><span class="line">    -uid n</span><br><span class="line">    -gid n</span><br><span class="line">    -user name</span><br><span class="line">    -group name</span><br><span class="line">    -nouser</span><br><span class="line">    -nogroup</span><br><span class="line">3.权限及名称</span><br><span class="line">    -name filename</span><br><span class="line">    -size [+-]SIZE:c代表byte，k代表kb</span><br><span class="line">    -type TYPE ： [f,b,c,d,l,s,p]</span><br><span class="line">    -perm mode</span><br><span class="line">    -perm -mode</span><br><span class="line">    -perm &#x2F;mode</span><br><span class="line">4.额外参数</span><br><span class="line">    -exec command : command见下图</span><br><span class="line">    -print</span><br><span class="line">    -a : and的意思，用于连接两个条件，如find &#x2F;etc -size +50k -a -size -60k</span><br><span class="line">    ! : 取反的意思，如find &#x2F;etc -size +50k -a ! -user root</span><br></pre></td></tr></table></figure>
-<img src="http://note.youdao.com/yws/public/resource/91f49489e63185046c6483d6ca66c85a/xmlnote/85FEA75CCD8E4D0CAA94260B98089A1E/431" alt="image"></li>
-</ul>
-<h2 id="第七章、Linux-磁盘与文件系统管理"><a href="#第七章、Linux-磁盘与文件系统管理" class="headerlink" title="第七章、Linux 磁盘与文件系统管理"></a>第七章、Linux 磁盘与文件系统管理</h2><h3 id="文件系统特性"><a href="#文件系统特性" class="headerlink" title="文件系统特性"></a>文件系统特性</h3><p>操作系统的文件数据除了文件实际内容外，还有非常多的属性（权限，属组，时间参数）。文件系统会将这两部分数据存放在不同的区块，权限与属性放到inode中，实际数据放到data block中。另外，还有一个超级区块（superblock）会记录整个文件系统的整体信息，包括inode和block总量、使用量、剩余量等。</p>
-<ul>
-<li>superblock：记录此filesystem的整体信息，包括inode/block的总量、使用量、剩余量，以及文件系统的格式与相关信息等；</li>
-<li>inode：记录文件的属性，一个文件占用一个inode，同时记录此文件的数据所在block号码；</li>
-<li>block：实际记录文件的内容，若文件太大时，会占用多个block；</li>
-</ul>
-<p>每个inode与block都有编号，每个文件都会占用一个inode，inode内则有文件数据放置的block号码。这种数据存取方法我们称为索引式文件系统（indexed allocation）（下图）。<br><img src="http://note.youdao.com/yws/public/resource/91f49489e63185046c6483d6ca66c85a/xmlnote/EE38F1F9F8A54CB185593EC9E07B2AAA/489" alt="image"><br><img src="http://note.youdao.com/yws/public/resource/91f49489e63185046c6483d6ca66c85a/xmlnote/561C779757124369BE8A8F997D760FBE/501" alt="image"><br>上图为闪存用的FAT格式，没有inode存在，所以FAT没有办法将这个文件的所有block再一开始就读取出来。每个block号码都记录再前一个block当中。如果同一个文件数据写入的block分散的太过厉害，无法在磁盘转一圈就读到所有数据，就需要多转好几圈。<br>碎片整理的原因就是文件写入的block过于分散，读取文件的效率会变得很差，这时候可以透过 碎片整理将同一个文件的blcok汇整到一起，这样读取会比较容易。Ext2是索引式文件系统，不需要整理。</p>
-<h3 id="Linux的EXT2文件系统（inode）"><a href="#Linux的EXT2文件系统（inode）" class="headerlink" title="Linux的EXT2文件系统（inode）"></a>Linux的EXT2文件系统（inode）</h3><p>文件系统一开始就将inode与block规划好了，除非重新格式化（或者利用resize2fs等指令变更文件系统大小），否则inode与block固定后就不再变动。</p>
-<h3 id="7-2-文件系统的简单操作"><a href="#7-2-文件系统的简单操作" class="headerlink" title="7.2 文件系统的简单操作"></a>7.2 文件系统的简单操作</h3><h4 id="7-2-1-磁盘与目录的容量"><a href="#7-2-1-磁盘与目录的容量" class="headerlink" title="7.2.1 磁盘与目录的容量"></a>7.2.1 磁盘与目录的容量</h4><p>df:列出文件系统的整体磁盘使用量；</p>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《深入理解计算机系统》第一章</title>
-    <url>/2018/09/23/%E3%80%8ACS:APP%E3%80%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E7%AC%AC%E4%B8%80%E7%AB%A0/</url>
-    <content><![CDATA[<h1 id="计算机系统漫游"><a href="#计算机系统漫游" class="headerlink" title="计算机系统漫游"></a>计算机系统漫游</h1><h2 id="信息就是位-上下文"><a href="#信息就是位-上下文" class="headerlink" title="信息就是位 + 上下文"></a>信息就是位 + 上下文</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"hello, world\n"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>​    hello程序的生命周期是从一个源程序开始的。源程序是一个由值0和1组成的位（又称比特）序列，8个位组成一组，称为字节。每个字节必保湿程序中的某些特殊文本字符。大部分计算机系统使用ASCII标准来表示文本字符，这种方式实际上就是一个唯一的单字节大小的整数值来表示每个字符（入下图）。</p>
-<p><img src="http://pfjta0ejx.bkt.clouddn.com/hello-ASCII.png" alt="ASCII"></p>
-<p>​    hello.c程序是以字节序列的方式存储在文本文件中的。每个字节都有一个整数值，对应某些字符。这种表示方法说明了一个节本思想：系统中所有信息——包括磁盘文件，内存中的程序，内存中存放的用户数据以及网络上传输的数据，都是由一串比特表示的，区别不同数据对象的唯一方式是我们读到这些数据对象时的上下文。</p>
-<h2 id="程序被其他程序翻译成不同的格式"><a href="#程序被其他程序翻译成不同的格式" class="headerlink" title="程序被其他程序翻译成不同的格式"></a>程序被其他程序翻译成不同的格式</h2><p>​    hello程序的生命周期是从一个高级C语言开始的，因为这种形式被人读懂。然而为了在系统上运行，每条C语句被其他程序转化为一系列低级机器语言指令。然后这些指令按照一种称为可执行目标程序的格式打好包，并以二进制磁盘文件的形式存起来。下面是GCC编译驱动器把源文件翻译成可执行文件的四个阶段。</p>
-<p><img src="http://pfjta0ejx.bkt.clouddn.com/compile-system.png" alt=""></p>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>CSAPP</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>arts-7.md</title>
     <url>/2018/09/23/arts-7/</url>
     <content><![CDATA[<h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>Merge two sorted linked lists and return it as a new list. The new list should be made by splicing together the nodes of the first two lists.</p>
 <p><strong>Example:</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Input: 1-&gt;2-&gt;4, 1-&gt;3-&gt;4</span><br><span class="line">Output: 1-&gt;1-&gt;2-&gt;3-&gt;4-&gt;4</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
 
 <h4 id="Approach-1-Recursion"><a href="#Approach-1-Recursion" class="headerlink" title="Approach 1: Recursion"></a>Approach 1: Recursion</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Definition for singly-linked list.</span></span><br><span class="line"><span class="comment"> * struct ListNode &#123;</span></span><br><span class="line"><span class="comment"> *     int val;</span></span><br><span class="line"><span class="comment"> *     struct ListNode *next;</span></span><br><span class="line"><span class="comment"> * &#125;;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">struct ListNode *<span class="title">mergeTwoLists</span><span class="params">(struct ListNode *l1, struct ListNode *l2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (l1 == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> l2;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (l2 == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> l1;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (l1-&gt;val &lt; l2-&gt;val) &#123;</span><br><span class="line">        l1-&gt;next = mergeTwoLists(l1-&gt;next, l2);</span><br><span class="line">        <span class="keyword">return</span> l1;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        l2-&gt;next = mergeTwoLists(l1, l2-&gt;next);</span><br><span class="line">        <span class="keyword">return</span> l2;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -1251,6 +1135,9 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 <p>​    时间复杂度为O(n+m)，因为while循环的次数相当于两个链表的长度之和（忽略剩余的部分），是线性的。</p>
 <p>​    空间复杂度是O(1)，迭代算法只是分配了几个指针，具有恒定的总内存占用量。</p>
 ]]></content>
+      <categories>
+        <category>ARTS</category>
+      </categories>
       <tags>
         <tag>ARTS</tag>
       </tags>
@@ -1273,6 +1160,8 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 
 <p><strong>Example 3:</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Input: &quot;(]&quot;</span><br><span class="line">Output: false</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
 
 <p><strong>Example 4:</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Input: &quot;([)]&quot;</span><br><span class="line">Output: false</span><br></pre></td></tr></table></figure>
@@ -1311,6 +1200,8 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 <p>下面通过一张图可以更直观的理解内存中的地址</p>
 <p><img src="https:////upload-images.jianshu.io/upload_images/1434508-3146d4e4c4362be7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/925/format/webp" alt="img"></p>
 <p>内存中的地址演示图</p>
+<a id="more"></a>
+
 <h2 id="2-指针"><a href="#2-指针" class="headerlink" title="2. 指针"></a>2. 指针</h2><ol>
 <li>指针是C语言的灵魂。指针变量占据8个字节。</li>
 <li>变量在内存中的存储。<br> 变量的值：存储在变量中的数据，叫做变量的值。<br> 变量的地址：组成这个变量的低字节的地址，就是这个变量的地址。</li>
@@ -1423,6 +1314,8 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 
 <p><strong>Note:</strong></p>
 <p>All given inputs are in lowercase letters <code>a-z</code>.</p>
+<a id="more"></a>
+
 <p><strong>Solution:</strong></p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Created by akaQin on 2018/8/26.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">longestCommonPrefix</span><span class="params">(<span class="keyword">char</span> **strs, <span class="keyword">int</span> strsSize)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (strsSize &lt; <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">//    先通过把第一个字符串跟每个字符串比较的方式计算出公共前缀的长度</span></span><br><span class="line">    <span class="keyword">int</span> index = <span class="built_in">strlen</span>(strs[<span class="number">0</span>]); <span class="keyword">int</span> tempIndex = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; strsSize; i++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (tempIndex = <span class="number">0</span>; tempIndex &lt; index; tempIndex++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (strs[<span class="number">0</span>][tempIndex] != strs[i][tempIndex]) &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (tempIndex == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">        &#125;</span><br><span class="line"><span class="comment">//        当tempIndex &lt; Index时，可以更新Index来省去多余的计算</span></span><br><span class="line">        <span class="keyword">if</span> (tempIndex &lt; index) &#123;</span><br><span class="line">            index = tempIndex;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">//计算出前缀长度后，字符串数据是存储在常量区的，不能直接更改，所以要为前缀申请内存空间并付值，+1是为了留出'\0'的位置</span></span><br><span class="line">    <span class="keyword">char</span> *prefix = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">char</span>) * (index + <span class="number">1</span>));</span><br><span class="line">    <span class="built_in">strncpy</span>(prefix, strs[<span class="number">0</span>], index);</span><br><span class="line">    prefix[index] = <span class="string">'\0'</span>;</span><br><span class="line">    <span class="keyword">return</span> prefix;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> *arr[] = &#123;<span class="string">""</span>&#125;;</span><br><span class="line">    <span class="keyword">char</span> *p = longestCommonPrefix(arr, <span class="number">4</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%lu\n"</span>, <span class="built_in">strlen</span>(p));</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%s\n"</span>, p);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -1451,6 +1344,9 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 <li>为程序提供更好的说明性——Treeptr 类型显然比一个声明为指向复杂结构的指针更容易让人理解。</li>
 </ol>
 ]]></content>
+      <categories>
+        <category>ARTS</category>
+      </categories>
       <tags>
         <tag>ARTS</tag>
       </tags>
@@ -1464,11 +1360,13 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 <p>For example, two is written as <code>II</code> in Roman numeral, just two one’s added together. Twelve is written as, <code>XII</code>, which is simply <code>X</code> + <code>II</code>. The number twenty seven is written as <code>XXVII</code>, which is <code>XX</code> + <code>V</code> + <code>II</code>.</p>
 <p>Roman numerals are usually written largest to smallest from left to right. However, the numeral for four is not <code>IIII</code>. Instead, the number four is written as <code>IV</code>. Because the one is before the five we subtract it making four. The same principle applies to the number nine, which is written as <code>IX</code>. There are six instances where subtraction is used:</p>
 <ul>
-<li><code>I</code> can be placed before <code>V</code> (5) and <code>X</code> (10) to make 4 and 9. </li>
-<li><code>X</code> can be placed before <code>L</code> (50) and <code>C</code> (100) to make 40 and 90. </li>
+<li><code>I</code> can be placed before <code>V</code> (5) and <code>X</code> (10) to make 4 and 9.</li>
+<li><code>X</code> can be placed before <code>L</code> (50) and <code>C</code> (100) to make 40 and 90.</li>
 <li><code>C</code> can be placed before <code>D</code> (500) and <code>M</code> (1000) to make 400 and 900.</li>
 </ul>
 <p>Given a roman numeral, convert it to an integer. Input is guaranteed to be within the range from 1 to 3999.</p>
+<a id="more"></a>
+
 <p><strong>Example 1:</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Input: &quot;III&quot;</span><br><span class="line">Output: 3</span><br></pre></td></tr></table></figure>
 
@@ -1494,9 +1392,9 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 <p>这些系统内核提供了特殊的资源和管理机制来支持这类线程。</p>
 <p>The Linux kernel, in a clever and simple manner, does not make distinction between processes and “threads”.</p>
 <p>而Linux内核，则采用了一种聪明而且简单的方式——在内核层面上，它并不区分进程和线程。</p>
-<p>The kernel allows processes to share resources and thus they can achieve legacy “threads” behavior without requiring additional data structures and mechanisms in the kernel. </p>
+<p>The kernel allows processes to share resources and thus they can achieve legacy “threads” behavior without requiring additional data structures and mechanisms in the kernel.</p>
 <p>Linux内核允许多条进程共享资源。这样做的好处在于，即使内核不再提供额外的数据结构和管理机制，和传统线程类似的行为也能被实现出来。</p>
-<p>The power of implementing threads in this manner comes not only from its simplicity but also from allowing application programmers to work outside the confinement of all-or-nothing shared resources of legacy threads. </p>
+<p>The power of implementing threads in this manner comes not only from its simplicity but also from allowing application programmers to work outside the confinement of all-or-nothing shared resources of legacy threads.</p>
 <p>以这样的实现方式来支持线程，不仅简单，而且也可以帮助程序员们摆脱曾经让他们感到烦恼的一个限制：在传统的线程模型中，要么就不能共享资源，要么就得全局共享资源。</p>
 <p>On Linux, at the time of thread creation using the clone system call, applications can selectively choose which resources to share between threads.</p>
 <p>在Linux中，程序在使用clone这个系统指令去创建线程时，可以选择性地指定哪部分资源会被其他线程所共享，而无需将所有资源都共享出去。</p>
@@ -1510,7 +1408,11 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 
 <h3 id="Share"><a href="#Share" class="headerlink" title="Share"></a>Share</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Created by akaQin on 2018/8/11.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ALLOCSIZE 10000</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">char</span> allocbuf[ALLOCSIZE];</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">char</span> *allocp = allocbuf;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">alloc</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (allocbuf + ALLOCSIZE - allocp &gt;= n) &#123;</span><br><span class="line">        allocp += n;</span><br><span class="line">        <span class="keyword">return</span> allocp - n;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">afree</span><span class="params">(<span class="keyword">char</span> *p)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (p &gt;= allocbuf &amp;&amp; p &lt; allocbuf + ALLOCSIZE) &#123;</span><br><span class="line">        allocp = p;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> *a = alloc(<span class="number">1</span>);</span><br><span class="line">    *(a<span class="number">-1</span>) = <span class="string">'b'</span>;</span><br><span class="line">    *a = <span class="string">'a'</span>;</span><br><span class="line">    *(a+<span class="number">1</span>) = <span class="string">'b'</span>;</span><br><span class="line"><span class="comment">//    *(a+2) = '\0';</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%p\n"</span>, a<span class="number">-1</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%s\n"</span>, a<span class="number">-1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; Created by akaQin on 2018&#x2F;8&#x2F;11.</span><br><span class="line">&#x2F;&#x2F;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">char *strcat(char *s, char *t) &#123;</span><br><span class="line">    char *se &#x3D; s;</span><br><span class="line">&#x2F;&#x2F;    for (; *se; ++se);</span><br><span class="line">        while (*se !&#x3D; &#39;\0&#39;) &#123;</span><br><span class="line">            se++;</span><br><span class="line">        &#125;</span><br><span class="line">    while ((*se++ &#x3D; *t++) !&#x3D; &#39;\0&#39;);</span><br><span class="line"></span><br><span class="line">    return s;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">char s[] &#x3D; &quot;ab&quot;;</span><br><span class="line"></span><br><span class="line">char t[] &#x3D; &quot;cd&quot;;</span><br><span class="line"></span><br><span class="line">main() &#123;</span><br><span class="line">    printf(&quot;%s&quot;, strcat(s, t));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F; Created by akaQin on 2018&#x2F;8&#x2F;11.</span><br><span class="line">&#x2F;&#x2F;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">char *strcat(char *s, char *t) &#123;</span><br><span class="line">    char *se &#x3D; s;</span><br><span class="line">&#x2F;&#x2F;    for (; *se; ++se);</span><br><span class="line">        while (*se !&#x3D; &#39;\0&#39;) &#123;</span><br><span class="line">            se++;</span><br><span class="line">        &#125;</span><br><span class="line">    while ((*se++ &#x3D; *t++) !&#x3D; &#39;\0&#39;);</span><br><span class="line"></span><br><span class="line">    return s;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">char s[] &#x3D; &quot;ab&quot;;</span><br><span class="line"></span><br><span class="line">char t[] &#x3D; &quot;cd&quot;;</span><br><span class="line"></span><br><span class="line">main() &#123;</span><br><span class="line">    printf(&quot;%s&quot;, strcat(s, t));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>ARTS</category>
+      </categories>
       <tags>
         <tag>ARTS</tag>
       </tags>
@@ -1530,19 +1432,21 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 
 <h2 id="Example-3"><a href="#Example-3" class="headerlink" title="Example 3:"></a><strong>Example 3:</strong></h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Input: 10</span><br><span class="line">Output: false</span><br><span class="line">Explanation: Reads 01 from right to left. Therefore it is not a palindrome.</span><br></pre></td></tr></table></figure>
 
+<a id="more"></a>
+
 <h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><p>Approach 1</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">isPalindrome</span><span class="params">(<span class="keyword">int</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (x &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> hold = x;</span><br><span class="line">    <span class="keyword">int</span> val = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (x) &#123;</span><br><span class="line">        val = val * <span class="number">10</span> + x % <span class="number">10</span>;</span><br><span class="line">        x /= <span class="number">10</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> val == hold ? <span class="literal">true</span> : <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="Review"><a href="#Review" class="headerlink" title="Review"></a>Review</h2><p>原文：<a href="https://dev.mysql.com/doc/mysql-replication-excerpt/5.5/en/replication-implementation.html" target="_blank" rel="noopener">MySQL Replication Implementation</a></p>
-<p>Replication is based on the master server keeping track of all changes to its databases (updates, deletes, and so on) in its binary log. </p>
+<p>Replication is based on the master server keeping track of all changes to its databases (updates, deletes, and so on) in its binary log.</p>
 <p>复制是通过将所有数据库修改操作记录（更新，删除等）到了日志文件中的主服务器实现的。</p>
-<p>The binary log serves as a written record of all events that modify database structure or content (data) from the moment the server was started. </p>
+<p>The binary log serves as a written record of all events that modify database structure or content (data) from the moment the server was started.</p>
 <p>日志服务器担负着将各类修改记录写入日志文件的职责。从日志服务器被启动的那一刻起，所有修改了数据库结构或者数据的事件，都会被它记录下来。</p>
 <p>Typically, SELECT statements are not recorded because they modify neither database structure nor content.</p>
 <p>一般来说，SELECT语句不会被记录下来，因为他们既不会影响数据库的结构，也不会影响数据库的数据。</p>
 <p>Each slave that connects to the master requests a copy of the binary log.</p>
 <p>每台接上了主服务器的从服务器都会请求一份二进制日志的拷贝文件。</p>
-<p>That is, it pulls the data from the master, rather than the master pushing the data to the slave. </p>
+<p>That is, it pulls the data from the master, rather than the master pushing the data to the slave.</p>
 <p>那就是，“从服务器”从“主服务器”那里将日志拉取回来，而非主服务器向从服务器推送日志。</p>
 <p>The slave also executes the events from the binary log that it receives. This has the effect of repeating the originalchanges just as they were made on the master.</p>
 <p>从服务器会将它收到的二进制日志中所记录的事件再执行一遍，这样就起到了重复这些操作的效果，就好像这些操作在主服务器上被执行时一样。</p>
@@ -1550,8 +1454,10 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 <p>根据主服务器对于各类操作的记录，从服务器上的数据表会相应地被创建或修改、而从服务器上的数据也会被相应地插入、删除或更新。</p>
 <h2 id="Technique"><a href="#Technique" class="headerlink" title="Technique"></a>Technique</h2><p>逆波兰计算器</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAXOP 100 <span class="comment">/* max size of operand or operator */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NUMBER <span class="meta-string">'0'</span> <span class="comment">/* signal that a number was found */</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getop</span><span class="params">(<span class="keyword">char</span> [])</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">push</span><span class="params">(<span class="keyword">double</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">pop</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">main() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> type;</span><br><span class="line">    <span class="keyword">double</span> op2;</span><br><span class="line">    <span class="keyword">char</span> s[MAXOP];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> ((type = getop(s)) != EOF) &#123;</span><br><span class="line">        <span class="keyword">switch</span> (type) &#123;</span><br><span class="line">            <span class="keyword">case</span> NUMBER:</span><br><span class="line">                push(atof(s));</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'+'</span>:</span><br><span class="line">                push(pop() + pop());</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'-'</span>:</span><br><span class="line">                op2 = pop();</span><br><span class="line">                push(op2 - pop());</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'*'</span>:</span><br><span class="line">                push(pop() * pop());</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'/'</span>:</span><br><span class="line">                op2 = pop();</span><br><span class="line">                op2 == <span class="number">0.0</span> ? <span class="built_in">printf</span>(<span class="string">"zero divisor\n"</span>) : push(pop() / op2);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">'\n'</span>:</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">"\t%.8g\n"</span>, pop());</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">"error: unknown command %s\n"</span>, s);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAXVAL 100 <span class="comment">/* maximum depth of val stack */</span></span></span><br><span class="line"><span class="keyword">int</span> sp = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">double</span> val[MAXVAL];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">push</span><span class="params">(<span class="keyword">double</span> f)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (sp &lt; MAXVAL) &#123;</span><br><span class="line">        val[sp++] = f;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"error: stack full, can't push %g\n"</span>, f);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">pop</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (sp &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> val[--sp];</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"error: stack empty\n"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0.0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ctype.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getch</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ungetch</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* getop: get next character or numeric operand */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getop</span><span class="params">(<span class="keyword">char</span> s[])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i, c;</span><br><span class="line">    <span class="keyword">while</span> ((s[<span class="number">0</span>] = c = getch()) == <span class="string">' '</span> || c == <span class="string">'\t'</span>) &#123; ;</span><br><span class="line">    &#125;</span><br><span class="line">    s[<span class="number">1</span>] = <span class="string">'\0'</span>;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="built_in">isdigit</span>(c) &amp;&amp; c != <span class="string">'.'</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> c;</span><br><span class="line">    &#125;</span><br><span class="line">    i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">isdigit</span>(c)) &#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="built_in">isdigit</span>(s[++i] = c = getch())) &#123; ;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (c == <span class="string">'.'</span>) &#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="built_in">isdigit</span>(s[++i] = c = getch())) &#123; ;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    s[i] = <span class="string">'\0'</span>;</span><br><span class="line">    <span class="keyword">if</span> (c != EOF) &#123;</span><br><span class="line">        ungetch(c);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> NUMBER;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BUFSIZE 100</span></span><br><span class="line"><span class="keyword">char</span> buf[BUFSIZE]; <span class="comment">/* buffer for ungetch */</span></span><br><span class="line"><span class="keyword">int</span> bufp = <span class="number">0</span>; <span class="comment">/* next free position in buf */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getch</span><span class="params">(<span class="keyword">void</span>)</span> <span class="comment">/* get a (possibly pushed-back) character */</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (bufp &gt; <span class="number">0</span>) ? buf[--bufp] : getchar();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ungetch</span><span class="params">(<span class="keyword">int</span> c)</span> <span class="comment">/* push character back on input */</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (bufp &gt;= BUFSIZE)</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"ungetch: too many characters\n"</span>);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        buf[bufp++] = c;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 ]]></content>
+      <categories>
+        <category>ARTS</category>
+      </categories>
       <tags>
         <tag>ARTS</tag>
       </tags>
@@ -1569,7 +1475,9 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 <p><strong>Example 3:</strong></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Input: 120</span><br><span class="line">Output: 21</span><br></pre></td></tr></table></figure>
 
-<p><strong>Note:</strong> </p>
+<a id="more"></a>
+
+<p><strong>Note:</strong></p>
 <p>Assume we are dealing with an environment which could only store integers within the 32-bit signed integer range: [−231,  231 − 1]. For the purpose of this problem, assume that your function returns 0 when the reversed integer overflows.</p>
 <h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><h3 id="Approach-1"><a href="#Approach-1" class="headerlink" title="Approach 1"></a>Approach 1</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">reverse</span><span class="params">(x <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	minInt32, maxInt32 := <span class="number">-2147483648</span>, <span class="number">2147483647</span></span><br><span class="line">	result := <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> ; x != <span class="number">0</span>; x = x/<span class="number">10</span> &#123;</span><br><span class="line">		result = (result * <span class="number">10</span>) + x % <span class="number">10</span></span><br><span class="line">		<span class="keyword">if</span> result &gt; maxInt32 || result &lt; minInt32  &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -1587,13 +1495,16 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 <ul>
 <li><p>对计数器的应用，如果顺序写的不对会导致wg.Done执行多次把数计成负的报一个panic异常；</p>
 </li>
-<li><p>还有在for循环中用goroutine 调用闭包时，这个单独的变量i是被所有 的匿名函数值所共享，且会被连续的循环迭代所更新的。当新的goroutine开始执行字面函数时，for循环可能已经更新了i并且开始了另一轮的迭代或者(更有可能的)已经结束了整个循环，所以当这些goroutine开始读取i的值时，它们所看到的值已经是slice的最后一个元素了。 显式地添加这个参数，我们能够确保使用的i是当go语句执行时的“当前”那个i。 </p>
+<li><p>还有在for循环中用goroutine 调用闭包时，这个单独的变量i是被所有 的匿名函数值所共享，且会被连续的循环迭代所更新的。当新的goroutine开始执行字面函数时，for循环可能已经更新了i并且开始了另一轮的迭代或者(更有可能的)已经结束了整个循环，所以当这些goroutine开始读取i的值时，它们所看到的值已经是slice的最后一个元素了。 显式地添加这个参数，我们能够确保使用的i是当go语句执行时的“当前”那个i。</p>
 </li>
 </ul>
 <p>  写完后会发现第二种解法会比第一种快很多很多。</p>
 <h1 id="Share"><a href="#Share" class="headerlink" title="Share"></a>Share</h1><p><a href="https://laravel-china.org/topics/9991/20-laravel-eloquent-necessary-practical-skills" target="_blank" rel="noopener">20 个 Laravel Eloquent 必备的实用技巧</a></p>
 <p>​    一些你可能还不知道的Larvel实用技巧，学习了～</p>
 ]]></content>
+      <categories>
+        <category>ARTS</category>
+      </categories>
       <tags>
         <tag>ARTS</tag>
       </tags>
@@ -1609,11 +1520,13 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 </blockquote>
 <h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><h3 id="Approach-1"><a href="#Approach-1" class="headerlink" title="Approach 1"></a>Approach 1</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">twoSum</span><span class="params">(nums []<span class="keyword">int</span>, target <span class="keyword">int</span>)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> k1, v1 := <span class="keyword">range</span> nums &#123;</span><br><span class="line">        <span class="keyword">for</span> k2, v2 := <span class="keyword">range</span> nums[k1+<span class="number">1</span>:] &#123;</span><br><span class="line">            <span class="keyword">if</span> v1 + v2 == target &#123;</span><br><span class="line">                <span class="keyword">return</span> []<span class="keyword">int</span>&#123;k1, k1 + k2 + <span class="number">1</span>&#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> []<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<a id="more"></a>
+
 <h3 id="Approach-2"><a href="#Approach-2" class="headerlink" title="Approach 2"></a>Approach 2</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">twoSum</span><span class="params">(nums []<span class="keyword">int</span>, target <span class="keyword">int</span>)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">    m := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">int</span>)</span><br><span class="line">    <span class="keyword">for</span> i, v := <span class="keyword">range</span> nums &#123;</span><br><span class="line">        <span class="keyword">if</span> j, ok := m[target-v]; ok &#123;</span><br><span class="line">            <span class="keyword">return</span> []<span class="keyword">int</span>&#123;i, j&#125;</span><br><span class="line">        &#125;</span><br><span class="line">        m[v] = i</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> []<span class="keyword">int</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="Complexity-Analysis"><a href="#Complexity-Analysis" class="headerlink" title="Complexity Analysis"></a><strong>Complexity Analysis</strong></h3><ul>
 <li>Time complexity : O(n^2)O(n2). For each element, we try to find its complement by looping through the rest of array which takes O(n)O(n) time. Therefore, the time complexity is O(n^2)O(n2).</li>
-<li>Space complexity : O(1)O(1). </li>
+<li>Space complexity : O(1)O(1).</li>
 </ul>
 <h3 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h3><p>​    Approach 1 is the simplest and low-grade arithmetic which I came up with first.Due to it is my first time to solving problem on leetcode, I have no other ideas.I found the approach 2 in Solution tag, it has a much faster time complexity than the other one and it’s an extension of my thinking.</p>
 <h1 id="Review"><a href="#Review" class="headerlink" title="Review"></a>Review</h1><p>​    由于我的英语实在太渣了，暂时没找到啥合适的英文文章做反思总结，所以第一周的Review先用中文的代替，下周开始一定替换成英文。</p>
@@ -1627,8 +1540,10 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 <p>​    看了上面引用的文章，对Go语言为什么要把类型放在后面有了初步的理解：C语言的写法在声明一些比较复杂的函数，尤其是带有指针的参数时，会变得非常难懂，容易引起混淆。由于我没有C的基础，感觉理解的还不够透彻，打算等学完C再来看一遍，相信一定会有更深刻的理解。</p>
 <h1 id="Technique"><a href="#Technique" class="headerlink" title="Technique"></a>Technique</h1><p>​    用一个二叉树实现插入排序</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> tree <span class="keyword">struct</span> &#123;</span><br><span class="line">	value       <span class="keyword">int</span></span><br><span class="line">	left, right *tree</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Sort sorts values in place.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Sort</span><span class="params">(values []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> root *tree</span><br><span class="line">	<span class="keyword">for</span> _, v := <span class="keyword">range</span> values &#123;</span><br><span class="line">		root = add(root, v)</span><br><span class="line">	&#125;</span><br><span class="line">	appendValues(values[:<span class="number">0</span>], root)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// appendValues appends the elements of t to values in order</span></span><br><span class="line"><span class="comment">// and returns the resulting slice.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">appendValues</span><span class="params">(values []<span class="keyword">int</span>, t *tree)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> t != <span class="literal">nil</span> &#123;</span><br><span class="line">		values = appendValues(values, t.left)</span><br><span class="line">		values = <span class="built_in">append</span>(values, t.value)</span><br><span class="line">		values = appendValues(values, t.right)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> values</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">add</span><span class="params">(t *tree, value <span class="keyword">int</span>)</span> *<span class="title">tree</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> t == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// Equivalent to return &amp;tree&#123;value: value&#125;.</span></span><br><span class="line">		t = <span class="built_in">new</span>(tree)</span><br><span class="line">		t.value = value</span><br><span class="line">		<span class="keyword">return</span> t</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> value &lt; t.value &#123;</span><br><span class="line">		t.left = add(t.left, value)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		t.right = add(t.right, value)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> t</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 ]]></content>
+      <categories>
+        <category>ARTS</category>
+      </categories>
       <tags>
         <tag>ARTS</tag>
       </tags>
@@ -1645,12 +1560,164 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 </blockquote>
 <p>In the next year, I will write a ARTS note every week;</p>
 <p>If you have suggestions or inspiration， welcome to communicate with me</p>
+<a id="more"></a>
+
 <p>e-mail: <a href="mailto:qinlong@akaqin.me">qinlong@akaqin.me</a></p>
 <p>June 24, 2018</p>
 ]]></content>
       <categories>
         <category>ARTS</category>
       </categories>
+  </entry>
+  <entry>
+    <title>《深入理解计算机系统》第一章</title>
+    <url>/2018/06/23/%E3%80%8ACS:APP%E3%80%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E7%AC%AC%E4%B8%80%E7%AB%A0/</url>
+    <content><![CDATA[<h1 id="计算机系统漫游"><a href="#计算机系统漫游" class="headerlink" title="计算机系统漫游"></a>计算机系统漫游</h1><h2 id="信息就是位-上下文"><a href="#信息就是位-上下文" class="headerlink" title="信息就是位 + 上下文"></a>信息就是位 + 上下文</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"hello, world\n"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​    hello程序的生命周期是从一个源程序开始的。源程序是一个由值0和1组成的位（又称比特）序列，8个位组成一组，称为字节。每个字节必保湿程序中的某些特殊文本字符。大部分计算机系统使用ASCII标准来表示文本字符，这种方式实际上就是一个唯一的单字节大小的整数值来表示每个字符（入下图）。</p>
+<p><img src="http://pfjta0ejx.bkt.clouddn.com/hello-ASCII.png" alt="ASCII"></p>
+<p>​    hello.c程序是以字节序列的方式存储在文本文件中的。每个字节都有一个整数值，对应某些字符。这种表示方法说明了一个节本思想：系统中所有信息——包括磁盘文件，内存中的程序，内存中存放的用户数据以及网络上传输的数据，都是由一串比特表示的，区别不同数据对象的唯一方式是我们读到这些数据对象时的上下文。</p>
+<h2 id="程序被其他程序翻译成不同的格式"><a href="#程序被其他程序翻译成不同的格式" class="headerlink" title="程序被其他程序翻译成不同的格式"></a>程序被其他程序翻译成不同的格式</h2><p>​    hello程序的生命周期是从一个高级C语言开始的，因为这种形式被人读懂。然而为了在系统上运行，每条C语句被其他程序转化为一系列低级机器语言指令。然后这些指令按照一种称为可执行目标程序的格式打好包，并以二进制磁盘文件的形式存起来。下面是GCC编译驱动器把源文件翻译成可执行文件的四个阶段。</p>
+<p><img src="http://pfjta0ejx.bkt.clouddn.com/compile-system.png" alt=""></p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>CSAPP</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux学习笔记</title>
+    <url>/2018/03/24/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h1 id="Linux学习笔记"><a href="#Linux学习笔记" class="headerlink" title="Linux学习笔记"></a>Linux学习笔记</h1><h2 id="Linux中，Ctrl组合键"><a href="#Linux中，Ctrl组合键" class="headerlink" title="Linux中，Ctrl组合键"></a>Linux中，Ctrl组合键</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Ctrl+c 结束正在运行的程序</span><br><span class="line"></span><br><span class="line">Ctrl+d 结束输入或退出shell</span><br><span class="line"></span><br><span class="line">Ctrl+s 暂停屏幕输出【锁住终端】</span><br><span class="line"></span><br><span class="line">Ctrl+q 恢复屏幕输出【解锁终端】</span><br><span class="line"></span><br><span class="line">Ctrl+l 清屏，【是字母L的小写】等同于Clear</span><br><span class="line"></span><br><span class="line">Ctrl+a 切换到命令行开始</span><br><span class="line"></span><br><span class="line">trl+e 切换到命令行末尾</span><br><span class="line"></span><br><span class="line">Ctrl+u 清除剪切光标之前的内容</span><br><span class="line"></span><br><span class="line">Ctrl+k 清除剪切光标及光标之后的内容</span><br><span class="line"></span><br><span class="line">Ctrl+y 在光标处粘贴剪切的内容</span><br><span class="line"></span><br><span class="line">Ctrl+r 查找历史命令【输入关键字，就能调出以前执行过的命令】</span><br><span class="line"></span><br><span class="line">Ctrl+t 调换光标所在处与其之前字符位置，并把光标移到下个字符</span><br><span class="line"></span><br><span class="line">Ctrl+x+u 撤销操作</span><br></pre></td></tr></table></figure>
+<h2 id="第四章、基础操作入门"><a href="#第四章、基础操作入门" class="headerlink" title="第四章、基础操作入门"></a>第四章、基础操作入门</h2><h3 id="关机或重启"><a href="#关机或重启" class="headerlink" title="关机或重启"></a>关机或重启</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">数据同步写入磁盘：</span><br><span class="line">sync</span><br><span class="line"></span><br><span class="line">关机：</span><br><span class="line">shutdown</span><br><span class="line">halt</span><br><span class="line">poweroff</span><br><span class="line"></span><br><span class="line">重启：</span><br><span class="line">reboot</span><br></pre></td></tr></table></figure>
+<h3 id="基础指令"><a href="#基础指令" class="headerlink" title="基础指令"></a>基础指令</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">日期和时间：date</span><br><span class="line">日历：cal</span><br><span class="line">计算器：bc</span><br></pre></td></tr></table></figure>
+
+<h3 id="热键"><a href="#热键" class="headerlink" title="热键"></a>热键</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[Tab]:命令补全或文件补齐</span><br><span class="line">[Ctrl]-c:中断目前程序</span><br><span class="line">[Ctrl]-d:（键盘输入结束，End Of File，EOF 或 End Of Input），相当于输入exit</span><br><span class="line">[shift]+&#123;[PageUP]|[Page Down]&#125;:翻页</span><br></pre></td></tr></table></figure>
+
+<h3 id="帮助"><a href="#帮助" class="headerlink" title="帮助"></a>帮助</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">--help</span><br><span class="line">man page</span><br><span class="line">info page</span><br></pre></td></tr></table></figure>
+
+<h2 id="第五章、文件权限与目录配置"><a href="#第五章、文件权限与目录配置" class="headerlink" title="第五章、文件权限与目录配置"></a>第五章、文件权限与目录配置</h2><h3 id="修改文件或目录属组"><a href="#修改文件或目录属组" class="headerlink" title="修改文件或目录属组"></a>修改文件或目录属组</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chgrp [-R] group dirname&#x2F;filename   </span><br><span class="line">chown [-R] user dirname&#x2F;filename    </span><br><span class="line">chown [-R] user:group dirname&#x2F;filename</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改文件或目录权限"><a href="#修改文件或目录权限" class="headerlink" title="修改文件或目录权限"></a>修改文件或目录权限</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chmod [-R] [ugoa][+-&#x3D;][rwx] dirname&#x2F;filename</span><br><span class="line">chmod [-R] [xyz] dirname&#x2F;filename (xyz为0-7的数字)</span><br></pre></td></tr></table></figure>
+
+<h3 id="操作与权限的关系"><a href="#操作与权限的关系" class="headerlink" title="操作与权限的关系"></a>操作与权限的关系</h3><p> <img src="http://note.youdao.com/yws/public/resource/91f49489e63185046c6483d6ca66c85a/xmlnote/DB45115B20484E5D93435C808DEA4B6C/31" alt="image"></p>
+<h3 id="文件种类"><a href="#文件种类" class="headerlink" title="文件种类"></a>文件种类</h3><ul>
+<li>正规文件（regular file)：第一个字符为[-],包括纯文本文档（ASCII），二进制文件（binary），数据格式文件（data）；</li>
+<li>目录（directory）：第一个字符为[d]；</li>
+<li>连接档（link）：第一个字符为[l]；</li>
+<li>设备与装置文件（device）：通常都集中在/dev目录下，分为区块(block)设备档[b]和字符(character)设备文件[c];</li>
+<li>资料接口文件（sockets）：第一个字符为[s]；</li>
+<li>数据传输文件（FIFO，pipe）：第一个字符为[p];<h3 id="目录配置"><a href="#目录配置" class="headerlink" title="目录配置"></a>目录配置</h3></li>
+<li>/（root，根目录）：与开机系统有关；</li>
+<li>/usr(unix software recourse):与软件安装／执行有关</li>
+<li>/var(variable):与系统运作过程有关；</li>
+<li>/bin:很多配置文件和指令的目录；</li>
+<li>/boot:开机用到的文件；</li>
+<li>/dev:装置与接口设备；</li>
+<li>/etc:系统主要配置文件；</li>
+<li>/lib:系统函数库；</li>
+<li>/media:可移除装置，如光盘，软盘，DVD；</li>
+<li>/opt:第三方协力软件目录；</li>
+<li>/run:早起的FHS规定系统开机后所产生的各项信息放置目录;</li>
+<li>/sbin:设定系统环境的指令;</li>
+<li>/srv:一些网络服务启动后，需要取用的数据目录;</li>
+<li>/tmp:临时文件目录;</li>
+<li>/home:家目录;</li>
+<li>/lost+found:系统发生错误时，遗失片段放置目录；</li>
+</ul>
+<h2 id="第六章、文件与目录管理"><a href="#第六章、文件与目录管理" class="headerlink" title="第六章、文件与目录管理"></a>第六章、文件与目录管理</h2><h3 id="目录管理"><a href="#目录管理" class="headerlink" title="目录管理"></a>目录管理</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#显示当前目录</span><br><span class="line">pwd [-P]    </span><br><span class="line">-P:显示真实路径，而非链接（link）路径</span><br><span class="line"></span><br><span class="line">#建立新目录</span><br><span class="line">mkdir 【-mp] dirname    </span><br><span class="line">-m:配置文件权限</span><br><span class="line">-p：递归建立</span><br><span class="line"></span><br><span class="line">#删除空目录</span><br><span class="line">rmdir [-p] dirname  </span><br><span class="line">-p：连同上层的空目录一起删除</span><br></pre></td></tr></table></figure>
+<h3 id="执行文件所在路径的变量-PATH"><a href="#执行文件所在路径的变量-PATH" class="headerlink" title="执行文件所在路径的变量$PATH"></a>执行文件所在路径的变量$PATH</h3><p>只有在$PATH中的指令才可以在任意地方执行</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">echo $PATH  #查看</span><br><span class="line"></span><br><span class="line">PATH&#x3D;&quot;$PATH:&#x2F;root&quot;  #把&#x2F;root加入到$PATH中</span><br></pre></td></tr></table></figure>
+
+<h3 id="文件管理"><a href="#文件管理" class="headerlink" title="文件管理"></a>文件管理</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#查看</span><br><span class="line">ls [-aAdfFhilnrRSt] filename&#x2F;dirname    </span><br><span class="line">ls [--color&#x3D;&#123;never,auto,always&#125;] filename&#x2F;dirname</span><br><span class="line">ls [--full-time] filename&#x2F;dirname</span><br><span class="line">-a : 全部文件，包括隐藏文件（.开头)</span><br><span class="line">-d : 仅列出目录本身，而不是目录内文件</span><br><span class="line">-l : 长数据串输出，包含文件属性、权限等数据</span><br><span class="line"></span><br><span class="line">#复制</span><br><span class="line">cp [-adfilprsu] 来源文件(source) 目标文件(destination)  </span><br><span class="line">cp [options] source1 source2 source3 .... directory</span><br><span class="line">-a : 相当于-dr --preserve&#x3D;all的意思</span><br><span class="line">-d : 若源文件为链接文件属性(link file),则复制链接文件属性，而非文件本身</span><br><span class="line">-f : 强制（force),若文件已存在，删除后再尝试一次</span><br><span class="line">-i ：若目标文件已存在，覆盖前先询问</span><br><span class="line">-l : 建立硬连接，而非复制文件本身</span><br><span class="line">-p : 连同属性（权限，用户，时间）一起复制，而非使用默认属性</span><br><span class="line">-r : 递归</span><br><span class="line">-s ：软链</span><br><span class="line">-u : destination 比 source旧才更新，或destination不存在才复制</span><br><span class="line"></span><br><span class="line">#移除</span><br><span class="line">rm [-fir] filename&#x2F;dirname</span><br><span class="line">-f : force,忽略不存在的文件，不报错</span><br><span class="line">-i : 互动模式，删前确认</span><br><span class="line">-r ：递归</span><br><span class="line"></span><br><span class="line">#移动</span><br><span class="line">mv [-fiu] source destination</span><br><span class="line">mv [options] source1 source2 source3 ... directory</span><br><span class="line">-f : force</span><br><span class="line">-i : 若目标文件已存在，询问是否覆盖</span><br><span class="line">-u : 若目标已存在，且source比较新，才会更新</span><br></pre></td></tr></table></figure>
+
+<h3 id="取得路径和文件名"><a href="#取得路径和文件名" class="headerlink" title="取得路径和文件名"></a>取得路径和文件名</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#路径</span><br><span class="line">basename &#x2F;a&#x2F;b&#x2F;c     #c</span><br><span class="line">#文件名</span><br><span class="line">dirname &#x2F;a&#x2F;b&#x2F;c      #&#x2F;a&#x2F;b</span><br></pre></td></tr></table></figure>
+
+<h3 id="文件内容查阅"><a href="#文件内容查阅" class="headerlink" title="文件内容查阅"></a>文件内容查阅</h3><ul>
+<li>cat(con++cat++enate)<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cat [-AbEnTv]</span><br><span class="line">-n : 打印行号</span><br></pre></td></tr></table></figure></li>
+<li>tac(反向的cat)</li>
+<li>nl</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">nl [-bnw] filename</span><br></pre></td></tr></table></figure>
+<ul>
+<li>more(一页一页翻动)</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">more filename</span><br><span class="line">空格（space）：向下翻一页</span><br><span class="line">回车（Enter）：向下翻一行</span><br><span class="line">&#x2F;字符串：查找</span><br><span class="line">:f ：显示文件名和目前显示行数</span><br><span class="line">q：离开</span><br><span class="line">b：往回翻页</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>less（一页一页反动）</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">less filename</span><br><span class="line">空格（space）：向下翻一页</span><br><span class="line">回车（Enter）：向下翻一行</span><br><span class="line">&#x2F;字符串：向下查找</span><br><span class="line">?字符串：向上查找</span><br><span class="line">n：重复前一个搜寻</span><br><span class="line">N：反向重复前一个搜寻</span><br><span class="line">g：去第一行</span><br><span class="line">G：去最后一行</span><br><span class="line">:f ：显示文件名和目前显示行数</span><br><span class="line">q：离开</span><br><span class="line">[pagedown]:下一页</span><br><span class="line">[pageup]:上一页</span><br></pre></td></tr></table></figure></li>
+<li><p>head（取出前面几行）</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">head [-n number] file</span><br><span class="line">head [-n +number] file  #取反，后n行不显示</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>tail（取后面几行）</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tail [-n number] [-f] file</span><br><span class="line">head [-n -number] file  #取反，前n行不显示</span><br><span class="line">-f：动态输出</span><br></pre></td></tr></table></figure></li>
+<li><p>od（非纯文本文档）</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">od [-t TYPE] file</span><br></pre></td></tr></table></figure>
+<h3 id="新建文档或修改文件时间"><a href="#新建文档或修改文件时间" class="headerlink" title="新建文档或修改文件时间"></a>新建文档或修改文件时间</h3><ul>
+<li>mtime（modification time）：文件内容变更时间(ls默认时间)</li>
+<li>ctime（status time）：文件状态（权限、属性）变更时间</li>
+<li>atime（access time）：文件读取时间</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">touch [-acdmt] file #建立一个新文件或更新文件的mtime和atime</span><br></pre></td></tr></table></figure>
+<h3 id="默认权限和隐藏权限"><a href="#默认权限和隐藏权限" class="headerlink" title="默认权限和隐藏权限"></a>默认权限和隐藏权限</h3><ul>
+<li>文件预设权限<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">umask</span><br></pre></td></tr></table></figure></li>
+<li>文件隐藏属性<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">chattr [+-&#x3D;][ASacdistu] file&#x2F;dir    #配置文件或目录隐藏属性</span><br><span class="line">lsattr [-adR] file&#x2F;dir  #查看隐藏属性</span><br></pre></td></tr></table></figure></li>
+<li>文件特殊权限：SUID，SGID，SBIT</li>
+<li>观察文件类型：fie</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">file filename</span><br></pre></td></tr></table></figure>
+<h3 id="指令与文件的搜寻"><a href="#指令与文件的搜寻" class="headerlink" title="指令与文件的搜寻"></a>指令与文件的搜寻</h3><ul>
+<li>which（寻找【指令文件】）<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">which [-a] command</span><br></pre></td></tr></table></figure></li>
+<li>whereis(在特定目录搜寻系统文件，不实用)<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">whereis [-bmsu] file&#x2F;dir</span><br></pre></td></tr></table></figure></li>
+<li>locate/updatedb（依靠db快速查询）<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">locate [-ir] keyword</span><br><span class="line">updatedb    #locate是靠db快速查询，所以查询较新文件时需要手动updatedb</span><br></pre></td></tr></table></figure>
+find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">find [PATH] [option] [action]</span><br><span class="line">1.time(-atime,-ctime,-mtime)</span><br><span class="line">    -mtime n : n天前（一天内）被改动过的文件</span><br><span class="line">    -mtime +n : n天前（不含n本身）被改动过的文件</span><br><span class="line">    -mtime -n : n天内（含n本身）被改动过的文件</span><br><span class="line">2.属组相关参数</span><br><span class="line">    -uid n</span><br><span class="line">    -gid n</span><br><span class="line">    -user name</span><br><span class="line">    -group name</span><br><span class="line">    -nouser</span><br><span class="line">    -nogroup</span><br><span class="line">3.权限及名称</span><br><span class="line">    -name filename</span><br><span class="line">    -size [+-]SIZE:c代表byte，k代表kb</span><br><span class="line">    -type TYPE ： [f,b,c,d,l,s,p]</span><br><span class="line">    -perm mode</span><br><span class="line">    -perm -mode</span><br><span class="line">    -perm &#x2F;mode</span><br><span class="line">4.额外参数</span><br><span class="line">    -exec command : command见下图</span><br><span class="line">    -print</span><br><span class="line">    -a : and的意思，用于连接两个条件，如find &#x2F;etc -size +50k -a -size -60k</span><br><span class="line">    ! : 取反的意思，如find &#x2F;etc -size +50k -a ! -user root</span><br></pre></td></tr></table></figure>
+<img src="http://note.youdao.com/yws/public/resource/91f49489e63185046c6483d6ca66c85a/xmlnote/85FEA75CCD8E4D0CAA94260B98089A1E/431" alt="image"></li>
+</ul>
+<h2 id="第七章、Linux-磁盘与文件系统管理"><a href="#第七章、Linux-磁盘与文件系统管理" class="headerlink" title="第七章、Linux 磁盘与文件系统管理"></a>第七章、Linux 磁盘与文件系统管理</h2><h3 id="文件系统特性"><a href="#文件系统特性" class="headerlink" title="文件系统特性"></a>文件系统特性</h3><p>操作系统的文件数据除了文件实际内容外，还有非常多的属性（权限，属组，时间参数）。文件系统会将这两部分数据存放在不同的区块，权限与属性放到inode中，实际数据放到data block中。另外，还有一个超级区块（superblock）会记录整个文件系统的整体信息，包括inode和block总量、使用量、剩余量等。</p>
+<ul>
+<li>superblock：记录此filesystem的整体信息，包括inode/block的总量、使用量、剩余量，以及文件系统的格式与相关信息等；</li>
+<li>inode：记录文件的属性，一个文件占用一个inode，同时记录此文件的数据所在block号码；</li>
+<li>block：实际记录文件的内容，若文件太大时，会占用多个block；</li>
+</ul>
+<p>每个inode与block都有编号，每个文件都会占用一个inode，inode内则有文件数据放置的block号码。这种数据存取方法我们称为索引式文件系统（indexed allocation）（下图）。<br><img src="http://note.youdao.com/yws/public/resource/91f49489e63185046c6483d6ca66c85a/xmlnote/EE38F1F9F8A54CB185593EC9E07B2AAA/489" alt="image"><br><img src="http://note.youdao.com/yws/public/resource/91f49489e63185046c6483d6ca66c85a/xmlnote/561C779757124369BE8A8F997D760FBE/501" alt="image"><br>上图为闪存用的FAT格式，没有inode存在，所以FAT没有办法将这个文件的所有block再一开始就读取出来。每个block号码都记录再前一个block当中。如果同一个文件数据写入的block分散的太过厉害，无法在磁盘转一圈就读到所有数据，就需要多转好几圈。<br>碎片整理的原因就是文件写入的block过于分散，读取文件的效率会变得很差，这时候可以透过 碎片整理将同一个文件的blcok汇整到一起，这样读取会比较容易。Ext2是索引式文件系统，不需要整理。</p>
+<h3 id="Linux的EXT2文件系统（inode）"><a href="#Linux的EXT2文件系统（inode）" class="headerlink" title="Linux的EXT2文件系统（inode）"></a>Linux的EXT2文件系统（inode）</h3><p>文件系统一开始就将inode与block规划好了，除非重新格式化（或者利用resize2fs等指令变更文件系统大小），否则inode与block固定后就不再变动。</p>
+<h3 id="7-2-文件系统的简单操作"><a href="#7-2-文件系统的简单操作" class="headerlink" title="7.2 文件系统的简单操作"></a>7.2 文件系统的简单操作</h3><h4 id="7-2-1-磁盘与目录的容量"><a href="#7-2-1-磁盘与目录的容量" class="headerlink" title="7.2.1 磁盘与目录的容量"></a>7.2.1 磁盘与目录的容量</h4><p>df:列出文件系统的整体磁盘使用量；</p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>C语言编程心得</title>
+    <url>/2018/02/23/C%E8%AF%AD%E8%A8%80%E7%BC%96%E7%A8%8B%E5%BF%83%E5%BE%97/</url>
+    <content><![CDATA[<ol>
+<li><p>字符’0’ 不等于0， 截断字符串时，a[n] = 0 与 a[n] = ‘\0’效果相同;</p>
+</li>
+<li><p>函数里直接声明结构体比声明结构体指针方便，因为指针要手动为它分配空间，不用后还需要手动释放；结构体自动分配，函数返回后自动释放</p>
+</li>
+<li><p>声明变量后一定要记得赋初识值，尤其是数组</p>
+</li>
+<li><p>变量就近声明</p>
+</li>
+<li><p>文件内使用的函数要习惯声明static</p>
+</li>
+<li><p>char *a = “ac”; 指针声明的字符串存在可执行文件的只读段，修改会产生段错误。</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>C</tag>
+      </tags>
   </entry>
   <entry>
     <title>PHP HashTable 解析</title>
@@ -1665,6 +1732,9 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 <li>相比普通HashTable，PHP的HashTable同时维护一个双向链表。在HashTable.arBuckets 存储的是包含多个Bucket指针的向量，每个指针又指向一个双向链表(多个bucket组成)。</li>
 </ul>
 <h2 id="HashTable-源码展示"><a href="#HashTable-源码展示" class="headerlink" title="HashTable 源码展示"></a>HashTable 源码展示</h2><p>在Zend/zend_hash.h的line 55~83 中定义了结构体 Bucket 和 HashTable。注意 Bucket 和 HashTable 是别名，分别对应结构体 bucket 和 _hashtable。</p>
+<a id="more"></a>
+
+
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> &#123;</span></span><br><span class="line">    ulong h;                        <span class="comment">/* Used for numeric indexing */</span></span><br><span class="line">    uint nKeyLength;</span><br><span class="line">    <span class="keyword">void</span> *pData;</span><br><span class="line">    <span class="keyword">void</span> *pDataPtr;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> *<span class="title">pListNext</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> *<span class="title">pListLast</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> *<span class="title">pNext</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> *<span class="title">pLast</span>;</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *arKey;</span><br><span class="line">&#125; Bucket;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">hashtable</span> &#123;</span></span><br><span class="line">    uint nTableSize;</span><br><span class="line">    uint nTableMask;</span><br><span class="line">    uint nNumOfElements;</span><br><span class="line">    ulong nNextFreeElement;</span><br><span class="line">    Bucket *pInternalPointer;   <span class="comment">/* Used for element traversal */</span></span><br><span class="line">    Bucket *pListHead;</span><br><span class="line">    Bucket *pListTail;</span><br><span class="line">    Bucket **arBuckets;</span><br><span class="line">    <span class="keyword">dtor_func_t</span> pDestructor;</span><br><span class="line">    zend_bool persistent;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> nApplyCount;</span><br><span class="line">    zend_bool bApplyProtection;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> ZEND_DEBUG</span></span><br><span class="line">    <span class="keyword">int</span> inconsistent;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125; HashTable;</span><br></pre></td></tr></table></figure>
 
 

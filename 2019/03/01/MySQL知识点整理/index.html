@@ -116,6 +116,8 @@
 <li>如果表中绝大多数都只是读查询，可以考虑MyISAM，如果既有读写也挺频繁，请使用InnoDB。</li>
 <li>系统奔溃后，MyISAM恢复起来更困难，能否接受；</li>
 </ol>
+<a id="more"></a>
+
 <h3 id="varchar和char的区别："><a href="#varchar和char的区别：" class="headerlink" title="varchar和char的区别："></a>varchar和char的区别：</h3><ol>
 <li>char(M)类型的数据列里，每个值都占用M个字节，如果某个长度小于M，MySQL就会在它的右边用空格字符补足．（在检索操作中那些填补出来的空格字符将被去掉）</li>
 <li>在varchar(M)类型的数据列里，每个值只占用刚好够用的字节再加上一个用来记录其长度的字节（即总长度为L+1字节）．</li>
@@ -133,7 +135,7 @@
 <li>utf-8中，一个字符最多3字节（汉字3字节，英文字母1字节）。</li>
 <li>utf8_mb4是utf8的超集，一个字符最多4字节，支持补充字符。</li>
 </ol>
-<p><strong>3、varchar物理存储</strong></p>
+<p>** 3、varchar物理存储 **</p>
 <p><strong>在物理存储上，varchar使用1到2个额外的字节表示实际存储的字符串长度（bytes）。如果列的最大长度小于256个字节，用一个字节表示（标识）。如果最大长度大于等于256，使用两个字节。</strong></p>
 <p><strong>当选择的字符集为latin1，一个字符占用一个byte</strong></p>
 <p><strong>varchar(255)存储一个字符，一共使用2个bytes物理空间存储数据实际数据长度和数据值。</strong></p>
@@ -361,9 +363,9 @@
       </a>
     
     
-      <a href="/2019/02/23/C%E8%AF%AD%E8%A8%80%E7%BC%96%E7%A8%8B%E5%BF%83%E5%BE%97/C%E8%AF%AD%E8%A8%80%E7%BC%96%E7%A8%8B%E5%BF%83%E5%BE%97/" class="article-nav-link">
+      <a href="/2019/01/08/ORM%E5%92%8CQueryBuilder%E5%93%AA%E4%B8%AA%E5%A5%BD/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">C语言编程心得</div>
+        <div class="article-nav-title">ORM和QueryBuilder哪个好</div>
       </a>
     
   </nav>
