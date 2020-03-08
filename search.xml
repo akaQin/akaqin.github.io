@@ -465,6 +465,151 @@
       </tags>
   </entry>
   <entry>
+    <title>PHP HashTable 解析</title>
+    <url>/2019/02/23/PHP%E5%86%85%E6%A0%B8%E8%A7%A3%E6%9E%90HashTable/</url>
+    <content><![CDATA[<p>说 HashTable 是PHP的灵魂，一点也不为过。在Zend引擎中，比如变量表、常量表、函数表、数组，以及资源管理、线程安全等，其实现都有HashTable的身影。HashTable 是一种查找性能极高的数据结构，理想情况下其算法复杂度是O(1)。</p>
+<h3 id="PHP-HashTable-概述"><a href="#PHP-HashTable-概述" class="headerlink" title="PHP HashTable 概述"></a>PHP HashTable 概述</h3><ul>
+<li>有两部分组成，Bucket 和 HashTable，而且均为结构体(struct)。</li>
+<li>Bucket 是存储数据的单元，用于保存具体的数据内容；HashTable 用于保存整个哈希表需要的基本信息。</li>
+<li>二者关系可以简单理解为：HashTable = Array(); HashTable[‘arBuckets’] = [Bucket1, Bucket2, Bucket3, …]。</li>
+<li>HashTable 的目的就是通过索引把每个Bucket元素分散到唯一的位置。</li>
+<li>PHP 内核通过HashTable 结构管理Bucket 数组。</li>
+<li>相比普通HashTable，PHP的HashTable同时维护一个双向链表。在HashTable.arBuckets 存储的是包含多个Bucket指针的向量，每个指针又指向一个双向链表(多个bucket组成)。</li>
+</ul>
+<h2 id="HashTable-源码展示"><a href="#HashTable-源码展示" class="headerlink" title="HashTable 源码展示"></a>HashTable 源码展示</h2><p>在Zend/zend_hash.h的line 55~83 中定义了结构体 Bucket 和 HashTable。注意 Bucket 和 HashTable 是别名，分别对应结构体 bucket 和 _hashtable。</p>
+<a id="more"></a>
+
+
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> &#123;</span></span><br><span class="line">    ulong h;                        <span class="comment">/* Used for numeric indexing */</span></span><br><span class="line">    uint nKeyLength;</span><br><span class="line">    <span class="keyword">void</span> *pData;</span><br><span class="line">    <span class="keyword">void</span> *pDataPtr;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> *<span class="title">pListNext</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> *<span class="title">pListLast</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> *<span class="title">pNext</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> *<span class="title">pLast</span>;</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *arKey;</span><br><span class="line">&#125; Bucket;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">hashtable</span> &#123;</span></span><br><span class="line">    uint nTableSize;</span><br><span class="line">    uint nTableMask;</span><br><span class="line">    uint nNumOfElements;</span><br><span class="line">    ulong nNextFreeElement;</span><br><span class="line">    Bucket *pInternalPointer;   <span class="comment">/* Used for element traversal */</span></span><br><span class="line">    Bucket *pListHead;</span><br><span class="line">    Bucket *pListTail;</span><br><span class="line">    Bucket **arBuckets;</span><br><span class="line">    <span class="keyword">dtor_func_t</span> pDestructor;</span><br><span class="line">    zend_bool persistent;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> nApplyCount;</span><br><span class="line">    zend_bool bApplyProtection;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> ZEND_DEBUG</span></span><br><span class="line">    <span class="keyword">int</span> inconsistent;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125; HashTable;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="Bucket-解析说明"><a href="#Bucket-解析说明" class="headerlink" title="Bucket 解析说明"></a>Bucket 解析说明</h2><p>先分析一下Bucket 结构体成员变量的作用：</p>
+<table>
+<thead>
+<tr>
+<th>成员变量</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>ulong h;</strong></td>
+<td>ulong 中u表示无符号，保存hash(key) 的值； 或者保存用户指定的整数类型索引值； key是什么？就是当前bucket的索引，存储在最后一个成员arKey中;</td>
+</tr>
+<tr>
+<td><strong>uint nKeyLength;</strong></td>
+<td>保存索引 key 的长度； 索引是字符串时，该值&gt;0，表示索引字符串的长度； 索引是整数时，该值==0；</td>
+</tr>
+<tr>
+<td><strong>void *pData;</strong></td>
+<td>指向要保存的内存块地址，一般是通过malloc之类的系统调用分配出来的 指向Value，一般是用户数据的副本，如果是指针数据，则指向pDataPtr</td>
+</tr>
+<tr>
+<td><strong>void *pDataPtr;</strong></td>
+<td>保存指针数据，当保存的数据是指针类型，不需要malloc分配，就直接保存到pDataPtr中，pData直接指向这里 保存的数据不是指针类型时，pDataPtr=NULL</td>
+</tr>
+<tr>
+<td><strong>struct bucket *pListNext;</strong></td>
+<td>指向双向链表的下一个元素</td>
+</tr>
+<tr>
+<td><strong>struct bucket *pListLast;</strong></td>
+<td>指向双向链表的上一个元素</td>
+</tr>
+<tr>
+<td><strong>struct bucket *pNext;</strong></td>
+<td>指向具有同一个hash值的下一个元素</td>
+</tr>
+<tr>
+<td><strong>struct bucket *pLast;</strong></td>
+<td>指向具有同一个hash值的上一个元素，这里是hash碰撞后的处理方法，拉链法</td>
+</tr>
+<tr>
+<td><strong>const char *arKey;</strong></td>
+<td>注意，这里之前PHP版本是 char arKey[1];  在PHP5.6版本中，不限制索引的长度了； 结构体变量内存申请 sizeof(Bucket *), 无需 加上nKeyLength 长度了。</td>
+</tr>
+</tbody></table>
+<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a><strong>说明</strong></h3><ol>
+<li>pData 和 pDataPtr 的关系，<ul>
+<li>pData 指向的是保存数据的内存块地址，一般通过malloc等分配;</li>
+<li>pDataPtr 如果是指针数据，此值会指向真正的value，同时pData 会指向该值</li>
+<li>疑问 内存块地址，不也是指针吗？和pDataPtr什么区别？？</li>
+</ul>
+</li>
+<li>h 成员保存的是HashTable key 哈希后的值，而非HashTable中的索引值，为什么？<ul>
+<li>索引值和HashTable的容量有关系，如果HashTable扩容，那么这些索引还得重新进行哈希，再进行索引映射</li>
+<li>数字索引直接就可以作为哈希表的索引，数字也无需进行哈希处理</li>
+</ul>
+</li>
+</ol>
+<h2 id="HashTable-解析说明"><a href="#HashTable-解析说明" class="headerlink" title="HashTable 解析说明"></a>HashTable 解析说明</h2><table>
+<thead>
+<tr>
+<th>成员变量</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>uint nTableSize</strong></td>
+<td>记录 Bucket 数组的大小</td>
+</tr>
+<tr>
+<td><strong>uint nTableMask</strong></td>
+<td>始终等于 nTableSize - 1 用在与哈希值做与运算，获得该哈希值的索引取值。额，哈希值是什么？？是Bucket中的索引值？</td>
+</tr>
+<tr>
+<td><strong>uint nNumOfElements</strong></td>
+<td>HashTable中，Bucket 元素的数量; count() 函数直接返回该值</td>
+</tr>
+<tr>
+<td><strong>ulong nNextFreeElement</strong></td>
+<td>表示数字键数组中，下一个数字索引的位置</td>
+</tr>
+<tr>
+<td><strong>Bucket *pInternalPointer</strong></td>
+<td>For循环时用于记录当前元素的位置 内部指针，指向当前成员，用于遍历元素</td>
+</tr>
+<tr>
+<td><strong>Bucket *pListHead</strong></td>
+<td>指向HashTable的第一个元素，也是数组的第一个元素。reset() 是返回这个值吗？与它是否有关系？</td>
+</tr>
+<tr>
+<td><strong>Bucket *pListTail</strong></td>
+<td>指向HashTable的最后一个元素，也是数组的最后一个元素。end()是返回这个值吗？与它是否有关系？</td>
+</tr>
+<tr>
+<td><strong>Bucket \</strong>arBuckets**</td>
+<td>Bucket组成的双向链表的数组，索引=hash(key) &amp; nTableMask</td>
+</tr>
+<tr>
+<td><strong>dtor_func_t pDestructor</strong></td>
+<td>删除Bucket数组元素使用的析构函数</td>
+</tr>
+<tr>
+<td><strong>zend_bool persistent</strong></td>
+<td>标记内存分配函数 true 使用系统的内存分配函数 false 使用PHP内存分配函数 一般使用PHP的内存分配函数，Zend引擎会管理相应内存，避免泄漏</td>
+</tr>
+<tr>
+<td><strong>unsigned char nApplyCount</strong></td>
+<td>保存当前Bucket被递归访问的次数，防止多次递归。@TODO 什么是多次递归？</td>
+</tr>
+<tr>
+<td><strong>zend_bool bApplyProtection</strong></td>
+<td>HashTable 是否需要递归报数，默认是1，要使用</td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+      <tags>
+        <tag>C</tag>
+        <tag>PHP</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>ORM和QueryBuilder哪个好</title>
     <url>/2019/01/08/ORM%E5%92%8CQueryBuilder%E5%93%AA%E4%B8%AA%E5%A5%BD/</url>
     <content><![CDATA[<h3 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h3><p>​    最近准备将跑PHP5的老项目升PHP7，用的是CI2.x的框架，烂的一笔。主要障碍是php7删除了mysqli的相关函数，于是准备自己封装一个DAO层。看了一下主流的 <a href="https://github.com/doctrine/orm/" target="_blank" rel="noopener">doctrine/orm</a> ORM封装，发现用法特别繁琐，要在代码里描述每个表的每个字段：</p>
@@ -1618,7 +1763,7 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux学习笔记</title>
+    <title>《Linux私房菜》学习笔记</title>
     <url>/2018/03/24/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<h1 id="Linux学习笔记"><a href="#Linux学习笔记" class="headerlink" title="Linux学习笔记"></a>Linux学习笔记</h1><h2 id="Linux中，Ctrl组合键"><a href="#Linux中，Ctrl组合键" class="headerlink" title="Linux中，Ctrl组合键"></a>Linux中，Ctrl组合键</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Ctrl+c 结束正在运行的程序</span><br><span class="line"></span><br><span class="line">Ctrl+d 结束输入或退出shell</span><br><span class="line"></span><br><span class="line">Ctrl+s 暂停屏幕输出【锁住终端】</span><br><span class="line"></span><br><span class="line">Ctrl+q 恢复屏幕输出【解锁终端】</span><br><span class="line"></span><br><span class="line">Ctrl+l 清屏，【是字母L的小写】等同于Clear</span><br><span class="line"></span><br><span class="line">Ctrl+a 切换到命令行开始</span><br><span class="line"></span><br><span class="line">trl+e 切换到命令行末尾</span><br><span class="line"></span><br><span class="line">Ctrl+u 清除剪切光标之前的内容</span><br><span class="line"></span><br><span class="line">Ctrl+k 清除剪切光标及光标之后的内容</span><br><span class="line"></span><br><span class="line">Ctrl+y 在光标处粘贴剪切的内容</span><br><span class="line"></span><br><span class="line">Ctrl+r 查找历史命令【输入关键字，就能调出以前执行过的命令】</span><br><span class="line"></span><br><span class="line">Ctrl+t 调换光标所在处与其之前字符位置，并把光标移到下个字符</span><br><span class="line"></span><br><span class="line">Ctrl+x+u 撤销操作</span><br></pre></td></tr></table></figure>
 <h2 id="第四章、基础操作入门"><a href="#第四章、基础操作入门" class="headerlink" title="第四章、基础操作入门"></a>第四章、基础操作入门</h2><h3 id="关机或重启"><a href="#关机或重启" class="headerlink" title="关机或重启"></a>关机或重启</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">数据同步写入磁盘：</span><br><span class="line">sync</span><br><span class="line"></span><br><span class="line">关机：</span><br><span class="line">shutdown</span><br><span class="line">halt</span><br><span class="line">poweroff</span><br><span class="line"></span><br><span class="line">重启：</span><br><span class="line">reboot</span><br></pre></td></tr></table></figure>
@@ -1747,151 +1892,6 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
       </categories>
       <tags>
         <tag>C</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PHP HashTable 解析</title>
-    <url>/2018/02/23/PHP%E5%86%85%E6%A0%B8%E8%A7%A3%E6%9E%90HashTable/</url>
-    <content><![CDATA[<p>说 HashTable 是PHP的灵魂，一点也不为过。在Zend引擎中，比如变量表、常量表、函数表、数组，以及资源管理、线程安全等，其实现都有HashTable的身影。HashTable 是一种查找性能极高的数据结构，理想情况下其算法复杂度是O(1)。</p>
-<h3 id="PHP-HashTable-概述"><a href="#PHP-HashTable-概述" class="headerlink" title="PHP HashTable 概述"></a>PHP HashTable 概述</h3><ul>
-<li>有两部分组成，Bucket 和 HashTable，而且均为结构体(struct)。</li>
-<li>Bucket 是存储数据的单元，用于保存具体的数据内容；HashTable 用于保存整个哈希表需要的基本信息。</li>
-<li>二者关系可以简单理解为：HashTable = Array(); HashTable[‘arBuckets’] = [Bucket1, Bucket2, Bucket3, …]。</li>
-<li>HashTable 的目的就是通过索引把每个Bucket元素分散到唯一的位置。</li>
-<li>PHP 内核通过HashTable 结构管理Bucket 数组。</li>
-<li>相比普通HashTable，PHP的HashTable同时维护一个双向链表。在HashTable.arBuckets 存储的是包含多个Bucket指针的向量，每个指针又指向一个双向链表(多个bucket组成)。</li>
-</ul>
-<h2 id="HashTable-源码展示"><a href="#HashTable-源码展示" class="headerlink" title="HashTable 源码展示"></a>HashTable 源码展示</h2><p>在Zend/zend_hash.h的line 55~83 中定义了结构体 Bucket 和 HashTable。注意 Bucket 和 HashTable 是别名，分别对应结构体 bucket 和 _hashtable。</p>
-<a id="more"></a>
-
-
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> &#123;</span></span><br><span class="line">    ulong h;                        <span class="comment">/* Used for numeric indexing */</span></span><br><span class="line">    uint nKeyLength;</span><br><span class="line">    <span class="keyword">void</span> *pData;</span><br><span class="line">    <span class="keyword">void</span> *pDataPtr;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> *<span class="title">pListNext</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> *<span class="title">pListLast</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> *<span class="title">pNext</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> *<span class="title">pLast</span>;</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *arKey;</span><br><span class="line">&#125; Bucket;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">hashtable</span> &#123;</span></span><br><span class="line">    uint nTableSize;</span><br><span class="line">    uint nTableMask;</span><br><span class="line">    uint nNumOfElements;</span><br><span class="line">    ulong nNextFreeElement;</span><br><span class="line">    Bucket *pInternalPointer;   <span class="comment">/* Used for element traversal */</span></span><br><span class="line">    Bucket *pListHead;</span><br><span class="line">    Bucket *pListTail;</span><br><span class="line">    Bucket **arBuckets;</span><br><span class="line">    <span class="keyword">dtor_func_t</span> pDestructor;</span><br><span class="line">    zend_bool persistent;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> nApplyCount;</span><br><span class="line">    zend_bool bApplyProtection;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> ZEND_DEBUG</span></span><br><span class="line">    <span class="keyword">int</span> inconsistent;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125; HashTable;</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<h2 id="Bucket-解析说明"><a href="#Bucket-解析说明" class="headerlink" title="Bucket 解析说明"></a>Bucket 解析说明</h2><p>先分析一下Bucket 结构体成员变量的作用：</p>
-<table>
-<thead>
-<tr>
-<th>成员变量</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>ulong h;</strong></td>
-<td>ulong 中u表示无符号，保存hash(key) 的值； 或者保存用户指定的整数类型索引值； key是什么？就是当前bucket的索引，存储在最后一个成员arKey中;</td>
-</tr>
-<tr>
-<td><strong>uint nKeyLength;</strong></td>
-<td>保存索引 key 的长度； 索引是字符串时，该值&gt;0，表示索引字符串的长度； 索引是整数时，该值==0；</td>
-</tr>
-<tr>
-<td><strong>void *pData;</strong></td>
-<td>指向要保存的内存块地址，一般是通过malloc之类的系统调用分配出来的 指向Value，一般是用户数据的副本，如果是指针数据，则指向pDataPtr</td>
-</tr>
-<tr>
-<td><strong>void *pDataPtr;</strong></td>
-<td>保存指针数据，当保存的数据是指针类型，不需要malloc分配，就直接保存到pDataPtr中，pData直接指向这里 保存的数据不是指针类型时，pDataPtr=NULL</td>
-</tr>
-<tr>
-<td><strong>struct bucket *pListNext;</strong></td>
-<td>指向双向链表的下一个元素</td>
-</tr>
-<tr>
-<td><strong>struct bucket *pListLast;</strong></td>
-<td>指向双向链表的上一个元素</td>
-</tr>
-<tr>
-<td><strong>struct bucket *pNext;</strong></td>
-<td>指向具有同一个hash值的下一个元素</td>
-</tr>
-<tr>
-<td><strong>struct bucket *pLast;</strong></td>
-<td>指向具有同一个hash值的上一个元素，这里是hash碰撞后的处理方法，拉链法</td>
-</tr>
-<tr>
-<td><strong>const char *arKey;</strong></td>
-<td>注意，这里之前PHP版本是 char arKey[1];  在PHP5.6版本中，不限制索引的长度了； 结构体变量内存申请 sizeof(Bucket *), 无需 加上nKeyLength 长度了。</td>
-</tr>
-</tbody></table>
-<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a><strong>说明</strong></h3><ol>
-<li>pData 和 pDataPtr 的关系，<ul>
-<li>pData 指向的是保存数据的内存块地址，一般通过malloc等分配;</li>
-<li>pDataPtr 如果是指针数据，此值会指向真正的value，同时pData 会指向该值</li>
-<li>疑问 内存块地址，不也是指针吗？和pDataPtr什么区别？？</li>
-</ul>
-</li>
-<li>h 成员保存的是HashTable key 哈希后的值，而非HashTable中的索引值，为什么？<ul>
-<li>索引值和HashTable的容量有关系，如果HashTable扩容，那么这些索引还得重新进行哈希，再进行索引映射</li>
-<li>数字索引直接就可以作为哈希表的索引，数字也无需进行哈希处理</li>
-</ul>
-</li>
-</ol>
-<h2 id="HashTable-解析说明"><a href="#HashTable-解析说明" class="headerlink" title="HashTable 解析说明"></a>HashTable 解析说明</h2><table>
-<thead>
-<tr>
-<th>成员变量</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>uint nTableSize</strong></td>
-<td>记录 Bucket 数组的大小</td>
-</tr>
-<tr>
-<td><strong>uint nTableMask</strong></td>
-<td>始终等于 nTableSize - 1 用在与哈希值做与运算，获得该哈希值的索引取值。额，哈希值是什么？？是Bucket中的索引值？</td>
-</tr>
-<tr>
-<td><strong>uint nNumOfElements</strong></td>
-<td>HashTable中，Bucket 元素的数量; count() 函数直接返回该值</td>
-</tr>
-<tr>
-<td><strong>ulong nNextFreeElement</strong></td>
-<td>表示数字键数组中，下一个数字索引的位置</td>
-</tr>
-<tr>
-<td><strong>Bucket *pInternalPointer</strong></td>
-<td>For循环时用于记录当前元素的位置 内部指针，指向当前成员，用于遍历元素</td>
-</tr>
-<tr>
-<td><strong>Bucket *pListHead</strong></td>
-<td>指向HashTable的第一个元素，也是数组的第一个元素。reset() 是返回这个值吗？与它是否有关系？</td>
-</tr>
-<tr>
-<td><strong>Bucket *pListTail</strong></td>
-<td>指向HashTable的最后一个元素，也是数组的最后一个元素。end()是返回这个值吗？与它是否有关系？</td>
-</tr>
-<tr>
-<td><strong>Bucket \</strong>arBuckets**</td>
-<td>Bucket组成的双向链表的数组，索引=hash(key) &amp; nTableMask</td>
-</tr>
-<tr>
-<td><strong>dtor_func_t pDestructor</strong></td>
-<td>删除Bucket数组元素使用的析构函数</td>
-</tr>
-<tr>
-<td><strong>zend_bool persistent</strong></td>
-<td>标记内存分配函数 true 使用系统的内存分配函数 false 使用PHP内存分配函数 一般使用PHP的内存分配函数，Zend引擎会管理相应内存，避免泄漏</td>
-</tr>
-<tr>
-<td><strong>unsigned char nApplyCount</strong></td>
-<td>保存当前Bucket被递归访问的次数，防止多次递归。@TODO 什么是多次递归？</td>
-</tr>
-<tr>
-<td><strong>zend_bool bApplyProtection</strong></td>
-<td>HashTable 是否需要递归报数，默认是1，要使用</td>
-</tr>
-</tbody></table>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-      <tags>
-        <tag>C</tag>
-        <tag>PHP</tag>
       </tags>
   </entry>
   <entry>

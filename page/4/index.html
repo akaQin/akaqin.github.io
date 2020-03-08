@@ -75,6 +75,88 @@
     
     
     
+    <article id="post-arts" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2018/06/26/arts/"
+    >arts</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2018/06/26/arts/" class="article-date">
+  <time datetime="2018-06-26T08:43:13.000Z" itemprop="datePublished">2018-06-26</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/ARTS/">ARTS</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>ARTS is a learning activity initiated by <a href="https://weibo.com/haoel?profile_ftype=1&is_all=1#_0" target="_blank" rel="noopener">Chen Hao</a></p>
+<blockquote>
+<p>A: Algorithm example which I learned on <a href="https://leetcode.com/" target="_blank" rel="noopener">leetcode</a>;</p>
+<p>R: Review an English blog or essay;</p>
+<p>T: Technical skills which I learned;</p>
+<p>S: Share something which I learn from a classic computer book;</p>
+</blockquote>
+<p>In the next year, I will write a ARTS note every week;</p>
+<p>If you have suggestions or inspiration， welcome to communicate with me</p>
+      
+      <a class="article-more-link" href="/2018/06/26/arts/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
     <article id="post-《深入理解计算机系统》第一章" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -164,7 +246,7 @@
        
 <h2 itemprop="name">
   <a class="article-title" href="/2018/03/24/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"
-    >Linux学习笔记</a
+    >《Linux私房菜》学习笔记</a
   >
 </h2>
   
@@ -394,91 +476,6 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
-    <article id="post-PHP内核解析HashTable" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2018/02/23/PHP%E5%86%85%E6%A0%B8%E8%A7%A3%E6%9E%90HashTable/"
-    >PHP HashTable 解析</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2018/02/23/PHP%E5%86%85%E6%A0%B8%E8%A7%A3%E6%9E%90HashTable/" class="article-date">
-  <time datetime="2018-02-23T08:03:39.000Z" itemprop="datePublished">2018-02-23</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>说 HashTable 是PHP的灵魂，一点也不为过。在Zend引擎中，比如变量表、常量表、函数表、数组，以及资源管理、线程安全等，其实现都有HashTable的身影。HashTable 是一种查找性能极高的数据结构，理想情况下其算法复杂度是O(1)。</p>
-<h3 id="PHP-HashTable-概述"><a href="#PHP-HashTable-概述" class="headerlink" title="PHP HashTable 概述"></a>PHP HashTable 概述</h3><ul>
-<li>有两部分组成，Bucket 和 HashTable，而且均为结构体(struct)。</li>
-<li>Bucket 是存储数据的单元，用于保存具体的数据内容；HashTable 用于保存整个哈希表需要的基本信息。</li>
-<li>二者关系可以简单理解为：HashTable = Array(); HashTable[‘arBuckets’] = [Bucket1, Bucket2, Bucket3, …]。</li>
-<li>HashTable 的目的就是通过索引把每个Bucket元素分散到唯一的位置。</li>
-<li>PHP 内核通过HashTable 结构管理Bucket 数组。</li>
-<li>相比普通HashTable，PHP的HashTable同时维护一个双向链表。在HashTable.arBuckets 存储的是包含多个Bucket指针的向量，每个指针又指向一个双向链表(多个bucket组成)。</li>
-</ul>
-<h2 id="HashTable-源码展示"><a href="#HashTable-源码展示" class="headerlink" title="HashTable 源码展示"></a>HashTable 源码展示</h2><p>在Zend/zend_hash.h的line 55~83 中定义了结构体 Bucket 和 HashTable。注意 Bucket 和 HashTable 是别名，分别对应结构体 bucket 和 _hashtable。</p>
-      
-      <a class="article-more-link" href="/2018/02/23/PHP%E5%86%85%E6%A0%B8%E8%A7%A3%E6%9E%90HashTable/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li></ul>
 
 
     </footer>

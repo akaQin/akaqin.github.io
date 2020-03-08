@@ -75,6 +75,89 @@
     
     
     
+    <article id="post-arts-13" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2018/11/12/arts-13/"
+    >arts-13</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2018/11/12/arts-13/" class="article-date">
+  <time datetime="2018-11-12T12:52:53.000Z" itemprop="datePublished">2018-11-12</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/ARTS/">ARTS</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="Algorithim"><a href="#Algorithim" class="headerlink" title="Algorithim"></a>Algorithim</h2><p>Given a linked list, determine if it has a cycle in it.</p>
+<p>Follow up:<br>Can you solve it without using extra space?</p>
+<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><p><strong>Approach:1</strong></p>
+<p>Imagine two runners running on a track at different speed. What happens when the track is actually a circle?</p>
+<p>The space complexity can be reduced to O(1)O(1) by considering two pointers at <strong>different speed</strong> - a slow pointer and a fast pointer. The slow pointer moves one step at a time while the fast pointer moves two steps at a time.</p>
+<p>If there is no cycle in the list, the fast pointer will eventually reach the end and we can return false in this case.</p>
+<p>Now consider a cyclic list and imagine the slow and fast pointers are two runners racing around a circle track. The fast runner will eventually meet the slow runner. Why? Consider this case (we name it case A) - The fast runner is just one step behind the slow runner. In the next iteration, they both increment one and two steps respectively and meet each other.</p>
+<p>How about other cases? For example, we have not considered cases where the fast runner is two or three steps behind the slow runner yet. This is simple, because in the next or next’s next iteration, this case will be reduced to case A mentioned above.</p>
+      
+      <a class="article-more-link" href="/2018/11/12/arts-13/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARTS/" rel="tag">ARTS</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
     <article id="post-优惠券服务拆分-反思总结" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -781,85 +864,6 @@
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/" rel="tag">macOS</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
-    <article id="post-arts-8" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2018/10/03/arts-8/"
-    >arts-8</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2018/10/03/arts-8/" class="article-date">
-  <time datetime="2018-10-03T06:30:47.000Z" itemprop="datePublished">2018-10-03</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/ARTS/">ARTS</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>Given a sorted array <em>nums</em>, remove the duplicates <a href="https://en.wikipedia.org/wiki/In-place_algorithm" target="_blank" rel="noopener"><strong>in-place</strong></a> such that each element appear only <em>once</em> and return the new length.</p>
-<p>Do not allocate extra space for another array, you must do this by <strong>modifying the input array in-place</strong> with O(1) extra memory.</p>
-<p><strong>Example 1:</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Given nums &#x3D; [1,1,2],</span><br><span class="line"></span><br><span class="line">Your function should return length &#x3D; 2, with the first two elements of nums being 1 and 2 respectively.</span><br><span class="line"></span><br><span class="line">It doesn&#39;t matter what you leave beyond the returned length.</span><br></pre></td></tr></table></figure>
-      
-      <a class="article-more-link" href="/2018/10/03/arts-8/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARTS/" rel="tag">ARTS</a></li></ul>
 
 
     </footer>

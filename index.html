@@ -680,6 +680,91 @@
 </article>
 
     
+    <article id="post-PHP内核解析HashTable" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2019/02/23/PHP%E5%86%85%E6%A0%B8%E8%A7%A3%E6%9E%90HashTable/"
+    >PHP HashTable 解析</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2019/02/23/PHP%E5%86%85%E6%A0%B8%E8%A7%A3%E6%9E%90HashTable/" class="article-date">
+  <time datetime="2019-02-23T08:03:39.000Z" itemprop="datePublished">2019-02-23</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>说 HashTable 是PHP的灵魂，一点也不为过。在Zend引擎中，比如变量表、常量表、函数表、数组，以及资源管理、线程安全等，其实现都有HashTable的身影。HashTable 是一种查找性能极高的数据结构，理想情况下其算法复杂度是O(1)。</p>
+<h3 id="PHP-HashTable-概述"><a href="#PHP-HashTable-概述" class="headerlink" title="PHP HashTable 概述"></a>PHP HashTable 概述</h3><ul>
+<li>有两部分组成，Bucket 和 HashTable，而且均为结构体(struct)。</li>
+<li>Bucket 是存储数据的单元，用于保存具体的数据内容；HashTable 用于保存整个哈希表需要的基本信息。</li>
+<li>二者关系可以简单理解为：HashTable = Array(); HashTable[‘arBuckets’] = [Bucket1, Bucket2, Bucket3, …]。</li>
+<li>HashTable 的目的就是通过索引把每个Bucket元素分散到唯一的位置。</li>
+<li>PHP 内核通过HashTable 结构管理Bucket 数组。</li>
+<li>相比普通HashTable，PHP的HashTable同时维护一个双向链表。在HashTable.arBuckets 存储的是包含多个Bucket指针的向量，每个指针又指向一个双向链表(多个bucket组成)。</li>
+</ul>
+<h2 id="HashTable-源码展示"><a href="#HashTable-源码展示" class="headerlink" title="HashTable 源码展示"></a>HashTable 源码展示</h2><p>在Zend/zend_hash.h的line 55~83 中定义了结构体 Bucket 和 HashTable。注意 Bucket 和 HashTable 是别名，分别对应结构体 bucket 和 _hashtable。</p>
+      
+      <a class="article-more-link" href="/2019/02/23/PHP%E5%86%85%E6%A0%B8%E8%A7%A3%E6%9E%90HashTable/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
     <article id="post-ORM和QueryBuilder哪个好" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -826,89 +911,6 @@
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
-    <article id="post-arts-13" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2018/11/12/arts-13/"
-    >arts-13</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2018/11/12/arts-13/" class="article-date">
-  <time datetime="2018-11-12T12:52:53.000Z" itemprop="datePublished">2018-11-12</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/ARTS/">ARTS</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="Algorithim"><a href="#Algorithim" class="headerlink" title="Algorithim"></a>Algorithim</h2><p>Given a linked list, determine if it has a cycle in it.</p>
-<p>Follow up:<br>Can you solve it without using extra space?</p>
-<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><p><strong>Approach:1</strong></p>
-<p>Imagine two runners running on a track at different speed. What happens when the track is actually a circle?</p>
-<p>The space complexity can be reduced to O(1)O(1) by considering two pointers at <strong>different speed</strong> - a slow pointer and a fast pointer. The slow pointer moves one step at a time while the fast pointer moves two steps at a time.</p>
-<p>If there is no cycle in the list, the fast pointer will eventually reach the end and we can return false in this case.</p>
-<p>Now consider a cyclic list and imagine the slow and fast pointers are two runners racing around a circle track. The fast runner will eventually meet the slow runner. Why? Consider this case (we name it case A) - The fast runner is just one step behind the slow runner. In the next iteration, they both increment one and two steps respectively and meet each other.</p>
-<p>How about other cases? For example, we have not considered cases where the fast runner is two or three steps behind the slow runner yet. This is simple, because in the next or next’s next iteration, this case will be reduced to case A mentioned above.</p>
-      
-      <a class="article-more-link" href="/2018/11/12/arts-13/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARTS/" rel="tag">ARTS</a></li></ul>
 
 
     </footer>
