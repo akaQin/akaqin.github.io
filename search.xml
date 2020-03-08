@@ -9,13 +9,22 @@
 <h2 id="vnode"><a href="#vnode" class="headerlink" title="vnode"></a>vnode</h2><h3 id="名称"><a href="#名称" class="headerlink" title="名称"></a>名称</h3><p>vnode —— 文件或目录的内部表示</p>
 <h3 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/param.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/vnode.h&gt;</span></span></span><br></pre></td></tr></table></figure>
 
-<h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><p>vnode是UNIX中所有文件活动的焦点。vnode节点由<code>struct vnode</code>声明。</p>
+<h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><ul>
+<li>vnode是UNIX中所有文件活动的焦点。</li>
+<li>vnode节点由<code>struct vnode</code>声明。</li>
+<li>每个活动文件、当前目录、挂载文件、文本文件和根目录都分配了一个vnode节点。</li>
+<li>vnode最初是为FreeBSD创建的，因为需要使用的不同类型的文件系统（例如UFS、NFS等）激增。</li>
+<li>Vnode旨在为所有可能的文件系统提供抽象，以便OS可以与它们进行对接，从而让内核方法不必兼容每个特定的文件系统；内核只需要知道如何与Vnode进行交互。</li>
+<li>Vnode抽象在内存中，可以与UFS、ext4等文件系统进行交互；而inode存储在磁盘上，只能用于特定的文件系统。</li>
+<li>inode节点包含文件大小、拥有者、指向地址块的指针等元数据。</li>
+<li>vnode仅包含在文件生命周期中不会改变的一些属性，因此如果想获得更多信息请使用inode作为参考。</li>
+</ul>
 ]]></content>
       <categories>
-        <category>学习笔记</category>
+        <category>知识点总结</category>
       </categories>
       <tags>
-        <tag>文件系统</tag>
+        <tag>File System</tag>
       </tags>
   </entry>
   <entry>
@@ -27,7 +36,7 @@
 </ul>
 ]]></content>
       <categories>
-        <category>学习笔记</category>
+        <category>知识点总结</category>
       </categories>
       <tags>
         <tag>C</tag>
@@ -35,7 +44,7 @@
   </entry>
   <entry>
     <title>《UNIX环境高级编程》第八章——进程控制</title>
-    <url>/2020/03/02/%E7%AC%AC8%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6/</url>
+    <url>/2020/03/02/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6/</url>
     <content><![CDATA[<h3 id="进程标识"><a href="#进程标识" class="headerlink" title="进程标识"></a>进程标识</h3><ul>
 <li>每个进程都有一个非负整型表示的唯一进程ID</li>
 <li>ID为0的进程通常是调度进程，常常被称为交换进程（swapper）。该进程是内核的一部分，它并不执行任何磁盘上的程序，因此也被称为系统进程。</li>
@@ -148,11 +157,10 @@
 <p><img src="8-19.png" alt=""></p>
 ]]></content>
       <categories>
-        <category>学习笔记</category>
+        <category>《APUE》笔记</category>
       </categories>
       <tags>
-        <tag>APUE</tag>
-        <tag>进程</tag>
+        <tag>process</tag>
       </tags>
   </entry>
   <entry>
@@ -166,7 +174,7 @@
 </ol>
 ]]></content>
       <categories>
-        <category>学习笔记</category>
+        <category>知识点总结</category>
       </categories>
       <tags>
         <tag>C</tag>
@@ -174,7 +182,7 @@
   </entry>
   <entry>
     <title>《UNIX环境高级编程》第七章——进程环境</title>
-    <url>/2020/02/23/%E7%AC%AC%E4%B8%83%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/</url>
+    <url>/2020/02/23/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E4%B8%83%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/</url>
     <content><![CDATA[<h3 id="进程开始"><a href="#进程开始" class="headerlink" title="进程开始"></a>进程开始</h3>   <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int main(int argc, char *argv[]);</span><br></pre></td></tr></table></figure>
 <p>   以main函数开始执行。当内核执行C程序时，在调用main前先调用一个特殊的启动例程。可执行程序将此启动例程指定为程序的起始地址——这是由链接编辑器设置的，而链接编辑器则由C编译器调用。启动例程从内核取得命令行参数和环境变量值，然后为按上述方式调用做好安排。</p>
 <h3 id="进程终止"><a href="#进程终止" class="headerlink" title="进程终止"></a>进程终止</h3><p>   有8种终止方式，前5种为正常终止：</p>
@@ -236,11 +244,10 @@
 </ul>
 ]]></content>
       <categories>
-        <category>学习笔记</category>
+        <category>《APUE》笔记</category>
       </categories>
       <tags>
-        <tag>APUE</tag>
-        <tag>进程</tag>
+        <tag>process</tag>
       </tags>
   </entry>
   <entry>
@@ -278,7 +285,7 @@
 </ul>
 ]]></content>
       <categories>
-        <category>学习笔记</category>
+        <category>知识点总结</category>
       </categories>
       <tags>
         <tag>CS</tag>
@@ -318,7 +325,7 @@
 <li>utf-8中，一个字符最多3字节（汉字3字节，英文字母1字节）。</li>
 <li>utf8_mb4是utf8的超集，一个字符最多4字节，支持补充字符。</li>
 </ol>
-<p>** 3、varchar物理存储 **</p>
+<p>** 3、varchar物理存储**</p>
 <p><strong>在物理存储上，varchar使用1到2个额外的字节表示实际存储的字符串长度（bytes）。如果列的最大长度小于256个字节，用一个字节表示（标识）。如果最大长度大于等于256，使用两个字节。</strong></p>
 <p><strong>当选择的字符集为latin1，一个字符占用一个byte</strong></p>
 <p><strong>varchar(255)存储一个字符，一共使用2个bytes物理空间存储数据实际数据长度和数据值。</strong></p>
@@ -451,7 +458,7 @@
 <p>这里需要注意改变一个观念，不要看到select就说不会加锁了，在Serializable这个级别，还是会加锁的</p>
 ]]></content>
       <categories>
-        <category>学习笔记</category>
+        <category>知识点总结</category>
       </categories>
       <tags>
         <tag>MySQL</tag>
@@ -484,10 +491,10 @@
 <p>  ​    从更高的层面思考：工具存在的意义就是为了解决实际问题，比较某某工具的好坏没有意义。多学习提升技术，当遇到实际问题时才能想出多种解决方案，并选取最合适的进行实践。这也是我喜欢做工程师的原因，做实事，解决实际问题，世界才会美好～</p>
 ]]></content>
       <categories>
-        <category>学习笔记</category>
+        <category>经验反思</category>
       </categories>
       <tags>
-        <tag>MYSQL</tag>
+        <tag>MySQL</tag>
       </tags>
   </entry>
   <entry>
@@ -508,7 +515,7 @@
 </ul>
 ]]></content>
       <categories>
-        <category>反思总结</category>
+        <category>经验反思</category>
       </categories>
       <tags>
         <tag>架构</tag>
@@ -554,18 +561,23 @@
 <p>​</p>
 ]]></content>
       <categories>
-        <category>反思总结</category>
+        <category>经验反思</category>
       </categories>
       <tags>
-        <tag>架构</tag>
+        <tag>architecture</tag>
       </tags>
   </entry>
   <entry>
-    <title>Go语言学习笔记整理</title>
+    <title>《Go语言圣经》笔记整理</title>
     <url>/2018/11/01/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E6%95%B4%E7%90%86/</url>
-    <content><![CDATA[<h3 id="Printf-转换动词"><a href="#Printf-转换动词" class="headerlink" title="Printf 转换动词"></a>Printf 转换动词</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">%d			十进制整数</span><br><span class="line">%x, %o, %b	十六进制，八进制，二进制整数。</span><br><span class="line">%f, %g, %e	浮点数: 3.141593 3.141592653589793 3.141593e+00 </span><br><span class="line">%t			布尔:true或false</span><br><span class="line">%c			字符(rune) (Unicode码点)</span><br><span class="line">%s			字符串</span><br><span class="line">%q			带双引号的字符串&quot;abc&quot;或带单引号的字符&#39;c&#39; </span><br><span class="line">%v			变量的自然形式(natural format)</span><br><span class="line">%T			变量的类型</span><br><span class="line">%%			字面上的百分号标志(无操作数)</span><br></pre></td></tr></table></figure>
-
+    <content><![CDATA[<h3 id="Printf-转换动词"><a href="#Printf-转换动词" class="headerlink" title="Printf 转换动词"></a>Printf 转换动词</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">%d			十进制整数</span><br><span class="line">%x, %o, %b	十六进制，八进制，二进制整数。</span><br><span class="line">%f, %g, %e	浮点数: 3.141593 3.141592653589793 3.141593e+00</span><br><span class="line">%t			布尔:true或false</span><br><span class="line">%c			字符(rune) (Unicode码点)</span><br><span class="line">%s			字符串</span><br><span class="line">%q			带双引号的字符串&quot;abc&quot;或带单引号的字符&#39;c&#39;</span><br><span class="line">%v			变量的自然形式(natural format)</span><br><span class="line">%T			变量的类型</span><br><span class="line">%%			字面上的百分号标志(无操作数)</span><br></pre></td></tr></table></figure>
 ]]></content>
+      <categories>
+        <category>《Go语言圣经》笔记</category>
+      </categories>
+      <tags>
+        <tag>Go</tag>
+      </tags>
   </entry>
   <entry>
     <title>arts-12</title>
@@ -602,10 +614,10 @@
 <p>3、你对每一个问题的责任心和态度都会有人记在心上，尽量给每个关注问题的人及时的反馈</p>
 ]]></content>
       <categories>
-        <category>反思总结</category>
+        <category>经验反思</category>
       </categories>
       <tags>
-        <tag>反思总结</tag>
+        <tag>work</tag>
       </tags>
   </entry>
   <entry>
@@ -644,10 +656,10 @@
 <h3 id="责任与心态"><a href="#责任与心态" class="headerlink" title="责任与心态"></a>责任与心态</h3><p>​    出现问题时leader询问情况，要先快速定位问题，并给出解决方案，分析利弊；如出的问题跟自己没关系，也可以待命看看有什么能帮的上忙的，帮忙思考下解决方案；问题解决后，思考问题是怎么造成的，以后怎么避免，总结经验；如果是自身的原因主动承担错误，如果是别人的原因，自己也要引以为戒。一定不要出了问题先说这代码是谁谁谁写的，把自己撇的一干二净，这给人感觉很不好，直接决定了你做事的高度。出问题是在所难免的，这并不可怕，很多时候leader也只是问问想搞清楚情况，并没有要责怪谁的意思，关键是不要让范过的错误重复的发生在自己身上。</p>
 ]]></content>
       <categories>
-        <category>反思总结</category>
+        <category>经验反思</category>
       </categories>
       <tags>
-        <tag>反思总结</tag>
+        <tag>work</tag>
       </tags>
   </entry>
   <entry>
@@ -1129,7 +1141,7 @@
 <p>上面描述的时间轮处理方式会存在1s以内的误差，若考虑实时性，可以提高定时器的运行间隔，另外该方案可以根据实际业务需求扩展到应用中。我们对Swoole的修改中，包括对定时器进行了重构，其中超时定时器采用的就是如上所描述的时间轮方案，并且精度可控。</p>
 ]]></content>
       <categories>
-        <category>学习笔记</category>
+        <category>知识点总结</category>
       </categories>
       <tags>
         <tag>I/O</tag>
@@ -1312,11 +1324,11 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int MaxValue (int a, int b)&#123;</span><br><span class="line">       return a &gt; b ? a : b;</span><br><span class="line">&#125;</span><br><span class="line">int main(int argc, const char * argv[]) &#123;    </span><br><span class="line">       int(*pMaxValue)(int a, int b) &#x3D; MaxValue; &#x2F;&#x2F; 创建一个返回int 并且有两个int型参数的函数指针，并赋值。</span><br><span class="line">       printf(&quot;%d\n&quot;, pMaxValue(5,10)); &#x2F;&#x2F; 通过指针调用函数方法1</span><br><span class="line">       printf(&quot;%d\n&quot;,(*pMaxValue)(6,9)); &#x2F;&#x2F; 通过指针调用函数方法2</span><br><span class="line">       printf(&quot;%d\n&quot;,MaxValue(9, 13)); &#x2F;&#x2F; 调用函数</span><br><span class="line">       printf(&quot;%p\n&quot;,MaxValue); &#x2F;&#x2F; 输出函数的地址</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
-        <category>学习笔记</category>
+        <category>知识点总结</category>
       </categories>
       <tags>
         <tag>C</tag>
-        <tag>指针</tag>
+        <tag>pointer</tag>
       </tags>
   </entry>
   <entry>
@@ -1589,7 +1601,7 @@
   </entry>
   <entry>
     <title>《深入理解计算机系统》第一章</title>
-    <url>/2018/06/23/%E3%80%8ACS:APP%E3%80%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E7%AC%AC%E4%B8%80%E7%AB%A0/</url>
+    <url>/2018/06/23/%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E3%80%8B%E7%AC%AC%E4%B8%80%E7%AB%A0/</url>
     <content><![CDATA[<h1 id="计算机系统漫游"><a href="#计算机系统漫游" class="headerlink" title="计算机系统漫游"></a>计算机系统漫游</h1><h2 id="信息就是位-上下文"><a href="#信息就是位-上下文" class="headerlink" title="信息就是位 + 上下文"></a>信息就是位 + 上下文</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"hello, world\n"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>​    hello程序的生命周期是从一个源程序开始的。源程序是一个由值0和1组成的位（又称比特）序列，8个位组成一组，称为字节。每个字节必保湿程序中的某些特殊文本字符。大部分计算机系统使用ASCII标准来表示文本字符，这种方式实际上就是一个唯一的单字节大小的整数值来表示每个字符（入下图）。</p>
@@ -1599,10 +1611,10 @@
 <p><img src="http://pfjta0ejx.bkt.clouddn.com/compile-system.png" alt=""></p>
 ]]></content>
       <categories>
-        <category>学习笔记</category>
+        <category>《CSAPP》笔记</category>
       </categories>
       <tags>
-        <tag>CSAPP</tag>
+        <tag>CS</tag>
       </tags>
   </entry>
   <entry>
@@ -1706,7 +1718,7 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 <h3 id="7-2-文件系统的简单操作"><a href="#7-2-文件系统的简单操作" class="headerlink" title="7.2 文件系统的简单操作"></a>7.2 文件系统的简单操作</h3><h4 id="7-2-1-磁盘与目录的容量"><a href="#7-2-1-磁盘与目录的容量" class="headerlink" title="7.2.1 磁盘与目录的容量"></a>7.2.1 磁盘与目录的容量</h4><p>df:列出文件系统的整体磁盘使用量；</p>
 ]]></content>
       <categories>
-        <category>学习笔记</category>
+        <category>《Linux私房菜》笔记</category>
       </categories>
       <tags>
         <tag>Linux</tag>
@@ -1731,7 +1743,7 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 </ol>
 ]]></content>
       <categories>
-        <category>学习笔记</category>
+        <category>经验总结</category>
       </categories>
       <tags>
         <tag>C</tag>
@@ -1878,7 +1890,7 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
         <category>学习笔记</category>
       </categories>
       <tags>
-        <tag>PHP源码</tag>
+        <tag>C</tag>
         <tag>PHP</tag>
       </tags>
   </entry>

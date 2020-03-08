@@ -58,7 +58,7 @@
 </a>
       
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>
+    <a class="article-category-link" href="/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/">知识点总结</a>
   </div>
 
       
@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">60字</span>
+            <span class="post-count">290字</span>
         </span>
     </span>
 
@@ -110,7 +110,16 @@
 <h2 id="vnode"><a href="#vnode" class="headerlink" title="vnode"></a>vnode</h2><h3 id="名称"><a href="#名称" class="headerlink" title="名称"></a>名称</h3><p>vnode —— 文件或目录的内部表示</p>
 <h3 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/param.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/vnode.h&gt;</span></span></span><br></pre></td></tr></table></figure>
 
-<h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><p>vnode是UNIX中所有文件活动的焦点。vnode节点由<code>struct vnode</code>声明。</p>
+<h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><ul>
+<li>vnode是UNIX中所有文件活动的焦点。</li>
+<li>vnode节点由<code>struct vnode</code>声明。</li>
+<li>每个活动文件、当前目录、挂载文件、文本文件和根目录都分配了一个vnode节点。</li>
+<li>vnode最初是为FreeBSD创建的，因为需要使用的不同类型的文件系统（例如UFS、NFS等）激增。</li>
+<li>Vnode旨在为所有可能的文件系统提供抽象，以便OS可以与它们进行对接，从而让内核方法不必兼容每个特定的文件系统；内核只需要知道如何与Vnode进行交互。</li>
+<li>Vnode抽象在内存中，可以与UFS、ext4等文件系统进行交互；而inode存储在磁盘上，只能用于特定的文件系统。</li>
+<li>inode节点包含文件大小、拥有者、指向地址块的指针等元数据。</li>
+<li>vnode仅包含在文件生命周期中不会改变的一些属性，因此如果想获得更多信息请使用inode作为参考。</li>
+</ul>
 
       
       <!-- reward -->
@@ -187,7 +196,7 @@
 <div id="share-mask"></div>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="tag">文件系统</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/File-System/" rel="tag">File System</a></li></ul>
 
 
     </footer>
