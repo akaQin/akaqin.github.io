@@ -4,7 +4,7 @@
     <title>vnode与inode区别</title>
     <url>/2020/03/08/vnode%E4%B8%8Einode%E5%8C%BA%E5%88%AB/</url>
     <content><![CDATA[<h1 id="vnode与inode的区别"><a href="#vnode与inode的区别" class="headerlink" title="vnode与inode的区别"></a>vnode与inode的区别</h1><blockquote>
-<p>文章整理自 <img src="https://www.freebsd.org/cgi/man.cgi?query=vnode" alt="FreeBSD docs"> 和 <img src="https://stackoverflow.com/questions/27345342/inode-vs-vnode-difference" alt="StackOverflow"></p>
+<p>文章整理自  <a href="https://www.freebsd.org/cgi/man.cgi?query=vnode" target="_blank" rel="noopener">FreeBSD docs</a> 和  <a href="https://stackoverflow.com/questions/27345342/inode-vs-vnode-difference" target="_blank" rel="noopener">StackOverflow</a></p>
 </blockquote>
 <h2 id="vnode"><a href="#vnode" class="headerlink" title="vnode"></a>vnode</h2><h3 id="名称"><a href="#名称" class="headerlink" title="名称"></a>名称</h3><p>vnode —— 文件或目录的内部表示</p>
 <h3 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/param.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/vnode.h&gt;</span></span></span><br></pre></td></tr></table></figure>
