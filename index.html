@@ -75,6 +75,86 @@
     
     
     
+    <article id="post-vnode与inode区别" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/03/08/vnode%E4%B8%8Einode%E5%8C%BA%E5%88%AB/"
+    >vnode与inode区别</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/03/08/vnode%E4%B8%8Einode%E5%8C%BA%E5%88%AB/" class="article-date">
+  <time datetime="2020-03-08T05:30:41.000Z" itemprop="datePublished">2020-03-08</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="vnode与inode的区别"><a href="#vnode与inode的区别" class="headerlink" title="vnode与inode的区别"></a>vnode与inode的区别</h1><blockquote>
+<p>文章整理自 <img src="https://www.freebsd.org/cgi/man.cgi?query=vnode" alt="FreeBSD docs"> 和 <img src="https://stackoverflow.com/questions/27345342/inode-vs-vnode-difference" alt="StackOverflow"></p>
+</blockquote>
+<h2 id="vnode"><a href="#vnode" class="headerlink" title="vnode"></a>vnode</h2><h3 id="名称"><a href="#名称" class="headerlink" title="名称"></a>名称</h3><p>vnode —— 文件或目录的内部表示</p>
+<h3 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/param.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/vnode.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><p>vnode是UNIX中所有文件活动的焦点。vnode节点由<code>struct vnode</code>声明。</p>
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="tag">文件系统</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
     <article id="post-strlen与sizeof区别" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -820,88 +900,6 @@
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARTS/" rel="tag">ARTS</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
-    <article id="post-优惠券服务拆分-反思总结" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2018/11/06/%E4%BC%98%E6%83%A0%E5%88%B8%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86-%E5%8F%8D%E6%80%9D%E6%80%BB%E7%BB%93/"
-    >反思总结：优惠券服务拆分</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2018/11/06/%E4%BC%98%E6%83%A0%E5%88%B8%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86-%E5%8F%8D%E6%80%9D%E6%80%BB%E7%BB%93/" class="article-date">
-  <time datetime="2018-11-06T10:35:09.000Z" itemprop="datePublished">2018-11-06</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E5%8F%8D%E6%80%9D%E6%80%BB%E7%BB%93/">反思总结</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="过程中出现的问题："><a href="#过程中出现的问题：" class="headerlink" title="过程中出现的问题："></a>过程中出现的问题：</h2><p><strong>思考问题</strong></p>
-<p>​    安全意识还是不够，不能因为这块是朝沛拆的就不怎么看，导致要上线了才发现回滚逻辑有这么多问题，临上线又重构代码，给测试也带来很多麻烦；想的不够细，有些逻辑靠衍雷提出来才想到，这一点感觉还是得靠多实践去改变。</p>
-<p><strong>买家端无法提供服务</strong></p>
-<p>​    虽然不是我的主要问题，但出问题时看到nginx的error_log：recv() failed (104: Connection reset by peer) while reading response header from upstream，应该能及时联想到是fpm的问题，然后随手ps下看看进程就能及时发现子进程只有5个；使用新机器时先看下机器配置。</p>
-<p><strong>一些要注意的点：</strong></p>
-<p>​    做服务这块一定要多了解业务，多思考可能存在的问题，心思要缜密，考虑全面，想的越多，出问题的概率才越小。尤其是涉及到事务相关的部分要考虑到成功失败的各种情况。</p>
-<p>​    涉及多项目的服务与接口代码上线，要保证各种case都测过没问题了，先把服务上了，再逐个上客户端。尽量避免后期改动服务的情况，一旦服务有改动，就得各项目都测一遍，带来不必不要的成本与风险。</p>
-<p>​    上线后及时的观察有没有各种异常，做好监控。</p>
-<p>​</p>
-
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li></ul>
 
 
     </footer>
