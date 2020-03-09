@@ -3,7 +3,22 @@
   <entry>
     <title>《UNIX环境高级编程》第九章——进程关系</title>
     <url>/2020/03/08/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E4%B9%9D%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E5%85%B3%E7%B3%BB/</url>
-    <content><![CDATA[<h2 id="终端登录"><a href="#终端登录" class="headerlink" title="终端登录"></a>终端登录</h2>]]></content>
+    <content><![CDATA[<h2 id="终端登录"><a href="#终端登录" class="headerlink" title="终端登录"></a>终端登录</h2><p>我们现在描述的过程用于经由终端登录至UNIX系统。该过程几乎与所使用的终端类型无关，可以是基于字符的终端、仿真基于字符终端的图形终端，或者运行窗口系统的图形终端。</p>
+<h3 id="BSD终端登录"><a href="#BSD终端登录" class="headerlink" title="BSD终端登录"></a>BSD终端登录</h3><p>系统管理者创建通常名为/etc/ttys的文件，其中每个终端设备都有一行，说明设备名和传到getty程序的参数。当系统自举时，内核创建进程ID为1的进程，也就是init进程。<br>init进程使系统进入多用户模式。init读取文件/etc/ttys，对每一个允许登录的终端设备，init调用一次fork，它所生成的子进程则exec getty程序。<br><img src="9-1.png" alt=""></p>
+<p>getty对终端设备调用open函数，以读、写方式将终端打开。如果设备是调制解调器，则open可能会在设备驱动程序中滞留，直到用户拨号调制解调器，并且线路被接通。<br>一旦设备被打开，则文件描述符0、1、2就被设置到该设备，然后getty输出“login：”之类的信息，等待用户键入用户名。<br><img src="9-2.png" alt=""></p>
+<p>因为init进程具有超级用户特权，所以图9-2中的所有进程都有超级用户特权。图9-2中的下面三个进程ID相同，exec不会改变进程ID，父进程ID都为1。</p>
+<p>如果用户正确登录，login将完成下列工作：</p>
+<ul>
+<li>将当前工作目录改为该用户的起始目录（chdir）。</li>
+<li>调用chown更改该终端的所有权，使登录用户成为它的所有者。</li>
+<li>将对该终端设备的访问权限改变成“用户读和写”。</li>
+<li>调用 setgid 及 initgroups 设置进程的组ID。</li>
+<li>用 login 得到的所有信息初始化环境：起始目录（HOME）、shell（SHELL）、用户名（USER和LOGNAME）以及一个系统默认路径（PATH）。</li>
+<li>login 进程更改为登录用户的用户ID（setuid）并调用该用户登录的shell，其方式类似于：<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">execl(<span class="string">"/bin/sh"</span>, <span class="string">"-sh"</span>, (<span class="keyword">char</span> *)<span class="number">0</span>);</span><br></pre></td></tr></table></figure></li>
+<li>其他任务（打印日期消息文件、检查新邮件等）</li>
+</ul>
+<p>至此，登录用户的登录shell开始运行。其父进程ID是init进程，所以此登录shell终止时，init会等到通知（接到SIGCHLD信号），它会对该终端重复全部上述过程。登录shell的文件描述符0、1和2设置为终端设备。<br><img src="9-3.png" alt=""></p>
+]]></content>
       <categories>
         <category>《APUE》笔记</category>
       </categories>
