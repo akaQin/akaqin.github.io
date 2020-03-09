@@ -380,7 +380,7 @@
 <li>init进程不会终止，它是一个普通的用户进程，以超级用户特权运行；交换进程是内核中的系统进程。</li>
 </ul>
 <h2 id="fork函数"><a href="#fork函数" class="headerlink" title="fork函数"></a>fork函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">fork</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
-<h4 id="函数说明"><a href="#函数说明" class="headerlink" title="函数说明"></a>函数说明</h4><ul>
+<h3 id="函数说明"><a href="#函数说明" class="headerlink" title="函数说明"></a>函数说明</h3><ul>
 <li>调用一次，返回两次。子进程返回0，父进程返回子进程ID，出错返回-1</li>
 <li>子进程和父进程继续执行fork之后的指令；子进程获得父进程数据空间、堆、栈的副本；子进程和父进程共享正文段</li>
 <li>fork时用到<code>写时复制（Copy-On-Write）</code>技术，这些区域由父进程和子进程共享，内核将他们的访问权限改为只读，当任一进程尝试修改时，内核只为修改区域的那块内存制作一个副本，通常是虚拟内存中的一“页”</li>
