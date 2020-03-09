@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>《UNIX环境高级编程》第九章——进程关系</title>
+    <url>/2020/03/08/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E4%B9%9D%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E5%85%B3%E7%B3%BB/</url>
+    <content><![CDATA[<h2 id="终端登录"><a href="#终端登录" class="headerlink" title="终端登录"></a>终端登录</h2>]]></content>
+      <categories>
+        <category>《APUE》笔记</category>
+      </categories>
+      <tags>
+        <tag>process</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>vnode与inode区别</title>
     <url>/2020/03/08/vnode%E4%B8%8Einode%E5%8C%BA%E5%88%AB/</url>
     <content><![CDATA[<h1 id="vnode与inode的区别"><a href="#vnode与inode的区别" class="headerlink" title="vnode与inode的区别"></a>vnode与inode的区别</h1><blockquote>
