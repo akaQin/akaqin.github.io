@@ -1,20 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>tt</title>
-    <url>/2020/03/10/tt/tt/</url>
-    <content><![CDATA[<p>asd</p>
-]]></content>
-      <categories>
-        <category>cb</category>
-        <category>cd</category>
-      </categories>
-      <tags>
-        <tag>ta</tag>
-        <tag>tc</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《UNIX环境高级编程》第九章——进程关系</title>
     <url>/2020/03/08/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E4%B9%9D%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E5%85%B3%E7%B3%BB/</url>
     <content><![CDATA[<h2 id="终端登录"><a href="#终端登录" class="headerlink" title="终端登录"></a>终端登录</h2><p>我们现在描述的过程用于经由终端登录至UNIX系统。该过程几乎与所使用的终端类型无关，可以是基于字符的终端、仿真基于字符终端的图形终端，或者运行窗口系统的图形终端。</p>
@@ -49,7 +35,24 @@
 <p>每个进程组有一个组长进程。组长进程的进程组ID等于其进程ID。<br>进程组组长可以创建一个进程组，创建该组中的进程，然后终止。只要在某个进程组中有一个进程存在，该进程组就存在，这与其组长进程是否终止无关。从进程组创建开始到其中最后一个进程离开为止的时间区间称为进程组的生命<br>周期。某个进程组的最后一个进程可以终止，也可以转移到另一个进程组。</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">setpgid</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">pid_t</span> pgid)</span></span>;</span><br></pre></td></tr></table></figure>
 
-<h2 id="会话"><a href="#会话" class="headerlink" title="会话"></a>会话</h2><p>会话（session）是一个或多个进程组的集合。<br><img src="9-6.png" alt=""></p>
+<h2 id="会话"><a href="#会话" class="headerlink" title="会话"></a>会话</h2><p>会话（session）是一个或多个进程组的集合。<br><img src="9-6.png" alt=""><br>进程调用setsid函数建立一个新会话。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">setsid</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>如果调用此函数的进程不是一个进程组的组长，则此函数创建一个新会话。具体发生以下3件事：</p>
+<ol>
+<li>该进程变成新会话的会话首进程（session leader）。此时，该进程是新会话中的唯一进程。</li>
+<li>该进程成为一个新进程组的组长进程。新进程组ID是该调用进程的进程ID。</li>
+<li>该进程没有控制终端。如果调用setsid之前由，那么这种联系也被切断。</li>
+</ol>
+<h2 id="控制终端"><a href="#控制终端" class="headerlink" title="控制终端"></a>控制终端</h2><p>会话和进程组还有一些其他特性：</p>
+<ul>
+<li>一个会话可以有一个控制终端（controlling terminal）。这通常是终端设备（在终端登录情况下）或伪终端设备（在网络登录情况下）。</li>
+<li>建立与控制终端连接的会话首进程被称为控制进程（controlling process）。</li>
+<li>一个会话中的几个进程组可被分成一个前台进程组（foreground process group）以及一个或多个后台进程组（background process group）。</li>
+<li>如果一个会话有一个控制终端，则它有一个前台进程组，其他进程组为后台进程组。</li>
+<li>无论何时键入终端的中断键（通常是Delete或Ctrl+C），都会将中断信号发送至前台进程组的所有进程。</li>
+<li>无论何时键入终端的退出键（通常是Ctrl+\）,都会将退出信号发送至前台进程组的所有进程。</li>
+<li>如果终端接口检测到调制解调器（或网络）已经断开连接，则将挂断信号发送至控制进程（会话首进程）。<br><img src="9-7.png" alt=""></li>
+</ul>
 ]]></content>
       <categories>
         <category>《APUE》笔记</category>
