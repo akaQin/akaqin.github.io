@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1k字</span>
+            <span class="post-count">1.3k字</span>
         </span>
     </span>
 
@@ -77,7 +77,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">3分钟</span>
+            <span class="post-count">4分钟</span>
         </span>
     </span>
 </div>
@@ -131,6 +131,12 @@
 <h3 id="BSD网络登录"><a href="#BSD网络登录" class="headerlink" title="BSD网络登录"></a>BSD网络登录</h3><p>在BSD中，有一个inetd进程，它等待大多数网络连接。作为系统启动的一部分，init调用一个shell，使其执行shell脚本/etc/rc。由此shell脚本启动一个守护进程inetd。一旦此shell脚本终止，inetd的父进程就变成init。inetd等待TCP/IP连接请求到达主机，而当一个连接请求到达时，它执行一次fork，然后生成的子进程exec适当的程序。</p>
 <p><img src="9-4.png" alt=""></p>
 <p><img src="9-5.png" alt=""></p>
+<h2 id="进程组"><a href="#进程组" class="headerlink" title="进程组"></a>进程组</h2><p>每个进程除了有一进程ID之外，还属于一个进程组。进程组是一个或多个进程的集合。<br>通常，它们是同一作业中结合起来的，同一进程组中的各进程接收来自同一终端的各种信号。每个进程组有一个唯一的进程组ID——它是一个正整数，并可存放在pid_t数据类型中。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">getpgrp</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">getpgid</span><span class="params">(<span class="keyword">pid_t</span> pid)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>每个进程组有一个组长进程。组长进程的进程组ID等于其进程ID。<br>进程组组长可以创建一个进程组，创建该组中的进程，然后终止。只要在某个进程组中有一个进程存在，该进程组就存在，这与其组长进程是否终止无关。从进程组创建开始到其中最后一个进程离开为止的时间区间称为进程组的生命<br>周期。某个进程组的最后一个进程可以终止，也可以转移到另一个进程组。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">setpgid</span><span class="params">(<span class="keyword">pid_t</span> pid, <span class="keyword">pid_t</span> pgid)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="会话"><a href="#会话" class="headerlink" title="会话"></a>会话</h2><p>会话（session）是一个或多个进程组的集合。<br><img src="9-6.png" alt=""></p>
 
       
       <!-- reward -->
@@ -217,6 +223,15 @@
   
   
   <nav class="article-nav">
+    
+      <a href="/2020/03/10/tt/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            tt
+          
+        </div>
+      </a>
     
     
       <a href="/2020/03/08/vnode%E4%B8%8Einode%E5%8C%BA%E5%88%AB/" class="article-nav-link">
