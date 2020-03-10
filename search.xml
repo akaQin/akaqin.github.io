@@ -5,6 +5,14 @@
     <url>/2020/03/10/tt/tt/</url>
     <content><![CDATA[<p>asd</p>
 ]]></content>
+      <categories>
+        <category>cb</category>
+        <category>cd</category>
+      </categories>
+      <tags>
+        <tag>ta</tag>
+        <tag>tc</tag>
+      </tags>
   </entry>
   <entry>
     <title>《UNIX环境高级编程》第九章——进程关系</title>
