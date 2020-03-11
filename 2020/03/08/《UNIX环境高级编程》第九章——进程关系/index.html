@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.8k字</span>
+            <span class="post-count">2.3k字</span>
         </span>
     </span>
 
@@ -77,7 +77,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">6分钟</span>
+            <span class="post-count">8分钟</span>
         </span>
     </span>
 </div>
@@ -154,6 +154,12 @@
 <li>无论何时键入终端的退出键（通常是Ctrl+\）,都会将退出信号发送至前台进程组的所有进程。</li>
 <li>如果终端接口检测到调制解调器（或网络）已经断开连接，则将挂断信号发送至控制进程（会话首进程）。<br><img src="9-7.png" alt=""></li>
 </ul>
+<h2 id="获取、设置前台进程组ID，获取会话首进程的会话ID（会话首进程的进程组ID）"><a href="#获取、设置前台进程组ID，获取会话首进程的会话ID（会话首进程的进程组ID）" class="headerlink" title="获取、设置前台进程组ID，获取会话首进程的会话ID（会话首进程的进程组ID）"></a>获取、设置前台进程组ID，获取会话首进程的会话ID（会话首进程的进程组ID）</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">tcgetpgrp</span><span class="params">(<span class="keyword">int</span> fd)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">tcsetpgrp</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">pid_t</span> pgrpid)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">pid_t</span> <span class="title">tcgetsid</span><span class="params">(<span class="keyword">int</span> fd)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="作业控制"><a href="#作业控制" class="headerlink" title="作业控制"></a>作业控制</h2><p>作业控制允许在一个终端上启动多个作业（进程组），它控制哪一个作业可以访问该终端以及哪些作业在后台运行。<br>用户可以在前台或后台启动一个作业。一个作业只是几个进程的集合。<br><img src="9-9.png" alt=""></p>
+<h2 id="shell执行程序"><a href="#shell执行程序" class="headerlink" title="shell执行程序"></a>shell执行程序</h2><p><img src="9.9.1.png" alt=""><br>在不支持作业控制的shell中，管道中的最后一个进程是shell的子进程，管道中的其他进程是最后一个进程的子进程。从中可以看出，shell fork一个它自身的副本，然后此副本再为管道中的每条命令各fork一个进程。<br><img src="9-10.png" alt=""><br>有作业控制时，后台作业被放在后台进程组，如果后台作业试图读控制终端，则会产生信号SIGTTIN。<br><img src="9.9.2.png" alt=""><br><img src="9.9.3.png" alt=""></p>
+<h2 id="孤儿进程组"><a href="#孤儿进程组" class="headerlink" title="孤儿进程组"></a>孤儿进程组</h2><p>该组中每个成员的父进程要么是该组的一个成员，要么不是该组所属会话的成员。另一种描述可以是：一个进程组不是孤儿进程组的条件是——该组中有一个进程，其父进程属于同一会话的另一个组中。如果进程组不是孤儿进程组，那么在属于同一会话的另一个组中的父进程就有机会重新启动该组中停止的进程。<br><img src="9-11.png" alt=""><br>因为在父进程终止后，进程组包含一个停止的进程，进程组称为孤儿进程组，POSIX。1要求向新孤儿进程组中处于停止状态的每一个进程发送挂断信号（SIGHUP），接着又向其发送继续信号（SIGCONT）。<br>在处理了挂断信号后，子进程继续。对挂断信号的系统默认动作是终止该进程。</p>
+<h2 id="FreeBSD实现"><a href="#FreeBSD实现" class="headerlink" title="FreeBSD实现"></a>FreeBSD实现</h2><p><img src="9-13.png" alt=""><br>每个会话都分配一个session结构。在调用setsid时，在内核分配一个心得session结构。</p>
 
       
       <!-- reward -->
