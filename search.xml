@@ -13,6 +13,7 @@
 <li>主线程如果不休眠，可能新线程还没有机会执行，整个进程就终止了</li>
 <li>新线程通过调用pthread_self获取自身的线程ID，而不是从共享内存读出或从线程的启动例程中以参数形式接收，因为那样并不安全。</li>
 </ol>
+<a id="more"></a>
 <h2 id="线程终止"><a href="#线程终止" class="headerlink" title="线程终止"></a>线程终止</h2><p>如果进程中的任意线程调用了exit、_Exit、或者_exit，那么整个进程就会终止。<br>单个线程可以在不终止整个进程的情况下，以以下三种方式停止它的控制流：</p>
 <ol>
 <li>线程可以简单地从启动例程中返回，返回值是线程的退出码。</li>
@@ -40,6 +41,17 @@
 </li>
 </ol>
 <p><em>多线程的软件设计要注意锁的粒度：如果锁的粒度太粗，就会出现多线程阻塞等待相同的锁，这可能并不能改善并发性；如果锁的粒度太细，那么过多的锁开销会使系统性能受影响，而且代码变得复杂。作为一个程序员，需要在满足锁需求的情况下，在代码复杂性和性能之间找到正确的平衡。</em></p>
+<h3 id="函数-pthread-mutex-timedlock"><a href="#函数-pthread-mutex-timedlock" class="headerlink" title="函数 pthread_mutex_timedlock"></a>函数 pthread_mutex_timedlock</h3><p>加锁时设置一个愿意等待的绝对时间，超时后放弃加锁，返回错误码ETIMEDOUT。</p>
+<h3 id="读写锁"><a href="#读写锁" class="headerlink" title="读写锁"></a>读写锁</h3><p>读写锁与互斥量类似，但允许更高的并行性。非常适合于对数据结构读的次数远大于写的情况。</p>
+<ul>
+<li>pthread_rwlock_init 初始化</li>
+<li>pthread_rwlock_destory 销毁</li>
+<li>pthread_rwlock_rdlock 加读锁</li>
+<li>pthread_rwlock_wrlock 加写锁</li>
+<li>pthread_rwlock_unlock 解锁</li>
+<li>pthread_rwlock_tryrdlock 尝试加读锁</li>
+<li>pthread_rwlock_trywrlock 尝试加写锁</li>
+</ul>
 ]]></content>
   </entry>
   <entry>
