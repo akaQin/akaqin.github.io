@@ -1,6 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>《UNIX环境高级编程》第十二章——线程控制</title>
+    <url>/2020/04/07/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/</url>
+    <content><![CDATA[<h2 id="线程限制"><a href="#线程限制" class="headerlink" title="线程限制"></a>线程限制</h2><p>Single UNIX Specification定义了一些与线程操作有关的限制：</p>
+<ul>
+<li>线程退出时操作系统试图销毁特定数据的最大次数</li>
+<li>进程可创建的键的最大数目</li>
+<li>一个线程的栈可用的最小字节数</li>
+<li>进程可创建的最大线程数</li>
+</ul>
+<h2 id="线程属性"><a href="#线程属性" class="headerlink" title="线程属性"></a>线程属性</h2><ul>
+<li>属性类型为 pthread_attr_t</li>
+<li>通过 pthread_attr_init 初始化</li>
+<li>通过 pthread_attr_destroy 反初始化</li>
+<li>如果对线程的终止状态不感兴趣，可以使用pthread_detach函数让操作系统在线程退出时回收它所占用的资源。</li>
+<li>创建线程前可以通过pthread_attr_getdetachstate 和 pthread_attr_setdetachstate设置线程的分离状态</li>
+<li>通过pthread_attr_getstack 和 pthread_attr_setstack 设置栈帧</li>
+</ul>
+<p><em>对于进程来说，虚拟地址的空间大小是固定的，因为进程中只有一个栈，所以大小通常不是问题。但对于线程来说，同样大小的虚拟地址空间必须被所有线程共享。如果应用程序使用了许多线程，以致这些线程的累计大小超过了可用的虚拟地址空间，就需要减少默认的线程栈大小。另一方面，如果线程调用的函数分配了大量的自动变量，或者调用的函数涉及许多很深的栈帧，那么需要的栈大小可能要比默认的大</em><br>如果线程的虚拟地址空间都用完了，可以使用malloc或者mmap来为可替代的栈分配空间，并使用pthread_attr_setstack函数来改变新建线程的栈位置。</p>
+<h2 id="同步属性"><a href="#同步属性" class="headerlink" title="同步属性"></a>同步属性</h2><h3 id="互斥量属性"><a href="#互斥量属性" class="headerlink" title="互斥量属性"></a>互斥量属性</h3><p>用 pthread_mutex_attr 结构表示，值得注意的三个属性是：</p>
+<ol>
+<li><p>进程共享属性：允许相互独立的多个进程把同一个内存数据块映射到它们各自独立的地址空间中。就像多个线程访问共享数据一样，多个进程访问共享数据通常也需要同步。如果进程共享互斥量属性设置为 PTHREAD_PROCESS_SHARED，从多个进程彼此之间共享的内存数据块中分配的互斥量就可以用于这些进程的同步；设置为 PTHREAD_PROCESS_PRIVATE时，允许pthread线程库提供更有效的互斥量实现，这在多线程应用程序中是默认情况。</p>
+</li>
+<li><p>健壮属性：与多个进程共享的互斥量有关。当持有互斥量的进程终止时，需要解决互斥量状态修复的问题。健壮属性默认值是 PTHREAD_MUTEX_STALLED，这意味着持有互斥量的进程终止时不需要采取特别的动作，而等待互斥量的应用程序会被有效的“拖住”。另一个取值是 PTHREAD_MUTEX_ROBUST，这个值将导致线程调用 pthread_mutex_lock获取锁，而该锁被另一个进程持有，但它终止时没有进行解锁，此时线程会阻塞，从pthread_mutex_lock 返回的值为 EONWERDEAD 而不是0。</p>
+</li>
+<li><p>类型属性：POSIX.1定义了4种类型</p>
+<ul>
+<li>PTHREAD_MUTEX_NORMAL 一种标准互斥量类型，不做任何特殊的错误检查或死锁检测。</li>
+<li>PTHREAD_MUTEX_ERRORCHECK 此互斥量类型提供错误检查</li>
+<li>PTHREAD_MUTEX_RECURSIVE 此类型允许多次加锁，递归维护锁计数，解锁次数和加锁次数不一致时，锁不会释放。</li>
+<li>PTHREAD_MUTEX_DEFAULT 上述三种类型之一</li>
+</ul>
+</li>
+</ol>
+<h3 id="读写锁属性"><a href="#读写锁属性" class="headerlink" title="读写锁属性"></a>读写锁属性</h3><ul>
+<li>进程共享属性（同上）</li>
+</ul>
+<h3 id="条件变量属性"><a href="#条件变量属性" class="headerlink" title="条件变量属性"></a>条件变量属性</h3><ul>
+<li>进程共享属性（同上）</li>
+<li>时钟属性：控制计算 pthread_cond_timewait 函数的超时参数（tsptr）时采用的是哪个时钟。</li>
+</ul>
+<h3 id="屏障属性"><a href="#屏障属性" class="headerlink" title="屏障属性"></a>屏障属性</h3><ul>
+<li>进程共享属性（同上）</li>
+</ul>
+<h2 id="重入"><a href="#重入" class="headerlink" title="重入"></a>重入</h2><p>线程在遇到重入问题时与信号处理程序是类似的。在这两种情况下，多个控制线程在相同时间有可能调用相同的函数。<br><em>如果一个函数在相同的时间点可以被多个线程安全地调用，就称该函数是<code>线程安全</code>的。</em><br>很多函数不是线程安全的，因为它们返回的数据存放在静态的内容缓冲区中。通过修改接口，要求调用者自己提供缓冲区可以使函数变为线程安全的。<br><em>如果一个函数对多个线程来说是可重入的，就是线程安全的，但并不能说明对信号处理程序也是可重入的。如果对信号处理程序也可重入，那就可以说函数是<code>异步信号安全</code>的。</em></p>
+<h2 id="线程特定数据"><a href="#线程特定数据" class="headerlink" title="线程特定数据"></a>线程特定数据</h2>]]></content>
+      <categories>
+        <category>《APUE》笔记</category>
+      </categories>
+      <tags>
+        <tag>pthread</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《UNIX环境高级编程》第十一章——线程</title>
     <url>/2020/03/25/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B/</url>
     <content><![CDATA[<h2 id="线程概念"><a href="#线程概念" class="headerlink" title="线程概念"></a>线程概念</h2><p>每个线程都包含有表示执行环境所必须的信息，包括线程ID、一组寄存器值、栈、调度优先级和策略、信号屏蔽字、errno变量以及线程私有数据。一个进程的所有信息对该进程的所有线程都是共享的，包括可执行程序的代码、程序的全局内存和堆内存、栈以及文件描述符。</p>
@@ -69,6 +122,12 @@
 <p>自旋锁在非抢占式内核中非常有用，但在用户层，自旋锁不是非常有用，除非运行在不允许抢占的实时调度类中。<br>pthread_spin_init函数对自旋锁初始化，pthread_spin_destory 函数对自旋锁进行反初始化。<br>pthread_spin_lock 和 pthread_spin_trylock 进行加锁，pthread_spin_unlock 进行解锁。</p>
 <h3 id="屏障"><a href="#屏障" class="headerlink" title="屏障"></a>屏障</h3><p>屏障是用户协调多个线程并行工作的同步机制。它允许每个线程等待，直到所有的合作线程都到达某一点，然后从该点继续执行。屏障允许任意数量的线程等待，直到所有的线程完成处理工作，而线程不需要退出，所有的线程到达屏障后可以接着工作。</p>
 ]]></content>
+      <categories>
+        <category>《APUE》笔记</category>
+      </categories>
+      <tags>
+        <tag>pthread</tag>
+      </tags>
   </entry>
   <entry>
     <title>《UNIX环境高级编程》第十章——信号</title>
