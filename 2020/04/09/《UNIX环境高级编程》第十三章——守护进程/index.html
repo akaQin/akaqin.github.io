@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    《UNIX环境高级编程》第十二章——线程控制 |  akaQin&#39;s Blog
+    《UNIX环境高级编程》第十三章——守护进程 |  akaQin&#39;s Blog
   </title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   
@@ -36,7 +36,7 @@
   <div id="app">
     <main class="content">
       <section class="outer">
-  <article id="post-《UNIX环境高级编程》第十二章——线程控制" class="article article-type-post" itemscope
+  <article id="post-《UNIX环境高级编程》第十三章——守护进程" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -44,7 +44,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  《UNIX环境高级编程》第十二章——线程控制
+  《UNIX环境高级编程》第十三章——守护进程
 </h1>
   
 
@@ -53,8 +53,8 @@
 
     
     <div class="article-meta">
-      <a href="/2020/04/07/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/" class="article-date">
-  <time datetime="2020-04-07T02:53:02.000Z" itemprop="datePublished">2020-04-07</time>
+      <a href="/2020/04/09/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E4%B8%89%E7%AB%A0%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/" class="article-date">
+  <time datetime="2020-04-09T13:39:09.000Z" itemprop="datePublished">2020-04-09</time>
 </a>
       
   <div class="article-category">
@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2k字</span>
+            <span class="post-count">706字</span>
         </span>
     </span>
 
@@ -77,7 +77,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">6分钟</span>
+            <span class="post-count">3分钟</span>
         </span>
     </span>
 </div>
@@ -104,67 +104,26 @@
       
 
       
-      <h2 id="线程限制"><a href="#线程限制" class="headerlink" title="线程限制"></a>线程限制</h2><p>Single UNIX Specification定义了一些与线程操作有关的限制：</p>
-<ul>
-<li>线程退出时操作系统试图销毁特定数据的最大次数</li>
-<li>进程可创建的键的最大数目</li>
-<li>一个线程的栈可用的最小字节数</li>
-<li>进程可创建的最大线程数</li>
-</ul>
-<h2 id="线程属性"><a href="#线程属性" class="headerlink" title="线程属性"></a>线程属性</h2><ul>
-<li>属性类型为 pthread_attr_t</li>
-<li>通过 pthread_attr_init 初始化</li>
-<li>通过 pthread_attr_destroy 反初始化</li>
-<li>如果对线程的终止状态不感兴趣，可以使用pthread_detach函数让操作系统在线程退出时回收它所占用的资源。</li>
-<li>创建线程前可以通过pthread_attr_getdetachstate 和 pthread_attr_setdetachstate设置线程的分离状态</li>
-<li>通过pthread_attr_getstack 和 pthread_attr_setstack 设置栈帧</li>
-</ul>
-<p><em>对于进程来说，虚拟地址的空间大小是固定的，因为进程中只有一个栈，所以大小通常不是问题。但对于线程来说，同样大小的虚拟地址空间必须被所有线程共享。如果应用程序使用了许多线程，以致这些线程的累计大小超过了可用的虚拟地址空间，就需要减少默认的线程栈大小。另一方面，如果线程调用的函数分配了大量的自动变量，或者调用的函数涉及许多很深的栈帧，那么需要的栈大小可能要比默认的大</em><br>如果线程的虚拟地址空间都用完了，可以使用malloc或者mmap来为可替代的栈分配空间，并使用pthread_attr_setstack函数来改变新建线程的栈位置。</p>
+      <p>守护进程（daemon）是生存期长的一种进程。它们常常在系统引导装入时启动，仅在系统关闭时才终止。守护进程没有控制终端，终端名为问号。后台运行，大多数都以超级用户（root）特权运行。用户层守护进程的父进程是init。</p>
+<h2 id="编程规则"><a href="#编程规则" class="headerlink" title="编程规则"></a>编程规则</h2><ol>
+<li>调用umask将文件模式创建屏蔽字设置为一个已知值（通常是0）。</li>
+<li>调用fork，然后使父进程exit。</li>
+<li>调用setsid创建一个新会话。使调用进程：（a）成为新会话的首进程，（b）成为一个新进程组的组长进程，（c）没有控制终端。</li>
+<li>将当前工作目录更改为根目录。避免文件系统被卸载。</li>
+<li>关闭不再需要的文件描述符。</li>
+<li>某些守护进程打开/dev/null使其具有文件描述符0、1、2，这样任何一个试图读/写标准输入/输出/错误的库例程都不会产生任何效果。</li>
+</ol>
 <a id="more"></a>
 
-<h2 id="同步属性"><a href="#同步属性" class="headerlink" title="同步属性"></a>同步属性</h2><h3 id="互斥量属性"><a href="#互斥量属性" class="headerlink" title="互斥量属性"></a>互斥量属性</h3><p>用 pthread_mutex_attr 结构表示，值得注意的三个属性是：</p>
-<ol>
-<li><p>进程共享属性：允许相互独立的多个进程把同一个内存数据块映射到它们各自独立的地址空间中。就像多个线程访问共享数据一样，多个进程访问共享数据通常也需要同步。如果进程共享互斥量属性设置为 PTHREAD_PROCESS_SHARED，从多个进程彼此之间共享的内存数据块中分配的互斥量就可以用于这些进程的同步；设置为 PTHREAD_PROCESS_PRIVATE时，允许pthread线程库提供更有效的互斥量实现，这在多线程应用程序中是默认情况。</p>
-</li>
-<li><p>健壮属性：与多个进程共享的互斥量有关。当持有互斥量的进程终止时，需要解决互斥量状态修复的问题。健壮属性默认值是 PTHREAD_MUTEX_STALLED，这意味着持有互斥量的进程终止时不需要采取特别的动作，而等待互斥量的应用程序会被有效的“拖住”。另一个取值是 PTHREAD_MUTEX_ROBUST，这个值将导致线程调用 pthread_mutex_lock获取锁，而该锁被另一个进程持有，但它终止时没有进行解锁，此时线程会阻塞，从pthread_mutex_lock 返回的值为 EONWERDEAD 而不是0。</p>
-</li>
-<li><p>类型属性：POSIX.1定义了4种类型</p>
-<ul>
-<li>PTHREAD_MUTEX_NORMAL 一种标准互斥量类型，不做任何特殊的错误检查或死锁检测。</li>
-<li>PTHREAD_MUTEX_ERRORCHECK 此互斥量类型提供错误检查</li>
-<li>PTHREAD_MUTEX_RECURSIVE 此类型允许多次加锁，递归维护锁计数，解锁次数和加锁次数不一致时，锁不会释放。</li>
-<li>PTHREAD_MUTEX_DEFAULT 上述三种类型之一</li>
-</ul>
-</li>
-</ol>
-<h3 id="读写锁属性"><a href="#读写锁属性" class="headerlink" title="读写锁属性"></a>读写锁属性</h3><ul>
-<li>进程共享属性（同上）</li>
-</ul>
-<h3 id="条件变量属性"><a href="#条件变量属性" class="headerlink" title="条件变量属性"></a>条件变量属性</h3><ul>
-<li>进程共享属性（同上）</li>
-<li>时钟属性：控制计算 pthread_cond_timewait 函数的超时参数（tsptr）时采用的是哪个时钟。</li>
-</ul>
-<h3 id="屏障属性"><a href="#屏障属性" class="headerlink" title="屏障属性"></a>屏障属性</h3><ul>
-<li>进程共享属性（同上）</li>
-</ul>
-<h2 id="重入"><a href="#重入" class="headerlink" title="重入"></a>重入</h2><p>线程在遇到重入问题时与信号处理程序是类似的。在这两种情况下，多个控制线程在相同时间有可能调用相同的函数。<br><em>如果一个函数在相同的时间点可以被多个线程安全地调用，就称该函数是<code>线程安全</code>的。</em><br>很多函数不是线程安全的，因为它们返回的数据存放在静态的内容缓冲区中。通过修改接口，要求调用者自己提供缓冲区可以使函数变为线程安全的。<br><em>如果一个函数对多个线程来说是可重入的，就是线程安全的，但并不能说明对信号处理程序也是可重入的。如果对信号处理程序也可重入，那就可以说函数是<code>异步信号安全</code>的。</em></p>
-<h2 id="线程特定数据"><a href="#线程特定数据" class="headerlink" title="线程特定数据"></a>线程特定数据</h2><p>也称线程私有数据，是存储和查询某个特定线程相关数据的一种机制。一个进程中的所有线程可以访问这个进程的整个地址空间。除了使用寄存器以外，一个线程没有办法阻止另一个线程访问它的数据。线程特定数据也不例外。但使用特定数据可以提高线程空间的数据独立性，使得线程不太容易访问到其他线程的特定数据</p>
-<ul>
-<li>pthread_key_create 创建与特定数据关联的key，这个键可以被进程中的所有线程使用，但每个线程把这个键与不同的线程特定数据进行关联。</li>
-<li>线程通常使用malloc为线程特定数据分配内存。析构函数释放已分配的内存。如果线程在没有释放内存之前就退出了，那么这块内存就会丢失，即线程所属进程出现了内存泄漏。</li>
-<li>使用 pthread_once 可以保证某个逻辑在多线程中只执行一次，如创建特定数据的键。</li>
-<li>使用 pthread_getspecific 与 pthread_setspecific 访问管理特定数据。</li>
-</ul>
-<h2 id="取消选项"><a href="#取消选项" class="headerlink" title="取消选项"></a>取消选项</h2><p>有两个线程没有包含在 pthread_attr 结构中，它们是可取消状态和可取消类型。</p>
-<ul>
-<li>可取消状态状态属性决定了线程是否可以被取消。pthread_cancel 调用并不等待线程终止，而是继续运行，直到线程到达某个取消点（POSIX.1指定的多个函数）再去检查。如果取消了则按照请求行事。</li>
-<li>调用 pthread_testcancel 可以主动测试线程是否被取消。</li>
-<li>取消类型包括推迟取消（默认上述逻辑）和异步取消。使用异步取消时，线程可以在任意时间撤销，不是非得遇到取消点才被取消。</li>
-</ul>
-<h2 id="线程和信号"><a href="#线程和信号" class="headerlink" title="线程和信号"></a>线程和信号</h2><p>线程和进程类似，也可以设置信号集来屏蔽信号。<br><em>进程中的信号是递送到单个线程的。如果一个信号与硬件故障相关，那么该信号一般会被发送到引起该事件的线程中去，而其他信号则被发送到任意一个线程。</em><br>线程中递送信号使用 pthread_kill。</p>
-<h2 id="线程和fork"><a href="#线程和fork" class="headerlink" title="线程和fork"></a>线程和fork</h2><p>线程调用fork时，就为子进程创建了整个进程空间的副本，包括每个互斥量、读写锁和雕件变量的状态。如果父进程包含一个以上的线程，子进程在fork返回后如果不是马上调用exec的话，就需要清理锁状态。问题是子进程并不一定包含占有锁的线程的副本，所以子进程没有办法直到它占有了哪些锁，需要释放哪些锁。<br>在多线程中，为了避免不一致状态的问题，POSIX.1声明，在fork返回和子进程调用一个exec函数之间，子进程只能调用<code>异步信号安全</code>的函数。<br>要清除锁状态，可以通过调用 pthread_affork 函数建立fork处理程序，它分别在调用fork前、父子进程中fork返回后 这三个时机安装三个处理程序用于清理锁。</p>
-<h2 id="线程和I-O"><a href="#线程和I-O" class="headerlink" title="线程和I/O"></a>线程和I/O</h2><p>因为进程中的所有线程共享相同的文件描述符，所以多线程中要使用 pread 和 pwrite 函数进行读写来保证seek和I/O是绑定的原子操作。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"../apue.3e/include/apue.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;syslog.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/resource.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dameonize</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *cmd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i, pid, fd0, fd1, fd2;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rlimit</span> <span class="title">rl</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span> <span class="title">sa</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//1 关闭屏蔽字</span></span><br><span class="line">    umask(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//2 获取最大描述符限制</span></span><br><span class="line">    <span class="keyword">if</span> (getrlimit(RLIMIT_NOFILE, &amp;rl) != <span class="number">0</span>) &#123;</span><br><span class="line">        err_quit(<span class="string">"%s: can't get file limit"</span>, cmd);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//3 fork，父进程退出</span></span><br><span class="line">    <span class="keyword">if</span> ((pid = fork()) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_quit(<span class="string">"%s: can't fork"</span>, cmd);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//4 建立新会话</span></span><br><span class="line">    setsid();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//5 Ensure future opens won't allocate controlling TTYs.</span></span><br><span class="line">    sa.sa_handler = SIG_IGN;</span><br><span class="line">    sigemptyset(&amp;sa.sa_mask);</span><br><span class="line">    sa.sa_flags = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (sigaction(SIGHUP, &amp;sa, <span class="literal">NULL</span>) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_quit(<span class="string">"%s: can't ignore SIGHUP"</span>, cmd);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((pid = fork()) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_quit(<span class="string">"%s: can't fork"</span>, cmd);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 6 Change the current working directory to the root so</span></span><br><span class="line">    <span class="comment">// we won't prevent file systems from being unmounted.</span></span><br><span class="line">    <span class="keyword">if</span> (chdir(<span class="string">"/"</span>) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_quit(<span class="string">"%s: can't change directory to /"</span>, cmd);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Close all open file descriptors.</span></span><br><span class="line">    <span class="keyword">if</span> (rl.rlim_max == RLIM_INFINITY) &#123;</span><br><span class="line">        rl.rlim_max = <span class="number">1024</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; rl.rlim_max; i++) &#123;</span><br><span class="line">        <span class="built_in">close</span>(i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Attach file descriptors 0, 1, and 2 to /dev/null.</span></span><br><span class="line">    fd0 = <span class="built_in">open</span>(<span class="string">"/dev/null"</span>, O_RDWR);</span><br><span class="line">    fd1 = dup(<span class="number">0</span>);</span><br><span class="line">    fd2 = dup(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Initialize the log file.</span></span><br><span class="line">    openlog(cmd, LOG_CONS, LOG_DAEMON);</span><br><span class="line">    <span class="keyword">if</span> (fd0 != <span class="number">0</span> || fd1 != <span class="number">1</span> || fd2 != <span class="number">2</span>) &#123;</span><br><span class="line">        syslog(LOG_ERR, <span class="string">"unexpected file descriptors %d %d %d"</span>, fd0, fd1, fd2);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<h2 id="出错记录"><a href="#出错记录" class="headerlink" title="出错记录"></a>出错记录</h2><p>syslog 是一个用于集中记录所有守护进程出错记录的设施，它自身的守护进程是syslogd，该设施的接口是syslog函数。<br><img src="13-2.png" alt=""><br>有3种方法产生日志消息，syslogd守护进程读取所有3种格式的日志消息：</p>
+<ol>
+<li>内核例程调用log函数。</li>
+<li>大多数用户进程（守护进程）调用syslog函数产生日志消息。这使消息被发送至UNIX域数据报套接字/dev/log。</li>
+<li>无论用户进程在此主机上还是通过TCP/IP网络连接的其他主机上，都可将日志消息发向UDP端口514.</li>
+</ol>
+<h2 id="单例守护进程"><a href="#单例守护进程" class="headerlink" title="单例守护进程"></a>单例守护进程</h2>
       
       <!-- reward -->
       
@@ -233,14 +192,14 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/04/07/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/04/09/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E4%B8%89%E7%AB%A0%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pthread/" rel="tag">pthread</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/daemon/" rel="tag">daemon</a></li></ul>
 
 
     </footer>
@@ -251,19 +210,10 @@
   
   <nav class="article-nav">
     
-      <a href="/2020/04/09/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E4%B8%89%E7%AB%A0%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            《UNIX环境高级编程》第十三章——守护进程
-          
-        </div>
-      </a>
     
-    
-      <a href="/2020/03/25/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B/" class="article-nav-link">
+      <a href="/2020/04/07/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">《UNIX环境高级编程》第十一章——线程</div>
+        <div class="article-nav-title">《UNIX环境高级编程》第十二章——线程控制</div>
       </a>
     
   </nav>
