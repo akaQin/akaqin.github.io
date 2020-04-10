@@ -75,6 +75,96 @@
     
     
     
+    <article id="post-《UNIX环境高级编程》第三章——文件I-O" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/04/10/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E4%B8%89%E7%AB%A0%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6I-O/"
+    >《UNIX环境高级编程》第三章——文件I/O</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/04/10/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E4%B8%89%E7%AB%A0%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6I-O/" class="article-date">
+  <time datetime="2020-04-10T05:11:54.000Z" itemprop="datePublished">2020-04-10</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E3%80%8AAPUE%E3%80%8B%E7%AC%94%E8%AE%B0/">《APUE》笔记</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="文件描述符"><a href="#文件描述符" class="headerlink" title="文件描述符"></a>文件描述符</h2><p>对于内核而言，所有打开的文件都通过文件描述符引用。文件描述符是一个非负整数。当打开一个现有文件或创建一个新文件时，内核向进程返回一个文件描述符。</p>
+<ul>
+<li>0 - STDIN_FILENO - 标准输入</li>
+<li>1 - STDOUT_FILENO - 标准输出</li>
+<li>2 - STDERR_FILENO - 标准错误</li>
+</ul>
+<h2 id="不带缓冲的I-O函数"><a href="#不带缓冲的I-O函数" class="headerlink" title="不带缓冲的I/O函数"></a>不带缓冲的I/O函数</h2><ul>
+<li>open(openat) 打开或创建一个文件</li>
+<li>creat 创建一个新文件</li>
+<li>close 关闭一个打开文件</li>
+<li>lseek 设置偏移量（lseek仅将当前文件偏移量记录在内核中，不引起任何I/O操作）</li>
+<li>read 从打开文件中读数据</li>
+<li>write 向打开文件写数据</li>
+</ul>
+<h3 id="带缓冲与不带缓冲的区别"><a href="#带缓冲与不带缓冲的区别" class="headerlink" title="带缓冲与不带缓冲的区别"></a>带缓冲与不带缓冲的区别</h3><p>所谓不带缓冲，并不是指内核不提供缓冲，而是只单纯的系统调用，不是函数库的调用。系统内核对磁盘的读写都会提供一个块缓冲（在有些地方也被称为内核高速缓存），当用write函数对其写数据时，直接调用系统调用，将数据写入到块缓冲进行排队，当块缓冲达到一定的量时，才会把数据写入磁盘。因此所谓的不带缓冲的I/O是指进程不提供缓冲功能（但内核还是提供缓冲的）。每调用一次write或read函数，直接系统调用。<br>而带缓冲的I/O是指进程对输入输出流进行了改进，提供了一个流缓冲，当用fwrite函数网磁盘写数据时，先把数据写入流缓冲区中，当达到一定条件，比如流缓冲区满了，或刷新流缓冲，这时候才会把数据一次送往内核提供的块缓冲，再经块缓冲写入磁盘。（双重缓冲）<br>因此，带缓冲的I/O在往磁盘写入相同的数据量时，会比不带缓冲的I/O调用系统调用的次数要少。<br>无缓存IO操作数据流向路径：<em>数据——内核缓存区——磁盘</em><br>标准IO操作数据流向路径：<em>数据——流缓存区——内核缓存区——磁盘</em></p>
+      
+      <a class="article-more-link" href="/2020/04/10/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E4%B8%89%E7%AB%A0%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6I-O/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6I-O/" rel="tag">文件I/O</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
     <article id="post-《UNIX环境高级编程》第十三章——守护进程" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -828,107 +918,13 @@
 </article>
 
     
-    <article id="post-《UNIX环境高级编程》第七章——进程环境" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/02/23/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E4%B8%83%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/"
-    >《UNIX环境高级编程》第七章——进程环境</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/02/23/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E4%B8%83%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/" class="article-date">
-  <time datetime="2020-02-23T08:03:39.000Z" itemprop="datePublished">2020-02-23</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E3%80%8AAPUE%E3%80%8B%E7%AC%94%E8%AE%B0/">《APUE》笔记</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h3 id="进程开始"><a href="#进程开始" class="headerlink" title="进程开始"></a>进程开始</h3>   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc, char *argv[]);</span><br></pre></td></tr></table></figure>
-<p>   以main函数开始执行。当内核执行C程序时，在调用main前先调用一个特殊的启动例程。可执行程序将此启动例程指定为程序的起始地址——这是由链接编辑器设置的，而链接编辑器则由C编译器调用。启动例程从内核取得命令行参数和环境变量值，然后为按上述方式调用做好安排。</p>
-<h3 id="进程终止"><a href="#进程终止" class="headerlink" title="进程终止"></a>进程终止</h3><p>   有8种终止方式，前5种为正常终止：</p>
-<ol>
-<li>从main返回</li>
-<li>调用exit</li>
-<li>调用_exit或_Exit</li>
-<li>最后一个线程从启动例程返回</li>
-<li>从最后一个线程调用pthread_exit<br>异常终止有3种：</li>
-<li>调用abort</li>
-<li>遇到一个信号</li>
-<li>最后一个线程对取消请求做出响应</li>
-</ol>
-<h3 id="终止处理程序"><a href="#终止处理程序" class="headerlink" title="终止处理程序"></a>终止处理程序</h3><ul>
-<li>一个进程可以通过<code>atexit</code>函数登记至多32个函数作为终止处理程序（exit handler），这些函数将在程序终止时有<code>exit</code>自动调用。<br> 调用顺序与登记顺序相反，登记多次也会调用多次。<br> 如若程序调用<code>exec</code>函数族中任一函数，则将清除所有已安装的终止处理程序。</li>
-</ul>
-<h3 id="exit函数"><a href="#exit函数" class="headerlink" title="exit函数"></a><code>exit</code>函数</h3><ul>
-<li><code>_exit</code>和<code>_Exit</code>立即进入内核，<code>exit</code>首先调用各终止处理程序，然后通过<code>fclose</code>关闭所有打开流，这造成输出缓冲中的所有数据都被冲洗（写到文件上）。</li>
-<li>内核使程序执行的唯一方法是调用一个<code>exec</code>函数。进程自愿终止的唯一方法是显示或隐式地（通过调用<code>exit</code>）调用<code>_exit</code>或<code>_Exit</code>。进程也可非自愿地由一个信号使其终止。<br> <img src="7-2.png" alt="">
-      
-      <a class="article-more-link" href="/2020/02/23/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E4%B8%83%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/process/" rel="tag">process</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
   </article>
   
 
   
   <nav class="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">下一页</a>
   </nav>
   
 </section>
