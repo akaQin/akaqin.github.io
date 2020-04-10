@@ -139,7 +139,7 @@
 <h3 id="文件描述符标志与文件状态标志的区别"><a href="#文件描述符标志与文件状态标志的区别" class="headerlink" title="文件描述符标志与文件状态标志的区别"></a>文件描述符标志与文件状态标志的区别</h3><p><em>前者只用于一个进程的一个描述符，后者则应用于指向该给定文件表项的任何进程中的所有描述符。</em></p>
 <h2 id="原子操作"><a href="#原子操作" class="headerlink" title="原子操作"></a>原子操作</h2><p>原子操作（atomic operation）指的是由多步组成的一个操作。如果该操作原子的执行，要么执行完所有步骤，要么一步也不执行，不可能只执行所有步骤的一个子集。任何要求多于一个函数调用的操作都不是原子操作，因为在两个函数调用之间，内核有可能会临时挂起进程。<br>我们用<code>pread</code>和<code>pwrite</code>函数进行I/O来保证lseek和read/write构成原子操作。</p>
 <h2 id="其他I-O函数"><a href="#其他I-O函数" class="headerlink" title="其他I/O函数"></a>其他I/O函数</h2><h3 id="dup（dup2）"><a href="#dup（dup2）" class="headerlink" title="dup（dup2）"></a>dup（dup2）</h3><p>用来复制一个现有的文件描述符。复制后每个文件描述符都有它自己的一套文件描述符标志。两个描述符指向同一文件表项，所以它们共享同一文件状态标志（读、写、追加写等）<br><img src="3-9.png" alt=""></p>
-<h3 id="syng、fsync和fdatasync"><a href="#syng、fsync和fdatasync" class="headerlink" title="syng、fsync和fdatasync"></a><code>syng</code>、<code>fsync</code>和<code>fdatasync</code></h3><p>用于保证磁盘上实际文件系统与缓冲区中内容的一致性。</p>
+<h3 id="syng、fsync和fdatasync"><a href="#syng、fsync和fdatasync" class="headerlink" title="syng、fsync和fdatasync"></a>syng、fsync和fdatasync</h3><p>用于保证磁盘上实际文件系统与缓冲区中内容的一致性。</p>
 <ul>
 <li>sync只是将所有修改过的块缓冲区排入写队列就返回，它不等待实际写磁盘操作结束。通常称为update的系统守护进程周期性地（一般为30秒）调用sync函数，这就保证了定期冲洗（flush）内核的块缓冲区。</li>
 <li>fsync只对由fd指定的一个文件起作用，并等待写磁盘操作结束才返回。</li>
