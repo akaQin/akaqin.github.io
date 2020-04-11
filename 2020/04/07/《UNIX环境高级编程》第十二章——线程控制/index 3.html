@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    《UNIX环境高级编程》第十四章——高级I/O |  akaQin&#39;s Blog
+    《UNIX环境高级编程》第十二章——线程控制 |  akaQin&#39;s Blog
   </title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   
@@ -36,7 +36,7 @@
   <div id="app">
     <main class="content">
       <section class="outer">
-  <article id="post-《UNIX环境高级编程》第十四章——高级I-O" class="article article-type-post" itemscope
+  <article id="post-《UNIX环境高级编程》第十二章——线程控制" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -44,7 +44,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  《UNIX环境高级编程》第十四章——高级I/O
+  《UNIX环境高级编程》第十二章——线程控制
 </h1>
   
 
@@ -53,8 +53,8 @@
 
     
     <div class="article-meta">
-      <a href="/2020/04/11/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AB%A0%E2%80%94%E2%80%94%E9%AB%98%E7%BA%A7I-O/" class="article-date">
-  <time datetime="2020-04-11T06:01:11.000Z" itemprop="datePublished">2020-04-11</time>
+      <a href="/2020/04/07/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/" class="article-date">
+  <time datetime="2020-04-07T02:53:02.000Z" itemprop="datePublished">2020-04-07</time>
 </a>
       
   <div class="article-category">
@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.4k字</span>
+            <span class="post-count">2k字</span>
         </span>
     </span>
 
@@ -77,7 +77,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">5分钟</span>
+            <span class="post-count">6分钟</span>
         </span>
     </span>
 </div>
@@ -104,41 +104,66 @@
       
 
       
-      <h2 id="非阻塞I-O"><a href="#非阻塞I-O" class="headerlink" title="非阻塞I/O"></a>非阻塞I/O</h2><h3 id="”低速“系统调用"><a href="#”低速“系统调用" class="headerlink" title="”低速“系统调用"></a>”低速“系统调用</h3><p>系统调用分为两类：“低速”系统调用和其他。<br>低速系统调用是可能会使进程永远阻塞的一类系统调用，包括：</p>
+      <h2 id="线程限制"><a href="#线程限制" class="headerlink" title="线程限制"></a>线程限制</h2><p>Single UNIX Specification定义了一些与线程操作有关的限制：</p>
 <ul>
-<li>如果某些文件类型（如读管道、终端设备和网络设备）的数据并不存在，读操作可能会使调用者永远阻塞；</li>
-<li>如果数据不能被相同的文件类型立即接受（如管道中无空间、网络流控制），写操作可能会使调用者永远阻塞；</li>
-<li>在某种条件发生之前打开某些文件类型可能会发生阻塞（如打开一个终端设备，需要先等待与之连接的调制解调器应答）</li>
-<li>对已经加上强制性记录锁的文件进行读写；</li>
-<li>某些ioctl操作；</li>
-<li>某些进程间通信函数；</li>
+<li>线程退出时操作系统试图销毁特定数据的最大次数</li>
+<li>进程可创建的键的最大数目</li>
+<li>一个线程的栈可用的最小字节数</li>
+<li>进程可创建的最大线程数</li>
 </ul>
-<p><em>虽然读写磁盘文件会暂时阻塞调用者，但并不能将与磁盘I/O有关的系统调用视为”低速“</em></p>
+<h2 id="线程属性"><a href="#线程属性" class="headerlink" title="线程属性"></a>线程属性</h2><ul>
+<li>属性类型为 pthread_attr_t</li>
+<li>通过 pthread_attr_init 初始化</li>
+<li>通过 pthread_attr_destroy 反初始化</li>
+<li>如果对线程的终止状态不感兴趣，可以使用pthread_detach函数让操作系统在线程退出时回收它所占用的资源。</li>
+<li>创建线程前可以通过pthread_attr_getdetachstate 和 pthread_attr_setdetachstate设置线程的分离状态</li>
+<li>通过pthread_attr_getstack 和 pthread_attr_setstack 设置栈帧</li>
+</ul>
+<p><em>对于进程来说，虚拟地址的空间大小是固定的，因为进程中只有一个栈，所以大小通常不是问题。但对于线程来说，同样大小的虚拟地址空间必须被所有线程共享。如果应用程序使用了许多线程，以致这些线程的累计大小超过了可用的虚拟地址空间，就需要减少默认的线程栈大小。另一方面，如果线程调用的函数分配了大量的自动变量，或者调用的函数涉及许多很深的栈帧，那么需要的栈大小可能要比默认的大</em><br>如果线程的虚拟地址空间都用完了，可以使用malloc或者mmap来为可替代的栈分配空间，并使用pthread_attr_setstack函数来改变新建线程的栈位置。</p>
 <a id="more"></a>
 
-<h3 id="非阻塞I-O-1"><a href="#非阻塞I-O-1" class="headerlink" title="非阻塞I/O"></a>非阻塞I/O</h3><p>非阻塞I/O是我们可以发出 open、read 和 write 这样的I/O操作，并使这些操作不会永远阻塞。如果这种操作不能完成，则调用立即出错返回，表示该操作如继续执行将阻塞。<br>对于一个给定的描述符，有两种为其指定非阻塞I/O的方法：</p>
-<ul>
-<li>如果调用 open 获得描述符，可指定 O_NONBLOCK 标志。</li>
-<li>对于已经打开的描述符，则可调用 fcntl 打开 O_NONBLOCK 文件状态标志。</li>
-</ul>
-<h2 id="记录锁"><a href="#记录锁" class="headerlink" title="记录锁"></a>记录锁</h2><p>记录锁的功能是：当第一个进程正在读或修改文件的某个部分时，使用记录锁可以阻止其他进程修改同一文件区。它锁定的只是文件中的一个区域（也可能是整个文件）。<br>记录锁在各种系统种有不同的形式，POSIX。1标准的基础是fcntl方法。<br><img src="14-2.png" alt=""></p>
-<h3 id="fcntl-记录锁"><a href="#fcntl-记录锁" class="headerlink" title="fcntl 记录锁"></a>fcntl 记录锁</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fcntl</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">int</span> cmd, ...<span class="comment">/* struct flock *flockptr */</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">flock</span> &#123;</span></span><br><span class="line">  short l_type;   <span class="comment">/* 锁类型，F_RDLOCK（共享读锁）、F_WRLCK（独占写锁）或 F_UNLCK （解锁一个区域） */</span></span><br><span class="line">  short l_whence; <span class="comment">/* 根源（从什么地方开始)：SEEK_SET、SEEK_CUR or SEEK_END */</span></span><br><span class="line">  <span class="keyword">off_t</span> l_start;  <span class="comment">/* 和 l_whence 共同组成要加锁/解锁区域的其实字节偏移量 */</span></span><br><span class="line">  <span class="keyword">off_t</span> l_len;    <span class="comment">/* 加锁/解锁区域的字节长度 */</span></span><br><span class="line">  <span class="keyword">off_t</span> l_pid;    <span class="comment">/* 进程的ID（l_pid）持有的锁能阻塞当前进程（仅由 F_GETLK 返回） */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>共享读锁（L_RDLCK）和独占性写锁（L_WRLCK）。任意多个进程在一个给定的字节上可以各自有一把共享的读锁，但是在一个给定字节上只能有一个进程有一把独占写锁。<br>进一步而言，如果在一个给定字节上已经有一把或多把读锁，则不能在该字节上再加写锁；如果一个字节上已经有一把独占写锁，则不能再对它加任何锁。<br>单个进程提出多个锁请求时，新锁将替换就锁。<br><img src="14-3.png" alt=""><br>加读锁时，描述符必须是读打开；加写锁时，描述符必须是写打开；<br><em>频繁的加读锁可能会把请求写锁的进程给饿死</em><br>锁会自动的分裂和组合：<br><img src="14-4.png" alt=""></p>
-<h4 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h4><p>如果两个进程相互等待对方持有的锁并切不释放自己持有的锁时，这两个进程就进入了死锁的状态。</p>
-<h3 id="锁的隐含继承和释放"><a href="#锁的隐含继承和释放" class="headerlink" title="锁的隐含继承和释放"></a>锁的隐含继承和释放</h3><ul>
-<li>锁与进程和文件两者想关联：<ol>
-<li>当一个进程终止时，它所建立的锁全部释放；</li>
-<li>无论一个描述符合适关闭，该进程通过这一描述符引用的文件上的任何一把锁都会释放。</li>
-</ol>
+<h2 id="同步属性"><a href="#同步属性" class="headerlink" title="同步属性"></a>同步属性</h2><h3 id="互斥量属性"><a href="#互斥量属性" class="headerlink" title="互斥量属性"></a>互斥量属性</h3><p>用 pthread_mutex_attr 结构表示，值得注意的三个属性是：</p>
+<ol>
+<li><p>进程共享属性：允许相互独立的多个进程把同一个内存数据块映射到它们各自独立的地址空间中。就像多个线程访问共享数据一样，多个进程访问共享数据通常也需要同步。如果进程共享互斥量属性设置为 PTHREAD_PROCESS_SHARED，从多个进程彼此之间共享的内存数据块中分配的互斥量就可以用于这些进程的同步；设置为 PTHREAD_PROCESS_PRIVATE时，允许pthread线程库提供更有效的互斥量实现，这在多线程应用程序中是默认情况。</p>
 </li>
-<li>由 fork 产生的子进程不继承父进程所设置的锁。因为锁的作用是阻止多个进程同时写同一个文件。</li>
-<li>在执行 exec 后，新程序可以继承原执行程序的锁。</li>
+<li><p>健壮属性：与多个进程共享的互斥量有关。当持有互斥量的进程终止时，需要解决互斥量状态修复的问题。健壮属性默认值是 PTHREAD_MUTEX_STALLED，这意味着持有互斥量的进程终止时不需要采取特别的动作，而等待互斥量的应用程序会被有效的“拖住”。另一个取值是 PTHREAD_MUTEX_ROBUST，这个值将导致线程调用 pthread_mutex_lock获取锁，而该锁被另一个进程持有，但它终止时没有进行解锁，此时线程会阻塞，从pthread_mutex_lock 返回的值为 EONWERDEAD 而不是0。</p>
+</li>
+<li><p>类型属性：POSIX.1定义了4种类型</p>
+<ul>
+<li>PTHREAD_MUTEX_NORMAL 一种标准互斥量类型，不做任何特殊的错误检查或死锁检测。</li>
+<li>PTHREAD_MUTEX_ERRORCHECK 此互斥量类型提供错误检查</li>
+<li>PTHREAD_MUTEX_RECURSIVE 此类型允许多次加锁，递归维护锁计数，解锁次数和加锁次数不一致时，锁不会释放。</li>
+<li>PTHREAD_MUTEX_DEFAULT 上述三种类型之一</li>
 </ul>
-<h3 id="FreeBSD-实现"><a href="#FreeBSD-实现" class="headerlink" title="FreeBSD 实现"></a>FreeBSD 实现</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">fd1 = <span class="built_in">open</span>(pathname, ...);</span><br><span class="line">write_lock(fd1, <span class="number">0</span>, SEEK_SET, <span class="number">1</span>);  <span class="comment">/* parent write locks byte 0 */</span></span><br><span class="line"><span class="keyword">if</span> ((pid = fork()) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">  fd2 = dump(fd1);</span><br><span class="line">  fd3 = <span class="built_in">open</span>(pathname, ...);</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">  read_lock(fd1, <span class="number">1</span>, SEEK_SET, <span class="number">1</span>);  <span class="comment">/* child read locks byte 1 * /</span></span><br><span class="line"><span class="comment">&#125;</span></span><br></pre></td></tr></table></figure>
-<p><img src="14-8.png" alt=""><br><strong>锁结构的指针放在了v节点（Linux里是i通用节点）结构里。</strong><br>在父进程中，关闭 fd1、fd2 或 fd3 中的任意一个都将释放由父进程设置的写锁。在关闭这三个中的任意一个h时，内核会从该描述符锁关联的i节点开始，逐个检查 lockf 链接表中的各项，并释放由调用进程持有的各把锁。内核并不清楚（也不关心）父进程是用这三个中的哪个描述符来设置这把锁的。</p>
-<h3 id="建议锁和强制锁"><a href="#建议锁和强制锁" class="headerlink" title="建议锁和强制锁"></a>建议锁和强制锁</h3><p>考虑数据库访问例程库。如果该库中所有函数都以一致的方法处理记录锁，则称使用这些函数访问数据库的进程集为<code>合作进程（cooperating process）</code>。如果这些函数是唯一地用来访问数据库的函数，那么它们使用建议锁是可行的。但建议锁不能阻止对数据库文件有写权限的任何其他进程写这个数据库文件。不实用数据库访问例程库协同一致的方法来访问数据库的进程是非合作进程。<br>强制锁会让内核检查每一个 open、read 和 write，验证调用进程是否违背了正在访问的文件上的一把锁。强制性锁也被成为强迫方式锁。</p>
-<h4 id="当两个人同时编辑同一个文件时会怎样？"><a href="#当两个人同时编辑同一个文件时会怎样？" class="headerlink" title="当两个人同时编辑同一个文件时会怎样？"></a>当两个人同时编辑同一个文件时会怎样？</h4><p><strong>一般的UNIX系统文本编辑器并不适用记录锁，所以该文件的最后结果取决于写该文件的最后一个进程。</strong></p>
+</li>
+</ol>
+<h3 id="读写锁属性"><a href="#读写锁属性" class="headerlink" title="读写锁属性"></a>读写锁属性</h3><ul>
+<li>进程共享属性（同上）</li>
+</ul>
+<h3 id="条件变量属性"><a href="#条件变量属性" class="headerlink" title="条件变量属性"></a>条件变量属性</h3><ul>
+<li>进程共享属性（同上）</li>
+<li>时钟属性：控制计算 pthread_cond_timewait 函数的超时参数（tsptr）时采用的是哪个时钟。</li>
+</ul>
+<h3 id="屏障属性"><a href="#屏障属性" class="headerlink" title="屏障属性"></a>屏障属性</h3><ul>
+<li>进程共享属性（同上）</li>
+</ul>
+<h2 id="重入"><a href="#重入" class="headerlink" title="重入"></a>重入</h2><p>线程在遇到重入问题时与信号处理程序是类似的。在这两种情况下，多个控制线程在相同时间有可能调用相同的函数。<br><em>如果一个函数在相同的时间点可以被多个线程安全地调用，就称该函数是<code>线程安全</code>的。</em><br>很多函数不是线程安全的，因为它们返回的数据存放在静态的内容缓冲区中。通过修改接口，要求调用者自己提供缓冲区可以使函数变为线程安全的。<br><em>如果一个函数对多个线程来说是可重入的，就是线程安全的，但并不能说明对信号处理程序也是可重入的。如果对信号处理程序也可重入，那就可以说函数是<code>异步信号安全</code>的。</em></p>
+<h2 id="线程特定数据"><a href="#线程特定数据" class="headerlink" title="线程特定数据"></a>线程特定数据</h2><p>也称线程私有数据，是存储和查询某个特定线程相关数据的一种机制。一个进程中的所有线程可以访问这个进程的整个地址空间。除了使用寄存器以外，一个线程没有办法阻止另一个线程访问它的数据。线程特定数据也不例外。但使用特定数据可以提高线程空间的数据独立性，使得线程不太容易访问到其他线程的特定数据</p>
+<ul>
+<li>pthread_key_create 创建与特定数据关联的key，这个键可以被进程中的所有线程使用，但每个线程把这个键与不同的线程特定数据进行关联。</li>
+<li>线程通常使用malloc为线程特定数据分配内存。析构函数释放已分配的内存。如果线程在没有释放内存之前就退出了，那么这块内存就会丢失，即线程所属进程出现了内存泄漏。</li>
+<li>使用 pthread_once 可以保证某个逻辑在多线程中只执行一次，如创建特定数据的键。</li>
+<li>使用 pthread_getspecific 与 pthread_setspecific 访问管理特定数据。</li>
+</ul>
+<h2 id="取消选项"><a href="#取消选项" class="headerlink" title="取消选项"></a>取消选项</h2><p>有两个线程没有包含在 pthread_attr 结构中，它们是可取消状态和可取消类型。</p>
+<ul>
+<li>可取消状态状态属性决定了线程是否可以被取消。pthread_cancel 调用并不等待线程终止，而是继续运行，直到线程到达某个取消点（POSIX.1指定的多个函数）再去检查。如果取消了则按照请求行事。</li>
+<li>调用 pthread_testcancel 可以主动测试线程是否被取消。</li>
+<li>取消类型包括推迟取消（默认上述逻辑）和异步取消。使用异步取消时，线程可以在任意时间撤销，不是非得遇到取消点才被取消。</li>
+</ul>
+<h2 id="线程和信号"><a href="#线程和信号" class="headerlink" title="线程和信号"></a>线程和信号</h2><p>线程和进程类似，也可以设置信号集来屏蔽信号。<br><em>进程中的信号是递送到单个线程的。如果一个信号与硬件故障相关，那么该信号一般会被发送到引起该事件的线程中去，而其他信号则被发送到任意一个线程。</em><br>线程中递送信号使用 pthread_kill。</p>
+<h2 id="线程和fork"><a href="#线程和fork" class="headerlink" title="线程和fork"></a>线程和fork</h2><p>线程调用fork时，就为子进程创建了整个进程空间的副本，包括每个互斥量、读写锁和雕件变量的状态。如果父进程包含一个以上的线程，子进程在fork返回后如果不是马上调用exec的话，就需要清理锁状态。问题是子进程并不一定包含占有锁的线程的副本，所以子进程没有办法直到它占有了哪些锁，需要释放哪些锁。<br>在多线程中，为了避免不一致状态的问题，POSIX.1声明，在fork返回和子进程调用一个exec函数之间，子进程只能调用<code>异步信号安全</code>的函数。<br>要清除锁状态，可以通过调用 pthread_affork 函数建立fork处理程序，它分别在调用fork前、父子进程中fork返回后 这三个时机安装三个处理程序用于清理锁。</p>
+<h2 id="线程和I-O"><a href="#线程和I-O" class="headerlink" title="线程和I/O"></a>线程和I/O</h2><p>因为进程中的所有线程共享相同的文件描述符，所以多线程中要使用 pread 和 pwrite 函数进行读写来保证seek和I/O是绑定的原子操作。</p>
 
       
       <!-- reward -->
@@ -208,14 +233,14 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/04/11/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AB%A0%E2%80%94%E2%80%94%E9%AB%98%E7%BA%A7I-O/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/04/07/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/I-O/" rel="tag">I/O</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pthread/" rel="tag">pthread</a></li></ul>
 
 
     </footer>
@@ -226,10 +251,19 @@
   
   <nav class="article-nav">
     
+      <a href="/2020/04/09/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E4%B8%89%E7%AB%A0%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            《UNIX环境高级编程》第十三章——守护进程
+          
+        </div>
+      </a>
     
-      <a href="/2020/04/10/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E4%B8%89%E7%AB%A0%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6I-O/" class="article-nav-link">
+    
+      <a href="/2020/03/25/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">《UNIX环境高级编程》第三章——文件I/O</div>
+        <div class="article-nav-title">《UNIX环境高级编程》第十一章——线程</div>
       </a>
     
   </nav>
