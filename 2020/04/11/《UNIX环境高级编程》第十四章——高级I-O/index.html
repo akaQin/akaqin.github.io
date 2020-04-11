@@ -113,7 +113,7 @@
 <li>某些ioctl操作；</li>
 <li>某些进程间通信函数；</li>
 </ul>
-<p><em>虽然读写磁盘文件会暂时阻塞调用者，但并不能将与磁盘I/O有关的系统调用视为”低速“</em></p>
+<p><strong>虽然读写磁盘文件会暂时阻塞调用者，但并不能将与磁盘I/O有关的系统调用视为”低速“</strong></p>
 <a id="more"></a>
 
 <h3 id="非阻塞I-O-1"><a href="#非阻塞I-O-1" class="headerlink" title="非阻塞I/O"></a>非阻塞I/O</h3><p>非阻塞I/O是我们可以发出 open、read 和 write 这样的I/O操作，并使这些操作不会永远阻塞。如果这种操作不能完成，则调用立即出错返回，表示该操作如继续执行将阻塞。<br>对于一个给定的描述符，有两种为其指定非阻塞I/O的方法：</p>
@@ -124,7 +124,7 @@
 <h2 id="记录锁"><a href="#记录锁" class="headerlink" title="记录锁"></a>记录锁</h2><p>记录锁的功能是：当第一个进程正在读或修改文件的某个部分时，使用记录锁可以阻止其他进程修改同一文件区。它锁定的只是文件中的一个区域（也可能是整个文件）。<br>记录锁在各种系统种有不同的形式，POSIX。1标准的基础是fcntl方法。<br><img src="14-2.png" alt=""></p>
 <h3 id="fcntl-记录锁"><a href="#fcntl-记录锁" class="headerlink" title="fcntl 记录锁"></a>fcntl 记录锁</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fcntl</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">int</span> cmd, ...<span class="comment">/* struct flock *flockptr */</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">flock</span> &#123;</span></span><br><span class="line">  short l_type;   <span class="comment">/* 锁类型，F_RDLOCK（共享读锁）、F_WRLCK（独占写锁）或 F_UNLCK （解锁一个区域） */</span></span><br><span class="line">  short l_whence; <span class="comment">/* 根源（从什么地方开始)：SEEK_SET、SEEK_CUR or SEEK_END */</span></span><br><span class="line">  <span class="keyword">off_t</span> l_start;  <span class="comment">/* 和 l_whence 共同组成要加锁/解锁区域的其实字节偏移量 */</span></span><br><span class="line">  <span class="keyword">off_t</span> l_len;    <span class="comment">/* 加锁/解锁区域的字节长度 */</span></span><br><span class="line">  <span class="keyword">off_t</span> l_pid;    <span class="comment">/* 进程的ID（l_pid）持有的锁能阻塞当前进程（仅由 F_GETLK 返回） */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<p>共享读锁（L_RDLCK）和独占性写锁（L_WRLCK）。任意多个进程在一个给定的字节上可以各自有一把共享的读锁，但是在一个给定字节上只能有一个进程有一把独占写锁。<br>进一步而言，如果在一个给定字节上已经有一把或多把读锁，则不能在该字节上再加写锁；如果一个字节上已经有一把独占写锁，则不能再对它加任何锁。<br>单个进程提出多个锁请求时，新锁将替换就锁。<br><img src="14-3.png" alt=""><br>加读锁时，描述符必须是读打开；加写锁时，描述符必须是写打开；<br><em>频繁的加读锁可能会把请求写锁的进程给饿死</em><br>锁会自动的分裂和组合：<br><img src="14-4.png" alt=""></p>
+<p>共享读锁（L_RDLCK）和独占性写锁（L_WRLCK）。任意多个进程在一个给定的字节上可以各自有一把共享的读锁，但是在一个给定字节上只能有一个进程有一把独占写锁。<br>进一步而言，如果在一个给定字节上已经有一把或多把读锁，则不能在该字节上再加写锁；如果一个字节上已经有一把独占写锁，则不能再对它加任何锁。<br>单个进程提出多个锁请求时，新锁将替换就锁。<br><img src="14-3.png" alt=""><br>加读锁时，描述符必须是读打开；加写锁时，描述符必须是写打开；<br><strong>频繁的加读锁可能会把请求写锁的进程给饿死</strong><br>锁会自动的分裂和组合：<br><img src="14-4.png" alt=""></p>
 <h4 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h4><p>如果两个进程相互等待对方持有的锁并切不释放自己持有的锁时，这两个进程就进入了死锁的状态。</p>
 <h3 id="锁的隐含继承和释放"><a href="#锁的隐含继承和释放" class="headerlink" title="锁的隐含继承和释放"></a>锁的隐含继承和释放</h3><ul>
 <li>锁与进程和文件两者想关联：<ol>

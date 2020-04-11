@@ -12,7 +12,7 @@
 <li>某些ioctl操作；</li>
 <li>某些进程间通信函数；</li>
 </ul>
-<p><em>虽然读写磁盘文件会暂时阻塞调用者，但并不能将与磁盘I/O有关的系统调用视为”低速“</em></p>
+<p><strong>虽然读写磁盘文件会暂时阻塞调用者，但并不能将与磁盘I/O有关的系统调用视为”低速“</strong></p>
 <a id="more"></a>
 
 <h3 id="非阻塞I-O-1"><a href="#非阻塞I-O-1" class="headerlink" title="非阻塞I/O"></a>非阻塞I/O</h3><p>非阻塞I/O是我们可以发出 open、read 和 write 这样的I/O操作，并使这些操作不会永远阻塞。如果这种操作不能完成，则调用立即出错返回，表示该操作如继续执行将阻塞。<br>对于一个给定的描述符，有两种为其指定非阻塞I/O的方法：</p>
@@ -23,7 +23,7 @@
 <h2 id="记录锁"><a href="#记录锁" class="headerlink" title="记录锁"></a>记录锁</h2><p>记录锁的功能是：当第一个进程正在读或修改文件的某个部分时，使用记录锁可以阻止其他进程修改同一文件区。它锁定的只是文件中的一个区域（也可能是整个文件）。<br>记录锁在各种系统种有不同的形式，POSIX。1标准的基础是fcntl方法。<br><img src="14-2.png" alt=""></p>
 <h3 id="fcntl-记录锁"><a href="#fcntl-记录锁" class="headerlink" title="fcntl 记录锁"></a>fcntl 记录锁</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fcntl</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">int</span> cmd, ...<span class="comment">/* struct flock *flockptr */</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">flock</span> &#123;</span></span><br><span class="line">  short l_type;   <span class="comment">/* 锁类型，F_RDLOCK（共享读锁）、F_WRLCK（独占写锁）或 F_UNLCK （解锁一个区域） */</span></span><br><span class="line">  short l_whence; <span class="comment">/* 根源（从什么地方开始)：SEEK_SET、SEEK_CUR or SEEK_END */</span></span><br><span class="line">  <span class="keyword">off_t</span> l_start;  <span class="comment">/* 和 l_whence 共同组成要加锁/解锁区域的其实字节偏移量 */</span></span><br><span class="line">  <span class="keyword">off_t</span> l_len;    <span class="comment">/* 加锁/解锁区域的字节长度 */</span></span><br><span class="line">  <span class="keyword">off_t</span> l_pid;    <span class="comment">/* 进程的ID（l_pid）持有的锁能阻塞当前进程（仅由 F_GETLK 返回） */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-<p>共享读锁（L_RDLCK）和独占性写锁（L_WRLCK）。任意多个进程在一个给定的字节上可以各自有一把共享的读锁，但是在一个给定字节上只能有一个进程有一把独占写锁。<br>进一步而言，如果在一个给定字节上已经有一把或多把读锁，则不能在该字节上再加写锁；如果一个字节上已经有一把独占写锁，则不能再对它加任何锁。<br>单个进程提出多个锁请求时，新锁将替换就锁。<br><img src="14-3.png" alt=""><br>加读锁时，描述符必须是读打开；加写锁时，描述符必须是写打开；<br><em>频繁的加读锁可能会把请求写锁的进程给饿死</em><br>锁会自动的分裂和组合：<br><img src="14-4.png" alt=""></p>
+<p>共享读锁（L_RDLCK）和独占性写锁（L_WRLCK）。任意多个进程在一个给定的字节上可以各自有一把共享的读锁，但是在一个给定字节上只能有一个进程有一把独占写锁。<br>进一步而言，如果在一个给定字节上已经有一把或多把读锁，则不能在该字节上再加写锁；如果一个字节上已经有一把独占写锁，则不能再对它加任何锁。<br>单个进程提出多个锁请求时，新锁将替换就锁。<br><img src="14-3.png" alt=""><br>加读锁时，描述符必须是读打开；加写锁时，描述符必须是写打开；<br><strong>频繁的加读锁可能会把请求写锁的进程给饿死</strong><br>锁会自动的分裂和组合：<br><img src="14-4.png" alt=""></p>
 <h4 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h4><p>如果两个进程相互等待对方持有的锁并切不释放自己持有的锁时，这两个进程就进入了死锁的状态。</p>
 <h3 id="锁的隐含继承和释放"><a href="#锁的隐含继承和释放" class="headerlink" title="锁的隐含继承和释放"></a>锁的隐含继承和释放</h3><ul>
 <li>锁与进程和文件两者想关联：<ol>
@@ -63,7 +63,7 @@
 <li>read 从打开文件中读数据</li>
 <li>write 向打开文件写数据</li>
 </ul>
-<h3 id="带缓冲与不带缓冲的区别"><a href="#带缓冲与不带缓冲的区别" class="headerlink" title="带缓冲与不带缓冲的区别"></a>带缓冲与不带缓冲的区别</h3><p>所谓不带缓冲，并不是指内核不提供缓冲，而是只单纯的系统调用，不是函数库的调用。系统内核对磁盘的读写都会提供一个块缓冲（在有些地方也被称为内核高速缓存），当用write函数对其写数据时，直接调用系统调用，将数据写入到块缓冲进行排队，当块缓冲达到一定的量时，才会把数据写入磁盘。因此所谓的不带缓冲的I/O是指进程不提供缓冲功能（但内核还是提供缓冲的）。每调用一次write或read函数，直接系统调用。<br>而带缓冲的I/O是指进程对输入输出流进行了改进，提供了一个流缓冲，当用fwrite函数网磁盘写数据时，先把数据写入流缓冲区中，当达到一定条件，比如流缓冲区满了，或刷新流缓冲，这时候才会把数据一次送往内核提供的块缓冲，再经块缓冲写入磁盘。（双重缓冲）<br>因此，带缓冲的I/O在往磁盘写入相同的数据量时，会比不带缓冲的I/O调用系统调用的次数要少。<br>无缓存IO操作数据流向路径：<em>数据——内核缓存区——磁盘</em><br>标准IO操作数据流向路径：<em>数据——流缓存区——内核缓存区——磁盘</em></p>
+<h3 id="带缓冲与不带缓冲的区别"><a href="#带缓冲与不带缓冲的区别" class="headerlink" title="带缓冲与不带缓冲的区别"></a>带缓冲与不带缓冲的区别</h3><p>所谓不带缓冲，并不是指内核不提供缓冲，而是只单纯的系统调用，不是函数库的调用。系统内核对磁盘的读写都会提供一个块缓冲（在有些地方也被称为内核高速缓存），当用write函数对其写数据时，直接调用系统调用，将数据写入到块缓冲进行排队，当块缓冲达到一定的量时，才会把数据写入磁盘。因此所谓的不带缓冲的I/O是指进程不提供缓冲功能（但内核还是提供缓冲的）。每调用一次write或read函数，直接系统调用。<br>而带缓冲的I/O是指进程对输入输出流进行了改进，提供了一个流缓冲，当用fwrite函数网磁盘写数据时，先把数据写入流缓冲区中，当达到一定条件，比如流缓冲区满了，或刷新流缓冲，这时候才会把数据一次送往内核提供的块缓冲，再经块缓冲写入磁盘。（双重缓冲）<br>因此，带缓冲的I/O在往磁盘写入相同的数据量时，会比不带缓冲的I/O调用系统调用的次数要少。<br>无缓存IO操作数据流向路径：<strong>数据——内核缓存区——磁盘</strong><br>标准IO操作数据流向路径：<strong>数据——流缓存区——内核缓存区——磁盘</strong></p>
 <a id="more"></a>
 
 <h3 id="预读"><a href="#预读" class="headerlink" title="预读"></a>预读</h3><p>大多数文件系统为改善性能都采用某种预读（read ahead）技术。当检测到正进行顺序读取时，系统就试图读入比应用所要求的更多数据，并假想应用很快就会读这些数据。</p>
@@ -90,7 +90,7 @@
 </blockquote>
 <p><img src="3-7.png" alt=""><br><img src="3-8.png" alt=""></p>
 <p>打开该文件的每个进程都能获得各自的一个文件表项，但对一个给的文件只有一个v节点表项。这样每个进程都有它自己对该文件偏移量以及打开方式。<br>可能有多个文件描述符指向同一文件表项的情况，如dup和fork函数。</p>
-<h3 id="文件描述符标志与文件状态标志的区别"><a href="#文件描述符标志与文件状态标志的区别" class="headerlink" title="文件描述符标志与文件状态标志的区别"></a>文件描述符标志与文件状态标志的区别</h3><p><em>前者只用于一个进程的一个描述符，后者则应用于指向该给定文件表项的任何进程中的所有描述符。</em></p>
+<h3 id="文件描述符标志与文件状态标志的区别"><a href="#文件描述符标志与文件状态标志的区别" class="headerlink" title="文件描述符标志与文件状态标志的区别"></a>文件描述符标志与文件状态标志的区别</h3><p><strong>前者只用于一个进程的一个描述符，后者则应用于指向该给定文件表项的任何进程中的所有描述符。</strong></p>
 <h2 id="原子操作"><a href="#原子操作" class="headerlink" title="原子操作"></a>原子操作</h2><p>原子操作（atomic operation）指的是由多步组成的一个操作。如果该操作原子的执行，要么执行完所有步骤，要么一步也不执行，不可能只执行所有步骤的一个子集。任何要求多于一个函数调用的操作都不是原子操作，因为在两个函数调用之间，内核有可能会临时挂起进程。<br>我们用<code>pread</code>和<code>pwrite</code>函数进行I/O来保证lseek和read/write构成原子操作。</p>
 <h2 id="其他I-O函数"><a href="#其他I-O函数" class="headerlink" title="其他I/O函数"></a>其他I/O函数</h2><h3 id="dup（dup2）"><a href="#dup（dup2）" class="headerlink" title="dup（dup2）"></a>dup（dup2）</h3><p>用来复制一个现有的文件描述符。复制后每个文件描述符都有它自己的一套文件描述符标志。两个描述符指向同一文件表项，所以它们共享同一文件状态标志（读、写、追加写等）<br><img src="3-9.png" alt=""></p>
 <h3 id="syng、fsync和fdatasync"><a href="#syng、fsync和fdatasync" class="headerlink" title="syng、fsync和fdatasync"></a>syng、fsync和fdatasync</h3><p>用于保证磁盘上实际文件系统与缓冲区中内容的一致性。</p>
@@ -174,7 +174,7 @@
 <li>创建线程前可以通过pthread_attr_getdetachstate 和 pthread_attr_setdetachstate设置线程的分离状态</li>
 <li>通过pthread_attr_getstack 和 pthread_attr_setstack 设置栈帧</li>
 </ul>
-<p><em>对于进程来说，虚拟地址的空间大小是固定的，因为进程中只有一个栈，所以大小通常不是问题。但对于线程来说，同样大小的虚拟地址空间必须被所有线程共享。如果应用程序使用了许多线程，以致这些线程的累计大小超过了可用的虚拟地址空间，就需要减少默认的线程栈大小。另一方面，如果线程调用的函数分配了大量的自动变量，或者调用的函数涉及许多很深的栈帧，那么需要的栈大小可能要比默认的大</em><br>如果线程的虚拟地址空间都用完了，可以使用malloc或者mmap来为可替代的栈分配空间，并使用pthread_attr_setstack函数来改变新建线程的栈位置。</p>
+<p><strong>对于进程来说，虚拟地址的空间大小是固定的，因为进程中只有一个栈，所以大小通常不是问题。但对于线程来说，同样大小的虚拟地址空间必须被所有线程共享。如果应用程序使用了许多线程，以致这些线程的累计大小超过了可用的虚拟地址空间，就需要减少默认的线程栈大小。另一方面，如果线程调用的函数分配了大量的自动变量，或者调用的函数涉及许多很深的栈帧，那么需要的栈大小可能要比默认的大</strong><br>如果线程的虚拟地址空间都用完了，可以使用malloc或者mmap来为可替代的栈分配空间，并使用pthread_attr_setstack函数来改变新建线程的栈位置。</p>
 <a id="more"></a>
 
 <h2 id="同步属性"><a href="#同步属性" class="headerlink" title="同步属性"></a>同步属性</h2><h3 id="互斥量属性"><a href="#互斥量属性" class="headerlink" title="互斥量属性"></a>互斥量属性</h3><p>用 pthread_mutex_attr 结构表示，值得注意的三个属性是：</p>
@@ -202,7 +202,7 @@
 <h3 id="屏障属性"><a href="#屏障属性" class="headerlink" title="屏障属性"></a>屏障属性</h3><ul>
 <li>进程共享属性（同上）</li>
 </ul>
-<h2 id="重入"><a href="#重入" class="headerlink" title="重入"></a>重入</h2><p>线程在遇到重入问题时与信号处理程序是类似的。在这两种情况下，多个控制线程在相同时间有可能调用相同的函数。<br><em>如果一个函数在相同的时间点可以被多个线程安全地调用，就称该函数是<code>线程安全</code>的。</em><br>很多函数不是线程安全的，因为它们返回的数据存放在静态的内容缓冲区中。通过修改接口，要求调用者自己提供缓冲区可以使函数变为线程安全的。<br><em>如果一个函数对多个线程来说是可重入的，就是线程安全的，但并不能说明对信号处理程序也是可重入的。如果对信号处理程序也可重入，那就可以说函数是<code>异步信号安全</code>的。</em></p>
+<h2 id="重入"><a href="#重入" class="headerlink" title="重入"></a>重入</h2><p>线程在遇到重入问题时与信号处理程序是类似的。在这两种情况下，多个控制线程在相同时间有可能调用相同的函数。<br><strong>如果一个函数在相同的时间点可以被多个线程安全地调用，就称该函数是<code>线程安全</code>的。</strong><br>很多函数不是线程安全的，因为它们返回的数据存放在静态的内容缓冲区中。通过修改接口，要求调用者自己提供缓冲区可以使函数变为线程安全的。<br><strong>如果一个函数对多个线程来说是可重入的，就是线程安全的，但并不能说明对信号处理程序也是可重入的。如果对信号处理程序也可重入，那就可以说函数是<code>异步信号安全</code>的。</strong></p>
 <h2 id="线程特定数据"><a href="#线程特定数据" class="headerlink" title="线程特定数据"></a>线程特定数据</h2><p>也称线程私有数据，是存储和查询某个特定线程相关数据的一种机制。一个进程中的所有线程可以访问这个进程的整个地址空间。除了使用寄存器以外，一个线程没有办法阻止另一个线程访问它的数据。线程特定数据也不例外。但使用特定数据可以提高线程空间的数据独立性，使得线程不太容易访问到其他线程的特定数据</p>
 <ul>
 <li>pthread_key_create 创建与特定数据关联的key，这个键可以被进程中的所有线程使用，但每个线程把这个键与不同的线程特定数据进行关联。</li>
@@ -216,7 +216,7 @@
 <li>调用 pthread_testcancel 可以主动测试线程是否被取消。</li>
 <li>取消类型包括推迟取消（默认上述逻辑）和异步取消。使用异步取消时，线程可以在任意时间撤销，不是非得遇到取消点才被取消。</li>
 </ul>
-<h2 id="线程和信号"><a href="#线程和信号" class="headerlink" title="线程和信号"></a>线程和信号</h2><p>线程和进程类似，也可以设置信号集来屏蔽信号。<br><em>进程中的信号是递送到单个线程的。如果一个信号与硬件故障相关，那么该信号一般会被发送到引起该事件的线程中去，而其他信号则被发送到任意一个线程。</em><br>线程中递送信号使用 pthread_kill。</p>
+<h2 id="线程和信号"><a href="#线程和信号" class="headerlink" title="线程和信号"></a>线程和信号</h2><p>线程和进程类似，也可以设置信号集来屏蔽信号。<br><strong>进程中的信号是递送到单个线程的。如果一个信号与硬件故障相关，那么该信号一般会被发送到引起该事件的线程中去，而其他信号则被发送到任意一个线程。</strong><br>线程中递送信号使用 pthread_kill。</p>
 <h2 id="线程和fork"><a href="#线程和fork" class="headerlink" title="线程和fork"></a>线程和fork</h2><p>线程调用fork时，就为子进程创建了整个进程空间的副本，包括每个互斥量、读写锁和雕件变量的状态。如果父进程包含一个以上的线程，子进程在fork返回后如果不是马上调用exec的话，就需要清理锁状态。问题是子进程并不一定包含占有锁的线程的副本，所以子进程没有办法直到它占有了哪些锁，需要释放哪些锁。<br>在多线程中，为了避免不一致状态的问题，POSIX.1声明，在fork返回和子进程调用一个exec函数之间，子进程只能调用<code>异步信号安全</code>的函数。<br>要清除锁状态，可以通过调用 pthread_affork 函数建立fork处理程序，它分别在调用fork前、父子进程中fork返回后 这三个时机安装三个处理程序用于清理锁。</p>
 <h2 id="线程和I-O"><a href="#线程和I-O" class="headerlink" title="线程和I/O"></a>线程和I/O</h2><p>因为进程中的所有线程共享相同的文件描述符，所以多线程中要使用 pread 和 pwrite 函数进行读写来保证seek和I/O是绑定的原子操作。</p>
 ]]></content>
@@ -267,7 +267,7 @@
 
 </li>
 </ol>
-<p><em>多线程的软件设计要注意锁的粒度：如果锁的粒度太粗，就会出现多线程阻塞等待相同的锁，这可能并不能改善并发性；如果锁的粒度太细，那么过多的锁开销会使系统性能受影响，而且代码变得复杂。作为一个程序员，需要在满足锁需求的情况下，在代码复杂性和性能之间找到正确的平衡。</em></p>
+<p><strong>多线程的软件设计要注意锁的粒度：如果锁的粒度太粗，就会出现多线程阻塞等待相同的锁，这可能并不能改善并发性；如果锁的粒度太细，那么过多的锁开销会使系统性能受影响，而且代码变得复杂。作为一个程序员，需要在满足锁需求的情况下，在代码复杂性和性能之间找到正确的平衡。</strong></p>
 <h4 id="带有超时的互斥量"><a href="#带有超时的互斥量" class="headerlink" title="带有超时的互斥量"></a>带有超时的互斥量</h4><p>函数 pthread_mutex_timedlock，加锁时设置一个愿意等待的绝对时间，超时后放弃加锁，返回错误码ETIMEDOUT。</p>
 <h3 id="读写锁"><a href="#读写锁" class="headerlink" title="读写锁"></a>读写锁</h3><p>读写锁与互斥量类似，但允许更高的并行性。非常适合于对数据结构读的次数远大于写的情况。</p>
 <ul>
@@ -317,7 +317,7 @@
 <h2 id="函数signal"><a href="#函数signal" class="headerlink" title="函数signal"></a>函数signal</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;signal.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// void (*signal(int signo, void (*func)(int)))(int);</span></span><br><span class="line"><span class="comment">//等价于</span></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="keyword">void</span> <span class="title">Sigfunc</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function">Sigfunc *<span class="title">signal</span><span class="params">(<span class="keyword">int</span>, Sigfunc *)</span></span>;</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"apue.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sig_usr</span><span class="params">(<span class="keyword">int</span> signo)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (signal(SIGUSR1, sig_usr) == SIG_ERR) &#123;</span><br><span class="line">        err_sys(<span class="string">"signal error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (signal(SIGUSR2, sig_usr) == SIG_ERR) &#123;</span><br><span class="line">        err_sys(<span class="string">"signal error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        pause();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sig_usr</span><span class="params">(<span class="keyword">int</span> signo)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (signo == SIGUSR1) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"received SIGUSR1\n"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (signo == SIGUSR2) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"received SIGUSR2\n"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        err_dump(<span class="string">"received signal %d\n"</span>, signo);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><em>注意：在UNIX系统中，杀死（kill）这个术语是不恰当的。kill（1）命令和kill（2）函数只是将一个信号发送给一个进程或进程组。该信号是否终止进程则取决于该信号的类型，以及进程是否安排了捕捉该信号</em></p>
+<p><strong>注意：在UNIX系统中，杀死（kill）这个术语是不恰当的。kill（1）命令和kill（2）函数只是将一个信号发送给一个进程或进程组。该信号是否终止进程则取决于该信号的类型，以及进程是否安排了捕捉该信号</strong></p>
 <h3 id="程序启动"><a href="#程序启动" class="headerlink" title="程序启动"></a>程序启动</h3><p>当执行一个程序时，所有信号的状态都是系统默认或忽略。通常所有信号都被设置为它们的默认动作，除非调用exec的进程忽略该信号。<br>当进程执行一个新程序后，信号捕捉函数的地址很可能在所执行的新程序文件中已无意义。</p>
 <h3 id="进程创建"><a href="#进程创建" class="headerlink" title="进程创建"></a>进程创建</h3><p>当一个进程调用fork时，其子进程继承父进程的信号处理方式。因为子进程在开始时复制了父进程内存映像，所以信号捕捉函数的地址在子进程中是有意义的。</p>
 <h2 id="可重入函数"><a href="#可重入函数" class="headerlink" title="可重入函数"></a>可重入函数</h2><p>进程捕捉到信号并对其进行处理时，进程正在执行的正常指令序列就被信号处理程序临时中断，它首先执行该信号处理程序中的指令。如果信号处理程序返回（例如没有调用exit或longjmp），则继续执行在捕捉到信号时进程正在执行的正常指令序列。</p>
