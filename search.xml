@@ -179,11 +179,11 @@
 </ul>
 <h3 id="fcntl"><a href="#fcntl" class="headerlink" title="fcntl"></a>fcntl</h3><p>用于改变已经打开文件的属性，主要由以下5种功能：</p>
 <ol>
-<li>复制一个已有的描述符</li>
-<li>获取/设置文件描述符标志</li>
-<li>获取/设置文件状态标志</li>
-<li>获取/设置异步I/O所有权</li>
-<li>获取/设置记录锁</li>
+<li>复制一个已有的描述符(cmd = F_DUPFD 或 F_DUPFD_CLOEXEC)</li>
+<li>获取/设置文件描述符标志(cmd = F_GETFD 或 F_SETFD)</li>
+<li>获取/设置文件状态标志(cmd = F_GETFL 或 F_SETFL)</li>
+<li>获取/设置异步I/O所有权(cmd = F_GETONW 或 F_SETOWN)</li>
+<li>获取/设置记录锁(cmd = F_GETLK 、 F_SETLK 或 F_SETLKW（阻塞版本）)</li>
 </ol>
 <h3 id="ioctl"><a href="#ioctl" class="headerlink" title="ioctl"></a>ioctl</h3><p>I/O操作的杂物箱，未总结的其他I/O操作都在里面。</p>
 <h2 id="dev-fd"><a href="#dev-fd" class="headerlink" title="/dev/fd"></a>/dev/fd</h2><p>较新的系统都提供/dev/fd目录，其目录项是名为0、1、2等文件，打开文件/dev/fd/n 等效于 复制描述符n（假定描述符n是打开的）。</p>
