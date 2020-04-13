@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3.5k字</span>
+            <span class="post-count">3.8k字</span>
         </span>
     </span>
 
@@ -77,7 +77,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">12分钟</span>
+            <span class="post-count">13分钟</span>
         </span>
     </span>
 </div>
@@ -205,6 +205,17 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">aio_return</span><span class="params">(<span class="keyword">const</span> struct aiocb *aiocbp)</span></span>;</span><br></pre></td></tr></table></figure>
 <p>如果完成了所有事务时，还有异步操作未完成时，可以调用aio_suspend函数来阻塞进程，直到操作完成：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">aio_suspend</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  <span class="keyword">const</span> struct aiocb *<span class="keyword">const</span> <span class="built_in">list</span>[],</span></span></span><br><span class="line"><span class="function"><span class="params">  <span class="keyword">int</span> nent,</span></span></span><br><span class="line"><span class="function"><span class="params">  <span class="keyword">const</span> struct timespec *timeout</span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>不想再等待未完成的异步I/O操作时，调用aio_cancel:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">aio_cancel</span><span class="params">(<span class="keyword">int</span> ofd, struct aiocb *aiocbp)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>批量I/O，可异步，可同步：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lio_listio</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">int</span> mode,</span></span></span><br><span class="line"><span class="function"><span class="params">    struct aiocb *<span class="keyword">const</span> aiocblist[],</span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">int</span> nent,</span></span></span><br><span class="line"><span class="function"><span class="params">    struct sigevent *sigp</span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="readv-和-writev"><a href="#readv-和-writev" class="headerlink" title="readv 和 writev"></a>readv 和 writev</h2><p>用于在一次函数调用中读、写锁哥非连续缓冲区。也成为散布读（scatter read）和聚集写（gather write）。</p>
+<h2 id="readn-和-writen"><a href="#readn-和-writen" class="headerlink" title="readn 和 writen"></a>readn 和 writen</h2><p>管道、FIFO以及某些设备（终端和网络）有下列性质：</p>
+<ul>
+<li>一次read操作的返回值可能少于所有求的数据，即使还没到达文件尾端，也可能是这样，这不是错误，应当继续读该设备。</li>
+<li>一次write操作的返回值可能少于指定字节数。这是某些原因造成的，如内核输出缓冲区变满。这也不是错误，应当继续写余下数据。<br>readn和writen的功能是指定读/写n字节数据，并处理返回值可能小于要求值的情况。</li>
+</ul>
 
       
       <!-- reward -->
