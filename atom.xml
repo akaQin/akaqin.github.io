@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-04-13T13:32:43.542Z</updated>
+  <updated>2020-04-13T14:34:46.422Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>《UNIX环境高级编程》第1章——UNIX基础知识</title>
+    <link href="http://yoursite.com/2020/04/13/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC1%E7%AB%A0%E2%80%94%E2%80%94UNIX%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/"/>
+    <id>http://yoursite.com/2020/04/13/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC1%E7%AB%A0%E2%80%94%E2%80%94UNIX%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</id>
+    <published>2020-04-13T13:57:59.000Z</published>
+    <updated>2020-04-13T14:34:46.422Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="UNIX-体系结构"><a href="#UNIX-体系结构" class="headerlink" title="UNIX 体系结构"></a>UNIX 体系结构</h2><p>严格意义上说，可将操作系统定义为一种软件，它控制计算机硬件资源，提供程序运行环境。我们称这种软件为内核，内核的接口被称为 <strong>系统调用（system call）</strong>。<br>广义上说，操作系统包括了内核和一些其他软件，这些软件使得计算机能够发挥作用，使其具有自己的特性。这里说的软件包括系统实用程序、应用程序、shell以及公用函数库等。<br>例如，Linux是GNU操作系统使用的内核。</p><h2 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h2><h3 id="登录名"><a href="#登录名" class="headerlink" title="登录名"></a>登录名</h3><h3 id="shell"><a href="#shell" class="headerlink" title="shell"></a>shell</h3><h2 id="文件和目录"><a href="#文件和目录" class="headerlink" title="文件和目录"></a>文件和目录</h2><h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><h3 id="文件名"><a href="#文件名" class="headerlink" title="文件名"></a>文件名</h3><h3 id="目录名"><a href="#目录名" class="headerlink" title="目录名"></a>目录名</h3><h3 id="工作目录"><a href="#工作目录" class="headerlink" title="工作目录"></a>工作目录</h3><h3 id="起始目录"><a href="#起始目录" class="headerlink" title="起始目录"></a>起始目录</h3><h2 id="输入和输出"><a href="#输入和输出" class="headerlink" title="输入和输出"></a>输入和输出</h2><h3 id="文件描述符"><a href="#文件描述符" class="headerlink" title="文件描述符"></a>文件描述符</h3><h3 id="标准输入、标准输出和标准错误"><a href="#标准输入、标准输出和标准错误" class="headerlink" title="标准输入、标准输出和标准错误"></a>标准输入、标准输出和标准错误</h3><h3 id="不带缓存的I-O"><a href="#不带缓存的I-O" class="headerlink" title="不带缓存的I/O"></a>不带缓存的I/O</h3><p><code>open</code>、<code>read</code>、<code>write</code>、<code>lseek</code>、<code>close</code></p><h3 id="标准I-O"><a href="#标准I-O" class="headerlink" title="标准I/O"></a>标准I/O</h3><h2 id="程序和进程"><a href="#程序和进程" class="headerlink" title="程序和进程"></a>程序和进程</h2><h3 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h3><p>存储在磁盘上某个目录中的可执行文件。内核使用exec函数将程序读入内存，并执行程序。</p><h3 id="进程和进程ID"><a href="#进程和进程ID" class="headerlink" title="进程和进程ID"></a>进程和进程ID</h3><p>程序的执行实例叫做进程。</p><h3 id="进程控制"><a href="#进程控制" class="headerlink" title="进程控制"></a>进程控制</h3><p>3个主要的控制函数：<code>fork</code>、<code>exec</code>和<code>waitpid</code></p><h3 id="线程和线程ID"><a href="#线程和线程ID" class="headerlink" title="线程和线程ID"></a>线程和线程ID</h3><h2 id="出错处理"><a href="#出错处理" class="headerlink" title="出错处理"></a>出错处理</h2><p>UNIX函数出错时，通常返回一个负值，而且整型变量errno通常被设置为特定的值。</p><h3 id="出错恢复"><a href="#出错恢复" class="headerlink" title="出错恢复"></a>出错恢复</h3><p>致命性错误无法恢复；非致命性错误可以恢复。</p><h2 id="用户标识"><a href="#用户标识" class="headerlink" title="用户标识"></a>用户标识</h2><h3 id="用户ID"><a href="#用户ID" class="headerlink" title="用户ID"></a>用户ID</h3><h3 id="组ID"><a href="#组ID" class="headerlink" title="组ID"></a>组ID</h3><h3 id="附属组ID"><a href="#附属组ID" class="headerlink" title="附属组ID"></a>附属组ID</h3><h2 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h2><h2 id="时间值"><a href="#时间值" class="headerlink" title="时间值"></a>时间值</h2><p>UNIX使用过两种不同的时间值：</p><ul><li>日历时间，time_t</li><li>进程时间/CPU时间，以时钟滴答计算，clock_t</li></ul><p>度量一个进程的执行时间时，UNIX系统为进程维护了3个进程时间值：</p><ul><li>时钟时间/墙上时钟时间</li><li>用户CPU时间</li><li>系统CPU时间</li></ul><p>用户CPU时间 + 系统CPU时间 = CPU时间</p><h2 id="系统调用和库函数"><a href="#系统调用和库函数" class="headerlink" title="系统调用和库函数"></a>系统调用和库函数</h2><p><img src="1-11.png" alt=""></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;UNIX-体系结构&quot;&gt;&lt;a href=&quot;#UNIX-体系结构&quot; class=&quot;headerlink&quot; title=&quot;UNIX 体系结构&quot;&gt;&lt;/a&gt;UNIX 体系结构&lt;/h2&gt;&lt;p&gt;严格意义上说，可将操作系统定义为一种软件，它控制计算机硬件资源，提供程序运行环境。我
+      
+    
+    </summary>
+    
+    
+      <category term="《APUE》笔记" scheme="http://yoursite.com/categories/%E3%80%8AAPUE%E3%80%8B%E7%AC%94%E8%AE%B0/"/>
+    
+    
+      <category term="UNIX" scheme="http://yoursite.com/tags/UNIX/"/>
+    
+  </entry>
   
   <entry>
     <title>《UNIX环境高级编程》第十四章——高级I/O</title>
