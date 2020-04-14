@@ -140,9 +140,7 @@
 <p>使用ls -i命令，可以看到文件名对应的inode号码：<br><code>ls -i example.txt</code><br><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120405.png" alt=""></p>
 <h3 id="五、目录文件"><a href="#五、目录文件" class="headerlink" title="五、目录文件"></a>五、目录文件</h3><p>Unix/Linux系统中，目录（directory）也是一种文件。打开目录，实际上就是打开目录文件。</p>
 <p>目录文件的结构非常简单，就是一系列目录项（dirent）的列表。每个目录项，由两部分组成：所包含文件的文件名，以及该文件名对应的inode号码。</p>
-<p>ls命令只列出目录文件中的所有文件名：</p>
-<p>　　ls /etc</p>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120406.png" alt=""></p>
+<p>ls命令只列出目录文件中的所有文件名：<br><code>ls /etc</code><br><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120406.png" alt=""></p>
 <p>ls -i命令列出整个目录文件，即文件名和inode号码：</p>
 <p>　　ls -i /etc</p>
 <p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120407.png" alt=""></p>
