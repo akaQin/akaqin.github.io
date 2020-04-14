@@ -63,8 +63,8 @@
       </tags>
   </entry>
   <entry>
-    <title>《UNIX环境高级编程》第十四章——高级I/O</title>
-    <url>/2020/04/11/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E5%9B%9B%E7%AB%A0%E2%80%94%E2%80%94%E9%AB%98%E7%BA%A7I-O/</url>
+    <title>《UNIX环境高级编程》第14章——高级I/O</title>
+    <url>/2020/04/11/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC14%E7%AB%A0%E2%80%94%E2%80%94%E9%AB%98%E7%BA%A7I-O/</url>
     <content><![CDATA[<h2 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h2><h3 id="同步，异步，阻塞，非阻塞"><a href="#同步，异步，阻塞，非阻塞" class="headerlink" title="同步，异步，阻塞，非阻塞"></a>同步，异步，阻塞，非阻塞</h3><p>没有IO操作，所有的代码基本都是同步的<br>有了IO操作后，如果没有多进程多线程，所有代码还是同步的<br>有了IO操作，有了多进程多线程，代码才有了异步的可能性，同时也产生了阻塞与非阻塞<br><strong>同步与异步</strong><br>同步是指代码调用IO操作时，必须等待IO操作完成才返回的调用方式。<br>异步是指代码调用IO操作时，不必等IO操作完成就返回的调用方式。</p>
 <p>同步是最原始的调用方式。<br>异步则需要多线程，多CPU或者非阻塞IO的支持。<br><strong>阻塞与非阻塞</strong><br>阻塞是指调用线程或者进程被操作系统挂起。<br>非阻塞是指调用线程或者进程不会被操作系统挂起。</p>
 <h3 id="”低速“系统调用（阻塞的原因）"><a href="#”低速“系统调用（阻塞的原因）" class="headerlink" title="”低速“系统调用（阻塞的原因）"></a>”低速“系统调用（阻塞的原因）</h3><p>系统调用分为两类：“低速”系统调用和其他。<br>低速系统调用是可能会使进程永远阻塞的一类系统调用，包括：</p>
@@ -187,8 +187,8 @@
       </tags>
   </entry>
   <entry>
-    <title>《UNIX环境高级编程》第三章——文件I/O</title>
-    <url>/2020/04/10/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E4%B8%89%E7%AB%A0%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6I-O/</url>
+    <title>《UNIX环境高级编程》第3章——文件I/O</title>
+    <url>/2020/04/10/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC3%E7%AB%A0%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6I-O/</url>
     <content><![CDATA[<h2 id="文件描述符"><a href="#文件描述符" class="headerlink" title="文件描述符"></a>文件描述符</h2><p>对于内核而言，所有打开的文件都通过文件描述符引用。文件描述符是一个非负整数。当打开一个现有文件或创建一个新文件时，内核向进程返回一个文件描述符。</p>
 <ul>
 <li>0 - STDIN_FILENO - 标准输入</li>
@@ -258,8 +258,8 @@
       </tags>
   </entry>
   <entry>
-    <title>《UNIX环境高级编程》第十三章——守护进程</title>
-    <url>/2020/04/09/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E4%B8%89%E7%AB%A0%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/</url>
+    <title>《UNIX环境高级编程》第13章——守护进程</title>
+    <url>/2020/04/09/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC13%E7%AB%A0%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/</url>
     <content><![CDATA[<p>守护进程（daemon）是生存期长的一种进程。它们常常在系统引导装入时启动，仅在系统关闭时才终止。守护进程没有控制终端，终端名为问号。后台运行，大多数都以超级用户（root）特权运行。用户层守护进程的父进程是init。</p>
 <h2 id="编程规则"><a href="#编程规则" class="headerlink" title="编程规则"></a>编程规则</h2><ol>
 <li>调用umask将文件模式创建屏蔽字设置为一个已知值（通常是0）。</li>
@@ -297,8 +297,8 @@
       </tags>
   </entry>
   <entry>
-    <title>《UNIX环境高级编程》第十二章——线程控制</title>
-    <url>/2020/04/07/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/</url>
+    <title>《UNIX环境高级编程》第12章——线程控制</title>
+    <url>/2020/04/07/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC12%E7%AB%A0%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/</url>
     <content><![CDATA[<h2 id="线程限制"><a href="#线程限制" class="headerlink" title="线程限制"></a>线程限制</h2><p>Single UNIX Specification定义了一些与线程操作有关的限制：</p>
 <ul>
 <li>线程退出时操作系统试图销毁特定数据的最大次数</li>
@@ -368,8 +368,8 @@
       </tags>
   </entry>
   <entry>
-    <title>《UNIX环境高级编程》第十一章——线程</title>
-    <url>/2020/03/25/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B/</url>
+    <title>《UNIX环境高级编程》第11章——线程</title>
+    <url>/2020/03/25/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC11%E7%AB%A0%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B/</url>
     <content><![CDATA[<h2 id="线程概念"><a href="#线程概念" class="headerlink" title="线程概念"></a>线程概念</h2><p>每个线程都包含有表示执行环境所必须的信息，包括线程ID、一组寄存器值、栈、调度优先级和策略、信号屏蔽字、errno变量以及线程私有数据。一个进程的所有信息对该进程的所有线程都是共享的，包括可执行程序的代码、程序的全局内存和堆内存、栈以及文件描述符。</p>
 <h2 id="线程标识"><a href="#线程标识" class="headerlink" title="线程标识"></a>线程标识</h2><p>每个线程有一个线程ID，线程可以通过调用 pthread_self 函数获得自身的线程ID。<br><img src="11-1.png" alt=""></p>
 <h2 id="线程创建-pthread-create"><a href="#线程创建-pthread-create" class="headerlink" title="线程创建 pthread_create"></a>线程创建 pthread_create</h2><p>线程创建时不保证哪个线程会先运行。新创建的线程可以访问进程的地址空间，并继承调用线程的浮点环境和信号屏蔽字，但是该线程的挂起信号集会被清除。</p>
@@ -444,8 +444,8 @@
       </tags>
   </entry>
   <entry>
-    <title>《UNIX环境高级编程》第十章——信号</title>
-    <url>/2020/03/13/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%8D%81%E7%AB%A0%E2%80%94%E2%80%94%E4%BF%A1%E5%8F%B7/</url>
+    <title>《UNIX环境高级编程》第10章——信号</title>
+    <url>/2020/03/13/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC10%E7%AB%A0%E2%80%94%E2%80%94%E4%BF%A1%E5%8F%B7/</url>
     <content><![CDATA[<h2 id="信号概念"><a href="#信号概念" class="headerlink" title="信号概念"></a>信号概念</h2><p>信号是软件中断。它提供了一种处理异步事件的方法。每个信号都有一个名字，以SIG开头。在头文件&lt;signal.h&gt;中，信号名都被定义为正整数常量（信号编号）。<br>不存在编号为0的信号。kill函数对信号编号0有特殊的作用。POSIX.1将此中信号编号值称为空信号。<br>信号出现时，内核按下列三种方式之一进行处理：</p>
 <ul>
 <li>忽略此信号。大多数信号都可使用这种方式进行处理，但有两种信号决不能被忽略，它们是SIGKILL和SIGSTOP。原因是它们想内核提供了使进程终止或停止的可靠方法。</li>
@@ -519,8 +519,8 @@
       </tags>
   </entry>
   <entry>
-    <title>《UNIX环境高级编程》第九章——进程关系</title>
-    <url>/2020/03/08/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E4%B9%9D%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E5%85%B3%E7%B3%BB/</url>
+    <title>《UNIX环境高级编程》第9章——进程关系</title>
+    <url>/2020/03/08/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC9%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E5%85%B3%E7%B3%BB/</url>
     <content><![CDATA[<h2 id="终端登录"><a href="#终端登录" class="headerlink" title="终端登录"></a>终端登录</h2><p>我们现在描述的过程用于经由终端登录至UNIX系统。该过程几乎与所使用的终端类型无关，可以是基于字符的终端、仿真基于字符终端的图形终端，或者运行窗口系统的图形终端。</p>
 <h3 id="BSD终端登录"><a href="#BSD终端登录" class="headerlink" title="BSD终端登录"></a>BSD终端登录</h3><p>系统管理者创建通常名为/etc/ttys的文件，其中每个终端设备都有一行，说明设备名和传到getty程序的参数。当系统自举时，内核创建进程ID为1的进程，也就是init进程。<br>init进程使系统进入多用户模式。init读取文件/etc/ttys，对每一个允许登录的终端设备，init调用一次fork，它所生成的子进程则exec getty程序。<br><img src="9-1.png" alt=""></p>
 <a id="more"></a>
@@ -628,8 +628,8 @@
       </tags>
   </entry>
   <entry>
-    <title>《UNIX环境高级编程》第八章——进程控制</title>
-    <url>/2020/03/02/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6/</url>
+    <title>《UNIX环境高级编程》第8章——进程控制</title>
+    <url>/2020/03/02/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC8%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6/</url>
     <content><![CDATA[<h2 id="进程标识"><a href="#进程标识" class="headerlink" title="进程标识"></a>进程标识</h2><ul>
 <li>每个进程都有一个非负整型表示的唯一进程ID</li>
 <li>ID为0的进程通常是调度进程，常常被称为交换进程（swapper）。该进程是内核的一部分，它并不执行任何磁盘上的程序，因此也被称为系统进程。</li>
@@ -766,8 +766,8 @@
       </tags>
   </entry>
   <entry>
-    <title>《UNIX环境高级编程》第七章——进程环境</title>
-    <url>/2020/02/23/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC%E4%B8%83%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/</url>
+    <title>《UNIX环境高级编程》第7章——进程环境</title>
+    <url>/2020/02/23/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC7%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/</url>
     <content><![CDATA[<h3 id="进程开始"><a href="#进程开始" class="headerlink" title="进程开始"></a>进程开始</h3>   <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int main(int argc, char *argv[]);</span><br></pre></td></tr></table></figure>
 <p>   以main函数开始执行。当内核执行C程序时，在调用main前先调用一个特殊的启动例程。可执行程序将此启动例程指定为程序的起始地址——这是由链接编辑器设置的，而链接编辑器则由C编译器调用。启动例程从内核取得命令行参数和环境变量值，然后为按上述方式调用做好安排。</p>
 <h3 id="进程终止"><a href="#进程终止" class="headerlink" title="进程终止"></a>进程终止</h3><p>   有8种终止方式，前5种为正常终止：</p>
@@ -2330,8 +2330,8 @@
       </categories>
   </entry>
   <entry>
-    <title>《深入理解计算机系统》第一章</title>
-    <url>/2018/06/23/%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E3%80%8B%E7%AC%AC%E4%B8%80%E7%AB%A0/</url>
+    <title>《深入理解计算机系统》第1章</title>
+    <url>/2018/06/23/%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E3%80%8B%E7%AC%AC1%E7%AB%A0/</url>
     <content><![CDATA[<h1 id="计算机系统漫游"><a href="#计算机系统漫游" class="headerlink" title="计算机系统漫游"></a>计算机系统漫游</h1><h2 id="信息就是位-上下文"><a href="#信息就是位-上下文" class="headerlink" title="信息就是位 + 上下文"></a>信息就是位 + 上下文</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"hello, world\n"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>​    hello程序的生命周期是从一个源程序开始的。源程序是一个由值0和1组成的位（又称比特）序列，8个位组成一组，称为字节。每个字节必保湿程序中的某些特殊文本字符。大部分计算机系统使用ASCII标准来表示文本字符，这种方式实际上就是一个唯一的单字节大小的整数值来表示每个字符（入下图）。</p>
