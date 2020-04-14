@@ -6,6 +6,8 @@
     <content><![CDATA[<h2 id="UNIX标准化"><a href="#UNIX标准化" class="headerlink" title="UNIX标准化"></a>UNIX标准化</h2><h3 id="ISO-C"><a href="#ISO-C" class="headerlink" title="ISO C"></a>ISO C</h3><p>ISO（国际标准化组织） C标准的意图是提供C程序的可移植性，使其能适合于大量不同的操作系统，而不只是适合UNIX系统。此标准不仅定了C程序设计语言的语法和语义，还定义了其标准库。</p>
 <h3 id="IEEE-POSIX"><a href="#IEEE-POSIX" class="headerlink" title="IEEE POSIX"></a>IEEE POSIX</h3><p>POSIX是由IEEE（电气和电子工程师学会）指定的标准族。POSIX指的是可移植操作系统接口。</p>
 <h3 id="Single-UNIX-Specification"><a href="#Single-UNIX-Specification" class="headerlink" title="Single UNIX Specification"></a>Single UNIX Specification</h3><p>Single UNIX Specification（SUS，单一UNIX规范）是POSIX.1标准的一个超集，它定义了一些附加接口扩展了POSIX.1规范提供的功能。POSIX.1相当于Single UNIX Specification中的基本规范部分。</p>
+<a id="more"></a>
+
 <h2 id="UNIX-系统实现"><a href="#UNIX-系统实现" class="headerlink" title="UNIX 系统实现"></a>UNIX 系统实现</h2><h3 id="SVR4"><a href="#SVR4" class="headerlink" title="SVR4"></a>SVR4</h3><h3 id="4-4BSD"><a href="#4-4BSD" class="headerlink" title="4.4BSD"></a>4.4BSD</h3><h3 id="FreeBSD"><a href="#FreeBSD" class="headerlink" title="FreeBSD"></a>FreeBSD</h3><h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><h3 id="Mac-OS-X"><a href="#Mac-OS-X" class="headerlink" title="Mac OS X"></a>Mac OS X</h3><h3 id="Solaris"><a href="#Solaris" class="headerlink" title="Solaris"></a>Solaris</h3><h2 id="标准和实现的关系"><a href="#标准和实现的关系" class="headerlink" title="标准和实现的关系"></a>标准和实现的关系</h2><h2 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h2><p>以下两类的限制是必须的：</p>
 <ul>
 <li>编译时限制（例如，短整型的最大值是什么）</li>
@@ -67,6 +69,8 @@
     <url>/2020/04/11/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC14%E7%AB%A0%E2%80%94%E2%80%94%E9%AB%98%E7%BA%A7I-O/</url>
     <content><![CDATA[<h2 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h2><h3 id="同步，异步，阻塞，非阻塞"><a href="#同步，异步，阻塞，非阻塞" class="headerlink" title="同步，异步，阻塞，非阻塞"></a>同步，异步，阻塞，非阻塞</h3><p>没有IO操作，所有的代码基本都是同步的<br>有了IO操作后，如果没有多进程多线程，所有代码还是同步的<br>有了IO操作，有了多进程多线程，代码才有了异步的可能性，同时也产生了阻塞与非阻塞<br><strong>同步与异步</strong><br>同步是指代码调用IO操作时，必须等待IO操作完成才返回的调用方式。<br>异步是指代码调用IO操作时，不必等IO操作完成就返回的调用方式。</p>
 <p>同步是最原始的调用方式。<br>异步则需要多线程，多CPU或者非阻塞IO的支持。<br><strong>阻塞与非阻塞</strong><br>阻塞是指调用线程或者进程被操作系统挂起。<br>非阻塞是指调用线程或者进程不会被操作系统挂起。</p>
+<a id="more"></a>
+
 <h3 id="”低速“系统调用（阻塞的原因）"><a href="#”低速“系统调用（阻塞的原因）" class="headerlink" title="”低速“系统调用（阻塞的原因）"></a>”低速“系统调用（阻塞的原因）</h3><p>系统调用分为两类：“低速”系统调用和其他。<br>低速系统调用是可能会使进程永远阻塞的一类系统调用，包括：</p>
 <ul>
 <li>如果某些文件类型（如读管道、终端设备和网络设备）的数据并不存在，读操作可能会使调用者永远阻塞；</li>
@@ -77,8 +81,6 @@
 <li>某些进程间通信函数；</li>
 </ul>
 <p><strong>虽然读写磁盘文件会暂时阻塞调用者，但并不能将与磁盘I/O有关的系统调用视为”低速“</strong></p>
-<a id="more"></a>
-
 <h2 id="阻塞I-O"><a href="#阻塞I-O" class="headerlink" title="阻塞I/O"></a>阻塞I/O</h2><p>阻塞I/O到处可见，比如从一个描述符读，然后又写到另一个描述符：</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> (n=<span class="built_in">read</span>(STDIN_FILENO, buf, BUFSIZE)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">write</span>(STDOUT_FILENO, buf, n) != n) &#123;</span><br><span class="line">    err_sys(<span class="string">"write error"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -203,9 +205,9 @@
 <li>read 从打开文件中读数据</li>
 <li>write 向打开文件写数据</li>
 </ul>
-<h3 id="带缓冲与不带缓冲的区别"><a href="#带缓冲与不带缓冲的区别" class="headerlink" title="带缓冲与不带缓冲的区别"></a>带缓冲与不带缓冲的区别</h3><p>所谓不带缓冲，并不是指内核不提供缓冲，而是只单纯的系统调用，不是函数库的调用。系统内核对磁盘的读写都会提供一个块缓冲（在有些地方也被称为内核高速缓存），当用write函数对其写数据时，直接调用系统调用，将数据写入到块缓冲进行排队，当块缓冲达到一定的量时，才会把数据写入磁盘。因此所谓的不带缓冲的I/O是指进程不提供缓冲功能（但内核还是提供缓冲的）。每调用一次write或read函数，直接系统调用。<br>而带缓冲的I/O是指进程对输入输出流进行了改进，提供了一个流缓冲，当用fwrite函数网磁盘写数据时，先把数据写入流缓冲区中，当达到一定条件，比如流缓冲区满了，或刷新流缓冲，这时候才会把数据一次送往内核提供的块缓冲，再经块缓冲写入磁盘。（双重缓冲）<br>因此，带缓冲的I/O在往磁盘写入相同的数据量时，会比不带缓冲的I/O调用系统调用的次数要少。<br>无缓存IO操作数据流向路径：<strong>数据——内核缓存区——磁盘</strong><br>标准IO操作数据流向路径：<strong>数据——流缓存区——内核缓存区——磁盘</strong></p>
 <a id="more"></a>
 
+<h3 id="带缓冲与不带缓冲的区别"><a href="#带缓冲与不带缓冲的区别" class="headerlink" title="带缓冲与不带缓冲的区别"></a>带缓冲与不带缓冲的区别</h3><p>所谓不带缓冲，并不是指内核不提供缓冲，而是只单纯的系统调用，不是函数库的调用。系统内核对磁盘的读写都会提供一个块缓冲（在有些地方也被称为内核高速缓存），当用write函数对其写数据时，直接调用系统调用，将数据写入到块缓冲进行排队，当块缓冲达到一定的量时，才会把数据写入磁盘。因此所谓的不带缓冲的I/O是指进程不提供缓冲功能（但内核还是提供缓冲的）。每调用一次write或read函数，直接系统调用。<br>而带缓冲的I/O是指进程对输入输出流进行了改进，提供了一个流缓冲，当用fwrite函数网磁盘写数据时，先把数据写入流缓冲区中，当达到一定条件，比如流缓冲区满了，或刷新流缓冲，这时候才会把数据一次送往内核提供的块缓冲，再经块缓冲写入磁盘。（双重缓冲）<br>因此，带缓冲的I/O在往磁盘写入相同的数据量时，会比不带缓冲的I/O调用系统调用的次数要少。<br>无缓存IO操作数据流向路径：<strong>数据——内核缓存区——磁盘</strong><br>标准IO操作数据流向路径：<strong>数据——流缓存区——内核缓存区——磁盘</strong></p>
 <h3 id="预读"><a href="#预读" class="headerlink" title="预读"></a>预读</h3><p>大多数文件系统为改善性能都采用某种预读（read ahead）技术。当检测到正进行顺序读取时，系统就试图读入比应用所要求的更多数据，并假想应用很快就会读这些数据。</p>
 <h3 id="延迟写"><a href="#延迟写" class="headerlink" title="延迟写"></a>延迟写</h3><p>传统的UNIX系统实现在内核中设有缓冲区高速缓存或页高速缓存，大多数磁盘I/O都通过缓冲区进行。当我们向文件写入数据时，内核通常先将数据复制到缓冲区中，然后排入队列，晚些时候再写入磁盘。这种方式被成为延迟写（delayed write）。</p>
 <h3 id="I-O与磁盘交互流程"><a href="#I-O与磁盘交互流程" class="headerlink" title="I/O与磁盘交互流程"></a>I/O与磁盘交互流程</h3><p>当应用程序尝试读取某块数据的时候，如果这块数据已经存放在页缓存中，那么这块数据就可以立即返回给应用程序，而不需要经过实际的物理读盘操作。当然，如果数据在应用程序读取之前并未被存放在页缓存中（也就是上面提到的内核高速缓存），那么就需要先将数据从磁盘读到页缓存中去。对于写操作来说，应用程序也会将数据先写到页缓存中去（这里所说的写到页缓存中，如果是调用标准库I/O进行写，那么首先是写到标准库的缓冲区内，如果标准库的缓冲区写满以后，在写到页缓冲内；如果是系统调用，那么直接写到页缓冲内），数据是否被立即写到磁盘上去取决于应用程序所采用的写操作机制：如果用户采用的是同步写机制,那么数据会立即被写回到磁盘上，应用程序会一直等到数据被写完为止；如果用户采用的是延迟写机制，那么应用程序就完全不需要等到数据全部被 写回到磁盘，数据只要被写到页缓存中去就可以了。在延迟写机制的情况下，操作系统会定期地将放在页缓存中的数据刷到磁盘上。与异步写机制不同的是，延迟写机制在数据完全写到磁盘上得时候不会通知应用程序，而异步写机制在数据完全写到磁盘上得时候是会返回给应用程序的。所以延迟写机制本省是存在数据丢失的风险的，而异步写机制则不会有这方面的担心。</p>
@@ -314,8 +316,10 @@
 <li>创建线程前可以通过pthread_attr_getdetachstate 和 pthread_attr_setdetachstate设置线程的分离状态</li>
 <li>通过pthread_attr_getstack 和 pthread_attr_setstack 设置栈帧</li>
 </ul>
-<p><strong>对于进程来说，虚拟地址的空间大小是固定的，因为进程中只有一个栈，所以大小通常不是问题。但对于线程来说，同样大小的虚拟地址空间必须被所有线程共享。如果应用程序使用了许多线程，以致这些线程的累计大小超过了可用的虚拟地址空间，就需要减少默认的线程栈大小。另一方面，如果线程调用的函数分配了大量的自动变量，或者调用的函数涉及许多很深的栈帧，那么需要的栈大小可能要比默认的大</strong><br>如果线程的虚拟地址空间都用完了，可以使用malloc或者mmap来为可替代的栈分配空间，并使用pthread_attr_setstack函数来改变新建线程的栈位置。</p>
 <a id="more"></a>
+
+<p><strong>对于进程来说，虚拟地址的空间大小是固定的，因为进程中只有一个栈，所以大小通常不是问题。但对于线程来说，同样大小的虚拟地址空间必须被所有线程共享。如果应用程序使用了许多线程，以致这些线程的累计大小超过了可用的虚拟地址空间，就需要减少默认的线程栈大小。另一方面，如果线程调用的函数分配了大量的自动变量，或者调用的函数涉及许多很深的栈帧，那么需要的栈大小可能要比默认的大</strong><br>如果线程的虚拟地址空间都用完了，可以使用malloc或者mmap来为可替代的栈分配空间，并使用pthread_attr_setstack函数来改变新建线程的栈位置。</p>
+<!--more-->
 
 <h2 id="同步属性"><a href="#同步属性" class="headerlink" title="同步属性"></a>同步属性</h2><h3 id="互斥量属性"><a href="#互斥量属性" class="headerlink" title="互斥量属性"></a>互斥量属性</h3><p>用 pthread_mutex_attr 结构表示，值得注意的三个属性是：</p>
 <ol>
@@ -372,6 +376,8 @@
     <url>/2020/03/25/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC11%E7%AB%A0%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B/</url>
     <content><![CDATA[<h2 id="线程概念"><a href="#线程概念" class="headerlink" title="线程概念"></a>线程概念</h2><p>每个线程都包含有表示执行环境所必须的信息，包括线程ID、一组寄存器值、栈、调度优先级和策略、信号屏蔽字、errno变量以及线程私有数据。一个进程的所有信息对该进程的所有线程都是共享的，包括可执行程序的代码、程序的全局内存和堆内存、栈以及文件描述符。</p>
 <h2 id="线程标识"><a href="#线程标识" class="headerlink" title="线程标识"></a>线程标识</h2><p>每个线程有一个线程ID，线程可以通过调用 pthread_self 函数获得自身的线程ID。<br><img src="11-1.png" alt=""></p>
+<a id="more"></a>
+
 <h2 id="线程创建-pthread-create"><a href="#线程创建-pthread-create" class="headerlink" title="线程创建 pthread_create"></a>线程创建 pthread_create</h2><p>线程创建时不保证哪个线程会先运行。新创建的线程可以访问进程的地址空间，并继承调用线程的浮点环境和信号屏蔽字，但是该线程的挂起信号集会被清除。</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"../apue.3e/include/apue.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">pthread_t</span> ntid;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">printids</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="keyword">pthread_t</span> tid;</span><br><span class="line"></span><br><span class="line">    pid = getpid();</span><br><span class="line">    tid = pthread_self();</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%s pid %lu tid %lu (0x%lx)\n"</span>, s, (<span class="keyword">unsigned</span> <span class="keyword">long</span>) pid, (<span class="keyword">unsigned</span> <span class="keyword">long</span>) tid, (<span class="keyword">unsigned</span> <span class="keyword">long</span>) tid);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">thr_fn</span><span class="params">(<span class="keyword">void</span> *arg)</span> </span>&#123;</span><br><span class="line">    printids(<span class="string">"new thread: "</span>);</span><br><span class="line">    <span class="keyword">return</span> ((<span class="keyword">void</span> *) <span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> err;</span><br><span class="line"></span><br><span class="line">    err = pthread_create(&amp;ntid, <span class="literal">NULL</span>, thr_fn, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">if</span> (err != <span class="number">0</span>) &#123;</span><br><span class="line">        err_exit(err, <span class="string">"can't create thread"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    printids(<span class="string">"main thread:"</span>);</span><br><span class="line">    sleep(<span class="number">1</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -380,7 +386,7 @@
 <li>主线程如果不休眠，可能新线程还没有机会执行，整个进程就终止了</li>
 <li>新线程通过调用pthread_self获取自身的线程ID，而不是从共享内存读出或从线程的启动例程中以参数形式接收，因为那样并不安全。</li>
 </ol>
-<a id="more"></a>
+<!--more-->
 <h2 id="线程终止"><a href="#线程终止" class="headerlink" title="线程终止"></a>线程终止</h2><p>如果进程中的任意线程调用了exit、_Exit、或者_exit，那么整个进程就会终止。<br>单个线程可以在不终止整个进程的情况下，以以下三种方式停止它的控制流：</p>
 <ol>
 <li>线程可以简单地从启动例程中返回，返回值是线程的退出码。</li>
@@ -781,13 +787,16 @@
 <li>遇到一个信号</li>
 <li>最后一个线程对取消请求做出响应</li>
 </ol>
+<a id="more"></a>
+
 <h3 id="终止处理程序"><a href="#终止处理程序" class="headerlink" title="终止处理程序"></a>终止处理程序</h3><ul>
 <li>一个进程可以通过<code>atexit</code>函数登记至多32个函数作为终止处理程序（exit handler），这些函数将在程序终止时有<code>exit</code>自动调用。<br> 调用顺序与登记顺序相反，登记多次也会调用多次。<br> 如若程序调用<code>exec</code>函数族中任一函数，则将清除所有已安装的终止处理程序。</li>
 </ul>
 <h3 id="exit函数"><a href="#exit函数" class="headerlink" title="exit函数"></a><code>exit</code>函数</h3><ul>
 <li><code>_exit</code>和<code>_Exit</code>立即进入内核，<code>exit</code>首先调用各终止处理程序，然后通过<code>fclose</code>关闭所有打开流，这造成输出缓冲中的所有数据都被冲洗（写到文件上）。</li>
-<li>内核使程序执行的唯一方法是调用一个<code>exec</code>函数。进程自愿终止的唯一方法是显示或隐式地（通过调用<code>exit</code>）调用<code>_exit</code>或<code>_Exit</code>。进程也可非自愿地由一个信号使其终止。<br> <img src="7-2.png" alt=""><a id="more"></a>
-<h3 id="环境变量与环境表"><a href="#环境变量与环境表" class="headerlink" title="环境变量与环境表"></a>环境变量与环境表</h3></li>
+<li>内核使程序执行的唯一方法是调用一个<code>exec</code>函数。进程自愿终止的唯一方法是显示或隐式地（通过调用<code>exit</code>）调用<code>_exit</code>或<code>_Exit</code>。进程也可非自愿地由一个信号使其终止。<br> <img src="7-2.png" alt=""></li>
+</ul>
+<h3 id="环境变量与环境表"><a href="#环境变量与环境表" class="headerlink" title="环境变量与环境表"></a>环境变量与环境表</h3><ul>
 <li>通常用<code>getenv</code>和<code>putenv</code>访问特定的环境变量</li>
 <li>我们能影响的通常只是当前进程及其后生成和调用的任何子进程的环境，但不能影响父进程的环境，这通常是一个shell进程</li>
 <li>环境表和环境字符串通常存放在进程存储空间的顶部（栈之上）<br> <img src="7-5.png" alt=""></li>

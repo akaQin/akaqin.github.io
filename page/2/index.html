@@ -377,12 +377,6 @@
 <li>遇到一个信号</li>
 <li>最后一个线程对取消请求做出响应</li>
 </ol>
-<h3 id="终止处理程序"><a href="#终止处理程序" class="headerlink" title="终止处理程序"></a>终止处理程序</h3><ul>
-<li>一个进程可以通过<code>atexit</code>函数登记至多32个函数作为终止处理程序（exit handler），这些函数将在程序终止时有<code>exit</code>自动调用。<br> 调用顺序与登记顺序相反，登记多次也会调用多次。<br> 如若程序调用<code>exec</code>函数族中任一函数，则将清除所有已安装的终止处理程序。</li>
-</ul>
-<h3 id="exit函数"><a href="#exit函数" class="headerlink" title="exit函数"></a><code>exit</code>函数</h3><ul>
-<li><code>_exit</code>和<code>_Exit</code>立即进入内核，<code>exit</code>首先调用各终止处理程序，然后通过<code>fclose</code>关闭所有打开流，这造成输出缓冲中的所有数据都被冲洗（写到文件上）。</li>
-<li>内核使程序执行的唯一方法是调用一个<code>exec</code>函数。进程自愿终止的唯一方法是显示或隐式地（通过调用<code>exit</code>）调用<code>_exit</code>或<code>_Exit</code>。进程也可非自愿地由一个信号使其终止。<br> <img src="7-2.png" alt="">
       
       <a class="article-more-link" href="/2020/02/23/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC7%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/">阅读更多...</a>
       
