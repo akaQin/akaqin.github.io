@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    《UNIX环境高级编程》第3章——文件I/O |  akaQin&#39;s Blog
+    arts-8 |  akaQin&#39;s Blog
   </title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   
@@ -36,7 +36,7 @@
   <div id="app">
     <main class="content">
       <section class="outer">
-  <article id="post-《UNIX环境高级编程》第3章——文件I-O" class="article article-type-post" itemscope
+  <article id="post-arts-8" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -44,7 +44,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  《UNIX环境高级编程》第3章——文件I/O
+  arts-8
 </h1>
   
 
@@ -53,12 +53,12 @@
 
     
     <div class="article-meta">
-      <a href="/2020/04/10/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC3%E7%AB%A0%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6I-O/" class="article-date">
-  <time datetime="2020-04-10T05:11:54.000Z" itemprop="datePublished">2020-04-10</time>
+      <a href="/2018/10/03/arts-8/" class="article-date">
+  <time datetime="2018-10-03T06:30:47.000Z" itemprop="datePublished">2018-10-03</time>
 </a>
       
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E3%80%8AAPUE%E3%80%8B%E7%AC%94%E8%AE%B0/">《APUE》笔记</a>
+    <a class="article-category-link" href="/categories/ARTS/">ARTS</a>
   </div>
 
       
@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2.3k字</span>
+            <span class="post-count">694字</span>
         </span>
     </span>
 
@@ -77,7 +77,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">8分钟</span>
+            <span class="post-count">4分钟</span>
         </span>
     </span>
 </div>
@@ -104,66 +104,44 @@
       
 
       
-      <h2 id="文件描述符"><a href="#文件描述符" class="headerlink" title="文件描述符"></a>文件描述符</h2><p>对于内核而言，所有打开的文件都通过文件描述符引用。文件描述符是一个非负整数。当打开一个现有文件或创建一个新文件时，内核向进程返回一个文件描述符。</p>
-<ul>
-<li>0 - STDIN_FILENO - 标准输入</li>
-<li>1 - STDOUT_FILENO - 标准输出</li>
-<li>2 - STDERR_FILENO - 标准错误</li>
-</ul>
-<h2 id="不带缓冲的I-O函数"><a href="#不带缓冲的I-O函数" class="headerlink" title="不带缓冲的I/O函数"></a>不带缓冲的I/O函数</h2><ul>
-<li>open(openat) 打开或创建一个文件</li>
-<li>creat 创建一个新文件</li>
-<li>close 关闭一个打开文件</li>
-<li>lseek 设置偏移量（lseek仅将当前文件偏移量记录在内核中，不引起任何I/O操作）</li>
-<li>read 从打开文件中读数据</li>
-<li>write 向打开文件写数据</li>
-</ul>
+      <h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>Given a sorted array <em>nums</em>, remove the duplicates <a href="https://en.wikipedia.org/wiki/In-place_algorithm" target="_blank" rel="noopener"><strong>in-place</strong></a> such that each element appear only <em>once</em> and return the new length.</p>
+<p>Do not allocate extra space for another array, you must do this by <strong>modifying the input array in-place</strong> with O(1) extra memory.</p>
+<p><strong>Example 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Given nums &#x3D; [1,1,2],</span><br><span class="line"></span><br><span class="line">Your function should return length &#x3D; 2, with the first two elements of nums being 1 and 2 respectively.</span><br><span class="line"></span><br><span class="line">It doesn&#39;t matter what you leave beyond the returned length.</span><br></pre></td></tr></table></figure>
+
 <a id="more"></a>
 
-<h3 id="带缓冲与不带缓冲的区别"><a href="#带缓冲与不带缓冲的区别" class="headerlink" title="带缓冲与不带缓冲的区别"></a>带缓冲与不带缓冲的区别</h3><p>所谓不带缓冲，并不是指内核不提供缓冲，而是只单纯的系统调用，不是函数库的调用。系统内核对磁盘的读写都会提供一个块缓冲（在有些地方也被称为内核高速缓存），当用write函数对其写数据时，直接调用系统调用，将数据写入到块缓冲进行排队，当块缓冲达到一定的量时，才会把数据写入磁盘。因此所谓的不带缓冲的I/O是指进程不提供缓冲功能（但内核还是提供缓冲的）。每调用一次write或read函数，直接系统调用。<br>而带缓冲的I/O是指进程对输入输出流进行了改进，提供了一个流缓冲，当用fwrite函数网磁盘写数据时，先把数据写入流缓冲区中，当达到一定条件，比如流缓冲区满了，或刷新流缓冲，这时候才会把数据一次送往内核提供的块缓冲，再经块缓冲写入磁盘。（双重缓冲）<br>因此，带缓冲的I/O在往磁盘写入相同的数据量时，会比不带缓冲的I/O调用系统调用的次数要少。<br>无缓存IO操作数据流向路径：<strong>数据——内核缓存区——磁盘</strong><br>标准IO操作数据流向路径：<strong>数据——流缓存区——内核缓存区——磁盘</strong></p>
-<h3 id="预读"><a href="#预读" class="headerlink" title="预读"></a>预读</h3><p>大多数文件系统为改善性能都采用某种预读（read ahead）技术。当检测到正进行顺序读取时，系统就试图读入比应用所要求的更多数据，并假想应用很快就会读这些数据。</p>
-<h3 id="延迟写"><a href="#延迟写" class="headerlink" title="延迟写"></a>延迟写</h3><p>传统的UNIX系统实现在内核中设有缓冲区高速缓存或页高速缓存，大多数磁盘I/O都通过缓冲区进行。当我们向文件写入数据时，内核通常先将数据复制到缓冲区中，然后排入队列，晚些时候再写入磁盘。这种方式被成为延迟写（delayed write）。</p>
-<h3 id="I-O与磁盘交互流程"><a href="#I-O与磁盘交互流程" class="headerlink" title="I/O与磁盘交互流程"></a>I/O与磁盘交互流程</h3><p>当应用程序尝试读取某块数据的时候，如果这块数据已经存放在页缓存中，那么这块数据就可以立即返回给应用程序，而不需要经过实际的物理读盘操作。当然，如果数据在应用程序读取之前并未被存放在页缓存中（也就是上面提到的内核高速缓存），那么就需要先将数据从磁盘读到页缓存中去(这个过程触发缺页异常)。对于写操作来说，应用程序也会将数据先写到页缓存中去（这里所说的写到页缓存中，如果是调用标准库I/O进行写，那么首先是写到标准库的缓冲区内，如果标准库的缓冲区写满以后，在写到页缓冲内；如果是系统调用，那么直接写到页缓冲内），数据是否被立即写到磁盘上去取决于应用程序所采用的写操作机制：如果用户采用的是同步写机制,那么数据会立即被写回到磁盘上，应用程序会一直等到数据被写完为止；如果用户采用的是延迟写机制，那么应用程序就完全不需要等到数据全部被 写回到磁盘，数据只要被写到页缓存中去就可以了。在延迟写机制的情况下，操作系统会定期地将放在页缓存中的数据刷到磁盘上。与异步写机制不同的是，延迟写机制在数据完全写到磁盘上得时候不会通知应用程序，而异步写机制在数据完全写到磁盘上得时候是会返回给应用程序的。所以延迟写机制本省是存在数据丢失的风险的，而异步写机制则不会有这方面的担心。</p>
-<h2 id="文件共享"><a href="#文件共享" class="headerlink" title="文件共享"></a>文件共享</h2><p>内核使用4种数据结构表示打开文件，它们之间的关系决定了在文件共享方面一个进程对另一个进程可能产生的影响。</p>
+<p><strong>Example 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Given nums &#x3D; [0,0,1,1,1,2,2,3,3,4],</span><br><span class="line"></span><br><span class="line">Your function should return length &#x3D; 5, with the first five elements of nums being modified to 0, 1, 2, 3, and 4 respectively.</span><br><span class="line"></span><br><span class="line">It doesn&#39;t matter what values are set beyond the returned length.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Approach 1: two pointer</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">removeDuplicates</span><span class="params">(<span class="keyword">int</span>* nums, <span class="keyword">int</span> numsSize)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (numsSize ==<span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt; numsSize; j++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (nums[i] != nums[j]) &#123;</span><br><span class="line">            nums[++i] = nums[j];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ++i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>用双指针遍历这个数组，一个指针用来迭代，另一个记录不重复的值的索引。时间复杂度O(n)，空间复杂度O(1)。</p>
+<p>Given an array <em>nums</em> and a value <em>val</em>, remove all instances of that value <a href="https://en.wikipedia.org/wiki/In-place_algorithm" target="_blank" rel="noopener"><strong>in-place</strong></a> and return the new length.</p>
+<p>Do not allocate extra space for another array, you must do this by <strong>modifying the input array in-place</strong> with O(1) extra memory.</p>
+<p>The order of elements can be changed. It doesn’t matter what you leave beyond the new length.</p>
+<p><strong>Example 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Given nums &#x3D; [3,2,2,3], val &#x3D; 3,</span><br><span class="line"></span><br><span class="line">Your function should return length &#x3D; 2, with the first two elements of nums being 2.</span><br><span class="line"></span><br><span class="line">It doesn&#39;t matter what you leave beyond the returned length.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Given nums &#x3D; [0,1,2,2,3,0,4,2], val &#x3D; 2,</span><br><span class="line"></span><br><span class="line">Your function should return length &#x3D; 5, with the first five elements of nums containing 0, 1, 3, 0, and 4.</span><br><span class="line"></span><br><span class="line">Note that the order of those five elements can be arbitrary.</span><br><span class="line"></span><br><span class="line">It doesn&#39;t matter what values are set beyond the returned length.</span><br></pre></td></tr></table></figure>
+
+<p><strong>approach 1:two pointer</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">removeElement</span><span class="params">(<span class="keyword">int</span>* nums, <span class="keyword">int</span> numsSize, <span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>, j = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (; i&lt; numsSize; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (nums[i] != val) &#123;</span><br><span class="line">            nums[j++] = nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> j;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Approach-2-Two-Pointers-when-elements-to-remove-are-rare"><a href="#Approach-2-Two-Pointers-when-elements-to-remove-are-rare" class="headerlink" title="Approach 2: Two Pointers - when elements to remove are rare"></a><strong>Approach 2: Two Pointers - when elements to remove are rare</strong></h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> &#123;</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">removeElement</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> n = nums.length;</span><br><span class="line">    <span class="keyword">while</span> (i &lt; n) &#123;</span><br><span class="line">        <span class="keyword">if</span> (nums[i] == val) &#123;</span><br><span class="line">            nums[i] = nums[n - <span class="number">1</span>];</span><br><span class="line">            <span class="comment">// reduce array size by one</span></span><br><span class="line">            n--;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            i++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> n;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Intuition</strong></p>
+<p>Now consider cases where the array contains few elements to remove. For example, nums = [1,2,3,5,4], val = 4nums=[1,2,3,5,4],val=4. The previous algorithm will do unnecessary copy operation of the first four elements. Another example is nums = [4,1,2,3,5], val = 4nums=[4,1,2,3,5],val=4. It seems unnecessary to move elements [1,2,3,5][1,2,3,5] one step left as the problem description mentions that the order of elements could be changed.</p>
+<p><strong>Algorithm</strong></p>
+<p>When we encounter nums[i] = valnums[i]=val, we can swap the current element out with the last element and dispose the last one. This essentially reduces the array’s size by 1.</p>
+<p>Note that the last element that was swapped in could be the value you want to remove itself. But don’t worry, in the next iteration we will still check this element.</p>
+<p><strong>Complexity analysis</strong></p>
 <ul>
-<li><code>进程表</code>。每个进程在进程表中都有一个记录项，记录项中包含一张打开文件描述符表，可将其视为一个矢量，每个描述符占用一项。与每个文件描述符相关联的是：<ol>
-<li>文件描述符标志（close_on_exec）</li>
-<li>指向一个文件表项的指针</li>
-</ol>
-</li>
-<li><code>文件表</code>。内核为所以打开文件维持一张文件表（全局唯一，所有进程共享一个文件表）。其中的每个文件表项对应一个进程中打开的文件，它包含：<ol>
-<li>文件状态标志（只读、只写、读写、追加写、同步/异步、阻塞/非阻塞等）</li>
-<li>当前文件偏移量</li>
-<li>指向该文件v节点表项的指针</li>
-</ol>
-</li>
-<li><code>v节点</code>。每个打开文件（或设备）都有一个v节点（v-node）结构。v节点包含了文件类型和对此文件进行各种操作函数的指针。对于大多数文件，v节点还包含了该文件的i节点指针。</li>
-<li><code>i节点</code>。i节点包含了文件的所有者、文件长度、指向文件实际数据块在磁盘所在位置的指针等。</li>
+<li>Time complexity : O(n)O(n). Both ii and nn traverse at most nn steps. In this approach, the number of assignment operation is equal to the number of elements to remove. So it is more efficient if elements to remove are rare.</li>
+<li>Space complexity : O(1)O(1).</li>
 </ul>
-<blockquote>
-<p>Linux没有使用v节点，而是使用了通用i节点结构（一个与文件系统相关的i节点，一个与文件系统无关的i节点）。虽然实现不同，但在概念上，v节点与i节点是一样的，两者都指向文件系统特有的i节点结构。</p>
-</blockquote>
-<p><img src="3-7.png" alt=""><br><img src="3-8.png" alt=""></p>
-<p>打开该文件的每个进程都能获得各自的一个文件表项，但对一个给的文件只有一个v节点表项。这样每个进程都有它自己对该文件偏移量以及打开方式。<br>可能有多个文件描述符指向同一文件表项的情况，如dup和fork函数。</p>
-<h3 id="文件描述符标志与文件状态标志的区别"><a href="#文件描述符标志与文件状态标志的区别" class="headerlink" title="文件描述符标志与文件状态标志的区别"></a>文件描述符标志与文件状态标志的区别</h3><p><strong>前者只用于一个进程的一个描述符，后者则应用于指向该给定文件表项的任何进程中的所有描述符。</strong></p>
-<h2 id="原子操作"><a href="#原子操作" class="headerlink" title="原子操作"></a>原子操作</h2><p><code>原子操作（atomic operation）</code>指的是由多步组成的一个操作。如果该操作原子的执行，要么执行完所有步骤，要么一步也不执行，不可能只执行所有步骤的一个子集。任何要求多于一个函数调用的操作都不是原子操作，因为在两个函数调用之间，内核有可能会临时挂起进程。<br>我们用<code>pread</code>和<code>pwrite</code>函数进行I/O来保证<code>lseek</code>和<code>read</code>/<code>write</code>构成原子操作。</p>
-<h2 id="其他I-O函数"><a href="#其他I-O函数" class="headerlink" title="其他I/O函数"></a>其他I/O函数</h2><h3 id="dup（dup2）"><a href="#dup（dup2）" class="headerlink" title="dup（dup2）"></a>dup（dup2）</h3><p>用来复制一个现有的文件描述符。复制后每个文件描述符都有它自己的一套文件描述符标志。两个描述符指向同一文件表项，所以它们共享同一文件状态标志（读、写、追加写等）<br><img src="3-9.png" alt=""></p>
-<h3 id="sync、fsync和fdatasync"><a href="#sync、fsync和fdatasync" class="headerlink" title="sync、fsync和fdatasync"></a><code>sync</code>、<code>fsync</code>和<code>fdatasync</code></h3><p>用于保证磁盘上实际文件系统与缓冲区中内容的一致性。</p>
-<ul>
-<li><code>sync</code>只是将所有修改过的块缓冲区排入写队列就返回，它不等待实际写磁盘操作结束。通常称为update的系统守护进程周期性地（一般为30秒）调用sync函数，这就保证了定期冲洗（flush）内核的块缓冲区。</li>
-<li><code>fsync</code>只对由fd指定的一个文件起作用，并等待写磁盘操作结束才返回。</li>
-<li><code>fdatasync</code>类似于<code>fsync</code>，但影响文件的数据部分</li>
-</ul>
-<h3 id="fcntl"><a href="#fcntl" class="headerlink" title="fcntl"></a>fcntl</h3><p>用于改变已经打开文件的属性，主要由以下5种功能：</p>
-<ol>
-<li>复制一个已有的描述符(cmd = F_DUPFD 或 F_DUPFD_CLOEXEC)</li>
-<li>获取/设置文件描述符标志(cmd = F_GETFD 或 F_SETFD)</li>
-<li>获取/设置文件状态标志(cmd = F_GETFL 或 F_SETFL)</li>
-<li>获取/设置异步I/O所有权(cmd = F_GETONW 或 F_SETOWN)</li>
-<li>获取/设置记录锁(cmd = F_GETLK 、 F_SETLK 或 F_SETLKW（阻塞版本）)</li>
-</ol>
-<h3 id="ioctl"><a href="#ioctl" class="headerlink" title="ioctl"></a>ioctl</h3><p>I/O操作的杂物箱，未总结的其他I/O操作都在里面。</p>
-<h2 id="dev-fd"><a href="#dev-fd" class="headerlink" title="/dev/fd"></a>/dev/fd</h2><p>较新的系统都提供/dev/fd目录，其目录项是名为0、1、2等文件，打开文件/dev/fd/n 等效于 复制描述符n（假定描述符n是打开的）。</p>
 
       
       <!-- reward -->
@@ -233,14 +211,14 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://akaqin.github.io/2020/04/10/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC3%E7%AB%A0%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6I-O/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2018/10/03/arts-8/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6I-O/" rel="tag">文件I/O</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARTS/" rel="tag">ARTS</a></li></ul>
 
 
     </footer>
@@ -251,19 +229,19 @@
   
   <nav class="article-nav">
     
-      <a href="/2020/04/11/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC14%E7%AB%A0%E2%80%94%E2%80%94%E9%AB%98%E7%BA%A7I-O/" class="article-nav-link">
+      <a href="/2018/10/04/%E5%85%B3%E4%BA%8EMac%E5%8D%87%E7%BA%A7Mojave%E5%90%8E%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            《UNIX环境高级编程》第14章——高级I/O
+            关于Mac升级Mojave后的一些坑
           
         </div>
       </a>
     
     
-      <a href="/2020/04/09/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC13%E7%AB%A0%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/" class="article-nav-link">
+      <a href="/2018/09/24/%E5%BC%82%E6%AD%A5%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">《UNIX环境高级编程》第13章——守护进程</div>
+        <div class="article-nav-title">异步网络模型</div>
       </a>
     
   </nav>
@@ -338,7 +316,7 @@
       <li>
         &copy;
         2019-2020
-        Aaron Qin
+        Arron Qin
       </li>
       <li>
         
