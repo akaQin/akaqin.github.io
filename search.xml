@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>《UNIX环境高级编程》第4章——文件和目录</title>
+    <url>/2020/04/14/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC4%E7%AB%A0%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95/</url>
+    <content><![CDATA[<h2 id="文件结构-stat"><a href="#文件结构-stat" class="headerlink" title="文件结构 stat"></a>文件结构 stat</h2><pre><code class="c"><span class="class"><span class="keyword">struct</span> <span class="title">stat</span> {</span>
+  <span class="keyword">mode_t</span>  st_mode; <span class="comment">//file type &amp; mode(permisssions)</span>
+
+}</code></pre>
+]]></content>
+      <categories>
+        <category>《APUE》笔记</category>
+      </categories>
+      <tags>
+        <tag>文件</tag>
+        <tag>目录</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《UNIX环境高级编程》第2章——UNIX标准及实现</title>
     <url>/2020/04/14/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC2%E7%AB%A0%E2%80%94%E2%80%94UNIX%E6%A0%87%E5%87%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/</url>
     <content><![CDATA[<h2 id="UNIX标准化"><a href="#UNIX标准化" class="headerlink" title="UNIX标准化"></a>UNIX标准化</h2><h3 id="ISO-C"><a href="#ISO-C" class="headerlink" title="ISO C"></a>ISO C</h3><p>ISO（国际标准化组织） C标准的意图是提供C程序的可移植性，使其能适合于大量不同的操作系统，而不只是适合UNIX系统。此标准不仅定了C程序设计语言的语法和语义，还定义了其标准库。</p>
@@ -256,7 +272,8 @@
         <category>《APUE》笔记</category>
       </categories>
       <tags>
-        <tag>文件I/O</tag>
+        <tag>I/O</tag>
+        <tag>文件</tag>
       </tags>
   </entry>
   <entry>
