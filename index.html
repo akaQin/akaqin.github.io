@@ -217,7 +217,7 @@
 <li>对于符号链接，尝试是文件名中的字节数。</li>
 </ul>
 <h4 id="文件空洞"><a href="#文件空洞" class="headerlink" title="文件空洞"></a>文件空洞</h4><p>文件空洞是由所设置的偏移量超过文件尾端，并写入了数据后造成的。</p>
-<h2 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h2><p>UNIX文件系统有很多种实现，这里讨论UFS文件系统。<br><img src="4-13.png" alt=""><br><img src="4-14.png" alt=""></p>
+<h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><p>UNIX文件系统有很多种实现，这里讨论UFS文件系统。<br><img src="4-13.png" alt=""><br><img src="4-14.png" alt=""></p>
 <ul>
 <li>每个i节点都有一个链接计数，其值指向i节点的目录项数。只有计数减少到0时，才可删除文件（也就是释放该文件占用的数据块）。链接计数包含在stat结构里的st_nlink字段中，这种链接类型称为硬链接。</li>
 <li>另一种链接类型为符号链接（symbolic link）。符号链接文件的实际内容包含了该符号链接所指向的文件的名字。</li>
@@ -229,6 +229,20 @@
 <ul>
 <li>每个叶目录的链接计数总是2（来自 该目录名 和<code>.</code>）。</li>
 <li>父目录中的每一个子目录都使该父目录的链接计数加1（子目录中的<code>..</code>项指向父目录）</li>
+</ul>
+<h3 id="link、linkat、unlink、unlinkat和remove"><a href="#link、linkat、unlink、unlinkat和remove" class="headerlink" title="link、linkat、unlink、unlinkat和remove"></a>link、linkat、unlink、unlinkat和remove</h3><p>任何一个文件可以有多个目录项指向其i节点。创建一个指向现有文件的链接的方法是使用link或linkat函数。<br>删除一个目录项使用unlink函数，只有链接计数达到0时，该文件内容才可被删除。<br>remove既能删文件（等同于unlink）也能删目录（等同于rmdir）。</p>
+<h3 id="rename-和-renameat"><a href="#rename-和-renameat" class="headerlink" title="rename 和 renameat"></a>rename 和 renameat</h3><p>用来对文件重命名。</p>
+<h3 id="符号链接"><a href="#符号链接" class="headerlink" title="符号链接"></a>符号链接</h3><p>符号链接是对一个文件的间接指针，硬链接直接指向文件的i节点。<br>使用symlink或syslinkat函数创建一个符号链接。</p>
+<h3 id="文件时间"><a href="#文件时间" class="headerlink" title="文件时间"></a>文件时间</h3><ul>
+<li>st_atime 文件数据的最后访问时间</li>
+<li>st_mtime 文件数据的最后修改时间</li>
+<li>st_ctime i节点状态的最后更改时间</li>
+</ul>
+<p>操作函数：</p>
+<ul>
+<li>futimens</li>
+<li>utimensat</li>
+<li>utimes</li>
 </ul>
 <h2 id="权限及属组"><a href="#权限及属组" class="headerlink" title="权限及属组"></a>权限及属组</h2><h3 id="用户ID和组ID"><a href="#用户ID和组ID" class="headerlink" title="用户ID和组ID"></a>用户ID和组ID</h3><p>与一个进程相关联的ID：<br><img src="4-5.png" alt=""></p>
 <ul>
@@ -265,7 +279,25 @@
 </blockquote>
 <p>现今交心的UNIX系统大多配置了虚拟存储系统以及快速文件系统，不再需要这种技术。<br>SUS允许针对目录设置粘着位，目录/tmp和/var/tmp是设置粘着位的典型候选者——任何用户都可在这两个目录中创建文件；任一用户对这两个目录的权限通常都是读、写、执行。</p>
 <h3 id="chown、fchown、fchownat和lchown"><a href="#chown、fchown、fchownat和lchown" class="headerlink" title="chown、fchown、fchownat和lchown"></a>chown、fchown、fchownat和lchown</h3><p>这几个函数更改文件的用户ID和组ID。</p>
-<h2 id="文件操作"><a href="#文件操作" class="headerlink" title="文件操作"></a>文件操作</h2>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><p>目录项 dirent结构与实现有关，至少包含下列两个成员：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ino_t</span> d_ino; <span class="comment">//i-node number</span></span><br><span class="line"><span class="keyword">char</span> d_name[]; <span class="comment">//null-terminated filename</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>mkdir</code>/<code>mkdirat</code> 创建目录</li>
+<li><code>rmdir</code> 删除目录</li>
+<li><code>opendir</code>/<code>fdopendir</code> 打开目录</li>
+<li><code>readdir</code> 读一个目录项</li>
+<li><code>rewinddir</code> 将偏移量重制</li>
+<li><code>closedir</code> 关闭文件</li>
+<li><code>tilldir</code> 获取偏移量</li>
+<li><code>seekdir</code> 更改偏移量</li>
+</ul>
+<p><strong>有权限的用户都可以读目录，但只有内核才可以写目录。</strong></p>
+<h3 id="当前工作目录"><a href="#当前工作目录" class="headerlink" title="当前工作目录"></a>当前工作目录</h3><ul>
+<li><code>chdir</code>/<code>fchdir</code> 指定新的当前工作目录</li>
+<li><code>getcwd</code> 获取当前工作目录</li>
+</ul>
+
       
       <!-- reward -->
       
