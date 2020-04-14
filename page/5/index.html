@@ -75,6 +75,86 @@
     
     
     
+    <article id="post-《深入理解计算机系统》第一章" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2018/06/23/%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E3%80%8B%E7%AC%AC%E4%B8%80%E7%AB%A0/"
+    >《深入理解计算机系统》第一章</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2018/06/23/%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E3%80%8B%E7%AC%AC%E4%B8%80%E7%AB%A0/" class="article-date">
+  <time datetime="2018-06-23T07:33:38.000Z" itemprop="datePublished">2018-06-23</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E3%80%8ACSAPP%E3%80%8B%E7%AC%94%E8%AE%B0/">《CSAPP》笔记</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="计算机系统漫游"><a href="#计算机系统漫游" class="headerlink" title="计算机系统漫游"></a>计算机系统漫游</h1><h2 id="信息就是位-上下文"><a href="#信息就是位-上下文" class="headerlink" title="信息就是位 + 上下文"></a>信息就是位 + 上下文</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"hello, world\n"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​    hello程序的生命周期是从一个源程序开始的。源程序是一个由值0和1组成的位（又称比特）序列，8个位组成一组，称为字节。每个字节必保湿程序中的某些特殊文本字符。大部分计算机系统使用ASCII标准来表示文本字符，这种方式实际上就是一个唯一的单字节大小的整数值来表示每个字符（入下图）。</p>
+<p><img src="http://pfjta0ejx.bkt.clouddn.com/hello-ASCII.png" alt="ASCII"></p>
+<p>​    hello.c程序是以字节序列的方式存储在文本文件中的。每个字节都有一个整数值，对应某些字符。这种表示方法说明了一个节本思想：系统中所有信息——包括磁盘文件，内存中的程序，内存中存放的用户数据以及网络上传输的数据，都是由一串比特表示的，区别不同数据对象的唯一方式是我们读到这些数据对象时的上下文。</p>
+<h2 id="程序被其他程序翻译成不同的格式"><a href="#程序被其他程序翻译成不同的格式" class="headerlink" title="程序被其他程序翻译成不同的格式"></a>程序被其他程序翻译成不同的格式</h2><p>​    hello程序的生命周期是从一个高级C语言开始的，因为这种形式被人读懂。然而为了在系统上运行，每条C语句被其他程序转化为一系列低级机器语言指令。然后这些指令按照一种称为可执行目标程序的格式打好包，并以二进制磁盘文件的形式存起来。下面是GCC编译驱动器把源文件翻译成可执行文件的四个阶段。</p>
+<p><img src="http://pfjta0ejx.bkt.clouddn.com/compile-system.png" alt=""></p>
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CS/" rel="tag">CS</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
     <article id="post-Linux学习笔记" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 

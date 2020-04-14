@@ -1,6 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>《UNIX环境高级编程》第2章——UNIX标准及实现</title>
+    <url>/2020/04/14/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC2%E7%AB%A0%E2%80%94%E2%80%94UNIX%E6%A0%87%E5%87%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/</url>
+    <content><![CDATA[<h2 id="UNIX标准化"><a href="#UNIX标准化" class="headerlink" title="UNIX标准化"></a>UNIX标准化</h2><h3 id="ISO-C"><a href="#ISO-C" class="headerlink" title="ISO C"></a>ISO C</h3><p>ISO（国际标准化组织） C标准的意图是提供C程序的可移植性，使其能适合于大量不同的操作系统，而不只是适合UNIX系统。此标准不仅定了C程序设计语言的语法和语义，还定义了其标准库。</p>
+<h3 id="IEEE-POSIX"><a href="#IEEE-POSIX" class="headerlink" title="IEEE POSIX"></a>IEEE POSIX</h3><p>POSIX是由IEEE（电气和电子工程师学会）指定的标准族。POSIX指的是可移植操作系统接口。</p>
+<h3 id="Single-UNIX-Specification"><a href="#Single-UNIX-Specification" class="headerlink" title="Single UNIX Specification"></a>Single UNIX Specification</h3><p>Single UNIX Specification（SUS，单一UNIX规范）是POSIX.1标准的一个超集，它定义了一些附加接口扩展了POSIX.1规范提供的功能。POSIX.1相当于Single UNIX Specification中的基本规范部分。</p>
+<h2 id="UNIX-系统实现"><a href="#UNIX-系统实现" class="headerlink" title="UNIX 系统实现"></a>UNIX 系统实现</h2><h3 id="SVR4"><a href="#SVR4" class="headerlink" title="SVR4"></a>SVR4</h3><h3 id="4-4BSD"><a href="#4-4BSD" class="headerlink" title="4.4BSD"></a>4.4BSD</h3><h3 id="FreeBSD"><a href="#FreeBSD" class="headerlink" title="FreeBSD"></a>FreeBSD</h3><h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><h3 id="Mac-OS-X"><a href="#Mac-OS-X" class="headerlink" title="Mac OS X"></a>Mac OS X</h3><h3 id="Solaris"><a href="#Solaris" class="headerlink" title="Solaris"></a>Solaris</h3><h2 id="标准和实现的关系"><a href="#标准和实现的关系" class="headerlink" title="标准和实现的关系"></a>标准和实现的关系</h2><h2 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h2><p>以下两类的限制是必须的：</p>
+<ul>
+<li>编译时限制（例如，短整型的最大值是什么）</li>
+<li>运行时限制（例如，文件名有多少个字符）</li>
+</ul>
+<p>为了解决这类问题，提供了以下3种限制：</p>
+<ul>
+<li>编译时限制（头文件）</li>
+<li>与文件或目录无关的运行时限制（sysconf函数）</li>
+<li>与文件或目录有关的运行时限制（pathconf和fpathconf函数）</li>
+</ul>
+<h3 id="ISO-C限制"><a href="#ISO-C限制" class="headerlink" title="ISO C限制"></a>ISO C限制</h3><p><img src="2-6.png" alt=""><br><img src="2-7.png" alt=""></p>
+<h3 id="POSIX-限制"><a href="#POSIX-限制" class="headerlink" title="POSIX 限制"></a>POSIX 限制</h3><p><img src="2-8.png" alt=""><br><img src="2-9.png" alt=""></p>
+<h3 id="sysconf、pathconf和fpathconf"><a href="#sysconf、pathconf和fpathconf" class="headerlink" title="sysconf、pathconf和fpathconf"></a>sysconf、pathconf和fpathconf</h3><p>运行时限制可以调用这三个函数之一获得</p>
+<h2 id="基本系统数据类型"><a href="#基本系统数据类型" class="headerlink" title="基本系统数据类型"></a>基本系统数据类型</h2><p><img src="2-21.png" alt=""></p>
+]]></content>
+      <categories>
+        <category>《APUE》笔记</category>
+      </categories>
+      <tags>
+        <tag>UNIX</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《UNIX环境高级编程》第1章——UNIX基础知识</title>
     <url>/2020/04/13/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC1%E7%AB%A0%E2%80%94%E2%80%94UNIX%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</url>
     <content><![CDATA[<h2 id="UNIX-体系结构"><a href="#UNIX-体系结构" class="headerlink" title="UNIX 体系结构"></a>UNIX 体系结构</h2><p>严格意义上说，可将操作系统定义为一种软件，它控制计算机硬件资源，提供程序运行环境。我们称这种软件为内核，内核的接口被称为 <strong>系统调用（system call）</strong>。<br>广义上说，操作系统包括了内核和一些其他软件，这些软件使得计算机能够发挥作用，使其具有自己的特性。这里说的软件包括系统实用程序、应用程序、shell以及公用函数库等。<br>例如，Linux是GNU操作系统使用的内核。</p>
