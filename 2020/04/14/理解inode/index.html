@@ -129,7 +129,9 @@
 <p>总之，除了文件名以外的所有文件信息，都存在inode之中。至于为什么没有文件名，下文会有详细解释。</p>
 <h3 id="三、inode的大小"><a href="#三、inode的大小" class="headerlink" title="三、inode的大小"></a>三、inode的大小</h3><p>inode也会消耗硬盘空间，所以硬盘格式化的时候，操作系统自动将硬盘分成两个区域。一个是数据区，存放文件数据；另一个是inode区（inode table），存放inode所包含的信息。</p>
 <p>每个inode节点的大小，一般是128字节或256字节。inode节点的总数，在格式化时就给定，一般是每1KB或每2KB就设置一个inode。假定在一块1GB的硬盘中，每个inode节点的大小为128字节，每1KB就设置一个inode，那么inode table的大小就会达到128MB，占整块硬盘的12.8%。</p>
-<p>查看每个硬盘分区的inode总数和已经使用的数量，可以使用df命令。<br><code>df -i</code><br><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120403.png" alt=""></p>
+<p>查看每个硬盘分区的inode总数和已经使用的数量，可以使用df命令。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">　　df -i</span><br></pre></td></tr></table></figure>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120403.png" alt=""></p>
 <p>查看每个inode节点的大小，可以用如下命令：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">　　sudo dumpe2fs -h &#x2F;dev&#x2F;hda | grep &quot;Inode size&quot;</span><br></pre></td></tr></table></figure>
 <p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120404.png" alt=""></p>
@@ -137,10 +139,14 @@
 <h3 id="四、inode号码"><a href="#四、inode号码" class="headerlink" title="四、inode号码"></a>四、inode号码</h3><p>每个inode都有一个号码，操作系统用inode号码来识别不同的文件。</p>
 <p>这里值得重复一遍，Unix/Linux系统内部不使用文件名，而使用inode号码来识别文件。对于系统来说，文件名只是inode号码便于识别的别称或者绰号。</p>
 <p>表面上，用户通过文件名，打开文件。实际上，系统内部这个过程分成三步：首先，系统找到这个文件名对应的inode号码；其次，通过inode号码，获取inode信息；最后，根据inode信息，找到文件数据所在的block，读出数据。</p>
-<p>使用ls -i命令，可以看到文件名对应的inode号码：<br><code>ls -i example.txt</code><br><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120405.png" alt=""></p>
+<p>使用ls -i命令，可以看到文件名对应的inode号码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">　　ls -i example.txt</span><br></pre></td></tr></table></figure>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120405.png" alt=""></p>
 <h3 id="五、目录文件"><a href="#五、目录文件" class="headerlink" title="五、目录文件"></a>五、目录文件</h3><p>Unix/Linux系统中，目录（directory）也是一种文件。打开目录，实际上就是打开目录文件。</p>
 <p>目录文件的结构非常简单，就是一系列目录项（dirent）的列表。每个目录项，由两部分组成：所包含文件的文件名，以及该文件名对应的inode号码。</p>
-<p>ls命令只列出目录文件中的所有文件名：<br><code>ls /etc</code><br><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120406.png" alt=""></p>
+<p>ls命令只列出目录文件中的所有文件名：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">　　ls &#x2F;etc</span><br></pre></td></tr></table></figure>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120406.png" alt=""></p>
 <p>ls -i命令列出整个目录文件，即文件名和inode号码：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">　　ls -i &#x2F;etc</span><br></pre></td></tr></table></figure>
 <p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120407.png" alt=""></p>
