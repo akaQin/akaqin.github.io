@@ -1,13 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>理解inode</title>
+    <url>/2020/04/14/%E7%90%86%E8%A7%A3inode/</url>
+    <content><![CDATA[<p>作者：阮一峰<br>转自：<a href="http://www.ruanyifeng.com/blog/2011/12/inode.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2011/12/inode.html</a></p>
+<p>inode是一个重要概念，是理解Unix/Linux文件系统和硬盘储存的基础。</p>
+<p>我觉得，理解inode，不仅有助于提高系统操作水平，还有助于体会Unix设计哲学，即如何把底层的复杂性抽象成一个简单概念，从而大大简化用户接口。</p>
+<p>下面就是我的inode学习笔记，尽量保持简单。</p>
+<a id="more"></a>
+<p>===================================<br>一、inode是什么？</p>
+<p>理解inode，要从文件储存说起。</p>
+<p>文件储存在硬盘上，硬盘的最小存储单位叫做”扇区”（Sector）。每个扇区储存512字节（相当于0.5KB）。</p>
+<p>操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个”块”（block）。这种由多个扇区组成的”块”，是文件存取的最小单位。”块”的大小，最常见的是4KB，即连续八个 sector组成一个 block。</p>
+<p>文件数据都储存在”块”中，那么很显然，我们还必须找到一个地方储存文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种储存文件元信息的区域就叫做inode，中文译名为”索引节点”。</p>
+<p>每一个文件都有对应的inode，里面包含了与该文件有关的一些信息。</p>
+<p>二、inode的内容</p>
+<p>inode包含文件的元信息，具体来说有以下内容：</p>
+<p>　　* 文件的字节数</p>
+<p>　　* 文件拥有者的User ID</p>
+<p>　　* 文件的Group ID</p>
+<p>　　* 文件的读、写、执行权限</p>
+<p>　　* 文件的时间戳，共有三个：ctime指inode上一次变动的时间，mtime指文件内容上一次变动的时间，atime指文件上一次打开的时间。</p>
+<p>　　* 链接数，即有多少文件名指向这个inode</p>
+<p>　　* 文件数据block的位置</p>
+<p>可以用stat命令，查看某个文件的inode信息：</p>
+<p>　　stat example.txt</p>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120402.png" alt=""></p>
+<p>总之，除了文件名以外的所有文件信息，都存在inode之中。至于为什么没有文件名，下文会有详细解释。</p>
+<p>三、inode的大小</p>
+<p>inode也会消耗硬盘空间，所以硬盘格式化的时候，操作系统自动将硬盘分成两个区域。一个是数据区，存放文件数据；另一个是inode区（inode table），存放inode所包含的信息。</p>
+<p>每个inode节点的大小，一般是128字节或256字节。inode节点的总数，在格式化时就给定，一般是每1KB或每2KB就设置一个inode。假定在一块1GB的硬盘中，每个inode节点的大小为128字节，每1KB就设置一个inode，那么inode table的大小就会达到128MB，占整块硬盘的12.8%。</p>
+<p>查看每个硬盘分区的inode总数和已经使用的数量，可以使用df命令。</p>
+<p>　　df -i</p>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120403.png" alt=""></p>
+<p>查看每个inode节点的大小，可以用如下命令：</p>
+<p>　　sudo dumpe2fs -h /dev/hda | grep “Inode size”</p>
+<p><a href="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120404.png" target="_blank" rel="noopener">http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120404.png</a></p>
+<p>由于每个文件都必须有一个inode，因此有可能发生inode已经用光，但是硬盘还未存满的情况。这时，就无法在硬盘上创建新文件。</p>
+<p>四、inode号码</p>
+<p>每个inode都有一个号码，操作系统用inode号码来识别不同的文件。</p>
+<p>这里值得重复一遍，Unix/Linux系统内部不使用文件名，而使用inode号码来识别文件。对于系统来说，文件名只是inode号码便于识别的别称或者绰号。</p>
+<p>表面上，用户通过文件名，打开文件。实际上，系统内部这个过程分成三步：首先，系统找到这个文件名对应的inode号码；其次，通过inode号码，获取inode信息；最后，根据inode信息，找到文件数据所在的block，读出数据。</p>
+<p>使用ls -i命令，可以看到文件名对应的inode号码：</p>
+<p>　　ls -i example.txt</p>
+<p><a href="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120405.png" target="_blank" rel="noopener">http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120405.png</a></p>
+<p>五、目录文件</p>
+<p>Unix/Linux系统中，目录（directory）也是一种文件。打开目录，实际上就是打开目录文件。</p>
+<p>目录文件的结构非常简单，就是一系列目录项（dirent）的列表。每个目录项，由两部分组成：所包含文件的文件名，以及该文件名对应的inode号码。</p>
+<p>ls命令只列出目录文件中的所有文件名：</p>
+<p>　　ls /etc</p>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120406.png" alt=""></p>
+<p>ls -i命令列出整个目录文件，即文件名和inode号码：</p>
+<p>　　ls -i /etc</p>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120407.png" alt=""></p>
+<p>如果要查看文件的详细信息，就必须根据inode号码，访问inode节点，读取信息。ls -l命令列出文件的详细信息。</p>
+<p>　　ls -l /etc</p>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120408.png" alt=""></p>
+<p>理解了上面这些知识，就能理解目录的权限。目录文件的读权限（r）和写权限（w），都是针对目录文件本身。由于目录文件内只有文件名和inode号码，所以如果只有读权限，只能获取文件名，无法获取其他信息，因为其他信息都储存在inode节点中，而读取inode节点内的信息需要目录文件的执行权限（x）。</p>
+<p>六、硬链接</p>
+<p>一般情况下，文件名和inode号码是”一一对应”关系，每个inode号码对应一个文件名。但是，Unix/Linux系统允许，多个文件名指向同一个inode号码。</p>
+<p>这意味着，可以用不同的文件名访问同样的内容；对文件内容进行修改，会影响到所有文件名；但是，删除一个文件名，不影响另一个文件名的访问。这种情况就被称为”硬链接”（hard link）。</p>
+<p>ln命令可以创建硬链接：</p>
+<p>　　ln 源文件 目标文件</p>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120409.png" alt=""></p>
+<p>运行上面这条命令以后，源文件与目标文件的inode号码相同，都指向同一个inode。inode信息中有一项叫做”链接数”，记录指向该inode的文件名总数，这时就会增加1。</p>
+<p>反过来，删除一个文件名，就会使得inode节点中的”链接数”减1。当这个值减到0，表明没有文件名指向这个inode，系统就会回收这个inode号码，以及其所对应block区域。</p>
+<p>这里顺便说一下目录文件的”链接数”。创建目录时，默认会生成两个目录项：”.”和”..”。前者的inode号码就是当前目录的inode号码，等同于当前目录的”硬链接”；后者的inode号码就是当前目录的父目录的inode号码，等同于父目录的”硬链接”。所以，任何一个目录的”硬链接”总数，总是等于2加上它的子目录总数（含隐藏目录）。</p>
+<p>七、软链接</p>
+<p>除了硬链接以外，还有一种特殊情况。</p>
+<p>文件A和文件B的inode号码虽然不一样，但是文件A的内容是文件B的路径。读取文件A时，系统会自动将访问者导向文件B。因此，无论打开哪一个文件，最终读取的都是文件B。这时，文件A就称为文件B的”软链接”（soft link）或者”符号链接（symbolic link）。</p>
+<p>这意味着，文件A依赖于文件B而存在，如果删除了文件B，打开文件A就会报错：”No such file or directory”。这是软链接与硬链接最大的不同：文件A指向文件B的文件名，而不是文件B的inode号码，文件B的inode”链接数”不会因此发生变化。</p>
+<p>ln -s命令可以创建软链接。</p>
+<p>　　ln -s 源文文件或目录 目标文件或目录</p>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120410.png" alt=""></p>
+<p>八、inode的特殊作用</p>
+<p>由于inode号码与文件名分离，这种机制导致了一些Unix/Linux系统特有的现象。</p>
+<p>　　1. 有时，文件名包含特殊字符，无法正常删除。这时，直接删除inode节点，就能起到删除文件的作用。</p>
+<p>　　2. 移动文件或重命名文件，只是改变文件名，不影响inode号码。</p>
+<p>　　3. 打开一个文件以后，系统就以inode号码来识别这个文件，不再考虑文件名。因此，通常来说，系统无法从inode号码得知文件名。</p>
+<p>第3点使得软件更新变得简单，可以在不关闭软件的情况下进行更新，不需要重启。因为系统通过inode号码，识别运行中的文件，不通过文件名。更新的时候，新版文件以同样的文件名，生成一个新的inode，不会影响到运行中的文件。等到下一次运行这个软件的时候，文件名就自动指向新版文件，旧版文件的inode则被回收。</p>
+<p>（完）</p>
+]]></content>
+      <categories>
+        <category>转载</category>
+      </categories>
+      <tags>
+        <tag>inode</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《UNIX环境高级编程》第4章——文件和目录</title>
     <url>/2020/04/14/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC4%E7%AB%A0%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95/</url>
-    <content><![CDATA[<h2 id="文件结构-stat"><a href="#文件结构-stat" class="headerlink" title="文件结构 stat"></a>文件结构 stat</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">stat</span> &#123;</span></span><br><span class="line">  <span class="keyword">mode_t</span>            st_mode;    <span class="comment">// file type &amp; mode (permisssions)</span></span><br><span class="line">  <span class="keyword">ino_t</span>             st_ino;     <span class="comment">// i-node number (serial number)</span></span><br><span class="line">  <span class="keyword">dev_t</span>             st_dev;     <span class="comment">// device number (file system)</span></span><br><span class="line">  <span class="keyword">dev_t</span>             st_rdev;    <span class="comment">// device number for special files</span></span><br><span class="line">  <span class="keyword">nlink_t</span>           st_link;    <span class="comment">// number of links</span></span><br><span class="line">  <span class="keyword">uid_t</span>             st_uid;     <span class="comment">// user ID of owner</span></span><br><span class="line">  <span class="keyword">gid_t</span>             st_gid;     <span class="comment">// group ID of owner</span></span><br><span class="line">  <span class="keyword">off_t</span>             st_size;    <span class="comment">// size in bytes, for regular files</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>   <span class="title">st_atime</span>;</span>   <span class="comment">// time of last access</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>   <span class="title">st_mtime</span>;</span>   <span class="comment">// time of last modification</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>   <span class="title">st_ctime</span>;</span>   <span class="comment">// time of last file status change</span></span><br><span class="line">  <span class="keyword">blksize_t</span>         st_blksize; <span class="comment">// best I/O block size</span></span><br><span class="line">  <span class="keyword">blkcnt_t</span>          st_blocks;  <span class="comment">// number of disk blocks allocated</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    <content><![CDATA[<h2 id="文件属性"><a href="#文件属性" class="headerlink" title="文件属性"></a>文件属性</h2><h3 id="文件结构-stat"><a href="#文件结构-stat" class="headerlink" title="文件结构 stat"></a>文件结构 stat</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">stat</span> &#123;</span></span><br><span class="line">  <span class="keyword">mode_t</span>            st_mode;    <span class="comment">// file type &amp; mode (permisssions)</span></span><br><span class="line">  <span class="keyword">ino_t</span>             st_ino;     <span class="comment">// i-node number (serial number)</span></span><br><span class="line">  <span class="keyword">dev_t</span>             st_dev;     <span class="comment">// device number (file system)</span></span><br><span class="line">  <span class="keyword">dev_t</span>             st_rdev;    <span class="comment">// device number for special files</span></span><br><span class="line">  <span class="keyword">nlink_t</span>           st_link;    <span class="comment">// number of links</span></span><br><span class="line">  <span class="keyword">uid_t</span>             st_uid;     <span class="comment">// user ID of owner</span></span><br><span class="line">  <span class="keyword">gid_t</span>             st_gid;     <span class="comment">// group ID of owner</span></span><br><span class="line">  <span class="keyword">off_t</span>             st_size;    <span class="comment">// size in bytes, for regular files</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>   <span class="title">st_atime</span>;</span>   <span class="comment">// time of last access</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>   <span class="title">st_mtime</span>;</span>   <span class="comment">// time of last modification</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>   <span class="title">st_ctime</span>;</span>   <span class="comment">// time of last file status change</span></span><br><span class="line">  <span class="keyword">blksize_t</span>         st_blksize; <span class="comment">// best I/O block size 对文件I/O较适合的块长度</span></span><br><span class="line">  <span class="keyword">blkcnt_t</span>          st_blocks;  <span class="comment">// number of disk blocks allocated 所分配的实际512字节块块数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>相关函数：</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//获取文件信息结构</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">stat</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> pathname, struct stat *<span class="keyword">restrict</span> buf)</span></span>;</span><br><span class="line"><span class="comment">//根据描述符获取</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fstat</span><span class="params">(<span class="keyword">int</span> fd, struct stat *buf)</span></span>;</span><br><span class="line"><span class="comment">//获取与符号链接相关的</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lstat</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> pathname, struct stat *<span class="keyword">restrict</span> buf)</span></span>;</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fstatat</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> pathname, struct stat *<span class="keyword">restrict</span> buf, <span class="keyword">int</span> flag)</span></span>;</span><br></pre></td></tr></table></figure>
 
-<h2 id="文件类型"><a href="#文件类型" class="headerlink" title="文件类型"></a>文件类型</h2><ul>
+<h3 id="文件类型"><a href="#文件类型" class="headerlink" title="文件类型"></a>文件类型</h3><ul>
 <li>普通文件（regular file)</li>
 <li>目录文件（directory file）</li>
 <li>块特殊文件（block special file）<br>这种类型的文件提供对设备（如磁盘）带缓冲的访问，每次访问以固定单位长度进行。</li>
@@ -16,14 +104,34 @@
 <li>套接字（socket）<br>这种类型的文件用于进程间的网络通信，也可用于一台宿主机上进程之间的非网络通信。</li>
 <li>符号链接（symbolic link）<br>这种类型的文件指向另一个文件。</li>
 </ul>
-<h2 id="用户ID和组ID"><a href="#用户ID和组ID" class="headerlink" title="用户ID和组ID"></a>用户ID和组ID</h2><p>与一个进程相关联的ID：<br><img src="4-5.png" alt=""></p>
+<h3 id="文件长度"><a href="#文件长度" class="headerlink" title="文件长度"></a>文件长度</h3><p>st_size表示以字节为单位的文件长度。此字段只对普通文件、目录文件和符号链接有意义。</p>
+<ul>
+<li>对于普通文件，长度可以是0。</li>
+<li>对于目录，长度通常是一个数（16或512）的整数倍。</li>
+<li>对于符号链接，尝试是文件名中的字节数。</li>
+</ul>
+<h4 id="文件空洞"><a href="#文件空洞" class="headerlink" title="文件空洞"></a>文件空洞</h4><p>文件空洞是由所设置的偏移量超过文件尾端，并写入了数据后造成的。</p>
+<h2 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h2><p>UNIX文件系统有很多种实现，这里讨论UFS文件系统。<br><img src="4-13.png" alt=""><br><img src="4-14.png" alt=""></p>
+<ul>
+<li>每个i节点都有一个链接计数，其值指向i节点的目录项数。只有计数减少到0时，才可删除文件（也就是释放该文件占用的数据块）。链接计数包含在stat结构里的st_nlink字段中，这种链接类型称为硬链接。</li>
+<li>另一种链接类型为符号链接（symbolic link）。符号链接文件的实际内容包含了该符号链接所指向的文件的名字。</li>
+<li>i节点包含了文件有关的所有信息：文件类型、文件访问权限位、文件长度和指向文件数据块的指针等。stat结构中大多数信息都取自i节点，除了文件名和i节点编号。</li>
+<li>目录项中的i节点编号指向同一文件系统中的i节点。</li>
+<li>在不更换文件系统的情况下，重命名文件并不会让文件的实际内容变动，只需要构造一个指向现有i几点的新目录项，并删除老的目录项，链接数不变。</li>
+</ul>
+<p><img src="4-15.png" alt=""></p>
+<ul>
+<li>每个叶目录的链接计数总是2（来自 该目录名 和<code>.</code>）。</li>
+<li>父目录中的每一个子目录都使该父目录的链接计数加1（子目录中的<code>..</code>项指向父目录）</li>
+</ul>
+<h2 id="权限及属组"><a href="#权限及属组" class="headerlink" title="权限及属组"></a>权限及属组</h2><h3 id="用户ID和组ID"><a href="#用户ID和组ID" class="headerlink" title="用户ID和组ID"></a>用户ID和组ID</h3><p>与一个进程相关联的ID：<br><img src="4-5.png" alt=""></p>
 <ul>
 <li>实际用户ID和实际组ID标识我们究竟是谁。这两个字段在登录时取自口令文件中的登录项。</li>
 <li>有效用户ID、有效组ID以及附属组ID决定了我们的文件访问权限。</li>
 <li>保存的设置用户ID和保存的设置组ID在执行一个程序时包含了有效用户ID和有效组ID的一个副本。</li>
 </ul>
 <p>执行一个程序文件时，进程的有效用户ID就是实际用户ID，有效组ID就是实际组ID。但可以在文件模式字（st_mode）中设置一个特殊标志，将执行此文件时的有效用户ID设置为文件所有者的用户ID；或将有效组ID设置为文件的组所有者ID。</p>
-<h2 id="文件访问权限"><a href="#文件访问权限" class="headerlink" title="文件访问权限"></a>文件访问权限</h2><p>st_mode值也包含了对文件的访问权限位。<br><img src="4-6.png" alt=""></p>
+<h3 id="文件访问权限"><a href="#文件访问权限" class="headerlink" title="文件访问权限"></a>文件访问权限</h3><p>st_mode值也包含了对文件的访问权限位。<br><img src="4-6.png" alt=""></p>
 <ul>
 <li>读权限决定了我们能否打开一个文件进行读操作，包括读目录中的内容。</li>
 <li>写权限决定了我们能否打开一个文件进行写操作。</li>
@@ -31,18 +139,26 @@
 <li>在目录中创建一个新文件需要对该目录有写和执行权限。</li>
 <li>删除一个现有文件，需要对包含该文件的目录具有写和执行权限，对该文件本身不需要有读、写权限。</li>
 </ul>
-<h2 id="新文件和目录的所有权"><a href="#新文件和目录的所有权" class="headerlink" title="新文件和目录的所有权"></a>新文件和目录的所有权</h2><ul>
+<h3 id="新文件和目录的所有权"><a href="#新文件和目录的所有权" class="headerlink" title="新文件和目录的所有权"></a>新文件和目录的所有权</h3><ul>
 <li>新文件的用户ID设置为进程的有效用户ID。</li>
 <li>新文件的组ID可以是进程的有效组ID也可以是它所在的目录的组ID。</li>
 </ul>
-<h2 id="access-和-faccessat"><a href="#access-和-faccessat" class="headerlink" title="access 和 faccessat"></a>access 和 faccessat</h2><p>用<code>open</code>函数打开文件时，内核以进程的有效用户ID和有效组ID做访问权限测试，<code>access</code>和<code>faccessat</code>函数按实际用户ID和实际组ID进行测试。</p>
+<h3 id="access-和-faccessat"><a href="#access-和-faccessat" class="headerlink" title="access 和 faccessat"></a>access 和 faccessat</h3><p>用<code>open</code>函数打开文件时，内核以进程的有效用户ID和有效组ID做访问权限测试，<code>access</code>和<code>faccessat</code>函数按实际用户ID和实际组ID进行测试。</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">access</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">int</span> mode)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">faccess</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">int</span> mode ,<span class="keyword">int</span> flag)</span></span>;</span><br></pre></td></tr></table></figure>
 
-<h2 id="umask"><a href="#umask" class="headerlink" title="umask"></a>umask</h2><p><code>umask</code>函数为进程设置文件膜创建屏蔽字，并返回之前的值。</p>
+<h3 id="umask"><a href="#umask" class="headerlink" title="umask"></a>umask</h3><p><code>umask</code>函数为进程设置文件膜创建屏蔽字，并返回之前的值。</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">mode_t</span> <span class="title">umask</span><span class="params">(<span class="keyword">mode_t</span> cmask)</span></span>;</span><br></pre></td></tr></table></figure>
 <p><img src="4-10.png" alt=""></p>
-<h2 id="chmod、fchmod和fchmodat"><a href="#chmod、fchmod和fchmodat" class="headerlink" title="chmod、fchmod和fchmodat"></a>chmod、fchmod和fchmodat</h2><p>这三个函数使我们更改现有文件的访问权限。<br><img src="4-11.png" alt=""></p>
-]]></content>
+<h3 id="chmod、fchmod和fchmodat"><a href="#chmod、fchmod和fchmodat" class="headerlink" title="chmod、fchmod和fchmodat"></a>chmod、fchmod和fchmodat</h3><p>这三个函数使我们更改现有文件的访问权限。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">chmod</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">mode_t</span> mode)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fchmod</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">mode_t</span> mode)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fchmodat</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">mode_t</span> mode, <span class="keyword">int</span> flag)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><img src="4-11.png" alt=""></p>
+<h3 id="粘着位"><a href="#粘着位" class="headerlink" title="粘着位"></a>粘着位</h3><p>UNIX早期版本中，S_ISVTX位被称为<code>粘着位(sticky bit)</code>。如果一个可执行程序文件的这一位被设置了，那么当该程序第一次被执行，在其终止时，程序正文部分（机器指令）的一个副本仍被保存在交换区。这使得下次执行该程序时能较快的将其载入内存。</p>
+<h4 id="Linux中的交换区"><a href="#Linux中的交换区" class="headerlink" title="Linux中的交换区"></a>Linux中的交换区</h4><blockquote>
+<p>Linux中Swap（即：交换分区），类似于Windows的虚拟内存，就是当内存不足的时候，把一部分硬盘空间虚拟成内存使用,从而解决内存容量不足的情况。Android是基于Linux的操作系统，所以也可以使用Swap分区来提升系统运行效率 。</p>
+</blockquote>
+<p>现今交心的UNIX系统大多配置了虚拟存储系统以及快速文件系统，不再需要这种技术。<br>SUS允许针对目录设置粘着位，目录/tmp和/var/tmp是设置粘着位的典型候选者——任何用户都可在这两个目录中创建文件；任一用户对这两个目录的权限通常都是读、写、执行。</p>
+<h3 id="chown、fchown、fchownat和lchown"><a href="#chown、fchown、fchownat和lchown" class="headerlink" title="chown、fchown、fchownat和lchown"></a>chown、fchown、fchownat和lchown</h3><p>这几个函数更改文件的用户ID和组ID。</p>
+<h2 id="文件操作"><a href="#文件操作" class="headerlink" title="文件操作"></a>文件操作</h2>]]></content>
       <categories>
         <category>《APUE》笔记</category>
       </categories>
