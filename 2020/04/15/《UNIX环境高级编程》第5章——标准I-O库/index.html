@@ -113,6 +113,8 @@
 <li>文件指针<code>stdout</code>对应文件描述符<code>STDOUT_FILENO</code></li>
 <li>文件指针<code>stderr</code>对应文件描述符<code>STDERR_FILENO</code></li>
 </ul>
+<a id="more"></a>
+
 <h2 id="缓冲"><a href="#缓冲" class="headerlink" title="缓冲"></a>缓冲</h2><p>标准I/O库提供缓冲以尽可能减少read和write调用的次数，它也对每个I/O流自动的进行缓冲管理。</p>
 <ul>
 <li>全缓冲<br>这种情况下，在填满标准I/O缓冲区后才进行实际I/O操作。对于驻留在磁盘上的文件通常是由标准I/O库实施全缓冲的。</li>
