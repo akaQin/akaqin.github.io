@@ -1061,10 +1061,10 @@
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">atexit</span><span class="params">(<span class="keyword">void</span> (*func)(<span class="keyword">void</span>))</span></span>;</span><br></pre></td></tr></table></figure>
 
 
-<h2 id="环境表"><a href="#环境表" class="headerlink" title="环境表"></a>环境表</h2><p>每个程序都收到一张环境表。与参数表一样，环境表也是一个字符指针数组，全局变量environ则包含了该指针数组的地址。</p>
+<h2 id="环境表和环境变量"><a href="#环境表和环境变量" class="headerlink" title="环境表和环境变量"></a>环境表和环境变量</h2><p>每个程序都收到一张环境表。与参数表一样，环境表也是一个字符指针数组，全局变量environ则包含了该指针数组的地址。</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="keyword">char</span> **environ;</span><br></pre></td></tr></table></figure>
 <p><img src="7-5.png" alt=""><br>我们称environ为环境指针，通常用<code>getenv</code>和<code>putenv</code>访问特定的环境变量。我们能影响的通常只是当前进程及其后生成和调用的任何子进程的环境，但不能影响父进程的环境，这通常是一个shell进程。<br>环境表和环境字符串通常存放在进程存储空间的顶部（栈之上）</p>
-<h3 id="C程序的存储空间布局"><a href="#C程序的存储空间布局" class="headerlink" title="C程序的存储空间布局"></a>C程序的存储空间布局</h3><p>C程序由下列几部分构成：</p>
+<h2 id="存储空间布局与分配"><a href="#存储空间布局与分配" class="headerlink" title="存储空间布局与分配"></a>存储空间布局与分配</h2><h3 id="存储空间布局"><a href="#存储空间布局" class="headerlink" title="存储空间布局"></a>存储空间布局</h3><p>C程序由下列几部分构成：</p>
 <ul>
 <li>正文段<br>由CPU执行的机器指令部分。通常，正文段是可共享的，所以即使频繁执行的程序在存储器中也只需要由一个副本。正文段通常是只读的，以防止程序由于意外而修改其指令。</li>
 <li>初始化数据段（.data）<br>通常称为数据段。包含了明确赋初值的变量。例如C程序中任何函数之外的声明：<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> maxcount = <span class="number">99</span>;</span><br></pre></td></tr></table></figure>
