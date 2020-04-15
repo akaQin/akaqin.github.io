@@ -5,6 +5,8 @@
     <url>/2020/04/15/register%E3%80%81volatile%E3%80%81restrict%E5%92%8Cextern/</url>
     <content><![CDATA[<h2 id="register"><a href="#register" class="headerlink" title="register"></a>register</h2><h3 id="含义："><a href="#含义：" class="headerlink" title="含义："></a>含义：</h3><p>这个关键字暗示编译器相应的变量将被频繁地使用，如果可能的话尽可能的将变量存在CPU内部寄存器中，而不是通过内存寻址访问，以提高效率。注意是尽可能，不是绝对。</p>
 <h3 id="补充："><a href="#补充：" class="headerlink" title="补充："></a>补充：</h3><p>首先，register变量必须是能被CPU所接受的类型。这通常意味着register变量必须是一个单个的值，并且长度应该小于或者等于整型的长度。不过，有些机器的寄存器也能存放浮点数。</p>
+<a id="more"></a>
+
 <p>其次，因为register变量可能不存放在内存中，所以不能用“&amp;”来获取register变量的地址。</p>
 <p>由于寄存器的数量有限，而且某些寄存器只能接受特定类型的数据（如指针和浮点数），因此真正起作用的register修饰符的数目和类型都依赖于运行程序的机器，而任何多余的register修饰符都将被编译程序所忽略。</p>
 <p>在某些情况下，把变量保存在寄存器中反而会降低程序的运行速度。因为被占用的寄存器不能再用于其它目的；或者变量被使用的次数不够多，不足以装入和存储变量所带来的额外开销。</p>
