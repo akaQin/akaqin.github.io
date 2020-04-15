@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">2.4k字</span>
+            <span class="post-count">2.3k字</span>
         </span>
     </span>
 
@@ -77,7 +77,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">9分钟</span>
+            <span class="post-count">8分钟</span>
         </span>
     </span>
 </div>
@@ -191,10 +191,7 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">	<span class="keyword">int</span>	__dd_fd;	<span class="comment">// file descriptor associated with directory</span></span><br><span class="line">	<span class="keyword">long</span>	__dd_loc;	<span class="comment">// offset in current buffer</span></span><br><span class="line">	<span class="keyword">long</span>	__dd_size;	<span class="comment">// amount of data returned</span></span><br><span class="line">	<span class="keyword">char</span>	*__dd_buf;	<span class="comment">// data buffer</span></span><br><span class="line">	<span class="keyword">int</span>	__dd_len;	<span class="comment">// size of data buffer</span></span><br><span class="line">	<span class="keyword">long</span>	__dd_seek;	<span class="comment">// magic cookie returned</span></span><br><span class="line">	__unused <span class="keyword">long</span>	__padding; <span class="comment">// (__dd_rewind space left for bincompat)</span></span><br><span class="line">	<span class="keyword">int</span>	__dd_flags;	<span class="comment">// flags for readdir</span></span><br><span class="line">	<span class="keyword">__darwin_pthread_mutex_t</span> __dd_lock; <span class="comment">// for thread locking</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> _<span class="title">telldir</span> *__<span class="title">dd_td</span>;</span> <span class="comment">// telldir position recording</span></span><br><span class="line">&#125; DIR;</span><br></pre></td></tr></table></figure>
 <p>目录项 dirent结构与实现有关，至少包含下列两个成员：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ino_t</span> d_ino; <span class="comment">//i-node number</span></span><br><span class="line"><span class="keyword">char</span> d_name[]; <span class="comment">//null-terminated filename</span></span><br></pre></td></tr></table></figure>
-<p>视频中提及的一些网站🔗</p>
-<p>电子书下载📖<br>Library Genesis:  gen.lib.rus.ec<br>Z library: zh.booksc.org<br>鸠摩搜书：jiumodiary.com<br>子午书简：5kindle.com</p>
-<p>杂志下载🗞<br>tianfateng.cn</p>
-<p>视频制作及剪辑<br>Keynote/ Lumafusion</p>
+
 <ul>
 <li><code>mkdir</code>/<code>mkdirat</code> 创建目录</li>
 <li><code>rmdir</code> 删除目录</li>
