@@ -1075,26 +1075,20 @@
 <li>堆<br>通常用于进行动态存储分配。</li>
 </ul>
 <p><img src="7-6.png" alt=""></p>
-<h3 id="共享库"><a href="#共享库" class="headerlink" title="共享库"></a>共享库</h3><ul>
-<li>共享库使得可执行文件中不再需要包含公用的库函数，只需要在所有进程都可引用的存储区保存这种库例程的一个副本。</li>
-<li>程序第一次执行或者第一次调用某个库函数时，用动态链接方法将程序与共享库函数链接。</li>
-<li>这减少了每个可执行文件的长度，但增加了一些运行时间开销。这种时间开销发生在该程序第一次执行时或每个共享库函数第一次被调用时。</li>
-<li>共享库的另一个优点是可以用库函数的新版本代替老版本而无需对使用该库的程序重新链接编辑。</li>
-</ul>
-<h3 id="存储空间分配"><a href="#存储空间分配" class="headerlink" title="存储空间分配"></a>存储空间分配</h3><ul>
+<h3 id="共享库"><a href="#共享库" class="headerlink" title="共享库"></a>共享库</h3><p>共享库使得可执行文件中不再需要包含公用的库函数，只需要在所有进程都可引用的存储区保存这种库例程的一个副本。程序第一次执行或者第一次调用某个库函数时，用动态链接方法将程序与共享库函数链接。这减少了每个可执行文件的长度，但增加了一些运行时间开销。这种时间开销发生在该程序第一次执行时或每个共享库函数第一次被调用时。共享库的另一个优点是可以用库函数的新版本代替老版本而无需对使用该库的程序重新链接编辑。</p>
+<h3 id="存储空间分配"><a href="#存储空间分配" class="headerlink" title="存储空间分配"></a>存储空间分配</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">malloc</span><span class="params">(<span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">calloc</span><span class="params">(<span class="keyword">size_t</span> nobj, <span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">realloc</span><span class="params">(<span class="keyword">void</span> *ptr, <span class="keyword">size_t</span> newsize)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">free</span><span class="params">(<span class="keyword">void</span> *ptr)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
 <li><code>malloc</code>分配指定字节数的存储区。其中的初始值不确定。</li>
 <li><code>calloc</code>分配的每一位都初始化为0。</li>
 <li><code>realloc</code>增加或减少分配区长度。新增区域内初始值不确定</li>
-<li>这些分配例程通常通过<code>sbrk</code>系统调用实现</li>
-<li><a href="../为什么calloc会比malloc-memset快">为什么calloc会比malloc+memset快</a></li>
-<li>大部分<code>malloc</code>和<code>free</code>的实现都不减小进程的存储空间。释放的空间可供以后再分配，但将它们保持在malloc池中而不返回给内核。</li>
-<li>大多数实现所分配的存储空间比要求的要大一些，额外的空间用来记录管理信息——分配块的长度、指向下一个分配块的指针等。</li>
 </ul>
-<h3 id="内存分配时常见错误"><a href="#内存分配时常见错误" class="headerlink" title="内存分配时常见错误"></a>内存分配时常见错误</h3><ul>
-<li>在动态分配的缓冲区前后进行写操作，破坏管理记录信息或用于其他动态分配的对象。</li>
+<p>这三个函数所返回的指针一定是适当对齐的，使其可用于任何数据对象。这些分配例程通常通过<code>sbrk</code>系统调用实现。<br>大部分<code>malloc</code>和<code>free</code>的实现都不减小进程的存储空间。释放的空间可供以后再分配，但将它们保持在malloc池中而不返回给内核。大多数实现所分配的存储空间比要求的要大一些，额外的空间用来记录管理信息——分配块的长度、指向下一个分配块的指针等。</p>
+<p><a href="../为什么calloc会比malloc-memset快">为什么calloc会比malloc+memset快</a></p>
+<h4 id="内存分配时常见错误"><a href="#内存分配时常见错误" class="headerlink" title="内存分配时常见错误"></a>内存分配时常见错误</h4><ul>
+<li>在动态分配的缓冲区前后进行写操作，破坏管理记录信息或用于其他动态分配的对象</li>
 <li>释放一个已经释放了的块</li>
 <li>调用free时的指针不是三个alloc函数的返回值</li>
-<li>调用malloc不调用free，造成内存泄漏。进程地址空间长度会慢慢增加，直至没有空闲空间。此时由于过度的换页开销，会导致性能下降。</li>
+<li>调用malloc不调用free，造成内存泄漏。进程地址空间长度会慢慢增加，直至没有空闲空间。此时由于过度的换页开销，会导致性能下降</li>
 </ul>
 <h3 id="setjump与longjump"><a href="#setjump与longjump" class="headerlink" title="setjump与longjump"></a>setjump与longjump</h3><ul>
 <li>C语言中goto是无法跨域函数的，而执行这种类型的跳转功能的函数是setjmp和longjmp。</li>
