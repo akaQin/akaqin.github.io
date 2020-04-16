@@ -164,7 +164,7 @@
 <li>挂起字符（一般采用Ctrl+Z）产生SIGSTP</li>
 </ul>
 <p>只有前台作业可以接收终端输入或向终端输出。<br>如果后台作业尝试读终端，终端驱动程序会向后台作业发送信号SIGTTIN，该信号通常会停止后台。然后通知用户。<br>后台作业能否输出到控制终端与配置有关。<br><img src="9-9.png" alt=""></p>
-<h2 id="shell执行程序"><a href="#shell执行程序" class="headerlink" title="shell执行程序"></a>shell执行程序</h2><p><img src="9.9.1.png" alt=""><br>在不支持作业控制的shell中，管道中的最后一个进程是shell的子进程，管道中的其他进程是最后一个进程的子进程。从中可以看出，shell fork一个它自身的副本，然后此副本再为管道中的每条命令各fork一个进程。<br><img src="9-10.png" alt=""><br>有作业控制时，后台作业被放在后台进程组，如果后台作业试图读控制终端，则会产生信号SIGTTIN。<br><img src="9.9.2.png" alt=""><br><img src="9.9.3.png" alt=""></p>
+<h2 id="shell执行程序"><a href="#shell执行程序" class="headerlink" title="shell执行程序"></a>shell执行程序</h2><p><img src="9.9.1.png" alt=""><br><strong>在不支持作业控制的shell中，管道中的最后一个进程是shell的子进程，管道中的其他进程是最后一个进程的子进程。从中可以看出，shell fork一个它自身的副本，然后此副本再为管道中的每条命令各fork一个进程。</strong><br><img src="9-10.png" alt=""><br>有作业控制时，后台作业被放在后台进程组，如果后台作业试图读控制终端，则会产生信号SIGTTIN。<br><img src="9.9.2.png" alt=""><br><img src="9.9.3.png" alt=""></p>
 <h2 id="孤儿进程组"><a href="#孤儿进程组" class="headerlink" title="孤儿进程组"></a>孤儿进程组</h2><p>该组中每个成员的父进程要么是该组的一个成员，要么不是该组所属会话的成员。另一种描述可以是：一个进程组不是孤儿进程组的条件是——该组中有一个进程，其父进程属于同一会话的另一个组中。如果进程组不是孤儿进程组，那么在属于同一会话的另一个组中的父进程就有机会重新启动该组中停止的进程。<br><img src="9-11.png" alt=""><br>因为在父进程终止后，进程组包含一个停止的进程，进程组称为孤儿进程组，POSIX。1要求向新孤儿进程组中处于停止状态的每一个进程发送挂断信号（SIGHUP），接着又向其发送继续信号（SIGCONT）。<br>在处理了挂断信号后，子进程继续。对挂断信号的系统默认动作是终止该进程。</p>
 <h2 id="FreeBSD实现"><a href="#FreeBSD实现" class="headerlink" title="FreeBSD实现"></a>FreeBSD实现</h2><p><img src="9-13.png" alt=""><br>每个会话都分配一个session结构。在调用setsid时，在内核分配一个心得session结构。</p>
 
