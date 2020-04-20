@@ -1726,9 +1726,13 @@
       </tags>
   </entry>
   <entry>
-    <title>《Go语言圣经》笔记整理</title>
-    <url>/2018/11/01/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%E6%95%B4%E7%90%86/</url>
-    <content><![CDATA[<h3 id="Printf-转换动词"><a href="#Printf-转换动词" class="headerlink" title="Printf 转换动词"></a>Printf 转换动词</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">%d			十进制整数</span><br><span class="line">%x, %o, %b	十六进制，八进制，二进制整数。</span><br><span class="line">%f, %g, %e	浮点数: 3.141593 3.141592653589793 3.141593e+00</span><br><span class="line">%t			布尔:true或false</span><br><span class="line">%c			字符(rune) (Unicode码点)</span><br><span class="line">%s			字符串</span><br><span class="line">%q			带双引号的字符串&quot;abc&quot;或带单引号的字符&#39;c&#39;</span><br><span class="line">%v			变量的自然形式(natural format)</span><br><span class="line">%T			变量的类型</span><br><span class="line">%%			字面上的百分号标志(无操作数)</span><br></pre></td></tr></table></figure>
+    <title>Go语言学习笔记</title>
+    <url>/2018/11/01/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
+    <content><![CDATA[<h2 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h2><p>Go语言的自动圾收集器是如何知道一个变量是何时可以被回收的呢?这里我们可以避开 完整的技术细节，基本的实现思路是，从每个包级的变量和每个当前运行函数的每一个局部 变量开始，通过指针或引用的访问路径遍历，是否可以找到该变量。如果不存在这样的访问 路径，那么说明该变量是不可达的，也就是说它是否存在并不会影响程序后续的计算结果。<br>因为一个变量的有效周期只取决于是否可达，因此一个循环迭代内部的局部变量的生命周期 可能超出其局部作用域。同时，局部变量可能在函数返回之后依然存在。<br>编译器会自动选择在栈上还是在堆上分配局部变量的存储空间，但可能令人惊讶的是，这个 选择并不是由用var还是new声明变量的方式决定的。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> global *<span class="keyword">int</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> x <span class="keyword">int</span></span><br><span class="line">    x=<span class="number">1</span></span><br><span class="line">    global = &amp;x</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">g</span><span class="params">()</span></span> &#123;</span><br><span class="line">    y := <span class="built_in">new</span>(<span class="keyword">int</span>)</span><br><span class="line">    *y = <span class="number">1</span></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>f函数里的x变量必须在堆上分配，因为它在函数退出后依然可以通过包一级的global变量找 到，虽然它是在函数内部定义的;用Go语言的术语说，这个x局部变量从函数f中逃逸了。相 反，当g函数返回时，变量 *y 将是不可达的，也就是说可以马上被回收的。因此，*y 并没 有从函数g中逃逸，编译器可以选择在栈上分配 *y 的存储空间(也可以选择在堆上分 配，然后由Go语言的GC回收这个变量的内存空间)，虽然这里用的是new方式。其实在任何 时候，你并不需为了编写正确的代码而要考虑变量的逃逸行为，要记住的是，逃逸的变量需 要额外分配内存，同时对性能的优化可能会产生细微的影响。</p>
+<p>Go语言的自动垃圾收集器对编写正确的代码是一个巨大的帮助，但也并不是说你完全不用考 虑内存了。你虽然不需要显式地分配和释放内存，但是要编写高效的程序你依然需要了解变 量的生命周期。例如，如果将指向短生命周期对象的指针保存到具有长生命周期的对象中， 特别是保存到全局变量时，会阻止对短生命周期对象的垃圾回收(从而可能影响程序的性能)。</p>
 ]]></content>
       <categories>
         <category>《Go语言圣经》笔记</category>
