@@ -49,77 +49,6 @@
       </tags>
   </entry>
   <entry>
-    <title>《UNIX环境高级编程》第5章——标准I/O库</title>
-    <url>/2020/04/15/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC5%E7%AB%A0%E2%80%94%E2%80%94%E6%A0%87%E5%87%86I-O%E5%BA%93/</url>
-    <content><![CDATA[<h2 id="流和FILE对象"><a href="#流和FILE对象" class="headerlink" title="流和FILE对象"></a>流和<code>FILE</code>对象</h2><p>所有不带缓冲的I/O函数都是围绕文件描述符进行的。而对于标准I/O库，它们的操作是围绕流进行的。当用标准I/O库打开或创建一个文件时，我们已使一个流与一个文件相关联。<br>对于ASCII字符集，一个字符用一个字节表示，对于国际字符集，一个字符用多个字节表示。标准I/O文件流可用于单字节或多字节字符集，由流的定向决定。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//设置流的定向</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fwide</span><span class="params">(FILE *fp, <span class="keyword">int</span> mode)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<h3 id="标准输入、标准输出和标准错误"><a href="#标准输入、标准输出和标准错误" class="headerlink" title="标准输入、标准输出和标准错误"></a>标准输入、标准输出和标准错误</h3><p>对一个进程预定义了3个流，这3个流可以自动地被进程使用:</p>
-<ul>
-<li>文件指针<code>stdin</code>对应文件描述符<code>STDIN_FILENO</code></li>
-<li>文件指针<code>stdout</code>对应文件描述符<code>STDOUT_FILENO</code></li>
-<li>文件指针<code>stderr</code>对应文件描述符<code>STDERR_FILENO</code></li>
-</ul>
-<a id="more"></a>
-
-<h2 id="缓冲"><a href="#缓冲" class="headerlink" title="缓冲"></a>缓冲</h2><p>标准I/O库提供缓冲以尽可能减少read和write调用的次数，它也对每个I/O流自动的进行缓冲管理。</p>
-<ul>
-<li>全缓冲<br>这种情况下，在填满标准I/O缓冲区后才进行实际I/O操作。对于驻留在磁盘上的文件通常是由标准I/O库实施全缓冲的。</li>
-<li>行缓冲<br>这种情况下，在输入和输出中遇到换行符时，标准I/O库执行I/O操作。通常用在终端上。</li>
-<li>不带缓冲<br>标准I/O库不对字符进行缓冲，通常用在标准错误上。</li>
-</ul>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//打开或关闭缓冲</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setbuf</span><span class="params">(FILE *<span class="keyword">restrict</span> fp, <span class="keyword">char</span> *<span class="keyword">restrict</span> buf)</span></span>;</span><br><span class="line"><span class="comment">//更改缓冲类型</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setvbuf</span><span class="params">(FILE *<span class="keyword">restrict</span> fp, <span class="keyword">char</span> *<span class="keyword">restrict</span> buf, <span class="keyword">int</span> mode, <span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>;</span><br><span class="line"><span class="comment">//冲洗一个流</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fflush</span><span class="params">(FILE *FP)</span></span>;</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="打开-关闭流"><a href="#打开-关闭流" class="headerlink" title="打开/关闭流"></a>打开/关闭流</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//打开指定文件</span></span><br><span class="line"><span class="function">FILE *<span class="title">fopen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> pathname, <span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> type)</span></span>;</span><br><span class="line"><span class="comment">//重新打开（关闭再打开）文件，用于打开预定义的流（标准输入/输出/错误）</span></span><br><span class="line"><span class="function">FILE *<span class="title">freopen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> pathname, <span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> type, FILE *<span class="keyword">restrict</span> fp)</span></span>;</span><br><span class="line"><span class="comment">//根据描述符打开文件，常用在由管道和网络通信通道函数返回的描述符</span></span><br><span class="line"><span class="function">FILE *<span class="title">fdopen</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *type)</span></span>;</span><br><span class="line"><span class="comment">//关闭流</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fclose</span><span class="params">(FILE *fp)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>打开方式：<br><img src="5-2.png" alt=""><br><strong>函数返回前记得关闭流以释放缓冲区</strong></p>
-<h2 id="读和写流"><a href="#读和写流" class="headerlink" title="读和写流"></a>读和写流</h2><h3 id="每次一个字符"><a href="#每次一个字符" class="headerlink" title="每次一个字符"></a>每次一个字符</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="comment">//读</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getc</span><span class="params">(FILE *fp)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fgetc</span><span class="params">(FILE *fp)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getchar</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="comment">//压回流中</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">ungetc</span><span class="params">(<span class="keyword">int</span> c, FILE *fp)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">putc</span><span class="params">(<span class="keyword">int</span> c, FILE *fp)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fputc</span><span class="params">(<span class="keyword">int</span> c, FILE *fp)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">putchar</span><span class="params">(<span class="keyword">int</span> c)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>getchar 等同于 getc(stdin)。前两者的区别是getc可以被实现为宏，这意味着：</p>
-<ul>
-<li>getc的参数不应当是具有副作用的表达式，因为可能会被计算多次</li>
-<li>fgetc一定是个函数，所以可以得到其地址，允许当参数传递</li>
-<li>fgetc的调用时长可能要比getc长。</li>
-</ul>
-<h3 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理"></a>错误处理</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//判断是否出错</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">ferror</span><span class="params">(FILE *fp)</span></span>;</span><br><span class="line"><span class="comment">//判断是否到达文件尾端</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">feof</span><span class="params">(FILE *fp)</span></span>;</span><br><span class="line"><span class="comment">//清除错误</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">clearerr</span><span class="params">(FILE *fp)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<h3 id="每次一行"><a href="#每次一行" class="headerlink" title="每次一行"></a>每次一行</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">fgets</span><span class="params">(<span class="keyword">char</span> *<span class="keyword">restrict</span> buf, <span class="keyword">int</span> n, FILE *<span class="keyword">restrict</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">gets</span><span class="params">(<span class="keyword">char</span> *buf)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fputs</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> str, FILE *<span class="keyword">restrict</span> fp)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">puts</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *str)</span></span>;</span><br></pre></td></tr></table></figure>
-<p><strong>不推荐使用gets和puts。因为不能指定缓冲区长度，可能造成缓冲区溢出</strong></p>
-<h3 id="二进制I-O"><a href="#二进制I-O" class="headerlink" title="二进制I/O"></a>二进制I/O</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">size_t</span> <span class="title">fread</span><span class="params">(<span class="keyword">void</span> *<span class="keyword">restrict</span> ptr, <span class="keyword">size_t</span> <span class="built_in">size</span>, <span class="keyword">size_t</span> nobj, FILE *<span class="keyword">restrict</span> fp)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">size_t</span> <span class="title">fwrite</span><span class="params">(<span class="keyword">const</span> <span class="keyword">void</span> *<span class="keyword">restrict</span> ptr, <span class="keyword">size_t</span> <span class="built_in">size</span>, <span class="keyword">size_t</span> nobj, FILE *<span class="keyword">restrict</span> fp)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<h3 id="内存流"><a href="#内存流" class="headerlink" title="内存流"></a>内存流</h3><p>SUSv4中支持了内存流。这就是标准I/O流，虽然仍使用FILE指针进行访问，但并没有底层文件。所有的I/O都是通过在缓冲区与主存之间来回传送字节完成的。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//创建内存流</span></span><br><span class="line"><span class="function">FILE *<span class="title">fmemopen</span><span class="params">(<span class="keyword">void</span> *<span class="keyword">restrict</span> buf, <span class="keyword">size_t</span> <span class="built_in">size</span>, <span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> type)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>因为避免了缓冲区溢出，内存流非常适用于创建字符串。因为内存流只访问主存，不访问磁盘上的文件，所以对于把标准I/O流作为参数用于临时文件的函数来说，会有很大的性能提升。</p>
-<h2 id="定位流"><a href="#定位流" class="headerlink" title="定位流"></a>定位流</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">ftell</span><span class="params">(FILE *fp)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fseek</span><span class="params">(FILE *fp, <span class="keyword">long</span> offset, <span class="keyword">int</span> whence)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rewind</span><span class="params">(FILE *fp)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">off_t</span> <span class="title">ftello</span><span class="params">(FILE *fp)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fseeko</span><span class="params">(FILE *fp, <span class="keyword">off_t</span> offset, <span class="keyword">int</span> whence)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fgetpos</span><span class="params">(FILE *<span class="keyword">restrict</span> fp, <span class="keyword">fpos_t</span> *<span class="keyword">restrict</span> pos)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fsetpos</span><span class="params">(FILE *fp, <span class="keyword">const</span> <span class="keyword">fpos_t</span> *pos)</span></span>;</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="标准I-O的优却点及效率"><a href="#标准I-O的优却点及效率" class="headerlink" title="标准I/O的优却点及效率"></a>标准I/O的优却点及效率</h2><p>使用标准I/O优点是无需考虑缓冲及最佳I/O长度的选择。不足之处是效率不高，这与它需要复制的数据量有关。当使用每次一行的fgets和fputs时，需要复制两次数据：依次是在内核和标准I/O缓冲区之间（当调用read和write时），第二次是在标准I/O缓冲区和用户程序中的行缓冲区之间。<br>标准I/O库与直接调用read和write相比并不慢很多。对于大多数复杂的应用程序，最主要的用户CPU时间是由应用本身的各种处理消耗的，而不是由标准I/O例程消耗的。</p>
-<h2 id="格式化I-O"><a href="#格式化I-O" class="headerlink" title="格式化I/O"></a>格式化I/O</h2><p>格式化输出：</p>
-<ul>
-<li>printf 将格式化数据写到标准输出</li>
-<li>fprintf 写到指定的流</li>
-<li>dprintf 写到指定的文件描述符</li>
-<li>sprintf 写到给定的缓冲区中。结尾自动加NULL，但该字符不计算在返回值中</li>
-<li>snprintf 同上。但sprintf可能会造成缓冲区溢出，所以推荐使用snprintf显式指定缓冲区长度</li>
-</ul>
-<p>格式化输入：</p>
-<ul>
-<li>scanf 从标准输入中分析字符串</li>
-<li>fscanf 从流中分析</li>
-<li>sscanf 从给定缓冲区中分析</li>
-</ul>
-<h2 id="实现细节"><a href="#实现细节" class="headerlink" title="实现细节"></a>实现细节</h2><p>UNIX中，标准I/O库最终都要调用第3章中说明的不带缓冲的I/O例程。每个I/O流都有一个与其相关的文件描述符。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fileno</span><span class="params">(FILE *fp)</span></span>; <span class="comment">//获取流对应的描述符</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="临时文件"><a href="#临时文件" class="headerlink" title="临时文件"></a>临时文件</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">tmpnam</span><span class="params">(<span class="keyword">char</span> *ptr)</span></span>; <span class="comment">//产生一个与现有文件名不同的一个有效路径名字符串</span></span><br><span class="line"><span class="function">FILE *<span class="title">tmpfile</span><span class="params">(<span class="keyword">void</span>)</span></span>; <span class="comment">//创建一个临时二进制文件（类型wb+），在关闭该文件或程序结束时自动删除</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">mkdtemp</span><span class="params">(<span class="keyword">char</span> *<span class="keyword">template</span>)</span></span>; <span class="comment">//创建一个目录，该目录有一个唯一的名字</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mkstemp</span><span class="params">(<span class="keyword">char</span> *<span class="keyword">template</span>)</span></span>; <span class="comment">//创建一个文件，该文件有一个唯一的名字</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>《APUE》笔记</category>
-      </categories>
-      <tags>
-        <tag>I/O</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>理解inode</title>
     <url>/2020/04/14/%E7%90%86%E8%A7%A3inode/</url>
     <content><![CDATA[<p>作者：阮一峰<br>转自：<a href="http://www.ruanyifeng.com/blog/2011/12/inode.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2011/12/inode.html</a></p>
@@ -201,188 +130,8 @@
       </tags>
   </entry>
   <entry>
-    <title>《UNIX环境高级编程》第4章——文件和目录</title>
-    <url>/2020/04/14/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC4%E7%AB%A0%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95/</url>
-    <content><![CDATA[<h2 id="文件属性"><a href="#文件属性" class="headerlink" title="文件属性"></a>文件属性</h2><h3 id="文件结构-stat"><a href="#文件结构-stat" class="headerlink" title="文件结构 stat"></a>文件结构 stat</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">stat</span> &#123;</span></span><br><span class="line">  <span class="keyword">mode_t</span>            st_mode;    <span class="comment">// file type &amp; mode (permisssions)</span></span><br><span class="line">  <span class="keyword">ino_t</span>             st_ino;     <span class="comment">// i-node number (serial number)</span></span><br><span class="line">  <span class="keyword">dev_t</span>             st_dev;     <span class="comment">// device number (file system)</span></span><br><span class="line">  <span class="keyword">dev_t</span>             st_rdev;    <span class="comment">// device number for special files</span></span><br><span class="line">  <span class="keyword">nlink_t</span>           st_link;    <span class="comment">// number of links</span></span><br><span class="line">  <span class="keyword">uid_t</span>             st_uid;     <span class="comment">// user ID of owner</span></span><br><span class="line">  <span class="keyword">gid_t</span>             st_gid;     <span class="comment">// group ID of owner</span></span><br><span class="line">  <span class="keyword">off_t</span>             st_size;    <span class="comment">// size in bytes, for regular files</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>   <span class="title">st_atime</span>;</span>   <span class="comment">// time of last access</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>   <span class="title">st_mtime</span>;</span>   <span class="comment">// time of last modification</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>   <span class="title">st_ctime</span>;</span>   <span class="comment">// time of last file status change</span></span><br><span class="line">  <span class="keyword">blksize_t</span>         st_blksize; <span class="comment">// best I/O block size 对文件I/O较适合的块长度</span></span><br><span class="line">  <span class="keyword">blkcnt_t</span>          st_blocks;  <span class="comment">// number of disk blocks allocated 所分配的实际512字节块块数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-<p>相关函数：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//获取文件信息结构</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">stat</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> pathname, struct stat *<span class="keyword">restrict</span> buf)</span></span>;</span><br><span class="line"><span class="comment">//根据描述符获取</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fstat</span><span class="params">(<span class="keyword">int</span> fd, struct stat *buf)</span></span>;</span><br><span class="line"><span class="comment">//获取与符号链接相关的</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lstat</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> pathname, struct stat *<span class="keyword">restrict</span> buf)</span></span>;</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fstatat</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> pathname, struct stat *<span class="keyword">restrict</span> buf, <span class="keyword">int</span> flag)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<h3 id="文件类型"><a href="#文件类型" class="headerlink" title="文件类型"></a>文件类型</h3><ul>
-<li>普通文件（regular file)</li>
-<li>目录文件（directory file）</li>
-<li>块特殊文件（block special file）<br>这种类型的文件提供对设备（如磁盘）带缓冲的访问，每次访问以固定单位长度进行。</li>
-<li>字特殊文件（character special file）<br>这种类型的文件提供对设备不带缓冲的访问，每次访问长度可变。系统中所有设备要么是字特殊文件，要么是块特殊文件。</li>
-<li>FIFO<br>这种类型的文件用于进程间通信，也称为命名管道（named pipe）。</li>
-<li>套接字（socket）<br>这种类型的文件用于进程间的网络通信，也可用于一台宿主机上进程之间的非网络通信。</li>
-<li>符号链接（symbolic link）<br>这种类型的文件指向另一个文件。</li>
-</ul>
-<h3 id="文件长度"><a href="#文件长度" class="headerlink" title="文件长度"></a>文件长度</h3><p>st_size表示以字节为单位的文件长度。此字段只对普通文件、目录文件和符号链接有意义。</p>
-<ul>
-<li>对于普通文件，长度可以是0。</li>
-<li>对于目录，长度通常是一个数（16或512）的整数倍。</li>
-<li>对于符号链接，尝试是文件名中的字节数。</li>
-</ul>
-<h4 id="文件空洞"><a href="#文件空洞" class="headerlink" title="文件空洞"></a>文件空洞</h4><p>文件空洞是由所设置的偏移量超过文件尾端，并写入了数据后造成的。</p>
-<h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><p>UNIX文件系统有很多种实现，这里讨论UFS文件系统。<br><img src="4-13.png" alt=""><br><img src="4-14.png" alt=""></p>
-<ul>
-<li>每个i节点都有一个链接计数，其值指向i节点的目录项数。只有计数减少到0时，才可删除文件（也就是释放该文件占用的数据块）。链接计数包含在stat结构里的st_nlink字段中，这种链接类型称为硬链接。</li>
-<li>另一种链接类型为符号链接（symbolic link）。符号链接文件的实际内容包含了该符号链接所指向的文件的名字。</li>
-<li>i节点包含了文件有关的所有信息：文件类型、文件访问权限位、文件长度和指向文件数据块的指针等。stat结构中大多数信息都取自i节点，除了文件名和i节点编号。</li>
-<li>目录项中的i节点编号指向同一文件系统中的i节点。</li>
-<li>在不更换文件系统的情况下，重命名文件并不会让文件的实际内容变动，只需要构造一个指向现有i几点的新目录项，并删除老的目录项，链接数不变。</li>
-</ul>
-<p><img src="4-15.png" alt=""></p>
-<ul>
-<li>每个叶目录的链接计数总是2（来自 该目录名 和<code>.</code>）。</li>
-<li>父目录中的每一个子目录都使该父目录的链接计数加1（子目录中的<code>..</code>项指向父目录）</li>
-</ul>
-<h3 id="link、linkat、unlink、unlinkat和remove"><a href="#link、linkat、unlink、unlinkat和remove" class="headerlink" title="link、linkat、unlink、unlinkat和remove"></a>link、linkat、unlink、unlinkat和remove</h3><p>任何一个文件可以有多个目录项指向其i节点。创建一个指向现有文件的链接的方法是使用link或linkat函数。<br>删除一个目录项使用unlink函数，只有链接计数达到0时，该文件内容才可被删除。<br>remove既能删文件（等同于unlink）也能删目录（等同于rmdir）。</p>
-<h3 id="rename-和-renameat"><a href="#rename-和-renameat" class="headerlink" title="rename 和 renameat"></a>rename 和 renameat</h3><p>用来对文件重命名。</p>
-<h3 id="符号链接"><a href="#符号链接" class="headerlink" title="符号链接"></a>符号链接</h3><p>符号链接是对一个文件的间接指针，硬链接直接指向文件的i节点。<br>使用symlink或syslinkat函数创建一个符号链接。</p>
-<h3 id="文件时间"><a href="#文件时间" class="headerlink" title="文件时间"></a>文件时间</h3><ul>
-<li>st_atime 文件数据的最后访问时间</li>
-<li>st_mtime 文件数据的最后修改时间</li>
-<li>st_ctime i节点状态的最后更改时间</li>
-</ul>
-<p>操作函数：</p>
-<ul>
-<li>futimens</li>
-<li>utimensat</li>
-<li>utimes</li>
-</ul>
-<h2 id="权限及属组"><a href="#权限及属组" class="headerlink" title="权限及属组"></a>权限及属组</h2><h3 id="用户ID和组ID"><a href="#用户ID和组ID" class="headerlink" title="用户ID和组ID"></a>用户ID和组ID</h3><p>与一个进程相关联的ID：<br><img src="4-5.png" alt=""></p>
-<ul>
-<li>实际用户ID和实际组ID标识我们究竟是谁。这两个字段在登录时取自口令文件中的登录项。</li>
-<li>有效用户ID、有效组ID以及附属组ID决定了我们的文件访问权限。</li>
-<li>保存的设置用户ID和保存的设置组ID在执行一个程序时包含了有效用户ID和有效组ID的一个副本。</li>
-</ul>
-<p>执行一个程序文件时，进程的有效用户ID就是实际用户ID，有效组ID就是实际组ID。但可以在文件模式字（st_mode）中设置一个特殊标志，将执行此文件时的有效用户ID设置为文件所有者的用户ID；或将有效组ID设置为文件的组所有者ID。</p>
-<h3 id="文件访问权限"><a href="#文件访问权限" class="headerlink" title="文件访问权限"></a>文件访问权限</h3><p>st_mode值也包含了对文件的访问权限位。<br><img src="4-6.png" alt=""></p>
-<ul>
-<li>读权限决定了我们能否打开一个文件进行读操作，包括读目录中的内容。</li>
-<li>写权限决定了我们能否打开一个文件进行写操作。</li>
-<li>打开任一文件时要对它的每一级父目录（包括当前目录）有执行权限。</li>
-<li>在目录中创建一个新文件需要对该目录有写和执行权限。</li>
-<li>删除一个现有文件，需要对包含该文件的目录具有写和执行权限，对该文件本身不需要有读、写权限。</li>
-</ul>
-<p><strong>目录文件的读权限（r）和写权限（w），都是针对目录文件本身。由于目录文件内只有文件名和inode号码，所以如果只有读权限，只能获取文件名，无法获取其他信息，因为其他信息都储存在inode节点中，而读取inode节点内的信息需要目录文件的执行权限（x）。</strong></p>
-<h3 id="新文件和目录的所有权"><a href="#新文件和目录的所有权" class="headerlink" title="新文件和目录的所有权"></a>新文件和目录的所有权</h3><ul>
-<li>新文件的用户ID设置为进程的有效用户ID。</li>
-<li>新文件的组ID可以是进程的有效组ID也可以是它所在的目录的组ID。</li>
-</ul>
-<h3 id="access-和-faccessat"><a href="#access-和-faccessat" class="headerlink" title="access 和 faccessat"></a>access 和 faccessat</h3><p>用<code>open</code>函数打开文件时，内核以进程的有效用户ID和有效组ID做访问权限测试，<code>access</code>和<code>faccessat</code>函数按实际用户ID和实际组ID进行测试。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">access</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">int</span> mode)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">faccess</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">int</span> mode ,<span class="keyword">int</span> flag)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<h3 id="umask"><a href="#umask" class="headerlink" title="umask"></a>umask</h3><p><code>umask</code>函数为进程设置文件膜创建屏蔽字，并返回之前的值。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">mode_t</span> <span class="title">umask</span><span class="params">(<span class="keyword">mode_t</span> cmask)</span></span>;</span><br></pre></td></tr></table></figure>
-<p><img src="4-10.png" alt=""></p>
-<h3 id="chmod、fchmod和fchmodat"><a href="#chmod、fchmod和fchmodat" class="headerlink" title="chmod、fchmod和fchmodat"></a>chmod、fchmod和fchmodat</h3><p>这三个函数使我们更改现有文件的访问权限。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">chmod</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">mode_t</span> mode)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fchmod</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">mode_t</span> mode)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fchmodat</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">mode_t</span> mode, <span class="keyword">int</span> flag)</span></span>;</span><br></pre></td></tr></table></figure>
-<p><img src="4-11.png" alt=""></p>
-<h3 id="粘着位"><a href="#粘着位" class="headerlink" title="粘着位"></a>粘着位</h3><p>UNIX早期版本中，S_ISVTX位被称为<code>粘着位(sticky bit)</code>。如果一个可执行程序文件的这一位被设置了，那么当该程序第一次被执行，在其终止时，程序正文部分（机器指令）的一个副本仍被保存在交换区。这使得下次执行该程序时能较快的将其载入内存。</p>
-<h4 id="Linux中的交换区"><a href="#Linux中的交换区" class="headerlink" title="Linux中的交换区"></a>Linux中的交换区</h4><blockquote>
-<p>Linux中Swap（即：交换分区），类似于Windows的虚拟内存，就是当内存不足的时候，把一部分硬盘空间虚拟成内存使用,从而解决内存容量不足的情况。Android是基于Linux的操作系统，所以也可以使用Swap分区来提升系统运行效率 。</p>
-</blockquote>
-<p>现今交心的UNIX系统大多配置了虚拟存储系统以及快速文件系统，不再需要这种技术。<br>SUS允许针对目录设置粘着位，目录/tmp和/var/tmp是设置粘着位的典型候选者——任何用户都可在这两个目录中创建文件；任一用户对这两个目录的权限通常都是读、写、执行。</p>
-<h3 id="chown、fchown、fchownat和lchown"><a href="#chown、fchown、fchownat和lchown" class="headerlink" title="chown、fchown、fchownat和lchown"></a>chown、fchown、fchownat和lchown</h3><p>这几个函数更改文件的用户ID和组ID。</p>
-<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><p>目录由DIR结构表示：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">	<span class="keyword">int</span>	__dd_fd;	<span class="comment">// file descriptor associated with directory</span></span><br><span class="line">	<span class="keyword">long</span>	__dd_loc;	<span class="comment">// offset in current buffer</span></span><br><span class="line">	<span class="keyword">long</span>	__dd_size;	<span class="comment">// amount of data returned</span></span><br><span class="line">	<span class="keyword">char</span>	*__dd_buf;	<span class="comment">// data buffer</span></span><br><span class="line">	<span class="keyword">int</span>	__dd_len;	<span class="comment">// size of data buffer</span></span><br><span class="line">	<span class="keyword">long</span>	__dd_seek;	<span class="comment">// magic cookie returned</span></span><br><span class="line">	__unused <span class="keyword">long</span>	__padding; <span class="comment">// (__dd_rewind space left for bincompat)</span></span><br><span class="line">	<span class="keyword">int</span>	__dd_flags;	<span class="comment">// flags for readdir</span></span><br><span class="line">	<span class="keyword">__darwin_pthread_mutex_t</span> __dd_lock; <span class="comment">// for thread locking</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> _<span class="title">telldir</span> *__<span class="title">dd_td</span>;</span> <span class="comment">// telldir position recording</span></span><br><span class="line">&#125; DIR;</span><br></pre></td></tr></table></figure>
-<p>目录项 dirent结构与实现有关，至少包含下列两个成员：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ino_t</span> d_ino; <span class="comment">//i-node number</span></span><br><span class="line"><span class="keyword">char</span> d_name[]; <span class="comment">//null-terminated filename</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><code>mkdir</code>/<code>mkdirat</code> 创建目录</li>
-<li><code>rmdir</code> 删除目录</li>
-<li><code>opendir</code>/<code>fdopendir</code> 打开目录</li>
-<li><code>readdir</code> 读一个目录项</li>
-<li><code>rewinddir</code> 将偏移量重制</li>
-<li><code>closedir</code> 关闭文件</li>
-<li><code>telldir</code> 获取偏移量</li>
-<li><code>seekdir</code> 更改偏移量</li>
-</ul>
-<p><strong>有权限的用户都可以读目录，但只有内核才可以写目录。</strong></p>
-<h3 id="当前工作目录"><a href="#当前工作目录" class="headerlink" title="当前工作目录"></a>当前工作目录</h3><p>每个进程都有一个当前工作目录，它是搜索所有相对路径名的起点。</p>
-<ul>
-<li><code>chdir</code>/<code>fchdir</code> 指定新的当前工作目录</li>
-<li><code>getcwd</code> 获取当前工作目录</li>
-</ul>
-]]></content>
-      <categories>
-        <category>《APUE》笔记</category>
-      </categories>
-      <tags>
-        <tag>文件</tag>
-        <tag>目录</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《UNIX环境高级编程》第2章——UNIX标准及实现</title>
-    <url>/2020/04/14/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC2%E7%AB%A0%E2%80%94%E2%80%94UNIX%E6%A0%87%E5%87%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/</url>
-    <content><![CDATA[<h2 id="UNIX标准化"><a href="#UNIX标准化" class="headerlink" title="UNIX标准化"></a>UNIX标准化</h2><h3 id="ISO-C"><a href="#ISO-C" class="headerlink" title="ISO C"></a>ISO C</h3><p>ISO（国际标准化组织） C标准的意图是提供C程序的可移植性，使其能适合于大量不同的操作系统，而不只是适合UNIX系统。此标准不仅定了C程序设计语言的语法和语义，还定义了其标准库。</p>
-<h3 id="IEEE-POSIX"><a href="#IEEE-POSIX" class="headerlink" title="IEEE POSIX"></a>IEEE POSIX</h3><p>POSIX是由IEEE（电气和电子工程师学会）指定的标准族。POSIX指的是可移植操作系统接口。</p>
-<h3 id="Single-UNIX-Specification"><a href="#Single-UNIX-Specification" class="headerlink" title="Single UNIX Specification"></a>Single UNIX Specification</h3><p>Single UNIX Specification（SUS，单一UNIX规范）是POSIX.1标准的一个超集，它定义了一些附加接口扩展了POSIX.1规范提供的功能。POSIX.1相当于Single UNIX Specification中的基本规范部分。</p>
-<a id="more"></a>
-
-<h2 id="UNIX-系统实现"><a href="#UNIX-系统实现" class="headerlink" title="UNIX 系统实现"></a>UNIX 系统实现</h2><h3 id="SVR4"><a href="#SVR4" class="headerlink" title="SVR4"></a>SVR4</h3><h3 id="4-4BSD"><a href="#4-4BSD" class="headerlink" title="4.4BSD"></a>4.4BSD</h3><h3 id="FreeBSD"><a href="#FreeBSD" class="headerlink" title="FreeBSD"></a>FreeBSD</h3><h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><h3 id="Mac-OS-X"><a href="#Mac-OS-X" class="headerlink" title="Mac OS X"></a>Mac OS X</h3><h3 id="Solaris"><a href="#Solaris" class="headerlink" title="Solaris"></a>Solaris</h3><h2 id="标准和实现的关系"><a href="#标准和实现的关系" class="headerlink" title="标准和实现的关系"></a>标准和实现的关系</h2><h2 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h2><p>以下两类的限制是必须的：</p>
-<ul>
-<li>编译时限制（例如，短整型的最大值是什么）</li>
-<li>运行时限制（例如，文件名有多少个字符）</li>
-</ul>
-<p>为了解决这类问题，提供了以下3种限制：</p>
-<ul>
-<li>编译时限制（头文件）</li>
-<li>与文件或目录无关的运行时限制（sysconf函数）</li>
-<li>与文件或目录有关的运行时限制（pathconf和fpathconf函数）</li>
-</ul>
-<h3 id="ISO-C限制"><a href="#ISO-C限制" class="headerlink" title="ISO C限制"></a>ISO C限制</h3><p><img src="2-6.png" alt=""><br><img src="2-7.png" alt=""></p>
-<h3 id="POSIX-限制"><a href="#POSIX-限制" class="headerlink" title="POSIX 限制"></a>POSIX 限制</h3><p><img src="2-8.png" alt=""><br><img src="2-9.png" alt=""></p>
-<h3 id="sysconf、pathconf和fpathconf"><a href="#sysconf、pathconf和fpathconf" class="headerlink" title="sysconf、pathconf和fpathconf"></a>sysconf、pathconf和fpathconf</h3><p>运行时限制可以调用这三个函数之一获得</p>
-<h2 id="基本系统数据类型"><a href="#基本系统数据类型" class="headerlink" title="基本系统数据类型"></a>基本系统数据类型</h2><p><img src="2-21.png" alt=""></p>
-]]></content>
-      <categories>
-        <category>《APUE》笔记</category>
-      </categories>
-      <tags>
-        <tag>UNIX</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《UNIX环境高级编程》第1章——UNIX基础知识</title>
-    <url>/2020/04/13/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC1%E7%AB%A0%E2%80%94%E2%80%94UNIX%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</url>
-    <content><![CDATA[<h2 id="UNIX-体系结构"><a href="#UNIX-体系结构" class="headerlink" title="UNIX 体系结构"></a>UNIX 体系结构</h2><p>严格意义上说，可将操作系统定义为一种软件，它控制计算机硬件资源，提供程序运行环境。我们称这种软件为内核，内核的接口被称为 <strong>系统调用（system call）</strong>。<br>广义上说，操作系统包括了内核和一些其他软件，这些软件使得计算机能够发挥作用，使其具有自己的特性。这里说的软件包括系统实用程序、应用程序、shell以及公用函数库等。<br>例如，Linux是GNU操作系统使用的内核。<br><img src="1-1.png" alt=""></p>
-<a id="more"></a>
-
-<h2 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h2><h3 id="登录名"><a href="#登录名" class="headerlink" title="登录名"></a>登录名</h3><h3 id="shell"><a href="#shell" class="headerlink" title="shell"></a>shell</h3><h2 id="文件和目录"><a href="#文件和目录" class="headerlink" title="文件和目录"></a>文件和目录</h2><h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><h3 id="文件名"><a href="#文件名" class="headerlink" title="文件名"></a>文件名</h3><h3 id="目录名"><a href="#目录名" class="headerlink" title="目录名"></a>目录名</h3><h3 id="工作目录"><a href="#工作目录" class="headerlink" title="工作目录"></a>工作目录</h3><h3 id="起始目录"><a href="#起始目录" class="headerlink" title="起始目录"></a>起始目录</h3><h2 id="输入和输出"><a href="#输入和输出" class="headerlink" title="输入和输出"></a>输入和输出</h2><h3 id="文件描述符"><a href="#文件描述符" class="headerlink" title="文件描述符"></a>文件描述符</h3><h3 id="标准输入、标准输出和标准错误"><a href="#标准输入、标准输出和标准错误" class="headerlink" title="标准输入、标准输出和标准错误"></a>标准输入、标准输出和标准错误</h3><h3 id="不带缓存的I-O"><a href="#不带缓存的I-O" class="headerlink" title="不带缓存的I/O"></a>不带缓存的I/O</h3><p><code>open</code>、<code>read</code>、<code>write</code>、<code>lseek</code>、<code>close</code></p>
-<h3 id="标准I-O"><a href="#标准I-O" class="headerlink" title="标准I/O"></a>标准I/O</h3><h2 id="程序和进程"><a href="#程序和进程" class="headerlink" title="程序和进程"></a>程序和进程</h2><h3 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h3><p>存储在磁盘上某个目录中的可执行文件。内核使用exec函数将程序读入内存，并执行程序。</p>
-<h3 id="进程和进程ID"><a href="#进程和进程ID" class="headerlink" title="进程和进程ID"></a>进程和进程ID</h3><p>程序的执行实例叫做进程。</p>
-<h3 id="进程控制"><a href="#进程控制" class="headerlink" title="进程控制"></a>进程控制</h3><p>3个主要的控制函数：<code>fork</code>、<code>exec</code>和<code>waitpid</code></p>
-<h3 id="线程和线程ID"><a href="#线程和线程ID" class="headerlink" title="线程和线程ID"></a>线程和线程ID</h3><h2 id="出错处理"><a href="#出错处理" class="headerlink" title="出错处理"></a>出错处理</h2><p>UNIX函数出错时，通常返回一个负值，而且整型变量errno通常被设置为特定的值。</p>
-<h3 id="出错恢复"><a href="#出错恢复" class="headerlink" title="出错恢复"></a>出错恢复</h3><p>致命性错误无法恢复；非致命性错误可以恢复。</p>
-<h2 id="用户标识"><a href="#用户标识" class="headerlink" title="用户标识"></a>用户标识</h2><h3 id="用户ID"><a href="#用户ID" class="headerlink" title="用户ID"></a>用户ID</h3><h3 id="组ID"><a href="#组ID" class="headerlink" title="组ID"></a>组ID</h3><h3 id="附属组ID"><a href="#附属组ID" class="headerlink" title="附属组ID"></a>附属组ID</h3><h2 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h2><h2 id="时间值"><a href="#时间值" class="headerlink" title="时间值"></a>时间值</h2><p>UNIX使用过两种不同的时间值：</p>
-<ul>
-<li>日历时间，time_t</li>
-<li>进程时间/CPU时间，以时钟滴答计算，clock_t</li>
-</ul>
-<p>度量一个进程的执行时间时，UNIX系统为进程维护了3个进程时间值：</p>
-<ul>
-<li>时钟时间/墙上时钟时间</li>
-<li>用户CPU时间</li>
-<li>系统CPU时间</li>
-</ul>
-<p>用户CPU时间 + 系统CPU时间 = CPU时间</p>
-<h2 id="系统调用和库函数"><a href="#系统调用和库函数" class="headerlink" title="系统调用和库函数"></a>系统调用和库函数</h2><p><img src="1-11.png" alt=""></p>
-]]></content>
-      <categories>
-        <category>《APUE》笔记</category>
-      </categories>
-      <tags>
-        <tag>UNIX</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《UNIX环境高级编程》第14章——高级I/O</title>
-    <url>/2020/04/11/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC14%E7%AB%A0%E2%80%94%E2%80%94%E9%AB%98%E7%BA%A7I-O/</url>
+    <url>/2020/03/20/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC14%E7%AB%A0%E2%80%94%E2%80%94%E9%AB%98%E7%BA%A7I-O/</url>
     <content><![CDATA[<h2 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h2><h3 id="同步，异步，阻塞，非阻塞"><a href="#同步，异步，阻塞，非阻塞" class="headerlink" title="同步，异步，阻塞，非阻塞"></a>同步，异步，阻塞，非阻塞</h3><p><strong>同步与异步</strong><br>同步是指代码调用IO操作时，必须等待IO操作完成才返回的调用方式。<br>异步是指代码调用IO操作时，不必等IO操作完成就返回的调用方式。</p>
 <p>同步是最原始的调用方式。<br>异步则需要多线程，多CPU或者非阻塞IO的支持。<br><strong>阻塞与非阻塞</strong><br>阻塞是指调用线程或者进程被操作系统挂起。<br>非阻塞是指调用线程或者进程不会被操作系统挂起。</p>
 <p>没有IO操作，所有的代码基本都是同步的<br>有了IO操作后，如果没有多进程多线程，所有代码还是同步的<br>有了IO操作，有了多进程多线程，代码才有了异步的可能性，同时也产生了阻塞与非阻塞</p>
@@ -508,74 +257,8 @@
       </tags>
   </entry>
   <entry>
-    <title>《UNIX环境高级编程》第3章——文件I/O</title>
-    <url>/2020/04/10/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC3%E7%AB%A0%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6I-O/</url>
-    <content><![CDATA[<h2 id="文件描述符"><a href="#文件描述符" class="headerlink" title="文件描述符"></a>文件描述符</h2><p>对于内核而言，所有打开的文件都通过文件描述符引用。文件描述符是一个非负整数。当打开一个现有文件或创建一个新文件时，内核向进程返回一个文件描述符。</p>
-<ul>
-<li>0 - STDIN_FILENO - 标准输入</li>
-<li>1 - STDOUT_FILENO - 标准输出</li>
-<li>2 - STDERR_FILENO - 标准错误</li>
-</ul>
-<h2 id="不带缓冲的I-O函数"><a href="#不带缓冲的I-O函数" class="headerlink" title="不带缓冲的I/O函数"></a>不带缓冲的I/O函数</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">open</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">int</span> oflag, ...<span class="comment">/* mode_t mode */</span>)</span></span>; <span class="comment">//打开或创建一个文件</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">openat</span> <span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">int</span> oflag, ...<span class="comment">/* mode_t mode */</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">creat</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">mode_t</span> mode)</span></span>; <span class="comment">//创建一个文件</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">close</span> <span class="params">(<span class="keyword">int</span> fd)</span></span>; <span class="comment">//关闭一个文件</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">off_t</span> <span class="title">lseek</span> <span class="params">(<span class="keyword">int</span> fd, <span class="keyword">off_t</span> offset, <span class="keyword">int</span> whence)</span></span>; <span class="comment">//设置偏移量</span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">read</span> <span class="params">(<span class="keyword">int</span> fd, <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> nbytes)</span></span>; <span class="comment">//读</span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">write</span> <span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> nbytes)</span></span>; <span class="comment">//写</span></span><br></pre></td></tr></table></figure>
-
-<a id="more"></a>
-
-<h3 id="带缓冲与不带缓冲的区别"><a href="#带缓冲与不带缓冲的区别" class="headerlink" title="带缓冲与不带缓冲的区别"></a>带缓冲与不带缓冲的区别</h3><p>所谓不带缓冲，并不是指内核不提供缓冲，而是只单纯的系统调用，不是函数库的调用。系统内核对磁盘的读写都会提供一个块缓冲（在有些地方也被称为内核高速缓存），当用write函数对其写数据时，直接调用系统调用，将数据写入到块缓冲进行排队，当块缓冲达到一定的量时，才会把数据写入磁盘。因此所谓的不带缓冲的I/O是指进程不提供缓冲功能（但内核还是提供缓冲的）。每调用一次write或read函数，直接系统调用。<br>而带缓冲的I/O是指进程对输入输出流进行了改进，提供了一个流缓冲，当用fwrite函数网磁盘写数据时，先把数据写入流缓冲区中，当达到一定条件，比如流缓冲区满了，或刷新流缓冲，这时候才会把数据一次送往内核提供的块缓冲，再经块缓冲写入磁盘。（双重缓冲）<br>因此，带缓冲的I/O在往磁盘写入相同的数据量时，会比不带缓冲的I/O调用系统调用的次数要少。<br>无缓存IO操作数据流向路径：<strong>数据——内核缓存区——磁盘</strong><br>标准IO操作数据流向路径：<strong>数据——流缓存区——内核缓存区——磁盘</strong></p>
-<h3 id="预读"><a href="#预读" class="headerlink" title="预读"></a>预读</h3><p>大多数文件系统为改善性能都采用某种预读（read ahead）技术。当检测到正进行顺序读取时，系统就试图读入比应用所要求的更多数据，并假想应用很快就会读这些数据。</p>
-<h3 id="延迟写"><a href="#延迟写" class="headerlink" title="延迟写"></a>延迟写</h3><p>传统的UNIX系统实现在内核中设有缓冲区高速缓存或页高速缓存，大多数磁盘I/O都通过缓冲区进行。当我们向文件写入数据时，内核通常先将数据复制到缓冲区中，然后排入队列，晚些时候再写入磁盘。这种方式被成为延迟写（delayed write）。</p>
-<h3 id="I-O与磁盘交互流程"><a href="#I-O与磁盘交互流程" class="headerlink" title="I/O与磁盘交互流程"></a>I/O与磁盘交互流程</h3><p>当应用程序尝试读取某块数据的时候，如果这块数据已经存放在页缓存中，那么这块数据就可以立即返回给应用程序，而不需要经过实际的物理读盘操作。当然，如果数据在应用程序读取之前并未被存放在页缓存中（也就是上面提到的内核高速缓存），那么就需要先将数据从磁盘读到页缓存中去(这个过程触发缺页异常)。对于写操作来说，应用程序也会将数据先写到页缓存中去（这里所说的写到页缓存中，如果是调用标准库I/O进行写，那么首先是写到标准库的缓冲区内，如果标准库的缓冲区写满以后，在写到页缓冲内；如果是系统调用，那么直接写到页缓冲内），数据是否被立即写到磁盘上去取决于应用程序所采用的写操作机制：如果用户采用的是同步写机制,那么数据会立即被写回到磁盘上，应用程序会一直等到数据被写完为止；如果用户采用的是延迟写机制，那么应用程序就完全不需要等到数据全部被 写回到磁盘，数据只要被写到页缓存中去就可以了。在延迟写机制的情况下，操作系统会定期地将放在页缓存中的数据刷到磁盘上。与异步写机制不同的是，延迟写机制在数据完全写到磁盘上得时候不会通知应用程序，而异步写机制在数据完全写到磁盘上得时候是会返回给应用程序的。所以延迟写机制本省是存在数据丢失的风险的，而异步写机制则不会有这方面的担心。</p>
-<h2 id="文件共享"><a href="#文件共享" class="headerlink" title="文件共享"></a>文件共享</h2><p>内核使用4种数据结构表示打开文件，它们之间的关系决定了在文件共享方面一个进程对另一个进程可能产生的影响。</p>
-<ul>
-<li><code>进程表</code>。每个进程在进程表中都有一个记录项，记录项中包含一张打开文件描述符表，可将其视为一个矢量，每个描述符占用一项。与每个文件描述符相关联的是：<ol>
-<li>文件描述符标志（close_on_exec）</li>
-<li>指向一个文件表项的指针</li>
-</ol>
-</li>
-<li><code>文件表</code>。内核为所以打开文件维持一张文件表（全局唯一，所有进程共享一个文件表）。其中的每个文件表项对应一个进程中打开的文件，它包含：<ol>
-<li>文件状态标志（只读、只写、读写、追加写、同步/异步、阻塞/非阻塞等）</li>
-<li>当前文件偏移量</li>
-<li>指向该文件v节点表项的指针</li>
-</ol>
-</li>
-<li><code>v节点</code>。每个打开文件（或设备）都有一个v节点（v-node）结构。v节点包含了文件类型和对此文件进行各种操作函数的指针。对于大多数文件，v节点还包含了该文件的i节点指针。</li>
-<li><code>i节点</code>。i节点包含了文件的所有者、文件长度、指向文件实际数据块在磁盘所在位置的指针等。</li>
-</ul>
-<blockquote>
-<p>Linux没有使用v节点，而是使用了通用i节点结构（一个与文件系统相关的i节点，一个与文件系统无关的i节点）。虽然实现不同，但在概念上，v节点与i节点是一样的，两者都指向文件系统特有的i节点结构。</p>
-</blockquote>
-<p><img src="3-7.png" alt=""><br><img src="3-8.png" alt=""></p>
-<p>打开该文件的每个进程都能获得各自的一个文件表项，但对一个给的文件只有一个v节点表项。这样每个进程都有它自己对该文件偏移量以及打开方式。<br>可能有多个文件描述符指向同一文件表项的情况，如dup和fork函数。</p>
-<h3 id="文件描述符标志与文件状态标志的区别"><a href="#文件描述符标志与文件状态标志的区别" class="headerlink" title="文件描述符标志与文件状态标志的区别"></a>文件描述符标志与文件状态标志的区别</h3><p><strong>前者只用于一个进程的一个描述符，后者则应用于指向该给定文件表项的任何进程中的所有描述符。</strong></p>
-<h2 id="原子操作"><a href="#原子操作" class="headerlink" title="原子操作"></a>原子操作</h2><p><code>原子操作（atomic operation）</code>指的是由多步组成的一个操作。如果该操作原子的执行，要么执行完所有步骤，要么一步也不执行，不可能只执行所有步骤的一个子集。任何要求多于一个函数调用的操作都不是原子操作，因为在两个函数调用之间，内核有可能会临时挂起进程。<br>我们用<code>pread</code>和<code>pwrite</code>函数进行I/O来保证<code>lseek</code>和<code>read</code>/<code>write</code>构成原子操作。</p>
-<h2 id="其他I-O函数"><a href="#其他I-O函数" class="headerlink" title="其他I/O函数"></a>其他I/O函数</h2><h3 id="dup（dup2）"><a href="#dup（dup2）" class="headerlink" title="dup（dup2）"></a>dup（dup2）</h3><p>用来复制一个现有的文件描述符。复制后每个文件描述符都有它自己的一套文件描述符标志。两个描述符指向同一文件表项，所以它们共享同一文件状态标志（读、写、追加写等）<br><img src="3-9.png" alt=""></p>
-<h3 id="sync、fsync和fdatasync"><a href="#sync、fsync和fdatasync" class="headerlink" title="sync、fsync和fdatasync"></a><code>sync</code>、<code>fsync</code>和<code>fdatasync</code></h3><p>用于保证磁盘上实际文件系统与缓冲区中内容的一致性。</p>
-<ul>
-<li><code>sync</code>只是将所有修改过的块缓冲区排入写队列就返回，它不等待实际写磁盘操作结束。通常称为update的系统守护进程周期性地（一般为30秒）调用sync函数，这就保证了定期冲洗（flush）内核的块缓冲区。</li>
-<li><code>fsync</code>只对由fd指定的一个文件起作用，并等待写磁盘操作结束才返回。</li>
-<li><code>fdatasync</code>类似于<code>fsync</code>，但影响文件的数据部分</li>
-</ul>
-<h3 id="fcntl"><a href="#fcntl" class="headerlink" title="fcntl"></a>fcntl</h3><p>用于改变已经打开文件的属性，主要由以下5种功能：</p>
-<ol>
-<li>复制一个已有的描述符(cmd = F_DUPFD 或 F_DUPFD_CLOEXEC)</li>
-<li>获取/设置文件描述符标志(cmd = F_GETFD 或 F_SETFD)</li>
-<li>获取/设置文件状态标志(cmd = F_GETFL 或 F_SETFL)</li>
-<li>获取/设置异步I/O所有权(cmd = F_GETONW 或 F_SETOWN)</li>
-<li>获取/设置记录锁(cmd = F_GETLK 、 F_SETLK 或 F_SETLKW（阻塞版本）)</li>
-</ol>
-<h3 id="ioctl"><a href="#ioctl" class="headerlink" title="ioctl"></a>ioctl</h3><p>I/O操作的杂物箱，未总结的其他I/O操作都在里面。</p>
-<h2 id="dev-fd"><a href="#dev-fd" class="headerlink" title="/dev/fd"></a>/dev/fd</h2><p>较新的系统都提供/dev/fd目录，其目录项是名为0、1、2等文件，打开文件/dev/fd/n 等效于 复制描述符n（假定描述符n是打开的）。</p>
-]]></content>
-      <categories>
-        <category>《APUE》笔记</category>
-      </categories>
-      <tags>
-        <tag>I/O</tag>
-        <tag>文件</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《UNIX环境高级编程》第13章——守护进程</title>
-    <url>/2020/04/09/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC13%E7%AB%A0%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/</url>
+    <url>/2020/03/10/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC13%E7%AB%A0%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/</url>
     <content><![CDATA[<p>守护进程（daemon）是生存期长的一种进程。它们常常在系统引导装入时启动，仅在系统关闭时才终止。守护进程没有控制终端，终端名为问号。后台运行，大多数都以超级用户（root）特权运行。用户层守护进程的父进程是init。</p>
 <h2 id="编程规则"><a href="#编程规则" class="headerlink" title="编程规则"></a>编程规则</h2><ol>
 <li>调用umask将文件模式创建屏蔽字设置为一个已知值（通常是0）。</li>
@@ -587,7 +270,7 @@
 </ol>
 <a id="more"></a>
 
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dameonize</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *cmd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rlimit</span> <span class="title">rl</span>;</span></span><br><span class="line">    <span class="keyword">int</span> fd0, fd1, fd2;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//1 关闭屏蔽字</span></span><br><span class="line">    umask(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//2 fork，父进程退出</span></span><br><span class="line">    <span class="keyword">if</span> ((pid = fork()) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//3 建立新会话，使调用进程成为会话首进程和组长进程，且没有控制终端</span></span><br><span class="line">    setsid();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//4 改变当前工作目录为根目录</span></span><br><span class="line">    <span class="keyword">if</span> (chdir(<span class="string">"/"</span>) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 关闭所有描述符</span></span><br><span class="line">    <span class="keyword">if</span> (getrlimit(RLIMIT_NOFILE, &amp;rl) != <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (rl.rlim_max == RLIM_INFINITY) &#123;</span><br><span class="line">        rl.rlim_max = <span class="number">1024</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; rl.rlim_max; ++i) &#123;</span><br><span class="line">        <span class="built_in">close</span>(i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Attach file descriptors 0, 1, and 2 to /dev/null.</span></span><br><span class="line">    fd0 = <span class="built_in">open</span>(<span class="string">"/dev/null"</span>, O_RDWR);</span><br><span class="line">    fd1 = dup(fd0);</span><br><span class="line">    fd2 = dup(fd0);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// optional: Initialize the log file.</span></span><br><span class="line">    openlog(cmd, LOG_CONS, LOG_DAEMON);</span><br><span class="line">    <span class="keyword">if</span> (fd0 != <span class="number">0</span> || fd1 != <span class="number">1</span> || fd2 != <span class="number">2</span>) &#123;</span><br><span class="line">        syslog(LOG_ERR, <span class="string">"unexpected file descriptors %d %d %d"</span>, fd0, fd1, fd2);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dameonize</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *cmd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rlimit</span> <span class="title">rl</span>;</span></span><br><span class="line">    <span class="keyword">int</span> fd0, fd1, fd2;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//1 关闭屏蔽字</span></span><br><span class="line">    umask(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//2 fork，父进程退出</span></span><br><span class="line">    <span class="keyword">if</span> ((pid = fork()) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//3 建立新会话，使调用进程成为会话首进程和组长进程，且没有控制终端</span></span><br><span class="line">    setsid();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//4 改变当前工作目录为根目录</span></span><br><span class="line">    <span class="keyword">if</span> (chdir(<span class="string">"/"</span>) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 关闭所有描述符</span></span><br><span class="line">    <span class="keyword">if</span> (getrlimit(RLIMIT_NOFILE, &amp;rl) != <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (rl.rlim_max == RLIM_INFINITY) &#123;</span><br><span class="line">        rl.rlim_max = <span class="number">1024</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; rl.rlim_max; ++i) &#123;</span><br><span class="line">        <span class="built_in">close</span>(i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Attach file descriptors 0, 1, and 2 to /dev/null.  </span></span><br><span class="line">    fd0 = <span class="built_in">open</span>(<span class="string">"/dev/null"</span>, O_RDWR);</span><br><span class="line">    fd1 = dup(fd0);</span><br><span class="line">    fd2 = dup(fd0);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// optional: Initialize the log file.</span></span><br><span class="line">    openlog(cmd, LOG_CONS, LOG_DAEMON);</span><br><span class="line">    <span class="keyword">if</span> (fd0 != <span class="number">0</span> || fd1 != <span class="number">1</span> || fd2 != <span class="number">2</span>) &#123;</span><br><span class="line">        syslog(LOG_ERR, <span class="string">"unexpected file descriptors %d %d %d"</span>, fd0, fd1, fd2);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="出错记录"><a href="#出错记录" class="headerlink" title="出错记录"></a>出错记录</h2><p>syslog 是一个用于集中记录所有守护进程出错记录的设施，它自身的守护进程是syslogd，该设施的接口是syslog函数。<br><img src="13-2.png" alt=""><br>有3种方法产生日志消息，syslogd守护进程读取所有3种格式的日志消息：</p>
 <ol>
@@ -613,8 +296,35 @@
       </tags>
   </entry>
   <entry>
+    <title>vnode与inode区别</title>
+    <url>/2020/03/08/vnode%E4%B8%8Einode%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<h1 id="vnode与inode的区别"><a href="#vnode与inode的区别" class="headerlink" title="vnode与inode的区别"></a>vnode与inode的区别</h1><blockquote>
+<p>文章整理自  <a href="https://www.freebsd.org/cgi/man.cgi?query=vnode" target="_blank" rel="noopener">FreeBSD docs</a> 和  <a href="https://stackoverflow.com/questions/27345342/inode-vs-vnode-difference" target="_blank" rel="noopener">StackOverflow</a></p>
+</blockquote>
+<h2 id="vnode"><a href="#vnode" class="headerlink" title="vnode"></a>vnode</h2><h3 id="名称"><a href="#名称" class="headerlink" title="名称"></a>名称</h3><p>vnode —— 文件或目录的内部表示</p>
+<h3 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/param.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/vnode.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><ul>
+<li>vnode是UNIX中所有文件活动的焦点。</li>
+<li>vnode节点由<code>struct vnode</code>声明。</li>
+<li>每个活动文件、当前目录、挂载文件、文本文件和根目录都分配了一个vnode节点。</li>
+<li>vnode最初是为FreeBSD创建的，因为需要使用的不同类型的文件系统（例如UFS、NFS等）激增。</li>
+<li>Vnode旨在为所有可能的文件系统提供抽象，以便OS可以与它们进行对接，从而让内核方法不必兼容每个特定的文件系统；内核只需要知道如何与Vnode进行交互。</li>
+<li>Vnode抽象在内存中，可以与UFS、ext4等文件系统进行交互；而inode存储在磁盘上，只能用于特定的文件系统。</li>
+<li>inode节点包含文件大小、拥有者、指向地址块的指针等元数据。</li>
+<li>vnode仅包含在文件生命周期中不会改变的一些属性，因此如果想获得更多信息请使用inode作为参考。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>知识点总结</category>
+      </categories>
+      <tags>
+        <tag>File System</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《UNIX环境高级编程》第12章——线程控制</title>
-    <url>/2020/04/07/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC12%E7%AB%A0%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/</url>
+    <url>/2020/03/07/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC12%E7%AB%A0%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/</url>
     <content><![CDATA[<h2 id="线程限制"><a href="#线程限制" class="headerlink" title="线程限制"></a>线程限制</h2><p>Single UNIX Specification定义了一些与线程操作有关的限制，这些限制是为了增强应用程序在不同的操作系统实现之间的可移植性，可以通过<code>sysconf</code>函数进行查询。</p>
 <ul>
 <li>线程退出时操作系统试图销毁特定数据的最大次数</li>
@@ -691,8 +401,23 @@
       </tags>
   </entry>
   <entry>
+    <title>strlen与sizeof区别</title>
+    <url>/2020/03/02/strlen%E4%B8%8Esizeof%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<ul>
+<li>strlen计算不包含终止null字节的字符串长度，而sizeof则计算包括终止null字节的缓冲区长度</li>
+<li>strlen需要进行一次函数调用，而对于sizeof，缓冲区长度在编译时计算，是固定的</li>
+</ul>
+]]></content>
+      <categories>
+        <category>知识点总结</category>
+      </categories>
+      <tags>
+        <tag>C</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《UNIX环境高级编程》第11章——线程</title>
-    <url>/2020/03/25/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC11%E7%AB%A0%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B/</url>
+    <url>/2020/03/01/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC11%E7%AB%A0%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B/</url>
     <content><![CDATA[<h2 id="线程概念"><a href="#线程概念" class="headerlink" title="线程概念"></a>线程概念</h2><p>线程包含有表示执行环境所必须的信息，包括线程ID、一组寄存器值、栈、调度优先级和策略、信号屏蔽字、errno变量以及线程私有数据。一个进程的所有信息对该进程的所有线程都是共享的，包括可执行程序的代码、程序的全局内存和堆内存、栈以及文件描述符。</p>
 <h2 id="线程标识"><a href="#线程标识" class="headerlink" title="线程标识"></a>线程标识</h2><p>每个线程有一个线程ID，进程ID在整个系统中是唯一的，但线程ID不同，线程ID只有它所属的进程上下文中才有意义。</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_equal</span><span class="params">(<span class="keyword">pthread_t</span> tid1, <span class="keyword">pthread_t</span> tid2)</span></span>; <span class="comment">//比较两个线程是否相等</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">pthread_t</span> <span class="title">pthread_self</span><span class="params">(<span class="keyword">void</span>)</span></span>; <span class="comment">//获取调用线程的线程ID</span></span><br></pre></td></tr></table></figure>
@@ -780,7 +505,7 @@
   </entry>
   <entry>
     <title>《UNIX环境高级编程》第10章——信号</title>
-    <url>/2020/03/13/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC10%E7%AB%A0%E2%80%94%E2%80%94%E4%BF%A1%E5%8F%B7/</url>
+    <url>/2020/02/24/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC10%E7%AB%A0%E2%80%94%E2%80%94%E4%BF%A1%E5%8F%B7/</url>
     <content><![CDATA[<h2 id="信号概念"><a href="#信号概念" class="headerlink" title="信号概念"></a>信号概念</h2><p>信号是软件中断。它提供了一种处理异步事件的方法。<br>每个信号都有一个名字，以SIG开头。在头文件&lt;signal.h&gt;中，信号名都被定义为正整数常量（信号编号）。<br>不存在编号为0的信号。kill函数对信号编号0有特殊的作用。POSIX.1将此中信号编号值称为空信号。</p>
 <p>信号出现时，内核按下列三种方式之一进行处理：</p>
 <ul>
@@ -934,8 +659,25 @@
       </tags>
   </entry>
   <entry>
+    <title>为什么calloc会比malloc+memset快</title>
+    <url>/2020/02/23/%E4%B8%BA%E4%BB%80%E4%B9%88calloc%E4%BC%9A%E6%AF%94malloc-memset%E5%BF%AB/</url>
+    <content><![CDATA[<ol>
+<li><code>malloc</code>和<code>calloc</code>分配小的内存时直接从内存池分配，内存池不够时向内核申请更多内存；分配大内存时会直接调用<code>mmap</code>或<code>sbrk</code>系统调用</li>
+<li>内核分配的内存可能是前一个进程用过的，为保证不泄漏敏感数据，内核始终在将内存交给进程前先将内存置0，因此<code>mmap()</code>保证返回的新内存始终为零</li>
+<li>当程序申请内存时，内核并不会马上修改页表为进程提供RAM，而是在进程中找到一些地址空间，记下应该去的地方，并保证如果您的程序实际使用RAM，它将在其中放置RAM。当程序尝试读写那些地址，会出发缺页故障，内核将RAM分配给这些地址，继续执行程序。如果不读写，内核就不会分配RAM给进程。</li>
+<li>有的进程分配内存后只读不写，这意味着跨不同进程的内存中的许多页面可能填充有从<code>mmap()</code>返回的原始零。由于这些页面都是相同的，因此内核使所有这些虚拟地址指向一个共享的4 KiB内存页面，其中填充了零。如果您尝试写入该内存，则处理器会触发另一个页面错误（写时复制），内核会介入，从而为您提供一个零的新页面，该页面不会与任何其他程序共享。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>知识点总结</category>
+      </categories>
+      <tags>
+        <tag>C</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《UNIX环境高级编程》第9章——进程关系</title>
-    <url>/2020/03/08/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC9%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E5%85%B3%E7%B3%BB/</url>
+    <url>/2020/02/16/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC9%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E5%85%B3%E7%B3%BB/</url>
     <content><![CDATA[<h2 id="终端登录"><a href="#终端登录" class="headerlink" title="终端登录"></a>终端登录</h2><p>我们现在描述的过程用于经由终端登录至UNIX系统。该过程几乎与所使用的终端类型无关，可以是基于字符的终端、仿真基于字符终端的图形终端，或者运行窗口系统的图形终端。</p>
 <h3 id="BSD终端登录"><a href="#BSD终端登录" class="headerlink" title="BSD终端登录"></a>BSD终端登录</h3><p>系统管理者创建通常名为/etc/ttys的文件，其中每个终端设备都有一行，说明设备名和传到getty程序的参数。当系统自举时，内核创建进程ID为1的进程，也就是init进程。<br>init进程使系统进入多用户模式。init读取文件/etc/ttys，对每一个允许登录的终端设备，init调用一次fork，它所生成的子进程则exec getty程序。<br><img src="9-1.png" alt=""></p>
 <a id="more"></a>
@@ -1008,50 +750,8 @@
       </tags>
   </entry>
   <entry>
-    <title>vnode与inode区别</title>
-    <url>/2020/03/08/vnode%E4%B8%8Einode%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<h1 id="vnode与inode的区别"><a href="#vnode与inode的区别" class="headerlink" title="vnode与inode的区别"></a>vnode与inode的区别</h1><blockquote>
-<p>文章整理自  <a href="https://www.freebsd.org/cgi/man.cgi?query=vnode" target="_blank" rel="noopener">FreeBSD docs</a> 和  <a href="https://stackoverflow.com/questions/27345342/inode-vs-vnode-difference" target="_blank" rel="noopener">StackOverflow</a></p>
-</blockquote>
-<h2 id="vnode"><a href="#vnode" class="headerlink" title="vnode"></a>vnode</h2><h3 id="名称"><a href="#名称" class="headerlink" title="名称"></a>名称</h3><p>vnode —— 文件或目录的内部表示</p>
-<h3 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/param.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/vnode.h&gt;</span></span></span><br></pre></td></tr></table></figure>
-
-<h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><ul>
-<li>vnode是UNIX中所有文件活动的焦点。</li>
-<li>vnode节点由<code>struct vnode</code>声明。</li>
-<li>每个活动文件、当前目录、挂载文件、文本文件和根目录都分配了一个vnode节点。</li>
-<li>vnode最初是为FreeBSD创建的，因为需要使用的不同类型的文件系统（例如UFS、NFS等）激增。</li>
-<li>Vnode旨在为所有可能的文件系统提供抽象，以便OS可以与它们进行对接，从而让内核方法不必兼容每个特定的文件系统；内核只需要知道如何与Vnode进行交互。</li>
-<li>Vnode抽象在内存中，可以与UFS、ext4等文件系统进行交互；而inode存储在磁盘上，只能用于特定的文件系统。</li>
-<li>inode节点包含文件大小、拥有者、指向地址块的指针等元数据。</li>
-<li>vnode仅包含在文件生命周期中不会改变的一些属性，因此如果想获得更多信息请使用inode作为参考。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>知识点总结</category>
-      </categories>
-      <tags>
-        <tag>File System</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>strlen与sizeof区别</title>
-    <url>/2020/03/02/strlen%E4%B8%8Esizeof%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<ul>
-<li>strlen计算不包含终止null字节的字符串长度，而sizeof则计算包括终止null字节的缓冲区长度</li>
-<li>strlen需要进行一次函数调用，而对于sizeof，缓冲区长度在编译时计算，是固定的</li>
-</ul>
-]]></content>
-      <categories>
-        <category>知识点总结</category>
-      </categories>
-      <tags>
-        <tag>C</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《UNIX环境高级编程》第8章——进程控制</title>
-    <url>/2020/03/02/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC8%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6/</url>
+    <url>/2020/02/11/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC8%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6/</url>
     <content><![CDATA[<h2 id="进程标识"><a href="#进程标识" class="headerlink" title="进程标识"></a>进程标识</h2><p>每个进程都有一个非负整型表示的唯一进程ID。</p>
 <p>ID为0的进程通常是调度进程，常常被称为交换进程（swapper）。该进程是内核的一部分，它并不执行任何磁盘上的程序，因此也被称为系统进程。</p>
 <p>进程ID 1通常是init进程，在自举过程结束时由内核调用。该进程的程序文件是/etc/init或/sbin/init。此进程负责在自举内核后启动一个UNIX系统。init读取与系统有关的初始化文件，并将系统引导到一个状态。init进程不会终止，它是一个普通的用户进程（与交换进程不同，它不是内核中的系统进程），以超级用户特权运行。</p>
@@ -1161,25 +861,8 @@
       </tags>
   </entry>
   <entry>
-    <title>为什么calloc会比malloc+memset快</title>
-    <url>/2020/02/23/%E4%B8%BA%E4%BB%80%E4%B9%88calloc%E4%BC%9A%E6%AF%94malloc-memset%E5%BF%AB/</url>
-    <content><![CDATA[<ol>
-<li><code>malloc</code>和<code>calloc</code>分配小的内存时直接从内存池分配，内存池不够时向内核申请更多内存；分配大内存时会直接调用<code>mmap</code>或<code>sbrk</code>系统调用</li>
-<li>内核分配的内存可能是前一个进程用过的，为保证不泄漏敏感数据，内核始终在将内存交给进程前先将内存置0，因此<code>mmap()</code>保证返回的新内存始终为零</li>
-<li>当程序申请内存时，内核并不会马上修改页表为进程提供RAM，而是在进程中找到一些地址空间，记下应该去的地方，并保证如果您的程序实际使用RAM，它将在其中放置RAM。当程序尝试读写那些地址，会出发缺页故障，内核将RAM分配给这些地址，继续执行程序。如果不读写，内核就不会分配RAM给进程。</li>
-<li>有的进程分配内存后只读不写，这意味着跨不同进程的内存中的许多页面可能填充有从<code>mmap()</code>返回的原始零。由于这些页面都是相同的，因此内核使所有这些虚拟地址指向一个共享的4 KiB内存页面，其中填充了零。如果您尝试写入该内存，则处理器会触发另一个页面错误（写时复制），内核会介入，从而为您提供一个零的新页面，该页面不会与任何其他程序共享。</li>
-</ol>
-]]></content>
-      <categories>
-        <category>知识点总结</category>
-      </categories>
-      <tags>
-        <tag>C</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《UNIX环境高级编程》第7章——进程环境</title>
-    <url>/2020/02/23/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC7%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/</url>
+    <url>/2020/02/06/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC7%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/</url>
     <content><![CDATA[<h2 id="进程开始"><a href="#进程开始" class="headerlink" title="进程开始"></a>进程开始</h2>   <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int main(int argc, char *argv[]);</span><br></pre></td></tr></table></figure>
 <p>   以main函数开始执行。当内核执行C程序时，在调用main前先调用一个特殊的启动例程。可执行程序将此启动例程指定为程序的起始地址——这是由链接编辑器设置的，而链接编辑器则由C编译器调用。启动例程从内核取得命令行参数和环境变量值，然后为按上述方式调用做好安排。</p>
 <h2 id="进程终止"><a href="#进程终止" class="headerlink" title="进程终止"></a>进程终止</h2><h3 id="终止方式"><a href="#终止方式" class="headerlink" title="终止方式"></a>终止方式</h3><p>有8种终止方式，前5种为正常终止，后3种为异常终止：</p>
@@ -1242,6 +925,323 @@
       </categories>
       <tags>
         <tag>process</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《UNIX环境高级编程》第5章——标准I/O库</title>
+    <url>/2020/02/01/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC5%E7%AB%A0%E2%80%94%E2%80%94%E6%A0%87%E5%87%86I-O%E5%BA%93/</url>
+    <content><![CDATA[<h2 id="流和FILE对象"><a href="#流和FILE对象" class="headerlink" title="流和FILE对象"></a>流和<code>FILE</code>对象</h2><p>所有不带缓冲的I/O函数都是围绕文件描述符进行的。而对于标准I/O库，它们的操作是围绕流进行的。当用标准I/O库打开或创建一个文件时，我们已使一个流与一个文件相关联。<br>对于ASCII字符集，一个字符用一个字节表示，对于国际字符集，一个字符用多个字节表示。标准I/O文件流可用于单字节或多字节字符集，由流的定向决定。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//设置流的定向</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fwide</span><span class="params">(FILE *fp, <span class="keyword">int</span> mode)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="标准输入、标准输出和标准错误"><a href="#标准输入、标准输出和标准错误" class="headerlink" title="标准输入、标准输出和标准错误"></a>标准输入、标准输出和标准错误</h3><p>对一个进程预定义了3个流，这3个流可以自动地被进程使用:</p>
+<ul>
+<li>文件指针<code>stdin</code>对应文件描述符<code>STDIN_FILENO</code></li>
+<li>文件指针<code>stdout</code>对应文件描述符<code>STDOUT_FILENO</code></li>
+<li>文件指针<code>stderr</code>对应文件描述符<code>STDERR_FILENO</code></li>
+</ul>
+<a id="more"></a>
+
+<h2 id="缓冲"><a href="#缓冲" class="headerlink" title="缓冲"></a>缓冲</h2><p>标准I/O库提供缓冲以尽可能减少read和write调用的次数，它也对每个I/O流自动的进行缓冲管理。</p>
+<ul>
+<li>全缓冲<br>这种情况下，在填满标准I/O缓冲区后才进行实际I/O操作。对于驻留在磁盘上的文件通常是由标准I/O库实施全缓冲的。</li>
+<li>行缓冲<br>这种情况下，在输入和输出中遇到换行符时，标准I/O库执行I/O操作。通常用在终端上。</li>
+<li>不带缓冲<br>标准I/O库不对字符进行缓冲，通常用在标准错误上。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//打开或关闭缓冲</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setbuf</span><span class="params">(FILE *<span class="keyword">restrict</span> fp, <span class="keyword">char</span> *<span class="keyword">restrict</span> buf)</span></span>;</span><br><span class="line"><span class="comment">//更改缓冲类型</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">setvbuf</span><span class="params">(FILE *<span class="keyword">restrict</span> fp, <span class="keyword">char</span> *<span class="keyword">restrict</span> buf, <span class="keyword">int</span> mode, <span class="keyword">size_t</span> <span class="built_in">size</span>)</span></span>;</span><br><span class="line"><span class="comment">//冲洗一个流</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fflush</span><span class="params">(FILE *FP)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="打开-关闭流"><a href="#打开-关闭流" class="headerlink" title="打开/关闭流"></a>打开/关闭流</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//打开指定文件</span></span><br><span class="line"><span class="function">FILE *<span class="title">fopen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> pathname, <span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> type)</span></span>;</span><br><span class="line"><span class="comment">//重新打开（关闭再打开）文件，用于打开预定义的流（标准输入/输出/错误）</span></span><br><span class="line"><span class="function">FILE *<span class="title">freopen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> pathname, <span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> type, FILE *<span class="keyword">restrict</span> fp)</span></span>;</span><br><span class="line"><span class="comment">//根据描述符打开文件，常用在由管道和网络通信通道函数返回的描述符</span></span><br><span class="line"><span class="function">FILE *<span class="title">fdopen</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *type)</span></span>;</span><br><span class="line"><span class="comment">//关闭流</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fclose</span><span class="params">(FILE *fp)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>打开方式：<br><img src="5-2.png" alt=""><br><strong>函数返回前记得关闭流以释放缓冲区</strong></p>
+<h2 id="读和写流"><a href="#读和写流" class="headerlink" title="读和写流"></a>读和写流</h2><h3 id="每次一个字符"><a href="#每次一个字符" class="headerlink" title="每次一个字符"></a>每次一个字符</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="comment">//读</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getc</span><span class="params">(FILE *fp)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fgetc</span><span class="params">(FILE *fp)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getchar</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="comment">//压回流中</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">ungetc</span><span class="params">(<span class="keyword">int</span> c, FILE *fp)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">putc</span><span class="params">(<span class="keyword">int</span> c, FILE *fp)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fputc</span><span class="params">(<span class="keyword">int</span> c, FILE *fp)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">putchar</span><span class="params">(<span class="keyword">int</span> c)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>getchar 等同于 getc(stdin)。前两者的区别是getc可以被实现为宏，这意味着：</p>
+<ul>
+<li>getc的参数不应当是具有副作用的表达式，因为可能会被计算多次</li>
+<li>fgetc一定是个函数，所以可以得到其地址，允许当参数传递</li>
+<li>fgetc的调用时长可能要比getc长。</li>
+</ul>
+<h3 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理"></a>错误处理</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//判断是否出错</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">ferror</span><span class="params">(FILE *fp)</span></span>;</span><br><span class="line"><span class="comment">//判断是否到达文件尾端</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">feof</span><span class="params">(FILE *fp)</span></span>;</span><br><span class="line"><span class="comment">//清除错误</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">clearerr</span><span class="params">(FILE *fp)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="每次一行"><a href="#每次一行" class="headerlink" title="每次一行"></a>每次一行</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">fgets</span><span class="params">(<span class="keyword">char</span> *<span class="keyword">restrict</span> buf, <span class="keyword">int</span> n, FILE *<span class="keyword">restrict</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">gets</span><span class="params">(<span class="keyword">char</span> *buf)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fputs</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> str, FILE *<span class="keyword">restrict</span> fp)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">puts</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *str)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><strong>不推荐使用gets和puts。因为不能指定缓冲区长度，可能造成缓冲区溢出</strong></p>
+<h3 id="二进制I-O"><a href="#二进制I-O" class="headerlink" title="二进制I/O"></a>二进制I/O</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">size_t</span> <span class="title">fread</span><span class="params">(<span class="keyword">void</span> *<span class="keyword">restrict</span> ptr, <span class="keyword">size_t</span> <span class="built_in">size</span>, <span class="keyword">size_t</span> nobj, FILE *<span class="keyword">restrict</span> fp)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">size_t</span> <span class="title">fwrite</span><span class="params">(<span class="keyword">const</span> <span class="keyword">void</span> *<span class="keyword">restrict</span> ptr, <span class="keyword">size_t</span> <span class="built_in">size</span>, <span class="keyword">size_t</span> nobj, FILE *<span class="keyword">restrict</span> fp)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="内存流"><a href="#内存流" class="headerlink" title="内存流"></a>内存流</h3><p>SUSv4中支持了内存流。这就是标准I/O流，虽然仍使用FILE指针进行访问，但并没有底层文件。所有的I/O都是通过在缓冲区与主存之间来回传送字节完成的。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//创建内存流</span></span><br><span class="line"><span class="function">FILE *<span class="title">fmemopen</span><span class="params">(<span class="keyword">void</span> *<span class="keyword">restrict</span> buf, <span class="keyword">size_t</span> <span class="built_in">size</span>, <span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> type)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>因为避免了缓冲区溢出，内存流非常适用于创建字符串。因为内存流只访问主存，不访问磁盘上的文件，所以对于把标准I/O流作为参数用于临时文件的函数来说，会有很大的性能提升。</p>
+<h2 id="定位流"><a href="#定位流" class="headerlink" title="定位流"></a>定位流</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">ftell</span><span class="params">(FILE *fp)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fseek</span><span class="params">(FILE *fp, <span class="keyword">long</span> offset, <span class="keyword">int</span> whence)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">rewind</span><span class="params">(FILE *fp)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">off_t</span> <span class="title">ftello</span><span class="params">(FILE *fp)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fseeko</span><span class="params">(FILE *fp, <span class="keyword">off_t</span> offset, <span class="keyword">int</span> whence)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fgetpos</span><span class="params">(FILE *<span class="keyword">restrict</span> fp, <span class="keyword">fpos_t</span> *<span class="keyword">restrict</span> pos)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fsetpos</span><span class="params">(FILE *fp, <span class="keyword">const</span> <span class="keyword">fpos_t</span> *pos)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="标准I-O的优却点及效率"><a href="#标准I-O的优却点及效率" class="headerlink" title="标准I/O的优却点及效率"></a>标准I/O的优却点及效率</h2><p>使用标准I/O优点是无需考虑缓冲及最佳I/O长度的选择。不足之处是效率不高，这与它需要复制的数据量有关。当使用每次一行的fgets和fputs时，需要复制两次数据：依次是在内核和标准I/O缓冲区之间（当调用read和write时），第二次是在标准I/O缓冲区和用户程序中的行缓冲区之间。<br>标准I/O库与直接调用read和write相比并不慢很多。对于大多数复杂的应用程序，最主要的用户CPU时间是由应用本身的各种处理消耗的，而不是由标准I/O例程消耗的。</p>
+<h2 id="格式化I-O"><a href="#格式化I-O" class="headerlink" title="格式化I/O"></a>格式化I/O</h2><p>格式化输出：</p>
+<ul>
+<li>printf 将格式化数据写到标准输出</li>
+<li>fprintf 写到指定的流</li>
+<li>dprintf 写到指定的文件描述符</li>
+<li>sprintf 写到给定的缓冲区中。结尾自动加NULL，但该字符不计算在返回值中</li>
+<li>snprintf 同上。但sprintf可能会造成缓冲区溢出，所以推荐使用snprintf显式指定缓冲区长度</li>
+</ul>
+<p>格式化输入：</p>
+<ul>
+<li>scanf 从标准输入中分析字符串</li>
+<li>fscanf 从流中分析</li>
+<li>sscanf 从给定缓冲区中分析</li>
+</ul>
+<h2 id="实现细节"><a href="#实现细节" class="headerlink" title="实现细节"></a>实现细节</h2><p>UNIX中，标准I/O库最终都要调用第3章中说明的不带缓冲的I/O例程。每个I/O流都有一个与其相关的文件描述符。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fileno</span><span class="params">(FILE *fp)</span></span>; <span class="comment">//获取流对应的描述符</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="临时文件"><a href="#临时文件" class="headerlink" title="临时文件"></a>临时文件</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">tmpnam</span><span class="params">(<span class="keyword">char</span> *ptr)</span></span>; <span class="comment">//产生一个与现有文件名不同的一个有效路径名字符串</span></span><br><span class="line"><span class="function">FILE *<span class="title">tmpfile</span><span class="params">(<span class="keyword">void</span>)</span></span>; <span class="comment">//创建一个临时二进制文件（类型wb+），在关闭该文件或程序结束时自动删除</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">mkdtemp</span><span class="params">(<span class="keyword">char</span> *<span class="keyword">template</span>)</span></span>; <span class="comment">//创建一个目录，该目录有一个唯一的名字</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mkstemp</span><span class="params">(<span class="keyword">char</span> *<span class="keyword">template</span>)</span></span>; <span class="comment">//创建一个文件，该文件有一个唯一的名字</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>《APUE》笔记</category>
+      </categories>
+      <tags>
+        <tag>I/O</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《UNIX环境高级编程》第4章——文件和目录</title>
+    <url>/2020/01/28/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC4%E7%AB%A0%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95/</url>
+    <content><![CDATA[<h2 id="文件属性"><a href="#文件属性" class="headerlink" title="文件属性"></a>文件属性</h2><h3 id="文件结构-stat"><a href="#文件结构-stat" class="headerlink" title="文件结构 stat"></a>文件结构 stat</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">stat</span> &#123;</span></span><br><span class="line">  <span class="keyword">mode_t</span>            st_mode;    <span class="comment">// file type &amp; mode (permisssions)</span></span><br><span class="line">  <span class="keyword">ino_t</span>             st_ino;     <span class="comment">// i-node number (serial number)</span></span><br><span class="line">  <span class="keyword">dev_t</span>             st_dev;     <span class="comment">// device number (file system)</span></span><br><span class="line">  <span class="keyword">dev_t</span>             st_rdev;    <span class="comment">// device number for special files</span></span><br><span class="line">  <span class="keyword">nlink_t</span>           st_link;    <span class="comment">// number of links</span></span><br><span class="line">  <span class="keyword">uid_t</span>             st_uid;     <span class="comment">// user ID of owner</span></span><br><span class="line">  <span class="keyword">gid_t</span>             st_gid;     <span class="comment">// group ID of owner</span></span><br><span class="line">  <span class="keyword">off_t</span>             st_size;    <span class="comment">// size in bytes, for regular files</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>   <span class="title">st_atime</span>;</span>   <span class="comment">// time of last access</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>   <span class="title">st_mtime</span>;</span>   <span class="comment">// time of last modification</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>   <span class="title">st_ctime</span>;</span>   <span class="comment">// time of last file status change</span></span><br><span class="line">  <span class="keyword">blksize_t</span>         st_blksize; <span class="comment">// best I/O block size 对文件I/O较适合的块长度</span></span><br><span class="line">  <span class="keyword">blkcnt_t</span>          st_blocks;  <span class="comment">// number of disk blocks allocated 所分配的实际512字节块块数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>相关函数：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//获取文件信息结构</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">stat</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> pathname, struct stat *<span class="keyword">restrict</span> buf)</span></span>;</span><br><span class="line"><span class="comment">//根据描述符获取</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fstat</span><span class="params">(<span class="keyword">int</span> fd, struct stat *buf)</span></span>;</span><br><span class="line"><span class="comment">//获取与符号链接相关的</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">lstat</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> pathname, struct stat *<span class="keyword">restrict</span> buf)</span></span>;</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fstatat</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *<span class="keyword">restrict</span> pathname, struct stat *<span class="keyword">restrict</span> buf, <span class="keyword">int</span> flag)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="文件类型"><a href="#文件类型" class="headerlink" title="文件类型"></a>文件类型</h3><ul>
+<li>普通文件（regular file)</li>
+<li>目录文件（directory file）</li>
+<li>块特殊文件（block special file）<br>这种类型的文件提供对设备（如磁盘）带缓冲的访问，每次访问以固定单位长度进行。</li>
+<li>字特殊文件（character special file）<br>这种类型的文件提供对设备不带缓冲的访问，每次访问长度可变。系统中所有设备要么是字特殊文件，要么是块特殊文件。</li>
+<li>FIFO<br>这种类型的文件用于进程间通信，也称为命名管道（named pipe）。</li>
+<li>套接字（socket）<br>这种类型的文件用于进程间的网络通信，也可用于一台宿主机上进程之间的非网络通信。</li>
+<li>符号链接（symbolic link）<br>这种类型的文件指向另一个文件。</li>
+</ul>
+<h3 id="文件长度"><a href="#文件长度" class="headerlink" title="文件长度"></a>文件长度</h3><p>st_size表示以字节为单位的文件长度。此字段只对普通文件、目录文件和符号链接有意义。</p>
+<ul>
+<li>对于普通文件，长度可以是0。</li>
+<li>对于目录，长度通常是一个数（16或512）的整数倍。</li>
+<li>对于符号链接，尝试是文件名中的字节数。</li>
+</ul>
+<h4 id="文件空洞"><a href="#文件空洞" class="headerlink" title="文件空洞"></a>文件空洞</h4><p>文件空洞是由所设置的偏移量超过文件尾端，并写入了数据后造成的。</p>
+<h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><p>UNIX文件系统有很多种实现，这里讨论UFS文件系统。<br><img src="4-13.png" alt=""><br><img src="4-14.png" alt=""></p>
+<ul>
+<li>每个i节点都有一个链接计数，其值指向i节点的目录项数。只有计数减少到0时，才可删除文件（也就是释放该文件占用的数据块）。链接计数包含在stat结构里的st_nlink字段中，这种链接类型称为硬链接。</li>
+<li>另一种链接类型为符号链接（symbolic link）。符号链接文件的实际内容包含了该符号链接所指向的文件的名字。</li>
+<li>i节点包含了文件有关的所有信息：文件类型、文件访问权限位、文件长度和指向文件数据块的指针等。stat结构中大多数信息都取自i节点，除了文件名和i节点编号。</li>
+<li>目录项中的i节点编号指向同一文件系统中的i节点。</li>
+<li>在不更换文件系统的情况下，重命名文件并不会让文件的实际内容变动，只需要构造一个指向现有i几点的新目录项，并删除老的目录项，链接数不变。</li>
+</ul>
+<p><img src="4-15.png" alt=""></p>
+<ul>
+<li>每个叶目录的链接计数总是2（来自 该目录名 和<code>.</code>）。</li>
+<li>父目录中的每一个子目录都使该父目录的链接计数加1（子目录中的<code>..</code>项指向父目录）</li>
+</ul>
+<h3 id="link、linkat、unlink、unlinkat和remove"><a href="#link、linkat、unlink、unlinkat和remove" class="headerlink" title="link、linkat、unlink、unlinkat和remove"></a>link、linkat、unlink、unlinkat和remove</h3><p>任何一个文件可以有多个目录项指向其i节点。创建一个指向现有文件的链接的方法是使用link或linkat函数。<br>删除一个目录项使用unlink函数，只有链接计数达到0时，该文件内容才可被删除。<br>remove既能删文件（等同于unlink）也能删目录（等同于rmdir）。</p>
+<h3 id="rename-和-renameat"><a href="#rename-和-renameat" class="headerlink" title="rename 和 renameat"></a>rename 和 renameat</h3><p>用来对文件重命名。</p>
+<h3 id="符号链接"><a href="#符号链接" class="headerlink" title="符号链接"></a>符号链接</h3><p>符号链接是对一个文件的间接指针，硬链接直接指向文件的i节点。<br>使用symlink或syslinkat函数创建一个符号链接。</p>
+<h3 id="文件时间"><a href="#文件时间" class="headerlink" title="文件时间"></a>文件时间</h3><ul>
+<li>st_atime 文件数据的最后访问时间</li>
+<li>st_mtime 文件数据的最后修改时间</li>
+<li>st_ctime i节点状态的最后更改时间</li>
+</ul>
+<p>操作函数：</p>
+<ul>
+<li>futimens</li>
+<li>utimensat</li>
+<li>utimes</li>
+</ul>
+<h2 id="权限及属组"><a href="#权限及属组" class="headerlink" title="权限及属组"></a>权限及属组</h2><h3 id="用户ID和组ID"><a href="#用户ID和组ID" class="headerlink" title="用户ID和组ID"></a>用户ID和组ID</h3><p>与一个进程相关联的ID：<br><img src="4-5.png" alt=""></p>
+<ul>
+<li>实际用户ID和实际组ID标识我们究竟是谁。这两个字段在登录时取自口令文件中的登录项。</li>
+<li>有效用户ID、有效组ID以及附属组ID决定了我们的文件访问权限。</li>
+<li>保存的设置用户ID和保存的设置组ID在执行一个程序时包含了有效用户ID和有效组ID的一个副本。</li>
+</ul>
+<p>执行一个程序文件时，进程的有效用户ID就是实际用户ID，有效组ID就是实际组ID。但可以在文件模式字（st_mode）中设置一个特殊标志，将执行此文件时的有效用户ID设置为文件所有者的用户ID；或将有效组ID设置为文件的组所有者ID。</p>
+<h3 id="文件访问权限"><a href="#文件访问权限" class="headerlink" title="文件访问权限"></a>文件访问权限</h3><p>st_mode值也包含了对文件的访问权限位。<br><img src="4-6.png" alt=""></p>
+<ul>
+<li>读权限决定了我们能否打开一个文件进行读操作，包括读目录中的内容。</li>
+<li>写权限决定了我们能否打开一个文件进行写操作。</li>
+<li>打开任一文件时要对它的每一级父目录（包括当前目录）有执行权限。</li>
+<li>在目录中创建一个新文件需要对该目录有写和执行权限。</li>
+<li>删除一个现有文件，需要对包含该文件的目录具有写和执行权限，对该文件本身不需要有读、写权限。</li>
+</ul>
+<p><strong>目录文件的读权限（r）和写权限（w），都是针对目录文件本身。由于目录文件内只有文件名和inode号码，所以如果只有读权限，只能获取文件名，无法获取其他信息，因为其他信息都储存在inode节点中，而读取inode节点内的信息需要目录文件的执行权限（x）。</strong></p>
+<h3 id="新文件和目录的所有权"><a href="#新文件和目录的所有权" class="headerlink" title="新文件和目录的所有权"></a>新文件和目录的所有权</h3><ul>
+<li>新文件的用户ID设置为进程的有效用户ID。</li>
+<li>新文件的组ID可以是进程的有效组ID也可以是它所在的目录的组ID。</li>
+</ul>
+<h3 id="access-和-faccessat"><a href="#access-和-faccessat" class="headerlink" title="access 和 faccessat"></a>access 和 faccessat</h3><p>用<code>open</code>函数打开文件时，内核以进程的有效用户ID和有效组ID做访问权限测试，<code>access</code>和<code>faccessat</code>函数按实际用户ID和实际组ID进行测试。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">access</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">int</span> mode)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">faccess</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">int</span> mode ,<span class="keyword">int</span> flag)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="umask"><a href="#umask" class="headerlink" title="umask"></a>umask</h3><p><code>umask</code>函数为进程设置文件膜创建屏蔽字，并返回之前的值。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">mode_t</span> <span class="title">umask</span><span class="params">(<span class="keyword">mode_t</span> cmask)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><img src="4-10.png" alt=""></p>
+<h3 id="chmod、fchmod和fchmodat"><a href="#chmod、fchmod和fchmodat" class="headerlink" title="chmod、fchmod和fchmodat"></a>chmod、fchmod和fchmodat</h3><p>这三个函数使我们更改现有文件的访问权限。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">chmod</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">mode_t</span> mode)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fchmod</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">mode_t</span> mode)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fchmodat</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *pathname, <span class="keyword">mode_t</span> mode, <span class="keyword">int</span> flag)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><img src="4-11.png" alt=""></p>
+<h3 id="粘着位"><a href="#粘着位" class="headerlink" title="粘着位"></a>粘着位</h3><p>UNIX早期版本中，S_ISVTX位被称为<code>粘着位(sticky bit)</code>。如果一个可执行程序文件的这一位被设置了，那么当该程序第一次被执行，在其终止时，程序正文部分（机器指令）的一个副本仍被保存在交换区。这使得下次执行该程序时能较快的将其载入内存。</p>
+<h4 id="Linux中的交换区"><a href="#Linux中的交换区" class="headerlink" title="Linux中的交换区"></a>Linux中的交换区</h4><blockquote>
+<p>Linux中Swap（即：交换分区），类似于Windows的虚拟内存，就是当内存不足的时候，把一部分硬盘空间虚拟成内存使用,从而解决内存容量不足的情况。Android是基于Linux的操作系统，所以也可以使用Swap分区来提升系统运行效率 。</p>
+</blockquote>
+<p>现今交心的UNIX系统大多配置了虚拟存储系统以及快速文件系统，不再需要这种技术。<br>SUS允许针对目录设置粘着位，目录/tmp和/var/tmp是设置粘着位的典型候选者——任何用户都可在这两个目录中创建文件；任一用户对这两个目录的权限通常都是读、写、执行。</p>
+<h3 id="chown、fchown、fchownat和lchown"><a href="#chown、fchown、fchownat和lchown" class="headerlink" title="chown、fchown、fchownat和lchown"></a>chown、fchown、fchownat和lchown</h3><p>这几个函数更改文件的用户ID和组ID。</p>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><p>目录由DIR结构表示：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">	<span class="keyword">int</span>	__dd_fd;	<span class="comment">// file descriptor associated with directory</span></span><br><span class="line">	<span class="keyword">long</span>	__dd_loc;	<span class="comment">// offset in current buffer</span></span><br><span class="line">	<span class="keyword">long</span>	__dd_size;	<span class="comment">// amount of data returned</span></span><br><span class="line">	<span class="keyword">char</span>	*__dd_buf;	<span class="comment">// data buffer</span></span><br><span class="line">	<span class="keyword">int</span>	__dd_len;	<span class="comment">// size of data buffer</span></span><br><span class="line">	<span class="keyword">long</span>	__dd_seek;	<span class="comment">// magic cookie returned</span></span><br><span class="line">	__unused <span class="keyword">long</span>	__padding; <span class="comment">// (__dd_rewind space left for bincompat)</span></span><br><span class="line">	<span class="keyword">int</span>	__dd_flags;	<span class="comment">// flags for readdir</span></span><br><span class="line">	<span class="keyword">__darwin_pthread_mutex_t</span> __dd_lock; <span class="comment">// for thread locking</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> _<span class="title">telldir</span> *__<span class="title">dd_td</span>;</span> <span class="comment">// telldir position recording</span></span><br><span class="line">&#125; DIR;</span><br></pre></td></tr></table></figure>
+<p>目录项 dirent结构与实现有关，至少包含下列两个成员：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">ino_t</span> d_ino; <span class="comment">//i-node number</span></span><br><span class="line"><span class="keyword">char</span> d_name[]; <span class="comment">//null-terminated filename</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>mkdir</code>/<code>mkdirat</code> 创建目录</li>
+<li><code>rmdir</code> 删除目录</li>
+<li><code>opendir</code>/<code>fdopendir</code> 打开目录</li>
+<li><code>readdir</code> 读一个目录项</li>
+<li><code>rewinddir</code> 将偏移量重制</li>
+<li><code>closedir</code> 关闭文件</li>
+<li><code>telldir</code> 获取偏移量</li>
+<li><code>seekdir</code> 更改偏移量</li>
+</ul>
+<p><strong>有权限的用户都可以读目录，但只有内核才可以写目录。</strong></p>
+<h3 id="当前工作目录"><a href="#当前工作目录" class="headerlink" title="当前工作目录"></a>当前工作目录</h3><p>每个进程都有一个当前工作目录，它是搜索所有相对路径名的起点。</p>
+<ul>
+<li><code>chdir</code>/<code>fchdir</code> 指定新的当前工作目录</li>
+<li><code>getcwd</code> 获取当前工作目录</li>
+</ul>
+]]></content>
+      <categories>
+        <category>《APUE》笔记</category>
+      </categories>
+      <tags>
+        <tag>文件</tag>
+        <tag>目录</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《UNIX环境高级编程》第3章——文件I/O</title>
+    <url>/2020/01/23/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC3%E7%AB%A0%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6I-O/</url>
+    <content><![CDATA[<h2 id="文件描述符"><a href="#文件描述符" class="headerlink" title="文件描述符"></a>文件描述符</h2><p>对于内核而言，所有打开的文件都通过文件描述符引用。文件描述符是一个非负整数。当打开一个现有文件或创建一个新文件时，内核向进程返回一个文件描述符。</p>
+<ul>
+<li>0 - STDIN_FILENO - 标准输入</li>
+<li>1 - STDOUT_FILENO - 标准输出</li>
+<li>2 - STDERR_FILENO - 标准错误</li>
+</ul>
+<h2 id="不带缓冲的I-O函数"><a href="#不带缓冲的I-O函数" class="headerlink" title="不带缓冲的I/O函数"></a>不带缓冲的I/O函数</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">open</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">int</span> oflag, ...<span class="comment">/* mode_t mode */</span>)</span></span>; <span class="comment">//打开或创建一个文件</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">openat</span> <span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">int</span> oflag, ...<span class="comment">/* mode_t mode */</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">creat</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">mode_t</span> mode)</span></span>; <span class="comment">//创建一个文件</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">close</span> <span class="params">(<span class="keyword">int</span> fd)</span></span>; <span class="comment">//关闭一个文件</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">off_t</span> <span class="title">lseek</span> <span class="params">(<span class="keyword">int</span> fd, <span class="keyword">off_t</span> offset, <span class="keyword">int</span> whence)</span></span>; <span class="comment">//设置偏移量</span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">read</span> <span class="params">(<span class="keyword">int</span> fd, <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> nbytes)</span></span>; <span class="comment">//读</span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">write</span> <span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> nbytes)</span></span>; <span class="comment">//写</span></span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<h3 id="带缓冲与不带缓冲的区别"><a href="#带缓冲与不带缓冲的区别" class="headerlink" title="带缓冲与不带缓冲的区别"></a>带缓冲与不带缓冲的区别</h3><p>所谓不带缓冲，并不是指内核不提供缓冲，而是只单纯的系统调用，不是函数库的调用。系统内核对磁盘的读写都会提供一个块缓冲（在有些地方也被称为内核高速缓存），当用write函数对其写数据时，直接调用系统调用，将数据写入到块缓冲进行排队，当块缓冲达到一定的量时，才会把数据写入磁盘。因此所谓的不带缓冲的I/O是指进程不提供缓冲功能（但内核还是提供缓冲的）。每调用一次write或read函数，直接系统调用。<br>而带缓冲的I/O是指进程对输入输出流进行了改进，提供了一个流缓冲，当用fwrite函数网磁盘写数据时，先把数据写入流缓冲区中，当达到一定条件，比如流缓冲区满了，或刷新流缓冲，这时候才会把数据一次送往内核提供的块缓冲，再经块缓冲写入磁盘。（双重缓冲）<br>因此，带缓冲的I/O在往磁盘写入相同的数据量时，会比不带缓冲的I/O调用系统调用的次数要少。<br>无缓存IO操作数据流向路径：<strong>数据——内核缓存区——磁盘</strong><br>标准IO操作数据流向路径：<strong>数据——流缓存区——内核缓存区——磁盘</strong></p>
+<h3 id="预读"><a href="#预读" class="headerlink" title="预读"></a>预读</h3><p>大多数文件系统为改善性能都采用某种预读（read ahead）技术。当检测到正进行顺序读取时，系统就试图读入比应用所要求的更多数据，并假想应用很快就会读这些数据。</p>
+<h3 id="延迟写"><a href="#延迟写" class="headerlink" title="延迟写"></a>延迟写</h3><p>传统的UNIX系统实现在内核中设有缓冲区高速缓存或页高速缓存，大多数磁盘I/O都通过缓冲区进行。当我们向文件写入数据时，内核通常先将数据复制到缓冲区中，然后排入队列，晚些时候再写入磁盘。这种方式被成为延迟写（delayed write）。</p>
+<h3 id="I-O与磁盘交互流程"><a href="#I-O与磁盘交互流程" class="headerlink" title="I/O与磁盘交互流程"></a>I/O与磁盘交互流程</h3><p>当应用程序尝试读取某块数据的时候，如果这块数据已经存放在页缓存中，那么这块数据就可以立即返回给应用程序，而不需要经过实际的物理读盘操作。当然，如果数据在应用程序读取之前并未被存放在页缓存中（也就是上面提到的内核高速缓存），那么就需要先将数据从磁盘读到页缓存中去(这个过程触发缺页异常)。对于写操作来说，应用程序也会将数据先写到页缓存中去（这里所说的写到页缓存中，如果是调用标准库I/O进行写，那么首先是写到标准库的缓冲区内，如果标准库的缓冲区写满以后，在写到页缓冲内；如果是系统调用，那么直接写到页缓冲内），数据是否被立即写到磁盘上去取决于应用程序所采用的写操作机制：如果用户采用的是同步写机制,那么数据会立即被写回到磁盘上，应用程序会一直等到数据被写完为止；如果用户采用的是延迟写机制，那么应用程序就完全不需要等到数据全部被 写回到磁盘，数据只要被写到页缓存中去就可以了。在延迟写机制的情况下，操作系统会定期地将放在页缓存中的数据刷到磁盘上。与异步写机制不同的是，延迟写机制在数据完全写到磁盘上得时候不会通知应用程序，而异步写机制在数据完全写到磁盘上得时候是会返回给应用程序的。所以延迟写机制本省是存在数据丢失的风险的，而异步写机制则不会有这方面的担心。</p>
+<h2 id="文件共享"><a href="#文件共享" class="headerlink" title="文件共享"></a>文件共享</h2><p>内核使用4种数据结构表示打开文件，它们之间的关系决定了在文件共享方面一个进程对另一个进程可能产生的影响。</p>
+<ul>
+<li><code>进程表</code>。每个进程在进程表中都有一个记录项，记录项中包含一张打开文件描述符表，可将其视为一个矢量，每个描述符占用一项。与每个文件描述符相关联的是：<ol>
+<li>文件描述符标志（close_on_exec）</li>
+<li>指向一个文件表项的指针</li>
+</ol>
+</li>
+<li><code>文件表</code>。内核为所以打开文件维持一张文件表（全局唯一，所有进程共享一个文件表）。其中的每个文件表项对应一个进程中打开的文件，它包含：<ol>
+<li>文件状态标志（只读、只写、读写、追加写、同步/异步、阻塞/非阻塞等）</li>
+<li>当前文件偏移量</li>
+<li>指向该文件v节点表项的指针</li>
+</ol>
+</li>
+<li><code>v节点</code>。每个打开文件（或设备）都有一个v节点（v-node）结构。v节点包含了文件类型和对此文件进行各种操作函数的指针。对于大多数文件，v节点还包含了该文件的i节点指针。</li>
+<li><code>i节点</code>。i节点包含了文件的所有者、文件长度、指向文件实际数据块在磁盘所在位置的指针等。</li>
+</ul>
+<blockquote>
+<p>Linux没有使用v节点，而是使用了通用i节点结构（一个与文件系统相关的i节点，一个与文件系统无关的i节点）。虽然实现不同，但在概念上，v节点与i节点是一样的，两者都指向文件系统特有的i节点结构。</p>
+</blockquote>
+<p><img src="3-7.png" alt=""><br><img src="3-8.png" alt=""></p>
+<p>打开该文件的每个进程都能获得各自的一个文件表项，但对一个给的文件只有一个v节点表项。这样每个进程都有它自己对该文件偏移量以及打开方式。<br>可能有多个文件描述符指向同一文件表项的情况，如dup和fork函数。</p>
+<h3 id="文件描述符标志与文件状态标志的区别"><a href="#文件描述符标志与文件状态标志的区别" class="headerlink" title="文件描述符标志与文件状态标志的区别"></a>文件描述符标志与文件状态标志的区别</h3><p><strong>前者只用于一个进程的一个描述符，后者则应用于指向该给定文件表项的任何进程中的所有描述符。</strong></p>
+<h2 id="原子操作"><a href="#原子操作" class="headerlink" title="原子操作"></a>原子操作</h2><p><code>原子操作（atomic operation）</code>指的是由多步组成的一个操作。如果该操作原子的执行，要么执行完所有步骤，要么一步也不执行，不可能只执行所有步骤的一个子集。任何要求多于一个函数调用的操作都不是原子操作，因为在两个函数调用之间，内核有可能会临时挂起进程。<br>我们用<code>pread</code>和<code>pwrite</code>函数进行I/O来保证<code>lseek</code>和<code>read</code>/<code>write</code>构成原子操作。</p>
+<h2 id="其他I-O函数"><a href="#其他I-O函数" class="headerlink" title="其他I/O函数"></a>其他I/O函数</h2><h3 id="dup（dup2）"><a href="#dup（dup2）" class="headerlink" title="dup（dup2）"></a>dup（dup2）</h3><p>用来复制一个现有的文件描述符。复制后每个文件描述符都有它自己的一套文件描述符标志。两个描述符指向同一文件表项，所以它们共享同一文件状态标志（读、写、追加写等）<br><img src="3-9.png" alt=""></p>
+<h3 id="sync、fsync和fdatasync"><a href="#sync、fsync和fdatasync" class="headerlink" title="sync、fsync和fdatasync"></a><code>sync</code>、<code>fsync</code>和<code>fdatasync</code></h3><p>用于保证磁盘上实际文件系统与缓冲区中内容的一致性。</p>
+<ul>
+<li><code>sync</code>只是将所有修改过的块缓冲区排入写队列就返回，它不等待实际写磁盘操作结束。通常称为update的系统守护进程周期性地（一般为30秒）调用sync函数，这就保证了定期冲洗（flush）内核的块缓冲区。</li>
+<li><code>fsync</code>只对由fd指定的一个文件起作用，并等待写磁盘操作结束才返回。</li>
+<li><code>fdatasync</code>类似于<code>fsync</code>，但影响文件的数据部分</li>
+</ul>
+<h3 id="fcntl"><a href="#fcntl" class="headerlink" title="fcntl"></a>fcntl</h3><p>用于改变已经打开文件的属性，主要由以下5种功能：</p>
+<ol>
+<li>复制一个已有的描述符(cmd = F_DUPFD 或 F_DUPFD_CLOEXEC)</li>
+<li>获取/设置文件描述符标志(cmd = F_GETFD 或 F_SETFD)</li>
+<li>获取/设置文件状态标志(cmd = F_GETFL 或 F_SETFL)</li>
+<li>获取/设置异步I/O所有权(cmd = F_GETONW 或 F_SETOWN)</li>
+<li>获取/设置记录锁(cmd = F_GETLK 、 F_SETLK 或 F_SETLKW（阻塞版本）)</li>
+</ol>
+<h3 id="ioctl"><a href="#ioctl" class="headerlink" title="ioctl"></a>ioctl</h3><p>I/O操作的杂物箱，未总结的其他I/O操作都在里面。</p>
+<h2 id="dev-fd"><a href="#dev-fd" class="headerlink" title="/dev/fd"></a>/dev/fd</h2><p>较新的系统都提供/dev/fd目录，其目录项是名为0、1、2等文件，打开文件/dev/fd/n 等效于 复制描述符n（假定描述符n是打开的）。</p>
+]]></content>
+      <categories>
+        <category>《APUE》笔记</category>
+      </categories>
+      <tags>
+        <tag>I/O</tag>
+        <tag>文件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《UNIX环境高级编程》第2章——UNIX标准及实现</title>
+    <url>/2020/01/18/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC2%E7%AB%A0%E2%80%94%E2%80%94UNIX%E6%A0%87%E5%87%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/</url>
+    <content><![CDATA[<h2 id="UNIX标准化"><a href="#UNIX标准化" class="headerlink" title="UNIX标准化"></a>UNIX标准化</h2><h3 id="ISO-C"><a href="#ISO-C" class="headerlink" title="ISO C"></a>ISO C</h3><p>ISO（国际标准化组织） C标准的意图是提供C程序的可移植性，使其能适合于大量不同的操作系统，而不只是适合UNIX系统。此标准不仅定了C程序设计语言的语法和语义，还定义了其标准库。</p>
+<h3 id="IEEE-POSIX"><a href="#IEEE-POSIX" class="headerlink" title="IEEE POSIX"></a>IEEE POSIX</h3><p>POSIX是由IEEE（电气和电子工程师学会）指定的标准族。POSIX指的是可移植操作系统接口。</p>
+<h3 id="Single-UNIX-Specification"><a href="#Single-UNIX-Specification" class="headerlink" title="Single UNIX Specification"></a>Single UNIX Specification</h3><p>Single UNIX Specification（SUS，单一UNIX规范）是POSIX.1标准的一个超集，它定义了一些附加接口扩展了POSIX.1规范提供的功能。POSIX.1相当于Single UNIX Specification中的基本规范部分。</p>
+<a id="more"></a>
+
+<h2 id="UNIX-系统实现"><a href="#UNIX-系统实现" class="headerlink" title="UNIX 系统实现"></a>UNIX 系统实现</h2><h3 id="SVR4"><a href="#SVR4" class="headerlink" title="SVR4"></a>SVR4</h3><h3 id="4-4BSD"><a href="#4-4BSD" class="headerlink" title="4.4BSD"></a>4.4BSD</h3><h3 id="FreeBSD"><a href="#FreeBSD" class="headerlink" title="FreeBSD"></a>FreeBSD</h3><h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><h3 id="Mac-OS-X"><a href="#Mac-OS-X" class="headerlink" title="Mac OS X"></a>Mac OS X</h3><h3 id="Solaris"><a href="#Solaris" class="headerlink" title="Solaris"></a>Solaris</h3><h2 id="标准和实现的关系"><a href="#标准和实现的关系" class="headerlink" title="标准和实现的关系"></a>标准和实现的关系</h2><h2 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h2><p>以下两类的限制是必须的：</p>
+<ul>
+<li>编译时限制（例如，短整型的最大值是什么）</li>
+<li>运行时限制（例如，文件名有多少个字符）</li>
+</ul>
+<p>为了解决这类问题，提供了以下3种限制：</p>
+<ul>
+<li>编译时限制（头文件）</li>
+<li>与文件或目录无关的运行时限制（sysconf函数）</li>
+<li>与文件或目录有关的运行时限制（pathconf和fpathconf函数）</li>
+</ul>
+<h3 id="ISO-C限制"><a href="#ISO-C限制" class="headerlink" title="ISO C限制"></a>ISO C限制</h3><p><img src="2-6.png" alt=""><br><img src="2-7.png" alt=""></p>
+<h3 id="POSIX-限制"><a href="#POSIX-限制" class="headerlink" title="POSIX 限制"></a>POSIX 限制</h3><p><img src="2-8.png" alt=""><br><img src="2-9.png" alt=""></p>
+<h3 id="sysconf、pathconf和fpathconf"><a href="#sysconf、pathconf和fpathconf" class="headerlink" title="sysconf、pathconf和fpathconf"></a>sysconf、pathconf和fpathconf</h3><p>运行时限制可以调用这三个函数之一获得</p>
+<h2 id="基本系统数据类型"><a href="#基本系统数据类型" class="headerlink" title="基本系统数据类型"></a>基本系统数据类型</h2><p><img src="2-21.png" alt=""></p>
+]]></content>
+      <categories>
+        <category>《APUE》笔记</category>
+      </categories>
+      <tags>
+        <tag>UNIX</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《UNIX环境高级编程》第1章——UNIX基础知识</title>
+    <url>/2020/01/13/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC1%E7%AB%A0%E2%80%94%E2%80%94UNIX%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</url>
+    <content><![CDATA[<h2 id="UNIX-体系结构"><a href="#UNIX-体系结构" class="headerlink" title="UNIX 体系结构"></a>UNIX 体系结构</h2><p>严格意义上说，可将操作系统定义为一种软件，它控制计算机硬件资源，提供程序运行环境。我们称这种软件为内核，内核的接口被称为 <strong>系统调用（system call）</strong>。<br>广义上说，操作系统包括了内核和一些其他软件，这些软件使得计算机能够发挥作用，使其具有自己的特性。这里说的软件包括系统实用程序、应用程序、shell以及公用函数库等。<br>例如，Linux是GNU操作系统使用的内核。<br><img src="1-1.png" alt=""></p>
+<a id="more"></a>
+
+<h2 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h2><h3 id="登录名"><a href="#登录名" class="headerlink" title="登录名"></a>登录名</h3><h3 id="shell"><a href="#shell" class="headerlink" title="shell"></a>shell</h3><h2 id="文件和目录"><a href="#文件和目录" class="headerlink" title="文件和目录"></a>文件和目录</h2><h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><h3 id="文件名"><a href="#文件名" class="headerlink" title="文件名"></a>文件名</h3><h3 id="目录名"><a href="#目录名" class="headerlink" title="目录名"></a>目录名</h3><h3 id="工作目录"><a href="#工作目录" class="headerlink" title="工作目录"></a>工作目录</h3><h3 id="起始目录"><a href="#起始目录" class="headerlink" title="起始目录"></a>起始目录</h3><h2 id="输入和输出"><a href="#输入和输出" class="headerlink" title="输入和输出"></a>输入和输出</h2><h3 id="文件描述符"><a href="#文件描述符" class="headerlink" title="文件描述符"></a>文件描述符</h3><h3 id="标准输入、标准输出和标准错误"><a href="#标准输入、标准输出和标准错误" class="headerlink" title="标准输入、标准输出和标准错误"></a>标准输入、标准输出和标准错误</h3><h3 id="不带缓存的I-O"><a href="#不带缓存的I-O" class="headerlink" title="不带缓存的I/O"></a>不带缓存的I/O</h3><p><code>open</code>、<code>read</code>、<code>write</code>、<code>lseek</code>、<code>close</code></p>
+<h3 id="标准I-O"><a href="#标准I-O" class="headerlink" title="标准I/O"></a>标准I/O</h3><h2 id="程序和进程"><a href="#程序和进程" class="headerlink" title="程序和进程"></a>程序和进程</h2><h3 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h3><p>存储在磁盘上某个目录中的可执行文件。内核使用exec函数将程序读入内存，并执行程序。</p>
+<h3 id="进程和进程ID"><a href="#进程和进程ID" class="headerlink" title="进程和进程ID"></a>进程和进程ID</h3><p>程序的执行实例叫做进程。</p>
+<h3 id="进程控制"><a href="#进程控制" class="headerlink" title="进程控制"></a>进程控制</h3><p>3个主要的控制函数：<code>fork</code>、<code>exec</code>和<code>waitpid</code></p>
+<h3 id="线程和线程ID"><a href="#线程和线程ID" class="headerlink" title="线程和线程ID"></a>线程和线程ID</h3><h2 id="出错处理"><a href="#出错处理" class="headerlink" title="出错处理"></a>出错处理</h2><p>UNIX函数出错时，通常返回一个负值，而且整型变量errno通常被设置为特定的值。</p>
+<h3 id="出错恢复"><a href="#出错恢复" class="headerlink" title="出错恢复"></a>出错恢复</h3><p>致命性错误无法恢复；非致命性错误可以恢复。</p>
+<h2 id="用户标识"><a href="#用户标识" class="headerlink" title="用户标识"></a>用户标识</h2><h3 id="用户ID"><a href="#用户ID" class="headerlink" title="用户ID"></a>用户ID</h3><h3 id="组ID"><a href="#组ID" class="headerlink" title="组ID"></a>组ID</h3><h3 id="附属组ID"><a href="#附属组ID" class="headerlink" title="附属组ID"></a>附属组ID</h3><h2 id="信号"><a href="#信号" class="headerlink" title="信号"></a>信号</h2><h2 id="时间值"><a href="#时间值" class="headerlink" title="时间值"></a>时间值</h2><p>UNIX使用过两种不同的时间值：</p>
+<ul>
+<li>日历时间，time_t</li>
+<li>进程时间/CPU时间，以时钟滴答计算，clock_t</li>
+</ul>
+<p>度量一个进程的执行时间时，UNIX系统为进程维护了3个进程时间值：</p>
+<ul>
+<li>时钟时间/墙上时钟时间</li>
+<li>用户CPU时间</li>
+<li>系统CPU时间</li>
+</ul>
+<p>用户CPU时间 + 系统CPU时间 = CPU时间</p>
+<h2 id="系统调用和库函数"><a href="#系统调用和库函数" class="headerlink" title="系统调用和库函数"></a>系统调用和库函数</h2><p><img src="1-11.png" alt=""></p>
+]]></content>
+      <categories>
+        <category>《APUE》笔记</category>
+      </categories>
+      <tags>
+        <tag>UNIX</tag>
       </tags>
   </entry>
   <entry>
