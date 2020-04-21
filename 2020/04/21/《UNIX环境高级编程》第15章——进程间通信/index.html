@@ -101,6 +101,8 @@
 
       
       <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>本章将说明进程之间互相通信的技术——<code>进程间通信（InterProcess Communication，IPC）</code>。<br><img src="15-1.png" alt=""></p>
+<a id="more"></a>
+
 <h2 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h2><p>管道是UNIX系统最古老最常用的IPC形式，所有UNIX系统都提供此种通信机制。管道有以下两种局限性：</p>
 <ul>
 <li>历史上，他们是半双工的。现在，某些系统提供了全双工管道，但我们不能预先假设系统支持全双工管道。</li>

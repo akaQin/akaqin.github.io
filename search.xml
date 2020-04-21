@@ -4,6 +4,8 @@
     <title>《UNIX环境高级编程》第15章——进程间通信</title>
     <url>/2020/04/21/%E3%80%8AUNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B%E3%80%8B%E7%AC%AC15%E7%AB%A0%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/</url>
     <content><![CDATA[<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>本章将说明进程之间互相通信的技术——<code>进程间通信（InterProcess Communication，IPC）</code>。<br><img src="15-1.png" alt=""></p>
+<a id="more"></a>
+
 <h2 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h2><p>管道是UNIX系统最古老最常用的IPC形式，所有UNIX系统都提供此种通信机制。管道有以下两种局限性：</p>
 <ul>
 <li>历史上，他们是半双工的。现在，某些系统提供了全双工管道，但我们不能预先假设系统支持全双工管道。</li>
