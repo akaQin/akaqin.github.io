@@ -1778,7 +1778,7 @@
 <p> 一个零值的slice等于nil。一个nil值的slice并没有底层数组。一个nil值的slice的长度和容量都 是0，但是也有非nil值的slice的长度和容量也是0的，例如[]int{}或make([]int, 3)[3:]。</p>
 ]]></content>
       <categories>
-        <category>《Go语言圣经》笔记</category>
+        <category>《The Go Programing Language》笔记</category>
       </categories>
       <tags>
         <tag>Go</tag>
