@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">209字</span>
+            <span class="post-count">251字</span>
         </span>
     </span>
 
@@ -120,6 +120,8 @@
 <li><p>打开的文件一定要记得关闭！</p>
 </li>
 <li><p><code>waitpid</code>返回值小于0不一定就是出错了，也有可能是被中断的系统调用，这种情况需要重新wait</p>
+</li>
+<li><p><code>fgets</code>成功时返回的时缓冲区指针，而不是读取的长度！到达文件尾端或出错都返回NULL，需要再用<code>ferror</code>或<code>feof</code>判断！</p>
 </li>
 </ol>
 
