@@ -798,8 +798,13 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 </li>
 <li><p>文件内使用的函数要习惯声明static</p>
 </li>
-<li><p>char *a = “ac”; 指针声明的字符串存在可执行文件的只读段，修改会产生段错误。</p>
+<li><p>char * a = “ac”; 指针声明的字符串存在可执行文件的只读段，修改会产生段错误。</p>
 </li>
+<li><p>signal函数的错误返回是SIG_ERR</p>
+</li>
+<li><p>打开的文件一定要记得关闭！</p>
+</li>
+<li></li>
 </ol>
 
       
