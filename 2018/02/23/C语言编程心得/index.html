@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">173字</span>
+            <span class="post-count">209字</span>
         </span>
     </span>
 
@@ -115,11 +115,12 @@
 </li>
 <li><p>char * a = “ac”; 指针声明的字符串存在可执行文件的只读段，修改会产生段错误。</p>
 </li>
-<li><p>signal函数的错误返回是SIG_ERR</p>
+<li><p><code>signal</code>函数的错误返回是SIG_ERR</p>
 </li>
 <li><p>打开的文件一定要记得关闭！</p>
 </li>
-<li></li>
+<li><p><code>waitpid</code>返回值小于0不一定就是出错了，也有可能是被中断的系统调用，这种情况需要重新wait</p>
+</li>
 </ol>
 
       
