@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    《深入理解计算机系统》第1章 |  akaQin&#39;s Blog
+    《APUE》ch13——守护进程 |  akaQin&#39;s Blog
   </title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   
@@ -36,7 +36,7 @@
   <div id="app">
     <main class="content">
       <section class="outer">
-  <article id="post-《深入理解计算机系统》第1章" class="article article-type-post" itemscope
+  <article id="post-《APUE》ch13——守护进程" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -44,7 +44,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  《深入理解计算机系统》第1章
+  《APUE》ch13——守护进程
 </h1>
   
 
@@ -53,12 +53,12 @@
 
     
     <div class="article-meta">
-      <a href="/2018/06/23/%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E3%80%8B%E7%AC%AC1%E7%AB%A0/" class="article-date">
-  <time datetime="2018-06-23T07:33:38.000Z" itemprop="datePublished">2018-06-23</time>
+      <a href="/2020/03/10/%E3%80%8AAPUE%E3%80%8Bch13%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/" class="article-date">
+  <time datetime="2020-03-10T13:39:09.000Z" itemprop="datePublished">2020-03-10</time>
 </a>
       
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E3%80%8ACSAPP%E3%80%8B%E7%AC%94%E8%AE%B0/">《CSAPP》笔记</a>
+    <a class="article-category-link" href="/categories/%E3%80%8AAPUE%E3%80%8B%E7%AC%94%E8%AE%B0/">《APUE》笔记</a>
   </div>
 
       
@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">428字</span>
+            <span class="post-count">872字</span>
         </span>
     </span>
 
@@ -77,7 +77,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1分钟</span>
+            <span class="post-count">3分钟</span>
         </span>
     </span>
 </div>
@@ -104,13 +104,34 @@
       
 
       
-      <h1 id="计算机系统漫游"><a href="#计算机系统漫游" class="headerlink" title="计算机系统漫游"></a>计算机系统漫游</h1><h2 id="信息就是位-上下文"><a href="#信息就是位-上下文" class="headerlink" title="信息就是位 + 上下文"></a>信息就是位 + 上下文</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"hello, world\n"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      <p>守护进程（daemon）是生存期长的一种进程。它们常常在系统引导装入时启动，仅在系统关闭时才终止。守护进程没有控制终端，终端名为问号。后台运行，大多数都以超级用户（root）特权运行。用户层守护进程的父进程是init。</p>
+<h2 id="编程规则"><a href="#编程规则" class="headerlink" title="编程规则"></a>编程规则</h2><ol>
+<li>调用umask将文件模式创建屏蔽字设置为一个已知值（通常是0）。</li>
+<li>调用fork，然后使父进程exit。</li>
+<li>调用setsid创建一个新会话。使调用进程：（a）成为新会话的首进程，（b）成为一个新进程组的组长进程，（c）没有控制终端。</li>
+<li>将当前工作目录更改为根目录。避免文件系统被卸载。</li>
+<li>关闭不再需要的文件描述符。</li>
+<li>某些守护进程打开/dev/null使其具有文件描述符0、1、2，这样任何一个试图读/写标准输入/输出/错误的库例程都不会产生任何效果。</li>
+</ol>
+<a id="more"></a>
 
-<p>​    hello程序的生命周期是从一个源程序开始的。源程序是一个由值0和1组成的位（又称比特）序列，8个位组成一组，称为字节。每个字节必保湿程序中的某些特殊文本字符。大部分计算机系统使用ASCII标准来表示文本字符，这种方式实际上就是一个唯一的单字节大小的整数值来表示每个字符（入下图）。</p>
-<p><img src="http://pfjta0ejx.bkt.clouddn.com/hello-ASCII.png" alt="ASCII"></p>
-<p>​    hello.c程序是以字节序列的方式存储在文本文件中的。每个字节都有一个整数值，对应某些字符。这种表示方法说明了一个节本思想：系统中所有信息——包括磁盘文件，内存中的程序，内存中存放的用户数据以及网络上传输的数据，都是由一串比特表示的，区别不同数据对象的唯一方式是我们读到这些数据对象时的上下文。</p>
-<h2 id="程序被其他程序翻译成不同的格式"><a href="#程序被其他程序翻译成不同的格式" class="headerlink" title="程序被其他程序翻译成不同的格式"></a>程序被其他程序翻译成不同的格式</h2><p>​    hello程序的生命周期是从一个高级C语言开始的，因为这种形式被人读懂。然而为了在系统上运行，每条C语句被其他程序转化为一系列低级机器语言指令。然后这些指令按照一种称为可执行目标程序的格式打好包，并以二进制磁盘文件的形式存起来。下面是GCC编译驱动器把源文件翻译成可执行文件的四个阶段。</p>
-<p><img src="http://pfjta0ejx.bkt.clouddn.com/compile-system.png" alt=""></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dameonize</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *cmd)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rlimit</span> <span class="title">rl</span>;</span></span><br><span class="line">    <span class="keyword">int</span> fd0, fd1, fd2;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//1 关闭屏蔽字</span></span><br><span class="line">    umask(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//2 fork，父进程退出</span></span><br><span class="line">    <span class="keyword">if</span> ((pid = fork()) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//3 建立新会话，使调用进程成为会话首进程和组长进程，且没有控制终端</span></span><br><span class="line">    setsid();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//4 改变当前工作目录为根目录</span></span><br><span class="line">    <span class="keyword">if</span> (chdir(<span class="string">"/"</span>) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 关闭所有描述符</span></span><br><span class="line">    <span class="keyword">if</span> (getrlimit(RLIMIT_NOFILE, &amp;rl) != <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (rl.rlim_max == RLIM_INFINITY) &#123;</span><br><span class="line">        rl.rlim_max = <span class="number">1024</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; rl.rlim_max; ++i) &#123;</span><br><span class="line">        <span class="built_in">close</span>(i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Attach file descriptors 0, 1, and 2 to /dev/null.  </span></span><br><span class="line">    fd0 = <span class="built_in">open</span>(<span class="string">"/dev/null"</span>, O_RDWR);</span><br><span class="line">    fd1 = dup(fd0);</span><br><span class="line">    fd2 = dup(fd0);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// optional: Initialize the log file.</span></span><br><span class="line">    openlog(cmd, LOG_CONS, LOG_DAEMON);</span><br><span class="line">    <span class="keyword">if</span> (fd0 != <span class="number">0</span> || fd1 != <span class="number">1</span> || fd2 != <span class="number">2</span>) &#123;</span><br><span class="line">        syslog(LOG_ERR, <span class="string">"unexpected file descriptors %d %d %d"</span>, fd0, fd1, fd2);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="出错记录"><a href="#出错记录" class="headerlink" title="出错记录"></a>出错记录</h2><p>syslog 是一个用于集中记录所有守护进程出错记录的设施，它自身的守护进程是syslogd，该设施的接口是syslog函数。<br><img src="13-2.png" alt=""><br>有3种方法产生日志消息，syslogd守护进程读取所有3种格式的日志消息：</p>
+<ol>
+<li>内核例程调用log函数。</li>
+<li>大多数用户进程（守护进程）调用syslog函数产生日志消息。这使消息被发送至UNIX域数据报套接字/dev/log。</li>
+<li>无论用户进程在此主机上还是通过TCP/IP网络连接的其他主机上，都可将日志消息发向UDP端口514.</li>
+</ol>
+<h2 id="单例守护进程"><a href="#单例守护进程" class="headerlink" title="单例守护进程"></a>单例守护进程</h2><p>文件和记录锁提供了一种方便的互斥机制用于实现单例.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LOCKFILE <span class="meta-string">"/var/run/daemon.pid"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LOCKMODE (S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH)</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">extern</span> <span class="keyword">int</span> <span class="title">lockfile</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">already_running</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span>		fd;</span><br><span class="line">	<span class="keyword">char</span>	buf[<span class="number">16</span>];</span><br><span class="line"></span><br><span class="line">	fd = <span class="built_in">open</span>(LOCKFILE, O_RDWR|O_CREAT, LOCKMODE);</span><br><span class="line">	<span class="keyword">if</span> (fd &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		syslog(LOG_ERR, <span class="string">"can't open %s: %s"</span>, LOCKFILE, strerror(errno));</span><br><span class="line">		<span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (lockfile(fd) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span> (errno == EACCES || errno == EAGAIN) &#123;</span><br><span class="line">			<span class="built_in">close</span>(fd);</span><br><span class="line">			<span class="keyword">return</span>(<span class="number">1</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		syslog(LOG_ERR, <span class="string">"can't lock %s: %s"</span>, LOCKFILE, strerror(errno));</span><br><span class="line">		<span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	ftruncate(fd, <span class="number">0</span>);</span><br><span class="line">	<span class="built_in">sprintf</span>(buf, <span class="string">"%ld"</span>, (<span class="keyword">long</span>)getpid());</span><br><span class="line">	<span class="built_in">write</span>(fd, buf, <span class="built_in">strlen</span>(buf)+<span class="number">1</span>);</span><br><span class="line">	<span class="keyword">return</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="守护进程的惯例"><a href="#守护进程的惯例" class="headerlink" title="守护进程的惯例"></a>守护进程的惯例</h2><ul>
+<li>若守护进程使用锁文件，那么该文件通常存储在/var/run目录中。</li>
+<li>若守护进程支持配置选项，那么配置文件通常存放在/etc目录中。</li>
+<li>守护进程可以命令行启动，但它们通常是系由系统初始化脚本之一启动的。</li>
+<li>若一个首进程有一个配置文件，那么当该守护进程启动时会读该文件，之后不再查看。若想reload可以使用SIGHUP信号。</li>
+</ul>
 
       
       <!-- reward -->
@@ -180,14 +201,14 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://akaqin.github.io/2018/06/23/%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E3%80%8B%E7%AC%AC1%E7%AB%A0/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://akaqin.github.io/2020/03/10/%E3%80%8AAPUE%E3%80%8Bch13%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CS/" rel="tag">CS</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/daemon/" rel="tag">daemon</a></li></ul>
 
 
     </footer>
@@ -198,19 +219,19 @@
   
   <nav class="article-nav">
     
-      <a href="/2018/06/26/arts/" class="article-nav-link">
+      <a href="/2020/03/20/%E3%80%8AAPUE%E3%80%8Bch14%E2%80%94%E2%80%94%E9%AB%98%E7%BA%A7I-O/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            arts
+            《APUE》ch14——高级I/O
           
         </div>
       </a>
     
     
-      <a href="/2018/03/24/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="article-nav-link">
+      <a href="/2020/03/08/vnode%E4%B8%8Einode%E5%8C%BA%E5%88%AB/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">《Linux私房菜》学习笔记</div>
+        <div class="article-nav-title">vnode与inode区别</div>
       </a>
     
   </nav>

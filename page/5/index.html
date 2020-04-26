@@ -75,6 +75,181 @@
     
     
     
+    <article id="post-指针学习笔记" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2018/09/09/%E6%8C%87%E9%92%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"
+    >指针学习笔记</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2018/09/09/%E6%8C%87%E9%92%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="article-date">
+  <time datetime="2018-09-09T02:36:27.000Z" itemprop="datePublished">2018-09-09</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/">知识点总结</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="C语言指针的总结"><a href="#C语言指针的总结" class="headerlink" title="C语言指针的总结"></a>C语言指针的总结</h1><p>原文出自xx_cc</p>
+<p>链接：<a href="https://www.jianshu.com/p/63f3bfb58687" target="_blank" rel="noopener">https://www.jianshu.com/p/63f3bfb58687</a></p>
+<h2 id="1-变量"><a href="#1-变量" class="headerlink" title="1. 变量"></a>1. 变量</h2><ol>
+<li>不同类型的变量在内存中占据不同的字节空间。</li>
+<li>内存中存储数据的最小基本单位是字节，每一个字节都有一个内存地址，这个地址是一个十六进制的数。</li>
+<li>声明一个变量，在内存中是从高字节向低字节分配连续的指定字节数的空间。</li>
+<li>任何数据在内存中都是以其二进制的补码形式存储的，低位存储在低字节，高位存储在高字节。</li>
+<li>变量的值：存储在变量中的数据，叫做变量的值。</li>
+<li>变量的地址：一个变量是由一个或者多个字节组成的，组成这个变量的低字节的地址，就是这个变量的地址。</li>
+<li>如何取出变量的地址：使用&amp;（取地址运算符）运算符，&amp;变量名；这个表达式的值就是这个变量的地址。使用%p控制度输出变量的地址。</li>
+<li>什么是指针：变量的地址叫做指针，指针就是地址，地址就是指针。</li>
+</ol>
+<p>下面通过一张图可以更直观的理解内存中的地址</p>
+<p><img src="https:////upload-images.jianshu.io/upload_images/1434508-3146d4e4c4362be7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/925/format/webp" alt="img"></p>
+<p>内存中的地址演示图</p>
+      
+      <a class="article-more-link" href="/2018/09/09/%E6%8C%87%E9%92%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pointer/" rel="tag">pointer</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
+    <article id="post-arts-5" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2018/08/12/arts-5/"
+    >arts-5</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2018/08/12/arts-5/" class="article-date">
+  <time datetime="2018-08-12T11:20:52.000Z" itemprop="datePublished">2018-08-12</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/ARTS/">ARTS</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><h3 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h3><p>Write a function to find the longest common prefix string amongst an array of strings.</p>
+<p>If there is no common prefix, return an empty string <code>&quot;&quot;</code>.</p>
+<p><strong>Example 1:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: [&quot;flower&quot;,&quot;flow&quot;,&quot;flight&quot;]</span><br><span class="line">Output: &quot;fl&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example 2:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: [&quot;dog&quot;,&quot;racecar&quot;,&quot;car&quot;]</span><br><span class="line">Output: &quot;&quot;</span><br><span class="line">Explanation: There is no common prefix among the input strings.</span><br></pre></td></tr></table></figure>
+
+<p><strong>Note:</strong></p>
+<p>All given inputs are in lowercase letters <code>a-z</code>.</p>
+      
+      <a class="article-more-link" href="/2018/08/12/arts-5/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARTS/" rel="tag">ARTS</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
     <article id="post-arts-4" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -495,7 +670,7 @@
 </article>
 
     
-    <article id="post-《深入理解计算机系统》第1章" class="article article-type-post" itemscope
+    <article id="post-《CSAPP》ch1" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -503,7 +678,7 @@
     <header class="article-header">
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2018/06/23/%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E3%80%8B%E7%AC%AC1%E7%AB%A0/"
+  <a class="article-title" href="/2018/06/23/%E3%80%8ACSAPP%E3%80%8Bch1/"
     >《深入理解计算机系统》第1章</a
   >
 </h2>
@@ -514,7 +689,7 @@
 
     
     <div class="article-meta">
-      <a href="/2018/06/23/%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E3%80%8B%E7%AC%AC1%E7%AB%A0/" class="article-date">
+      <a href="/2018/06/23/%E3%80%8ACSAPP%E3%80%8Bch1/" class="article-date">
   <time datetime="2018-06-23T07:33:38.000Z" itemprop="datePublished">2018-06-23</time>
 </a>
       
@@ -839,81 +1014,13 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
 </article>
 
     
-    <article id="post-first-post" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2017/02/23/first-post/"
-    >first post</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2017/02/23/first-post/" class="article-date">
-  <time datetime="2017-02-23T07:26:11.000Z" itemprop="datePublished">2017-02-23</time>
-</a>
-      
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>I love you, Joyce!</p>
-
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
   </article>
   
 
   
   <nav class="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/4/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span>
+    <a class="extend prev" rel="prev" href="/page/4/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/6/">下一页</a>
   </nav>
   
 </section>
