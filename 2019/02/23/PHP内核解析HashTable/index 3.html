@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+   
+  <meta name="keywords" content="生活,旅行,思考,代码,博客" />
+   
+  <meta name="description" content="一座孤岛" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    PHP HashTable 解析 |  akaQin&#39;s Blog
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<script src="/js/pace.min.js"></script>
+
+
+  
+
+  
+
+<link rel="alternate" href="/atom.xml" title="akaQin's Blog" type="application/atom+xml">
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-PHP内核解析HashTable" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  PHP HashTable 解析
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2019/02/23/PHP%E5%86%85%E6%A0%B8%E8%A7%A3%E6%9E%90HashTable/" class="article-date">
+  <time datetime="2019-02-23T08:03:39.000Z" itemprop="datePublished">2019-02-23</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a>
+  </div>
+
+      
+      
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.2k字</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">4分钟</span>
+        </span>
+    </span>
+</div>
+
+      
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>说 HashTable 是PHP的灵魂，一点也不为过。在Zend引擎中，比如变量表、常量表、函数表、数组，以及资源管理、线程安全等，其实现都有HashTable的身影。HashTable 是一种查找性能极高的数据结构，理想情况下其算法复杂度是O(1)。</p>
+<h3 id="PHP-HashTable-概述"><a href="#PHP-HashTable-概述" class="headerlink" title="PHP HashTable 概述"></a>PHP HashTable 概述</h3><ul>
+<li>有两部分组成，Bucket 和 HashTable，而且均为结构体(struct)。</li>
+<li>Bucket 是存储数据的单元，用于保存具体的数据内容；HashTable 用于保存整个哈希表需要的基本信息。</li>
+<li>二者关系可以简单理解为：HashTable = Array(); HashTable[‘arBuckets’] = [Bucket1, Bucket2, Bucket3, …]。</li>
+<li>HashTable 的目的就是通过索引把每个Bucket元素分散到唯一的位置。</li>
+<li>PHP 内核通过HashTable 结构管理Bucket 数组。</li>
+<li>相比普通HashTable，PHP的HashTable同时维护一个双向链表。在HashTable.arBuckets 存储的是包含多个Bucket指针的向量，每个指针又指向一个双向链表(多个bucket组成)。</li>
+</ul>
+<h2 id="HashTable-源码展示"><a href="#HashTable-源码展示" class="headerlink" title="HashTable 源码展示"></a>HashTable 源码展示</h2><p>在Zend/zend_hash.h的line 55~83 中定义了结构体 Bucket 和 HashTable。注意 Bucket 和 HashTable 是别名，分别对应结构体 bucket 和 _hashtable。</p>
+<a id="more"></a>
+
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> &#123;</span></span><br><span class="line">    ulong h;                        <span class="comment">/* Used for numeric indexing */</span></span><br><span class="line">    uint nKeyLength;</span><br><span class="line">    <span class="keyword">void</span> *pData;</span><br><span class="line">    <span class="keyword">void</span> *pDataPtr;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> *<span class="title">pListNext</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> *<span class="title">pListLast</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> *<span class="title">pNext</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">bucket</span> *<span class="title">pLast</span>;</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *arKey;</span><br><span class="line">&#125; Bucket;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">hashtable</span> &#123;</span></span><br><span class="line">    uint nTableSize;</span><br><span class="line">    uint nTableMask;</span><br><span class="line">    uint nNumOfElements;</span><br><span class="line">    ulong nNextFreeElement;</span><br><span class="line">    Bucket *pInternalPointer;   <span class="comment">/* Used for element traversal */</span></span><br><span class="line">    Bucket *pListHead;</span><br><span class="line">    Bucket *pListTail;</span><br><span class="line">    Bucket **arBuckets;</span><br><span class="line">    <span class="keyword">dtor_func_t</span> pDestructor;</span><br><span class="line">    zend_bool persistent;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> nApplyCount;</span><br><span class="line">    zend_bool bApplyProtection;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> ZEND_DEBUG</span></span><br><span class="line">    <span class="keyword">int</span> inconsistent;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125; HashTable;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="Bucket-解析说明"><a href="#Bucket-解析说明" class="headerlink" title="Bucket 解析说明"></a>Bucket 解析说明</h2><p>先分析一下Bucket 结构体成员变量的作用：</p>
+<table>
+<thead>
+<tr>
+<th>成员变量</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>ulong h;</strong></td>
+<td>ulong 中u表示无符号，保存hash(key) 的值； 或者保存用户指定的整数类型索引值； key是什么？就是当前bucket的索引，存储在最后一个成员arKey中;</td>
+</tr>
+<tr>
+<td><strong>uint nKeyLength;</strong></td>
+<td>保存索引 key 的长度； 索引是字符串时，该值&gt;0，表示索引字符串的长度； 索引是整数时，该值==0；</td>
+</tr>
+<tr>
+<td><strong>void *pData;</strong></td>
+<td>指向要保存的内存块地址，一般是通过malloc之类的系统调用分配出来的 指向Value，一般是用户数据的副本，如果是指针数据，则指向pDataPtr</td>
+</tr>
+<tr>
+<td><strong>void *pDataPtr;</strong></td>
+<td>保存指针数据，当保存的数据是指针类型，不需要malloc分配，就直接保存到pDataPtr中，pData直接指向这里 保存的数据不是指针类型时，pDataPtr=NULL</td>
+</tr>
+<tr>
+<td><strong>struct bucket *pListNext;</strong></td>
+<td>指向双向链表的下一个元素</td>
+</tr>
+<tr>
+<td><strong>struct bucket *pListLast;</strong></td>
+<td>指向双向链表的上一个元素</td>
+</tr>
+<tr>
+<td><strong>struct bucket *pNext;</strong></td>
+<td>指向具有同一个hash值的下一个元素</td>
+</tr>
+<tr>
+<td><strong>struct bucket *pLast;</strong></td>
+<td>指向具有同一个hash值的上一个元素，这里是hash碰撞后的处理方法，拉链法</td>
+</tr>
+<tr>
+<td><strong>const char *arKey;</strong></td>
+<td>注意，这里之前PHP版本是 char arKey[1];  在PHP5.6版本中，不限制索引的长度了； 结构体变量内存申请 sizeof(Bucket *), 无需 加上nKeyLength 长度了。</td>
+</tr>
+</tbody></table>
+<h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a><strong>说明</strong></h3><ol>
+<li>pData 和 pDataPtr 的关系，<ul>
+<li>pData 指向的是保存数据的内存块地址，一般通过malloc等分配;</li>
+<li>pDataPtr 如果是指针数据，此值会指向真正的value，同时pData 会指向该值</li>
+<li>疑问 内存块地址，不也是指针吗？和pDataPtr什么区别？？</li>
+</ul>
+</li>
+<li>h 成员保存的是HashTable key 哈希后的值，而非HashTable中的索引值，为什么？<ul>
+<li>索引值和HashTable的容量有关系，如果HashTable扩容，那么这些索引还得重新进行哈希，再进行索引映射</li>
+<li>数字索引直接就可以作为哈希表的索引，数字也无需进行哈希处理</li>
+</ul>
+</li>
+</ol>
+<h2 id="HashTable-解析说明"><a href="#HashTable-解析说明" class="headerlink" title="HashTable 解析说明"></a>HashTable 解析说明</h2><table>
+<thead>
+<tr>
+<th>成员变量</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>uint nTableSize</strong></td>
+<td>记录 Bucket 数组的大小</td>
+</tr>
+<tr>
+<td><strong>uint nTableMask</strong></td>
+<td>始终等于 nTableSize - 1 用在与哈希值做与运算，获得该哈希值的索引取值。额，哈希值是什么？？是Bucket中的索引值？</td>
+</tr>
+<tr>
+<td><strong>uint nNumOfElements</strong></td>
+<td>HashTable中，Bucket 元素的数量; count() 函数直接返回该值</td>
+</tr>
+<tr>
+<td><strong>ulong nNextFreeElement</strong></td>
+<td>表示数字键数组中，下一个数字索引的位置</td>
+</tr>
+<tr>
+<td><strong>Bucket *pInternalPointer</strong></td>
+<td>For循环时用于记录当前元素的位置 内部指针，指向当前成员，用于遍历元素</td>
+</tr>
+<tr>
+<td><strong>Bucket *pListHead</strong></td>
+<td>指向HashTable的第一个元素，也是数组的第一个元素。reset() 是返回这个值吗？与它是否有关系？</td>
+</tr>
+<tr>
+<td><strong>Bucket *pListTail</strong></td>
+<td>指向HashTable的最后一个元素，也是数组的最后一个元素。end()是返回这个值吗？与它是否有关系？</td>
+</tr>
+<tr>
+<td><strong>Bucket \</strong>arBuckets**</td>
+<td>Bucket组成的双向链表的数组，索引=hash(key) &amp; nTableMask</td>
+</tr>
+<tr>
+<td><strong>dtor_func_t pDestructor</strong></td>
+<td>删除Bucket数组元素使用的析构函数</td>
+</tr>
+<tr>
+<td><strong>zend_bool persistent</strong></td>
+<td>标记内存分配函数 true 使用系统的内存分配函数 false 使用PHP内存分配函数 一般使用PHP的内存分配函数，Zend引擎会管理相应内存，避免泄漏</td>
+</tr>
+<tr>
+<td><strong>unsigned char nApplyCount</strong></td>
+<td>保存当前Bucket被递归访问的次数，防止多次递归。@TODO 什么是多次递归？</td>
+</tr>
+<tr>
+<td><strong>zend_bool bApplyProtection</strong></td>
+<td>HashTable 是否需要递归报数，默认是1，要使用</td>
+</tr>
+</tbody></table>
+
+      
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+        <div class="declare">
+          <ul class="post-copyright">
+            <li>
+              <i class="ri-copyright-line"></i>
+              <strong>版权声明： </strong s>
+              本博客所有文章除特别声明外，均采用 <a href="https://www.apache.org/licenses/LICENSE-2.0.html" rel="external nofollow"
+                target="_blank">Apache License 2.0</a> 许可协议。转载请注明出处！
+            </li>
+          </ul>
+        </div>
+        
+    <footer class="article-footer">
+      
+          
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://akaqin.github.io/2019/02/23/PHP%E5%86%85%E6%A0%B8%E8%A7%A3%E6%9E%90HashTable/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+      <a href="/2019/03/01/MySQL%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            MySQL知识点整理
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2019/01/08/ORM%E5%92%8CQueryBuilder%E5%93%AA%E4%B8%AA%E5%A5%BD/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">ORM和QueryBuilder哪个好</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        app_id: 'X2Yrs2HgM1dBr94LBlfP7Jsj-gzGzoHsz',
+        app_key: 'x2WQjNYF5CQseEAN1iSqXOLQ',
+        path: window.location.pathname,
+        notify: 'true',
+        verify: 'false',
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2019-2020
+        Aaron Qin
+      </li>
+      <li>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <span>
+  <i>PV:<span id="busuanzi_value_page_pv"></span></i>
+  <i>UV:<span id="busuanzi_value_site_uv"></span></i>
+</span>
+        
+      </li>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+    <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+      <aside class="sidebar">
+        <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="akaQin&#39;s Blog"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about/me">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+      </aside>
+      <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+      
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<script src="/js/share.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script>
+  try {
+    var typed = new Typed("#subtitle", {
+    strings: ['面朝大海，春暖花开','愿你一生努力，一生被爱','想要的都拥有，得不到的都释怀'],
+    startDelay: 0,
+    typeSpeed: 200,
+    loop: true,
+    backSpeed: 100,
+    showCursor: true
+    });
+  } catch (err) {
+  }
+  
+</script>
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer:'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    onClick: (e) => {
+      $('.toc-link').removeClass('is-active-link');
+      $(`a[href=${e.target.hash}]`).addClass('is-active-link');
+      $(e.target.hash).scrollIntoView();
+      return false;
+    }
+  });
+</script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: false
+  }
+</script>
+
+
+<script src="/js/ayer.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+  </div>
+</body>
+
+</html>
