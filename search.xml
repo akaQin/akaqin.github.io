@@ -1,33 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>《UNP》ch2——传输层：TCP、UDP</title>
-    <url>/2020/04/26/%E3%80%8AUNP%E3%80%8Bch2%E2%80%94%E2%80%94%E4%BC%A0%E8%BE%93%E5%B1%82%EF%BC%9ATCP%E3%80%81UDP/</url>
-    <content><![CDATA[<p><img src="2-1.png" alt=""></p>
-]]></content>
-      <categories>
-        <category>《UNP》笔记</category>
-      </categories>
-      <tags>
-        <tag>Network</tag>
-        <tag>TCP</tag>
-        <tag>UDP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《UNP》ch1——简介</title>
-    <url>/2020/04/24/%E3%80%8AUNP%E3%80%8Bch1%E2%80%94%E2%80%94%E7%AE%80%E4%BB%8B/</url>
-    <content><![CDATA[<p><img src="1-4.png" alt=""></p>
-<h2 id="OSI模型"><a href="#OSI模型" class="headerlink" title="OSI模型"></a>OSI模型</h2><p><img src="1-14.png" alt=""></p>
-]]></content>
-      <categories>
-        <category>《UNP》笔记</category>
-      </categories>
-      <tags>
-        <tag>Network</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《APUE》ch15——进程间通信</title>
     <url>/2020/04/21/%E3%80%8AAPUE%E3%80%8Bch15%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/</url>
     <content><![CDATA[<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>本章将说明进程之间互相通信的技术——<code>进程间通信（InterProcess Communication，IPC）</code>。<br><img src="15-1.png" alt=""></p>
@@ -1282,8 +1255,8 @@
         <category>《APUE》笔记</category>
       </categories>
       <tags>
-        <tag>文件</tag>
         <tag>I/O</tag>
+        <tag>文件</tag>
       </tags>
   </entry>
   <entry>
@@ -1487,7 +1460,7 @@
 <p>幻读(Phantom Read)：在一个事务的两次查询中数据笔数不一致，例如有一个事务查询了几列(Row)数据，而另一个事务却在此时插入了新的几列数据，先前的事务在接下来的查询中，就会发现有几列数据是它先前所没有的。</p>
 <p>在MySQL中，实现了这四种隔离级别，分别有可能产生问题如下所示：</p>
 <p><img src="https:////upload-images.jianshu.io/upload_images/5219651-fdd241489731111a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/686/format/webp" alt="img"></p>
-<p><strong>四**</strong>、事务隔离的原理是什么？**</p>
+<p><strong>四、事务隔离的原理是什么？</strong></p>
 <p>我们都知道事务的几种性质，数据库为了维护这些性质，尤其是一致性和隔离性，一般使用加锁这种方式。同时数据库又是个高并发的应用，同一时间会有大量的并发访问，如果加锁过度，会极大的降低并发处理能力。所以对于加锁的处理，可以说就是数据库对于事务处理的精髓所在。这里通过分析MySQL中InnoDB引擎的加锁机制，来抛砖引玉，让我们更好的理解，在事务处理中数据库到底做了什么。</p>
 <p><strong>4.1、一次封锁or两段锁？</strong></p>
 <p>因为有大量的并发访问，为了预防死锁，一般应用中推荐使用一次封锁法，就是在方法的开始阶段，已经预先知道会用到哪些数据，然后全部锁住，在方法运行之后，再全部解锁。这种方式可以有效的避免循环死锁，但在数据库中却不适用，因为在事务开始阶段，数据库并不知道会用到哪些数据。</p>
