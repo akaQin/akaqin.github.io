@@ -67,34 +67,6 @@
   </entry>
   
   <entry>
-    <title>为什么calloc会比malloc+memset快</title>
-    <link href="https://akaqin.github.io/2020/02/23/%E4%B8%BA%E4%BB%80%E4%B9%88calloc%E4%BC%9A%E6%AF%94malloc-memset%E5%BF%AB/"/>
-    <id>https://akaqin.github.io/2020/02/23/%E4%B8%BA%E4%BB%80%E4%B9%88calloc%E4%BC%9A%E6%AF%94malloc-memset%E5%BF%AB/</id>
-    <published>2020-02-23T09:03:12.000Z</published>
-    <updated>2020-03-08T07:41:56.376Z</updated>
-    
-    <content type="html"><![CDATA[<ol><li><code>malloc</code>和<code>calloc</code>分配小的内存时直接从内存池分配，内存池不够时向内核申请更多内存；分配大内存时会直接调用<code>mmap</code>或<code>sbrk</code>系统调用</li><li>内核分配的内存可能是前一个进程用过的，为保证不泄漏敏感数据，内核始终在将内存交给进程前先将内存置0，因此<code>mmap()</code>保证返回的新内存始终为零</li><li>当程序申请内存时，内核并不会马上修改页表为进程提供RAM，而是在进程中找到一些地址空间，记下应该去的地方，并保证如果您的程序实际使用RAM，它将在其中放置RAM。当程序尝试读写那些地址，会出发缺页故障，内核将RAM分配给这些地址，继续执行程序。如果不读写，内核就不会分配RAM给进程。</li><li>有的进程分配内存后只读不写，这意味着跨不同进程的内存中的许多页面可能填充有从<code>mmap()</code>返回的原始零。由于这些页面都是相同的，因此内核使所有这些虚拟地址指向一个共享的4 KiB内存页面，其中填充了零。如果您尝试写入该内存，则处理器会触发另一个页面错误（写时复制），内核会介入，从而为您提供一个零的新页面，该页面不会与任何其他程序共享。</li></ol>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;ol&gt;
-&lt;li&gt;&lt;code&gt;malloc&lt;/code&gt;和&lt;code&gt;calloc&lt;/code&gt;分配小的内存时直接从内存池分配，内存池不够时向内核申请更多内存；分配大内存时会直接调用&lt;code&gt;mmap&lt;/code&gt;或&lt;code&gt;sbrk&lt;/code&gt;系统调用&lt;/li&gt;
-&lt;li&gt;
-      
-    
-    </summary>
-    
-    
-      <category term="知识点总结" scheme="https://akaqin.github.io/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/"/>
-    
-    
-      <category term="C" scheme="https://akaqin.github.io/tags/C/"/>
-    
-  </entry>
-  
-  <entry>
     <title>《APUE》ch14——高级I/O</title>
     <link href="https://akaqin.github.io/2020/02/11/%E3%80%8AAPUE%E3%80%8Bch14%E2%80%94%E2%80%94%E9%AB%98%E7%BA%A7I-O/"/>
     <id>https://akaqin.github.io/2020/02/11/%E3%80%8AAPUE%E3%80%8Bch14%E2%80%94%E2%80%94%E9%AB%98%E7%BA%A7I-O/</id>
@@ -547,6 +519,34 @@
     
     
       <category term="UNIX" scheme="https://akaqin.github.io/tags/UNIX/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>为什么calloc会比malloc+memset快</title>
+    <link href="https://akaqin.github.io/2019/08/23/%E4%B8%BA%E4%BB%80%E4%B9%88calloc%E4%BC%9A%E6%AF%94malloc-memset%E5%BF%AB/"/>
+    <id>https://akaqin.github.io/2019/08/23/%E4%B8%BA%E4%BB%80%E4%B9%88calloc%E4%BC%9A%E6%AF%94malloc-memset%E5%BF%AB/</id>
+    <published>2019-08-23T09:03:12.000Z</published>
+    <updated>2020-05-06T13:30:05.698Z</updated>
+    
+    <content type="html"><![CDATA[<ol><li><code>malloc</code>和<code>calloc</code>分配小的内存时直接从内存池分配，内存池不够时向内核申请更多内存；分配大内存时会直接调用<code>mmap</code>或<code>sbrk</code>系统调用</li><li>内核分配的内存可能是前一个进程用过的，为保证不泄漏敏感数据，内核始终在将内存交给进程前先将内存置0，因此<code>mmap()</code>保证返回的新内存始终为零</li><li>当程序申请内存时，内核并不会马上修改页表为进程提供RAM，而是在进程中找到一些地址空间，记下应该去的地方，并保证如果您的程序实际使用RAM，它将在其中放置RAM。当程序尝试读写那些地址，会出发缺页故障，内核将RAM分配给这些地址，继续执行程序。如果不读写，内核就不会分配RAM给进程。</li><li>有的进程分配内存后只读不写，这意味着跨不同进程的内存中的许多页面可能填充有从<code>mmap()</code>返回的原始零。由于这些页面都是相同的，因此内核使所有这些虚拟地址指向一个共享的4 KiB内存页面，其中填充了零。如果您尝试写入该内存，则处理器会触发另一个页面错误（写时复制），内核会介入，从而为您提供一个零的新页面，该页面不会与任何其他程序共享。</li></ol>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;ol&gt;
+&lt;li&gt;&lt;code&gt;malloc&lt;/code&gt;和&lt;code&gt;calloc&lt;/code&gt;分配小的内存时直接从内存池分配，内存池不够时向内核申请更多内存；分配大内存时会直接调用&lt;code&gt;mmap&lt;/code&gt;或&lt;code&gt;sbrk&lt;/code&gt;系统调用&lt;/li&gt;
+&lt;li&gt;
+      
+    
+    </summary>
+    
+    
+      <category term="知识点总结" scheme="https://akaqin.github.io/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/"/>
+    
+    
+      <category term="C" scheme="https://akaqin.github.io/tags/C/"/>
     
   </entry>
   

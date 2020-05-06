@@ -240,85 +240,6 @@
 </article>
 
     
-    <article id="post-为什么calloc会比malloc-memset快" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/02/23/%E4%B8%BA%E4%BB%80%E4%B9%88calloc%E4%BC%9A%E6%AF%94malloc-memset%E5%BF%AB/"
-    >为什么calloc会比malloc+memset快</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/02/23/%E4%B8%BA%E4%BB%80%E4%B9%88calloc%E4%BC%9A%E6%AF%94malloc-memset%E5%BF%AB/" class="article-date">
-  <time datetime="2020-02-23T09:03:12.000Z" itemprop="datePublished">2020-02-23</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/">知识点总结</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <ol>
-<li><code>malloc</code>和<code>calloc</code>分配小的内存时直接从内存池分配，内存池不够时向内核申请更多内存；分配大内存时会直接调用<code>mmap</code>或<code>sbrk</code>系统调用</li>
-<li>内核分配的内存可能是前一个进程用过的，为保证不泄漏敏感数据，内核始终在将内存交给进程前先将内存置0，因此<code>mmap()</code>保证返回的新内存始终为零</li>
-<li>当程序申请内存时，内核并不会马上修改页表为进程提供RAM，而是在进程中找到一些地址空间，记下应该去的地方，并保证如果您的程序实际使用RAM，它将在其中放置RAM。当程序尝试读写那些地址，会出发缺页故障，内核将RAM分配给这些地址，继续执行程序。如果不读写，内核就不会分配RAM给进程。</li>
-<li>有的进程分配内存后只读不写，这意味着跨不同进程的内存中的许多页面可能填充有从<code>mmap()</code>返回的原始零。由于这些页面都是相同的，因此内核使所有这些虚拟地址指向一个共享的4 KiB内存页面，其中填充了零。如果您尝试写入该内存，则处理器会触发另一个页面错误（写时复制），内核会介入，从而为您提供一个零的新页面，该页面不会与任何其他程序共享。</li>
-</ol>
-
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
     <article id="post-《APUE》ch14——高级I-O" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -873,6 +794,88 @@
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
+    <article id="post-《APUE》ch10——信号" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2019/12/03/%E3%80%8AAPUE%E3%80%8Bch10%E2%80%94%E2%80%94%E4%BF%A1%E5%8F%B7/"
+    >《APUE》ch10——信号</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2019/12/03/%E3%80%8AAPUE%E3%80%8Bch10%E2%80%94%E2%80%94%E4%BF%A1%E5%8F%B7/" class="article-date">
+  <time datetime="2019-12-03T12:35:08.000Z" itemprop="datePublished">2019-12-03</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E3%80%8AAPUE%E3%80%8B%E7%AC%94%E8%AE%B0/">《APUE》笔记</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="信号概念"><a href="#信号概念" class="headerlink" title="信号概念"></a>信号概念</h2><p>信号是软件中断。它提供了一种处理异步事件的方法。<br>每个信号都有一个名字，以SIG开头。在头文件&lt;signal.h&gt;中，信号名都被定义为正整数常量（信号编号）。<br>不存在编号为0的信号。kill函数对信号编号0有特殊的作用。POSIX.1将此中信号编号值称为空信号。</p>
+<p>信号出现时，内核按下列三种方式之一进行处理：</p>
+<ul>
+<li>忽略此信号<br>大多数信号都可使用这种方式进行处理，但有两种信号决不能被忽略，它们是SIGKILL和SIGSTOP。原因是它们向内核和超级用户提供了使进程终止或停止的可靠方法。</li>
+<li>捕捉信号<br>为了做到这一点，要通知内核在某种信号发生时，调用一个可执行用户希望对这种事件进行的处理的用户函数。</li>
+<li>执行系统默认动作<br>对大多数信号的系统默认动作是终止该进程。</li>
+</ul>
+      
+      <a class="article-more-link" href="/2019/12/03/%E3%80%8AAPUE%E3%80%8Bch10%E2%80%94%E2%80%94%E4%BF%A1%E5%8F%B7/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/signal/" rel="tag">signal</a></li></ul>
 
 
     </footer>
