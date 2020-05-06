@@ -75,82 +75,6 @@
     
     
     
-    <article id="post-《APUE》ch15——进程间通信" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/04/21/%E3%80%8AAPUE%E3%80%8Bch15%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/"
-    >《APUE》ch15——进程间通信</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/04/21/%E3%80%8AAPUE%E3%80%8Bch15%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/" class="article-date">
-  <time datetime="2020-04-21T13:46:25.000Z" itemprop="datePublished">2020-04-21</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E3%80%8AAPUE%E3%80%8B%E7%AC%94%E8%AE%B0/">《APUE》笔记</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>本章将说明进程之间互相通信的技术——<code>进程间通信（InterProcess Communication，IPC）</code>。<br><img src="15-1.png" alt=""></p>
-      
-      <a class="article-more-link" href="/2020/04/21/%E3%80%8AAPUE%E3%80%8Bch15%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IPC/" rel="tag">IPC</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
     <article id="post-register、volatile、restrict和extern" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -385,90 +309,6 @@
 </article>
 
     
-    <article id="post-《APUE》ch13——守护进程" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/03/10/%E3%80%8AAPUE%E3%80%8Bch13%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/"
-    >《APUE》ch13——守护进程</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/03/10/%E3%80%8AAPUE%E3%80%8Bch13%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/" class="article-date">
-  <time datetime="2020-03-10T13:39:09.000Z" itemprop="datePublished">2020-03-10</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E3%80%8AAPUE%E3%80%8B%E7%AC%94%E8%AE%B0/">《APUE》笔记</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>守护进程（daemon）是生存期长的一种进程。它们常常在系统引导装入时启动，仅在系统关闭时才终止。守护进程没有控制终端，终端名为问号。后台运行，大多数都以超级用户（root）特权运行。用户层守护进程的父进程是init。</p>
-<h2 id="编程规则"><a href="#编程规则" class="headerlink" title="编程规则"></a>编程规则</h2><ol>
-<li>调用umask将文件模式创建屏蔽字设置为一个已知值（通常是0）。</li>
-<li>调用fork，然后使父进程exit。</li>
-<li>调用setsid创建一个新会话。使调用进程：（a）成为新会话的首进程，（b）成为一个新进程组的组长进程，（c）没有控制终端。</li>
-<li>将当前工作目录更改为根目录。避免文件系统被卸载。</li>
-<li>关闭不再需要的文件描述符。</li>
-<li>某些守护进程打开/dev/null使其具有文件描述符0、1、2，这样任何一个试图读/写标准输入/输出/错误的库例程都不会产生任何效果。</li>
-</ol>
-      
-      <a class="article-more-link" href="/2020/03/10/%E3%80%8AAPUE%E3%80%8Bch13%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/daemon/" rel="tag">daemon</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
     <article id="post-vnode与inode区别" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -558,6 +398,245 @@
 </article>
 
     
+    <article id="post-《APUE》ch15——进程间通信" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/03/05/%E3%80%8AAPUE%E3%80%8Bch15%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/"
+    >《APUE》ch15——进程间通信</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/03/05/%E3%80%8AAPUE%E3%80%8Bch15%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/" class="article-date">
+  <time datetime="2020-03-05T13:46:25.000Z" itemprop="datePublished">2020-03-05</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E3%80%8AAPUE%E3%80%8B%E7%AC%94%E8%AE%B0/">《APUE》笔记</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>本章将说明进程之间互相通信的技术——<code>进程间通信（InterProcess Communication，IPC）</code>。<br><img src="15-1.png" alt=""></p>
+      
+      <a class="article-more-link" href="/2020/03/05/%E3%80%8AAPUE%E3%80%8Bch15%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IPC/" rel="tag">IPC</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
+    <article id="post-为什么calloc会比malloc-memset快" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/02/23/%E4%B8%BA%E4%BB%80%E4%B9%88calloc%E4%BC%9A%E6%AF%94malloc-memset%E5%BF%AB/"
+    >为什么calloc会比malloc+memset快</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/02/23/%E4%B8%BA%E4%BB%80%E4%B9%88calloc%E4%BC%9A%E6%AF%94malloc-memset%E5%BF%AB/" class="article-date">
+  <time datetime="2020-02-23T09:03:12.000Z" itemprop="datePublished">2020-02-23</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/">知识点总结</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <ol>
+<li><code>malloc</code>和<code>calloc</code>分配小的内存时直接从内存池分配，内存池不够时向内核申请更多内存；分配大内存时会直接调用<code>mmap</code>或<code>sbrk</code>系统调用</li>
+<li>内核分配的内存可能是前一个进程用过的，为保证不泄漏敏感数据，内核始终在将内存交给进程前先将内存置0，因此<code>mmap()</code>保证返回的新内存始终为零</li>
+<li>当程序申请内存时，内核并不会马上修改页表为进程提供RAM，而是在进程中找到一些地址空间，记下应该去的地方，并保证如果您的程序实际使用RAM，它将在其中放置RAM。当程序尝试读写那些地址，会出发缺页故障，内核将RAM分配给这些地址，继续执行程序。如果不读写，内核就不会分配RAM给进程。</li>
+<li>有的进程分配内存后只读不写，这意味着跨不同进程的内存中的许多页面可能填充有从<code>mmap()</code>返回的原始零。由于这些页面都是相同的，因此内核使所有这些虚拟地址指向一个共享的4 KiB内存页面，其中填充了零。如果您尝试写入该内存，则处理器会触发另一个页面错误（写时复制），内核会介入，从而为您提供一个零的新页面，该页面不会与任何其他程序共享。</li>
+</ol>
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
+    <article id="post-《APUE》ch13——守护进程" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/01/20/%E3%80%8AAPUE%E3%80%8Bch13%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/"
+    >《APUE》ch13——守护进程</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/01/20/%E3%80%8AAPUE%E3%80%8Bch13%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/" class="article-date">
+  <time datetime="2020-01-20T13:39:09.000Z" itemprop="datePublished">2020-01-20</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E3%80%8AAPUE%E3%80%8B%E7%AC%94%E8%AE%B0/">《APUE》笔记</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>守护进程（daemon）是生存期长的一种进程。它们常常在系统引导装入时启动，仅在系统关闭时才终止。守护进程没有控制终端，终端名为问号。后台运行，大多数都以超级用户（root）特权运行。用户层守护进程的父进程是init。</p>
+<h2 id="编程规则"><a href="#编程规则" class="headerlink" title="编程规则"></a>编程规则</h2><ol>
+<li>调用umask将文件模式创建屏蔽字设置为一个已知值（通常是0）。</li>
+<li>调用fork，然后使父进程exit。</li>
+<li>调用setsid创建一个新会话。使调用进程：（a）成为新会话的首进程，（b）成为一个新进程组的组长进程，（c）没有控制终端。</li>
+<li>将当前工作目录更改为根目录。避免文件系统被卸载。</li>
+<li>关闭不再需要的文件描述符。</li>
+<li>某些守护进程打开/dev/null使其具有文件描述符0、1、2，这样任何一个试图读/写标准输入/输出/错误的库例程都不会产生任何效果。</li>
+</ol>
+      
+      <a class="article-more-link" href="/2020/01/20/%E3%80%8AAPUE%E3%80%8Bch13%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/daemon/" rel="tag">daemon</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
     <article id="post-《APUE》ch12——线程控制" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -566,7 +645,7 @@
     <header class="article-header">
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2020/03/07/%E3%80%8AAPUE%E3%80%8Bch12%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/"
+  <a class="article-title" href="/2020/01/07/%E3%80%8AAPUE%E3%80%8Bch12%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/"
     >《APUE》ch12——线程控制</a
   >
 </h2>
@@ -577,8 +656,8 @@
 
     
     <div class="article-meta">
-      <a href="/2020/03/07/%E3%80%8AAPUE%E3%80%8Bch12%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/" class="article-date">
-  <time datetime="2020-03-07T02:53:02.000Z" itemprop="datePublished">2020-03-07</time>
+      <a href="/2020/01/07/%E3%80%8AAPUE%E3%80%8Bch12%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/" class="article-date">
+  <time datetime="2020-01-07T02:53:02.000Z" itemprop="datePublished">2020-01-07</time>
 </a>
       
   <div class="article-category">
@@ -611,7 +690,7 @@
 <h2 id="线程属性"><a href="#线程属性" class="headerlink" title="线程属性"></a>线程属性</h2><p>通过设置每个对象关联的不同属性来细调线程和同步对象的行为。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">//线程属性初始化/反初始化</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_attr_init</span><span class="params">(<span class="keyword">pthread_attr_t</span> *attr)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_attr_destroy</span><span class="params">(<span class="keyword">pthread_attr_t</span> *attr)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取/设置当前的detachstate线程属性</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_attr_getdetachstate</span><span class="params">(<span class="keyword">const</span> <span class="keyword">pthread_attr_t</span> *<span class="keyword">restrict</span> attr, <span class="keyword">int</span> *detachstate)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_attr_setdetachstate</span><span class="params">(<span class="keyword">pthread_attr_t</span> *attr, <span class="keyword">int</span> *detachstate)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取/设置线程栈属性</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_attr_getstack</span><span class="params">(<span class="keyword">const</span> <span class="keyword">pthread_attr_t</span> *<span class="keyword">restrict</span> attr, <span class="keyword">void</span> **<span class="keyword">restrict</span> stackaddr, <span class="keyword">size_t</span> *<span class="keyword">restrict</span> stacksize)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_attr_setstack</span><span class="params">(<span class="keyword">pthread_attr_t</span> *attr, <span class="keyword">void</span> *stackaddr, <span class="keyword">size_t</span> stacksize)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取/设置栈大小</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_attr_getstacksize</span><span class="params">(<span class="keyword">const</span> <span class="keyword">pthread_attr_t</span> *<span class="keyword">restrict</span> attr, <span class="keyword">size_t</span> *<span class="keyword">restrict</span> stacksize)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_attr_setstacksize</span><span class="params">(<span class="keyword">pthread_attr_t</span> *attr, <span class="keyword">size_t</span> stacksize)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取/设置警戒缓冲区（用于避免栈溢出的扩展内存）大小</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_attr_getguardsize</span><span class="params">(<span class="keyword">const</span> <span class="keyword">pthread_attr_t</span> *<span class="keyword">restrict</span> attr, <span class="keyword">size_t</span> *<span class="keyword">restrict</span> guardsize)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_attr_setguardsize</span><span class="params">(<span class="keyword">pthread_attr_t</span> * attr, <span class="keyword">size_t</span> guardsize)</span></span>;</span><br></pre></td></tr></table></figure>
       
-      <a class="article-more-link" href="/2020/03/07/%E3%80%8AAPUE%E3%80%8Bch12%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/">阅读更多...</a>
+      <a class="article-more-link" href="/2020/01/07/%E3%80%8AAPUE%E3%80%8Bch12%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/">阅读更多...</a>
       
       
       <!-- reward -->
@@ -642,83 +721,6 @@
 </article>
 
     
-    <article id="post-strlen与sizeof区别" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/03/02/strlen%E4%B8%8Esizeof%E5%8C%BA%E5%88%AB/"
-    >strlen与sizeof区别</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/03/02/strlen%E4%B8%8Esizeof%E5%8C%BA%E5%88%AB/" class="article-date">
-  <time datetime="2020-03-02T13:18:44.000Z" itemprop="datePublished">2020-03-02</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/">知识点总结</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <ul>
-<li>strlen计算不包含终止null字节的字符串长度，而sizeof则计算包括终止null字节的缓冲区长度</li>
-<li>strlen需要进行一次函数调用，而对于sizeof，缓冲区长度在编译时计算，是固定的</li>
-</ul>
-
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
     <article id="post-《APUE》ch11——线程" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -727,7 +729,7 @@
     <header class="article-header">
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2020/03/01/%E3%80%8AAPUE%E3%80%8Bch11%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B/"
+  <a class="article-title" href="/2019/12/20/%E3%80%8AAPUE%E3%80%8Bch11%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B/"
     >《APUE》ch11——线程</a
   >
 </h2>
@@ -738,8 +740,8 @@
 
     
     <div class="article-meta">
-      <a href="/2020/03/01/%E3%80%8AAPUE%E3%80%8Bch11%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B/" class="article-date">
-  <time datetime="2020-03-01T14:19:30.000Z" itemprop="datePublished">2020-03-01</time>
+      <a href="/2019/12/20/%E3%80%8AAPUE%E3%80%8Bch11%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B/" class="article-date">
+  <time datetime="2019-12-20T14:19:30.000Z" itemprop="datePublished">2019-12-20</time>
 </a>
       
   <div class="article-category">
@@ -767,7 +769,7 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_equal</span><span class="params">(<span class="keyword">pthread_t</span> tid1, <span class="keyword">pthread_t</span> tid2)</span></span>; <span class="comment">//比较两个线程是否相等</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">pthread_t</span> <span class="title">pthread_self</span><span class="params">(<span class="keyword">void</span>)</span></span>; <span class="comment">//获取调用线程的线程ID</span></span><br></pre></td></tr></table></figure>
 <p><img src="11-1.png" alt=""></p>
       
-      <a class="article-more-link" href="/2020/03/01/%E3%80%8AAPUE%E3%80%8Bch11%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B/">阅读更多...</a>
+      <a class="article-more-link" href="/2019/12/20/%E3%80%8AAPUE%E3%80%8Bch11%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B/">阅读更多...</a>
       
       
       <!-- reward -->
@@ -798,7 +800,7 @@
 </article>
 
     
-    <article id="post-《APUE》ch10——信号" class="article article-type-post" itemscope
+    <article id="post-工作心得总结" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -806,8 +808,8 @@
     <header class="article-header">
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2020/02/24/%E3%80%8AAPUE%E3%80%8Bch10%E2%80%94%E2%80%94%E4%BF%A1%E5%8F%B7/"
-    >《APUE》ch10——信号</a
+  <a class="article-title" href="/2019/12/13/%E5%B7%A5%E4%BD%9C%E5%BF%83%E5%BE%97%E6%80%BB%E7%BB%93/"
+    >工作心得总结</a
   >
 </h2>
   
@@ -817,12 +819,12 @@
 
     
     <div class="article-meta">
-      <a href="/2020/02/24/%E3%80%8AAPUE%E3%80%8Bch10%E2%80%94%E2%80%94%E4%BF%A1%E5%8F%B7/" class="article-date">
-  <time datetime="2020-02-24T12:35:08.000Z" itemprop="datePublished">2020-02-24</time>
+      <a href="/2019/12/13/%E5%B7%A5%E4%BD%9C%E5%BF%83%E5%BE%97%E6%80%BB%E7%BB%93/" class="article-date">
+  <time datetime="2019-12-13T04:09:43.000Z" itemprop="datePublished">2019-12-13</time>
 </a>
       
   <div class="article-category">
-    <a class="article-category-link" href="/categories/%E3%80%8AAPUE%E3%80%8B%E7%AC%94%E8%AE%B0/">《APUE》笔记</a>
+    <a class="article-category-link" href="/categories/%E7%BB%8F%E9%AA%8C%E5%8F%8D%E6%80%9D/">经验反思</a>
   </div>
 
       
@@ -841,15 +843,14 @@
       
 
       
-      <h2 id="信号概念"><a href="#信号概念" class="headerlink" title="信号概念"></a>信号概念</h2><p>信号是软件中断。它提供了一种处理异步事件的方法。<br>每个信号都有一个名字，以SIG开头。在头文件&lt;signal.h&gt;中，信号名都被定义为正整数常量（信号编号）。<br>不存在编号为0的信号。kill函数对信号编号0有特殊的作用。POSIX.1将此中信号编号值称为空信号。</p>
-<p>信号出现时，内核按下列三种方式之一进行处理：</p>
-<ul>
-<li>忽略此信号<br>大多数信号都可使用这种方式进行处理，但有两种信号决不能被忽略，它们是SIGKILL和SIGSTOP。原因是它们向内核和超级用户提供了使进程终止或停止的可靠方法。</li>
-<li>捕捉信号<br>为了做到这一点，要通知内核在某种信号发生时，调用一个可执行用户希望对这种事件进行的处理的用户函数。</li>
-<li>执行系统默认动作<br>对大多数信号的系统默认动作是终止该进程。</li>
-</ul>
+      <h3 id="时间评估"><a href="#时间评估" class="headerlink" title="时间评估"></a>时间评估</h3><p>​    当leader给你一个任务问你多久能完成时，不要简单的看一看就给一个估摸的大概的时间，要培养对工作量评估的能力，这很重要。评估时要做到尽量准确，具体注意以下几点：</p>
+<ol>
+<li>不要想着三个小时的工作,我加加班赶一赶两个小时搞定——在仓促状态下赶工，质量必然会收到影响，你做的每一件事的质量代表着你的个人水平，它直接影响着你在别人心中的看法，而且一旦再出什么额外状况，这个任务就会delay。</li>
+<li>两个小时的工作量，不要想着我给自己估宽松点，估三个小时——该是多少就是多少，这直接影响别人对你的信任，如果同一份工作你给估了一个月，老板去问另一个开发，他只估了半个月，那老板以后可能就不会再找你分配工作。一天八小时工作制，由于各种各样的原因实际可支配的时间其实并没有这么多，那你可以提前说明比如我每天要给别人解决各种各样的问题或者晚上想留出两小时的时间学习，所以每天实际的开发时间只有5h，那一份40h工作量的任务对我来说就需要8day，但一定不要把这些额外事情的时间算到这个任务里。</li>
+<li>评估任务尽量拆解的细一些，想的全面一些。一个需求中复杂的坑和细节尽量一开始就考虑到搞清楚，并留出相应的时间，以避免做到一半发现有坑再delay，承诺过的事情要有契约精神。我知道这很难，但尽量做，其实每个任务实际完成的时间比预期差个一天半天都是正常的，关键是要总结经验，想想这次评估中有哪些不足，让下次的评估可以更准确。如果每次评估都是糊弄了事，你会逐渐丧失时间评估的能力。</li>
+</ol>
       
-      <a class="article-more-link" href="/2020/02/24/%E3%80%8AAPUE%E3%80%8Bch10%E2%80%94%E2%80%94%E4%BF%A1%E5%8F%B7/">阅读更多...</a>
+      <a class="article-more-link" href="/2019/12/13/%E5%B7%A5%E4%BD%9C%E5%BF%83%E5%BE%97%E6%80%BB%E7%BB%93/">阅读更多...</a>
       
       
       <!-- reward -->
@@ -862,7 +863,7 @@
     <footer class="article-footer">
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/signal/" rel="tag">signal</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/work/" rel="tag">work</a></li></ul>
 
 
     </footer>

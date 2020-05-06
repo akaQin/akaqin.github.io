@@ -1,66 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>《APUE》ch15——进程间通信</title>
-    <url>/2020/04/21/%E3%80%8AAPUE%E3%80%8Bch15%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/</url>
-    <content><![CDATA[<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>本章将说明进程之间互相通信的技术——<code>进程间通信（InterProcess Communication，IPC）</code>。<br><img src="15-1.png" alt=""></p>
-<a id="more"></a>
-
-<h2 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h2><p>管道是UNIX系统最古老最常用的IPC形式，所有UNIX系统都提供此种通信机制。管道有以下两种局限性：</p>
-<ul>
-<li>历史上，他们是半双工的。现在，某些系统提供了全双工管道，但我们不能预先假设系统支持全双工管道。</li>
-<li>管道只能在具有公共祖先的两个进程间使用。</li>
-</ul>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pipe</span><span class="params">(<span class="keyword">int</span> fd[<span class="number">2</span>])</span></span>; <span class="comment">//创建管道</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//popen实现一系列操作：创建一个管道，fork一个子进程，关闭未使用的管道端，执行一个shell运行命令，然后等待命令终止</span></span><br><span class="line"><span class="function">FILE *<span class="title">popen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *cmdstring, <span class="keyword">const</span> <span class="keyword">char</span> *type)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pclose</span><span class="params">(FILE *fp)</span></span>; <span class="comment">//关闭由popen创建的管道文件，返回cmdstring的终止状态</span></span><br></pre></td></tr></table></figure>
-<p><img src="15-2.png" alt=""><br><img src="15-3.png" alt=""><br><img src="15-4.png" alt=""></p>
-<h3 id="实例：利用管道实现进程间同步"><a href="#实例：利用管道实现进程间同步" class="headerlink" title="实例：利用管道实现进程间同步"></a>实例：利用管道实现进程间同步</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> pfd1[<span class="number">2</span>], pfd2[<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TELL_WAIT</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (pipe(pfd1) &lt; <span class="number">0</span> || pipe(pfd2) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TELL_CHILD</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">write</span>(pfd1[<span class="number">1</span>], <span class="string">"p"</span>, <span class="number">1</span>) != <span class="number">1</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TELL_PARENT</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">write</span>(pfd2[<span class="number">1</span>], <span class="string">"c"</span>, <span class="number">1</span>) != <span class="number">1</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">WAIT_PATENT</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> c;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">read</span>(pfd2[<span class="number">0</span>], &amp;c, <span class="number">1</span>) != <span class="number">1</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (c != <span class="string">'p'</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">WAIT_PARENT</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> c;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">read</span>(pfd1[<span class="number">0</span>], &amp;c, <span class="number">1</span>) != <span class="number">1</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (c != <span class="string">'c'</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="实例：popen和pclose的实现"><a href="#实例：popen和pclose的实现" class="headerlink" title="实例：popen和pclose的实现"></a>实例：popen和pclose的实现</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">pid_t</span> *child_ptr = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> max_fd;</span><br><span class="line"></span><br><span class="line"><span class="function">FILE *<span class="title">popen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *cmd, <span class="keyword">const</span> <span class="keyword">char</span> *type)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> pfd[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    FILE * fp;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//检验参数</span></span><br><span class="line">    <span class="keyword">if</span> (cmd == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        errno = EINVAL;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (type[<span class="number">0</span>] != <span class="string">'r'</span> &amp;&amp; type[<span class="number">0</span>] != <span class="string">'w'</span> || type[<span class="number">1</span>] != <span class="number">0</span>) &#123;</span><br><span class="line">        errno = EINVAL;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建描述符与进程id的对应关系，在关闭时使用</span></span><br><span class="line">    <span class="keyword">if</span> (child_ptr == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        max_fd = open_max();</span><br><span class="line">        <span class="keyword">if</span> ((child_ptr = <span class="built_in">calloc</span>(max_fd, <span class="keyword">sizeof</span>(<span class="keyword">pid_t</span>))) == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            err_sys(<span class="string">"error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建管道</span></span><br><span class="line">    <span class="keyword">if</span> (pipe(pfd) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//检测描述符</span></span><br><span class="line">    <span class="keyword">if</span> (pfd[<span class="number">0</span>] &gt;= max_fd || pfd[<span class="number">1</span>] &gt;= max_fd) &#123;</span><br><span class="line">        <span class="built_in">close</span>(pfd[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">close</span>(pfd[<span class="number">1</span>]);</span><br><span class="line">        errno = EMFILE;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((pid = fork()) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123; <span class="comment">//子进程关闭多于描述符</span></span><br><span class="line">        <span class="keyword">if</span> (*type == <span class="string">'r'</span>) &#123;</span><br><span class="line">            <span class="built_in">close</span>(pfd[<span class="number">0</span>]);</span><br><span class="line">            <span class="keyword">if</span> (pfd[<span class="number">1</span>] != STDOUT_FILENO) &#123;</span><br><span class="line">                dup2(pfd[<span class="number">1</span>], STDOUT_FILENO);</span><br><span class="line">                <span class="built_in">close</span>(pfd[<span class="number">1</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">close</span>(pfd[<span class="number">1</span>]);</span><br><span class="line">            <span class="keyword">if</span> (pfd[<span class="number">0</span>] != STDIN_FILENO) &#123;</span><br><span class="line">                dup2(pfd[<span class="number">0</span>], STDOUT_FILENO);</span><br><span class="line">                <span class="built_in">close</span>(pfd[<span class="number">0</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//关闭子进程中映射关系里所有的描述符，因为子进程用不到</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; max_fd; ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (child_ptr[i] &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="built_in">close</span>(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        execl(<span class="string">"/bin/sh"</span>, <span class="string">"sh"</span>, <span class="string">"-c"</span>, (<span class="keyword">char</span> *)<span class="number">0</span>);</span><br><span class="line">        _exit(<span class="number">127</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//父进程关闭多于描述符，并获取描述符对应文件指针</span></span><br><span class="line">    <span class="keyword">if</span> (*type == <span class="string">'r'</span>) &#123;</span><br><span class="line">        <span class="built_in">close</span>(pfd[<span class="number">1</span>]);</span><br><span class="line">        <span class="keyword">if</span> ((fp = fdopen(pfd[<span class="number">0</span>], type)) == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">close</span>(pfd[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">if</span> ((fp = fdopen(pfd[<span class="number">1</span>], type)) == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//将描述符与子进程id绑定，为了在关闭时通过描述符能找到子进程ID</span></span><br><span class="line">    child_ptr[fileno(fp)] = pid;</span><br><span class="line">    <span class="keyword">return</span> fp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pclose</span><span class="params">(FILE *fp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fd, status;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="keyword">if</span> (fp == <span class="literal">NULL</span> || <span class="comment">//参数错误</span></span><br><span class="line">        child_ptr == <span class="literal">NULL</span> || <span class="comment">//子进程指针未初始化</span></span><br><span class="line">        (fd = fileno(fp)) &lt; <span class="number">0</span> || <span class="comment">//文件指针获取不到对应的描述符</span></span><br><span class="line">        (pid = child_ptr[fd]) == <span class="number">0</span>) <span class="comment">// 找不到与该描述符对应的进程ID</span></span><br><span class="line">    &#123;</span><br><span class="line">        errno = EINVAL;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    child_ptr[fd] = <span class="number">0</span>; <span class="comment">//解除描述符与子进程ID的绑定关系</span></span><br><span class="line">    <span class="keyword">if</span> (fclose(fp) == EOF) &#123; <span class="comment">//关闭管道文件</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (waitpid(pid, &amp;status, <span class="number">0</span>) &lt; <span class="number">0</span>) &#123; <span class="comment">//等待失败有一种情况时被中断的系统调用，这种情况需要重新等待</span></span><br><span class="line">        <span class="keyword">if</span> (errno != EINTR) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="协同进程"><a href="#协同进程" class="headerlink" title="协同进程"></a>协同进程</h2><p>UNIX系统过滤程序从标准输入读取数据，向标准输出写数据。介个过滤程序通常在shell管道中线性连接。当一个过滤程序既产生某个过滤程序的输入，又读取该过滤程序的输出时，它就变成了<code>协同进程（coprocess）</code>。</p>
-<p>popen只提供连接到另一个进程的标准输入或标准输出的一个单向管道，而系统进程则有连接到另一个进程的两个单向管道：一个连接到其标准输入，另一个则来自其标准输出。<br><img src="15-16.png" alt=""></p>
-<h3 id="实例：将两个数相加的过滤程序"><a href="#实例：将两个数相加的过滤程序" class="headerlink" title="实例：将两个数相加的过滤程序"></a>实例：将两个数相加的过滤程序</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sig_pipe</span><span class="params">(<span class="keyword">int</span> signo)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"SIGPIPE caught\n"</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="keyword">char</span> <span class="built_in">line</span>[MAXLINE];</span><br><span class="line">    <span class="keyword">int</span> n, pfd1[<span class="number">2</span>], pfd2[<span class="number">2</span>]; <span class="comment">//pfd1是父进程-&gt;子进程的单向管道，pfd2是子进程-&gt;父进程的单向管道</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (signal(SIGPIPE, sig_pipe) == SIG_ERR) &#123;</span><br><span class="line">        err_sys(<span class="string">"signal error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pipe(pfd1) &lt; <span class="number">0</span> || pipe(pfd2) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"pipe error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((pid = fork()) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"fork error"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">//用标准输入与标准输出的描述符和父进程进行通信，关闭其他描述符</span></span><br><span class="line">        <span class="built_in">close</span>(pfd1[<span class="number">1</span>]);</span><br><span class="line">        <span class="built_in">close</span>(pfd2[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">if</span> (pfd1[<span class="number">0</span>] != STDIN_FILENO) &#123;</span><br><span class="line">            dup2(pfd1[<span class="number">0</span>], STDIN_FILENO);</span><br><span class="line">            <span class="built_in">close</span>(pfd1[<span class="number">0</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (pfd2[<span class="number">1</span>] != STDOUT_FILENO) &#123;</span><br><span class="line">            dup2(pfd2[<span class="number">1</span>], STDOUT_FILENO);</span><br><span class="line">            <span class="built_in">close</span>(pfd2[<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (execl(<span class="string">"./add2"</span>, <span class="string">"add2"</span>, (<span class="keyword">char</span> *)<span class="number">0</span>) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            err_sys(<span class="string">"execl error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">close</span>(pfd1[<span class="number">0</span>]);</span><br><span class="line">    <span class="built_in">close</span>(pfd2[<span class="number">1</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (fgets(<span class="built_in">line</span>, MAXLINE, <span class="built_in">stdin</span>) != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        n = <span class="built_in">strlen</span>(<span class="built_in">line</span>);</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">write</span>(pfd1[<span class="number">1</span>], <span class="built_in">line</span>, n) != n) &#123;</span><br><span class="line">            err_sys(<span class="string">"write error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> ((n = <span class="built_in">read</span>(pfd2[<span class="number">0</span>], <span class="built_in">line</span>, MAXLINE)) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            err_sys(<span class="string">"read error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (n == <span class="number">0</span>) &#123;</span><br><span class="line">            err_msg(<span class="string">"child closed pipe"</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">line</span>[n] = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">fputs</span>(<span class="built_in">line</span>, <span class="built_in">stdout</span>) == EOF) &#123;</span><br><span class="line">            err_sys(<span class="string">"fputs error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//fgets完要用ferror判断是否发生错误</span></span><br><span class="line">    <span class="keyword">if</span> (ferror(<span class="built_in">stdin</span>)) &#123;</span><br><span class="line">        err_sys(<span class="string">"ferror error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>注意，对管道的读写使用了底层IO（UNIX系统调用）：read和write，因为如果使用标准库I/O，对于非终端的I/O是全缓冲的，对管道的读写会发生阻塞，产生死锁。</p>
-<h2 id="FIFO"><a href="#FIFO" class="headerlink" title="FIFO"></a>FIFO</h2><p>FIFO被称为命名管道。未命名的管道只能在两个相关的进程之间使用，而且这两个相关的进程还要有一个共同的创建了它们的祖先进程。但是通过FIFO，不相关的进程也能交换数据。</p>
-<p>FIFO是一种文件类型，通过stat结构的st_mode成员的编码可以知道文件是否是FIFO类型。可以用S_ISFIFO宏对此进行测试。<br>创建FIFO类似于创建文件，FIFO的路径名也确实存在于文件系统中。对它的操作也都和文件一样（open、close、read、write和unlink）</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mkfifo</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">mode_t</span> mode)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mkfifoat</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">mode_t</span> mode)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>当open一个FIFO时，非阻塞标志（O_NONBLOCK）会产生下列影响：</p>
-<ul>
-<li>在一般情况下（没有指定O_NONBLOCK），只读open要阻塞到某个其他进程为写打开这个FIFO为止。类似地，只写open要阻塞到某个其他进程为读开它为止。</li>
-<li>如果指定了（O_NONBLOCK），则只读open立即返回。但是如果没有进程为读而打开一个FIFO，那么只写open将返回-1，并将errno产生一个文件结束标志。</li>
-</ul>
-<p>类似于管道，若write一个尚无进程为读而打开的FIFO，则产生信号SIGPIPE。若某个FIFO的最后一个写进程关闭了该FIFO，则将为该FIFO的读进程产生一个文件结束标志。</p>
-<p>FIFO 有以下两种用途</p>
-<ul>
-<li>shell命令使用FIFO将数据从一条管道传到另一条时，无需创建中间临时文件。</li>
-<li>客户进程-服务器进程应用程序中，FIFO用作汇聚点，在客户进程和服务器进程二者之间传递数据。</li>
-</ul>
-<h3 id="实例：用FIFO复制输出流"><a href="#实例：用FIFO复制输出流" class="headerlink" title="实例：用FIFO复制输出流"></a>实例：用FIFO复制输出流</h3><p>FIFO可用于复制一系列shell命令中的输出流。这就防止了将数据写向中间磁盘文件。但与管道不同的是，管道只能用于两个进程之间的线性连接，而FIFO是有名字的，因此它可用于非线性连接。<br><img src="15-20.png" alt=""></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkfifo fifo1</span><br><span class="line">prog3 &lt; fifo1 &amp;</span><br><span class="line">prog1 &lt; infile | tee fifo1 | prog2</span><br></pre></td></tr></table></figure>
-<p><img src="15-21.png" alt=""></p>
-<h3 id="实例：使用FIFO进行客户进程-服务器进程通信"><a href="#实例：使用FIFO进行客户进程-服务器进程通信" class="headerlink" title="实例：使用FIFO进行客户进程-服务器进程通信"></a>实例：使用FIFO进行客户进程-服务器进程通信</h3><p><img src="15-22.png" alt=""><br><img src="15-23.png" alt=""></p>
-<h2 id="XSI-IPC"><a href="#XSI-IPC" class="headerlink" title="XSI IPC"></a>XSI IPC</h2><p>有3种称作XSI IPC的IPC：消息队列，信号量以及共享存储器，这里先介绍共有、类似特征。</p>
-<h3 id="标识符和键"><a href="#标识符和键" class="headerlink" title="标识符和键"></a>标识符和键</h3><p>每个内核中的IPC结构（消息队列、信号量或共享存储段）都用一个非负整数的标识符加以引用。标识符是IPC对象的内部名。为使多个合作进程能够在同一IPC对象上汇聚，需要提供一个外部命名方案。为此，每个IPC对象都与一个键（key）相关联，将这个键作为该对象的外部名。<br>无论何时创建IPC结构（通过调用msgget、semget或shmget创建），都应指定一个键。这个键的数据类型是基本系统数据类型key_t，通常在头文件&lt;sys/types.h&gt;中被定义为长整型。这个键由内核变换成标识符。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">key_t</span> <span class="title">ftok</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">int</span> id)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>XSI IPC为每一个IPC结构关联了一个ipc_perm结构。该结构规定了权限和所有者，它至少包括下列成员：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ipc_perm</span> &#123;</span></span><br><span class="line">  <span class="keyword">uid_t</span> uid;</span><br><span class="line">  <span class="keyword">gid_t</span> gid;</span><br><span class="line">  <span class="keyword">uid_t</span> cuid;</span><br><span class="line">  <span class="keyword">gid_t</span> cgid;</span><br><span class="line">  <span class="keyword">mode_t</span> mode;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="优点和缺点"><a href="#优点和缺点" class="headerlink" title="优点和缺点"></a>优点和缺点</h3><p>缺点：</p>
-<ul>
-<li>IPC结构是在系统范围内起作用的，没有引用计数。</li>
-<li>这些IPC结构在文件系统中没有名字。</li>
-</ul>
-<h3 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h3><p>消息队列是消息的链接表，存储在内核中，由消息队列标识符标识。</p>
-<h3 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h3>]]></content>
-      <categories>
-        <category>《APUE》笔记</category>
-      </categories>
-      <tags>
-        <tag>IPC</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>register、volatile、restrict和extern</title>
     <url>/2020/04/15/register%E3%80%81volatile%E3%80%81restrict%E5%92%8Cextern/</url>
     <content><![CDATA[<h2 id="register"><a href="#register" class="headerlink" title="register"></a>register</h2><h3 id="含义："><a href="#含义：" class="headerlink" title="含义："></a>含义：</h3><p>这个关键字暗示编译器相应的变量将被频繁地使用，如果可能的话尽可能的将变量存在CPU内部寄存器中，而不是通过内存寻址访问，以提高效率。注意是尽可能，不是绝对。</p>
@@ -336,8 +276,112 @@
       </tags>
   </entry>
   <entry>
+    <title>vnode与inode区别</title>
+    <url>/2020/03/08/vnode%E4%B8%8Einode%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<h1 id="vnode与inode的区别"><a href="#vnode与inode的区别" class="headerlink" title="vnode与inode的区别"></a>vnode与inode的区别</h1><blockquote>
+<p>文章整理自  <a href="https://www.freebsd.org/cgi/man.cgi?query=vnode" target="_blank" rel="noopener">FreeBSD docs</a> 和  <a href="https://stackoverflow.com/questions/27345342/inode-vs-vnode-difference" target="_blank" rel="noopener">StackOverflow</a></p>
+</blockquote>
+<h2 id="vnode"><a href="#vnode" class="headerlink" title="vnode"></a>vnode</h2><h3 id="名称"><a href="#名称" class="headerlink" title="名称"></a>名称</h3><p>vnode —— 文件或目录的内部表示</p>
+<h3 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/param.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/vnode.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><ul>
+<li>vnode是UNIX中所有文件活动的焦点。</li>
+<li>vnode节点由<code>struct vnode</code>声明。</li>
+<li>每个活动文件、当前目录、挂载文件、文本文件和根目录都分配了一个vnode节点。</li>
+<li>vnode最初是为FreeBSD创建的，因为需要使用的不同类型的文件系统（例如UFS、NFS等）激增。</li>
+<li>Vnode旨在为所有可能的文件系统提供抽象，以便OS可以与它们进行对接，从而让内核方法不必兼容每个特定的文件系统；内核只需要知道如何与Vnode进行交互。</li>
+<li>Vnode抽象在内存中，可以与UFS、ext4等文件系统进行交互；而inode存储在磁盘上，只能用于特定的文件系统。</li>
+<li>inode节点包含文件大小、拥有者、指向地址块的指针等元数据。</li>
+<li>vnode仅包含在文件生命周期中不会改变的一些属性，因此如果想获得更多信息请使用inode作为参考。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>知识点总结</category>
+      </categories>
+      <tags>
+        <tag>File System</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《APUE》ch15——进程间通信</title>
+    <url>/2020/03/05/%E3%80%8AAPUE%E3%80%8Bch15%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/</url>
+    <content><![CDATA[<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>本章将说明进程之间互相通信的技术——<code>进程间通信（InterProcess Communication，IPC）</code>。<br><img src="15-1.png" alt=""></p>
+<a id="more"></a>
+
+<h2 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h2><p>管道是UNIX系统最古老最常用的IPC形式，所有UNIX系统都提供此种通信机制。管道有以下两种局限性：</p>
+<ul>
+<li>历史上，他们是半双工的。现在，某些系统提供了全双工管道，但我们不能预先假设系统支持全双工管道。</li>
+<li>管道只能在具有公共祖先的两个进程间使用。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pipe</span><span class="params">(<span class="keyword">int</span> fd[<span class="number">2</span>])</span></span>; <span class="comment">//创建管道</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//popen实现一系列操作：创建一个管道，fork一个子进程，关闭未使用的管道端，执行一个shell运行命令，然后等待命令终止</span></span><br><span class="line"><span class="function">FILE *<span class="title">popen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *cmdstring, <span class="keyword">const</span> <span class="keyword">char</span> *type)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pclose</span><span class="params">(FILE *fp)</span></span>; <span class="comment">//关闭由popen创建的管道文件，返回cmdstring的终止状态</span></span><br></pre></td></tr></table></figure>
+<p><img src="15-2.png" alt=""><br><img src="15-3.png" alt=""><br><img src="15-4.png" alt=""></p>
+<h3 id="实例：利用管道实现进程间同步"><a href="#实例：利用管道实现进程间同步" class="headerlink" title="实例：利用管道实现进程间同步"></a>实例：利用管道实现进程间同步</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> pfd1[<span class="number">2</span>], pfd2[<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TELL_WAIT</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (pipe(pfd1) &lt; <span class="number">0</span> || pipe(pfd2) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TELL_CHILD</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">write</span>(pfd1[<span class="number">1</span>], <span class="string">"p"</span>, <span class="number">1</span>) != <span class="number">1</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TELL_PARENT</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">write</span>(pfd2[<span class="number">1</span>], <span class="string">"c"</span>, <span class="number">1</span>) != <span class="number">1</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">WAIT_PATENT</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> c;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">read</span>(pfd2[<span class="number">0</span>], &amp;c, <span class="number">1</span>) != <span class="number">1</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (c != <span class="string">'p'</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">WAIT_PARENT</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> c;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">read</span>(pfd1[<span class="number">0</span>], &amp;c, <span class="number">1</span>) != <span class="number">1</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (c != <span class="string">'c'</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="实例：popen和pclose的实现"><a href="#实例：popen和pclose的实现" class="headerlink" title="实例：popen和pclose的实现"></a>实例：popen和pclose的实现</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">pid_t</span> *child_ptr = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> max_fd;</span><br><span class="line"></span><br><span class="line"><span class="function">FILE *<span class="title">popen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *cmd, <span class="keyword">const</span> <span class="keyword">char</span> *type)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> pfd[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    FILE * fp;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//检验参数</span></span><br><span class="line">    <span class="keyword">if</span> (cmd == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        errno = EINVAL;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (type[<span class="number">0</span>] != <span class="string">'r'</span> &amp;&amp; type[<span class="number">0</span>] != <span class="string">'w'</span> || type[<span class="number">1</span>] != <span class="number">0</span>) &#123;</span><br><span class="line">        errno = EINVAL;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建描述符与进程id的对应关系，在关闭时使用</span></span><br><span class="line">    <span class="keyword">if</span> (child_ptr == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        max_fd = open_max();</span><br><span class="line">        <span class="keyword">if</span> ((child_ptr = <span class="built_in">calloc</span>(max_fd, <span class="keyword">sizeof</span>(<span class="keyword">pid_t</span>))) == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            err_sys(<span class="string">"error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建管道</span></span><br><span class="line">    <span class="keyword">if</span> (pipe(pfd) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//检测描述符</span></span><br><span class="line">    <span class="keyword">if</span> (pfd[<span class="number">0</span>] &gt;= max_fd || pfd[<span class="number">1</span>] &gt;= max_fd) &#123;</span><br><span class="line">        <span class="built_in">close</span>(pfd[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">close</span>(pfd[<span class="number">1</span>]);</span><br><span class="line">        errno = EMFILE;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((pid = fork()) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123; <span class="comment">//子进程关闭多于描述符</span></span><br><span class="line">        <span class="keyword">if</span> (*type == <span class="string">'r'</span>) &#123;</span><br><span class="line">            <span class="built_in">close</span>(pfd[<span class="number">0</span>]);</span><br><span class="line">            <span class="keyword">if</span> (pfd[<span class="number">1</span>] != STDOUT_FILENO) &#123;</span><br><span class="line">                dup2(pfd[<span class="number">1</span>], STDOUT_FILENO);</span><br><span class="line">                <span class="built_in">close</span>(pfd[<span class="number">1</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">close</span>(pfd[<span class="number">1</span>]);</span><br><span class="line">            <span class="keyword">if</span> (pfd[<span class="number">0</span>] != STDIN_FILENO) &#123;</span><br><span class="line">                dup2(pfd[<span class="number">0</span>], STDOUT_FILENO);</span><br><span class="line">                <span class="built_in">close</span>(pfd[<span class="number">0</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//关闭子进程中映射关系里所有的描述符，因为子进程用不到</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; max_fd; ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (child_ptr[i] &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="built_in">close</span>(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        execl(<span class="string">"/bin/sh"</span>, <span class="string">"sh"</span>, <span class="string">"-c"</span>, (<span class="keyword">char</span> *)<span class="number">0</span>);</span><br><span class="line">        _exit(<span class="number">127</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//父进程关闭多于描述符，并获取描述符对应文件指针</span></span><br><span class="line">    <span class="keyword">if</span> (*type == <span class="string">'r'</span>) &#123;</span><br><span class="line">        <span class="built_in">close</span>(pfd[<span class="number">1</span>]);</span><br><span class="line">        <span class="keyword">if</span> ((fp = fdopen(pfd[<span class="number">0</span>], type)) == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">close</span>(pfd[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">if</span> ((fp = fdopen(pfd[<span class="number">1</span>], type)) == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//将描述符与子进程id绑定，为了在关闭时通过描述符能找到子进程ID</span></span><br><span class="line">    child_ptr[fileno(fp)] = pid;</span><br><span class="line">    <span class="keyword">return</span> fp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pclose</span><span class="params">(FILE *fp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fd, status;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="keyword">if</span> (fp == <span class="literal">NULL</span> || <span class="comment">//参数错误</span></span><br><span class="line">        child_ptr == <span class="literal">NULL</span> || <span class="comment">//子进程指针未初始化</span></span><br><span class="line">        (fd = fileno(fp)) &lt; <span class="number">0</span> || <span class="comment">//文件指针获取不到对应的描述符</span></span><br><span class="line">        (pid = child_ptr[fd]) == <span class="number">0</span>) <span class="comment">// 找不到与该描述符对应的进程ID</span></span><br><span class="line">    &#123;</span><br><span class="line">        errno = EINVAL;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    child_ptr[fd] = <span class="number">0</span>; <span class="comment">//解除描述符与子进程ID的绑定关系</span></span><br><span class="line">    <span class="keyword">if</span> (fclose(fp) == EOF) &#123; <span class="comment">//关闭管道文件</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (waitpid(pid, &amp;status, <span class="number">0</span>) &lt; <span class="number">0</span>) &#123; <span class="comment">//等待失败有一种情况时被中断的系统调用，这种情况需要重新等待</span></span><br><span class="line">        <span class="keyword">if</span> (errno != EINTR) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="协同进程"><a href="#协同进程" class="headerlink" title="协同进程"></a>协同进程</h2><p>UNIX系统过滤程序从标准输入读取数据，向标准输出写数据。介个过滤程序通常在shell管道中线性连接。当一个过滤程序既产生某个过滤程序的输入，又读取该过滤程序的输出时，它就变成了<code>协同进程（coprocess）</code>。</p>
+<p>popen只提供连接到另一个进程的标准输入或标准输出的一个单向管道，而系统进程则有连接到另一个进程的两个单向管道：一个连接到其标准输入，另一个则来自其标准输出。<br><img src="15-16.png" alt=""></p>
+<h3 id="实例：将两个数相加的过滤程序"><a href="#实例：将两个数相加的过滤程序" class="headerlink" title="实例：将两个数相加的过滤程序"></a>实例：将两个数相加的过滤程序</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sig_pipe</span><span class="params">(<span class="keyword">int</span> signo)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"SIGPIPE caught\n"</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="keyword">char</span> <span class="built_in">line</span>[MAXLINE];</span><br><span class="line">    <span class="keyword">int</span> n, pfd1[<span class="number">2</span>], pfd2[<span class="number">2</span>]; <span class="comment">//pfd1是父进程-&gt;子进程的单向管道，pfd2是子进程-&gt;父进程的单向管道</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (signal(SIGPIPE, sig_pipe) == SIG_ERR) &#123;</span><br><span class="line">        err_sys(<span class="string">"signal error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pipe(pfd1) &lt; <span class="number">0</span> || pipe(pfd2) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"pipe error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((pid = fork()) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"fork error"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">//用标准输入与标准输出的描述符和父进程进行通信，关闭其他描述符</span></span><br><span class="line">        <span class="built_in">close</span>(pfd1[<span class="number">1</span>]);</span><br><span class="line">        <span class="built_in">close</span>(pfd2[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">if</span> (pfd1[<span class="number">0</span>] != STDIN_FILENO) &#123;</span><br><span class="line">            dup2(pfd1[<span class="number">0</span>], STDIN_FILENO);</span><br><span class="line">            <span class="built_in">close</span>(pfd1[<span class="number">0</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (pfd2[<span class="number">1</span>] != STDOUT_FILENO) &#123;</span><br><span class="line">            dup2(pfd2[<span class="number">1</span>], STDOUT_FILENO);</span><br><span class="line">            <span class="built_in">close</span>(pfd2[<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (execl(<span class="string">"./add2"</span>, <span class="string">"add2"</span>, (<span class="keyword">char</span> *)<span class="number">0</span>) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            err_sys(<span class="string">"execl error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">close</span>(pfd1[<span class="number">0</span>]);</span><br><span class="line">    <span class="built_in">close</span>(pfd2[<span class="number">1</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (fgets(<span class="built_in">line</span>, MAXLINE, <span class="built_in">stdin</span>) != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        n = <span class="built_in">strlen</span>(<span class="built_in">line</span>);</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">write</span>(pfd1[<span class="number">1</span>], <span class="built_in">line</span>, n) != n) &#123;</span><br><span class="line">            err_sys(<span class="string">"write error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> ((n = <span class="built_in">read</span>(pfd2[<span class="number">0</span>], <span class="built_in">line</span>, MAXLINE)) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            err_sys(<span class="string">"read error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (n == <span class="number">0</span>) &#123;</span><br><span class="line">            err_msg(<span class="string">"child closed pipe"</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">line</span>[n] = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">fputs</span>(<span class="built_in">line</span>, <span class="built_in">stdout</span>) == EOF) &#123;</span><br><span class="line">            err_sys(<span class="string">"fputs error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//fgets完要用ferror判断是否发生错误</span></span><br><span class="line">    <span class="keyword">if</span> (ferror(<span class="built_in">stdin</span>)) &#123;</span><br><span class="line">        err_sys(<span class="string">"ferror error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意，对管道的读写使用了底层IO（UNIX系统调用）：read和write，因为如果使用标准库I/O，对于非终端的I/O是全缓冲的，对管道的读写会发生阻塞，产生死锁。</p>
+<h2 id="FIFO"><a href="#FIFO" class="headerlink" title="FIFO"></a>FIFO</h2><p>FIFO被称为命名管道。未命名的管道只能在两个相关的进程之间使用，而且这两个相关的进程还要有一个共同的创建了它们的祖先进程。但是通过FIFO，不相关的进程也能交换数据。</p>
+<p>FIFO是一种文件类型，通过stat结构的st_mode成员的编码可以知道文件是否是FIFO类型。可以用S_ISFIFO宏对此进行测试。<br>创建FIFO类似于创建文件，FIFO的路径名也确实存在于文件系统中。对它的操作也都和文件一样（open、close、read、write和unlink）</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mkfifo</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">mode_t</span> mode)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mkfifoat</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">mode_t</span> mode)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>当open一个FIFO时，非阻塞标志（O_NONBLOCK）会产生下列影响：</p>
+<ul>
+<li>在一般情况下（没有指定O_NONBLOCK），只读open要阻塞到某个其他进程为写打开这个FIFO为止。类似地，只写open要阻塞到某个其他进程为读开它为止。</li>
+<li>如果指定了（O_NONBLOCK），则只读open立即返回。但是如果没有进程为读而打开一个FIFO，那么只写open将返回-1，并将errno产生一个文件结束标志。</li>
+</ul>
+<p>类似于管道，若write一个尚无进程为读而打开的FIFO，则产生信号SIGPIPE。若某个FIFO的最后一个写进程关闭了该FIFO，则将为该FIFO的读进程产生一个文件结束标志。</p>
+<p>FIFO 有以下两种用途</p>
+<ul>
+<li>shell命令使用FIFO将数据从一条管道传到另一条时，无需创建中间临时文件。</li>
+<li>客户进程-服务器进程应用程序中，FIFO用作汇聚点，在客户进程和服务器进程二者之间传递数据。</li>
+</ul>
+<h3 id="实例：用FIFO复制输出流"><a href="#实例：用FIFO复制输出流" class="headerlink" title="实例：用FIFO复制输出流"></a>实例：用FIFO复制输出流</h3><p>FIFO可用于复制一系列shell命令中的输出流。这就防止了将数据写向中间磁盘文件。但与管道不同的是，管道只能用于两个进程之间的线性连接，而FIFO是有名字的，因此它可用于非线性连接。<br><img src="15-20.png" alt=""></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkfifo fifo1</span><br><span class="line">prog3 &lt; fifo1 &amp;</span><br><span class="line">prog1 &lt; infile | tee fifo1 | prog2</span><br></pre></td></tr></table></figure>
+<p><img src="15-21.png" alt=""></p>
+<h3 id="实例：使用FIFO进行客户进程-服务器进程通信"><a href="#实例：使用FIFO进行客户进程-服务器进程通信" class="headerlink" title="实例：使用FIFO进行客户进程-服务器进程通信"></a>实例：使用FIFO进行客户进程-服务器进程通信</h3><p><img src="15-22.png" alt=""><br><img src="15-23.png" alt=""></p>
+<h2 id="XSI-IPC"><a href="#XSI-IPC" class="headerlink" title="XSI IPC"></a>XSI IPC</h2><p>有3种称作XSI IPC的IPC：消息队列，信号量以及共享存储器，这里先介绍共有、类似特征。</p>
+<h3 id="标识符和键"><a href="#标识符和键" class="headerlink" title="标识符和键"></a>标识符和键</h3><p>每个内核中的IPC结构（消息队列、信号量或共享存储段）都用一个非负整数的标识符加以引用。标识符是IPC对象的内部名。为使多个合作进程能够在同一IPC对象上汇聚，需要提供一个外部命名方案。为此，每个IPC对象都与一个键（key）相关联，将这个键作为该对象的外部名。<br>无论何时创建IPC结构（通过调用msgget、semget或shmget创建），都应指定一个键。这个键的数据类型是基本系统数据类型key_t，通常在头文件&lt;sys/types.h&gt;中被定义为长整型。这个键由内核变换成标识符。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">key_t</span> <span class="title">ftok</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">int</span> id)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>XSI IPC为每一个IPC结构关联了一个ipc_perm结构。该结构规定了权限和所有者，它至少包括下列成员：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ipc_perm</span> &#123;</span></span><br><span class="line">  <span class="keyword">uid_t</span> uid;</span><br><span class="line">  <span class="keyword">gid_t</span> gid;</span><br><span class="line">  <span class="keyword">uid_t</span> cuid;</span><br><span class="line">  <span class="keyword">gid_t</span> cgid;</span><br><span class="line">  <span class="keyword">mode_t</span> mode;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="优点和缺点"><a href="#优点和缺点" class="headerlink" title="优点和缺点"></a>优点和缺点</h3><p>缺点：</p>
+<ul>
+<li>IPC结构是在系统范围内起作用的，没有引用计数。</li>
+<li>这些IPC结构在文件系统中没有名字。</li>
+</ul>
+<h3 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h3><p>消息队列是消息的链接表，存储在内核中，由消息队列标识符标识。</p>
+<h3 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h3>]]></content>
+      <categories>
+        <category>《APUE》笔记</category>
+      </categories>
+      <tags>
+        <tag>IPC</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>为什么calloc会比malloc+memset快</title>
+    <url>/2020/02/23/%E4%B8%BA%E4%BB%80%E4%B9%88calloc%E4%BC%9A%E6%AF%94malloc-memset%E5%BF%AB/</url>
+    <content><![CDATA[<ol>
+<li><code>malloc</code>和<code>calloc</code>分配小的内存时直接从内存池分配，内存池不够时向内核申请更多内存；分配大内存时会直接调用<code>mmap</code>或<code>sbrk</code>系统调用</li>
+<li>内核分配的内存可能是前一个进程用过的，为保证不泄漏敏感数据，内核始终在将内存交给进程前先将内存置0，因此<code>mmap()</code>保证返回的新内存始终为零</li>
+<li>当程序申请内存时，内核并不会马上修改页表为进程提供RAM，而是在进程中找到一些地址空间，记下应该去的地方，并保证如果您的程序实际使用RAM，它将在其中放置RAM。当程序尝试读写那些地址，会出发缺页故障，内核将RAM分配给这些地址，继续执行程序。如果不读写，内核就不会分配RAM给进程。</li>
+<li>有的进程分配内存后只读不写，这意味着跨不同进程的内存中的许多页面可能填充有从<code>mmap()</code>返回的原始零。由于这些页面都是相同的，因此内核使所有这些虚拟地址指向一个共享的4 KiB内存页面，其中填充了零。如果您尝试写入该内存，则处理器会触发另一个页面错误（写时复制），内核会介入，从而为您提供一个零的新页面，该页面不会与任何其他程序共享。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>知识点总结</category>
+      </categories>
+      <tags>
+        <tag>C</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《APUE》ch13——守护进程</title>
-    <url>/2020/03/10/%E3%80%8AAPUE%E3%80%8Bch13%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/</url>
+    <url>/2020/01/20/%E3%80%8AAPUE%E3%80%8Bch13%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/</url>
     <content><![CDATA[<p>守护进程（daemon）是生存期长的一种进程。它们常常在系统引导装入时启动，仅在系统关闭时才终止。守护进程没有控制终端，终端名为问号。后台运行，大多数都以超级用户（root）特权运行。用户层守护进程的父进程是init。</p>
 <h2 id="编程规则"><a href="#编程规则" class="headerlink" title="编程规则"></a>编程规则</h2><ol>
 <li>调用umask将文件模式创建屏蔽字设置为一个已知值（通常是0）。</li>
@@ -375,35 +419,8 @@
       </tags>
   </entry>
   <entry>
-    <title>vnode与inode区别</title>
-    <url>/2020/03/08/vnode%E4%B8%8Einode%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<h1 id="vnode与inode的区别"><a href="#vnode与inode的区别" class="headerlink" title="vnode与inode的区别"></a>vnode与inode的区别</h1><blockquote>
-<p>文章整理自  <a href="https://www.freebsd.org/cgi/man.cgi?query=vnode" target="_blank" rel="noopener">FreeBSD docs</a> 和  <a href="https://stackoverflow.com/questions/27345342/inode-vs-vnode-difference" target="_blank" rel="noopener">StackOverflow</a></p>
-</blockquote>
-<h2 id="vnode"><a href="#vnode" class="headerlink" title="vnode"></a>vnode</h2><h3 id="名称"><a href="#名称" class="headerlink" title="名称"></a>名称</h3><p>vnode —— 文件或目录的内部表示</p>
-<h3 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/param.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/vnode.h&gt;</span></span></span><br></pre></td></tr></table></figure>
-
-<h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><ul>
-<li>vnode是UNIX中所有文件活动的焦点。</li>
-<li>vnode节点由<code>struct vnode</code>声明。</li>
-<li>每个活动文件、当前目录、挂载文件、文本文件和根目录都分配了一个vnode节点。</li>
-<li>vnode最初是为FreeBSD创建的，因为需要使用的不同类型的文件系统（例如UFS、NFS等）激增。</li>
-<li>Vnode旨在为所有可能的文件系统提供抽象，以便OS可以与它们进行对接，从而让内核方法不必兼容每个特定的文件系统；内核只需要知道如何与Vnode进行交互。</li>
-<li>Vnode抽象在内存中，可以与UFS、ext4等文件系统进行交互；而inode存储在磁盘上，只能用于特定的文件系统。</li>
-<li>inode节点包含文件大小、拥有者、指向地址块的指针等元数据。</li>
-<li>vnode仅包含在文件生命周期中不会改变的一些属性，因此如果想获得更多信息请使用inode作为参考。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>知识点总结</category>
-      </categories>
-      <tags>
-        <tag>File System</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《APUE》ch12——线程控制</title>
-    <url>/2020/03/07/%E3%80%8AAPUE%E3%80%8Bch12%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/</url>
+    <url>/2020/01/07/%E3%80%8AAPUE%E3%80%8Bch12%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/</url>
     <content><![CDATA[<h2 id="线程限制"><a href="#线程限制" class="headerlink" title="线程限制"></a>线程限制</h2><p>Single UNIX Specification定义了一些与线程操作有关的限制，这些限制是为了增强应用程序在不同的操作系统实现之间的可移植性，可以通过<code>sysconf</code>函数进行查询。</p>
 <ul>
 <li>线程退出时操作系统试图销毁特定数据的最大次数</li>
@@ -480,23 +497,8 @@
       </tags>
   </entry>
   <entry>
-    <title>strlen与sizeof区别</title>
-    <url>/2020/03/02/strlen%E4%B8%8Esizeof%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<ul>
-<li>strlen计算不包含终止null字节的字符串长度，而sizeof则计算包括终止null字节的缓冲区长度</li>
-<li>strlen需要进行一次函数调用，而对于sizeof，缓冲区长度在编译时计算，是固定的</li>
-</ul>
-]]></content>
-      <categories>
-        <category>知识点总结</category>
-      </categories>
-      <tags>
-        <tag>C</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《APUE》ch11——线程</title>
-    <url>/2020/03/01/%E3%80%8AAPUE%E3%80%8Bch11%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B/</url>
+    <url>/2019/12/20/%E3%80%8AAPUE%E3%80%8Bch11%E2%80%94%E2%80%94%E7%BA%BF%E7%A8%8B/</url>
     <content><![CDATA[<h2 id="线程概念"><a href="#线程概念" class="headerlink" title="线程概念"></a>线程概念</h2><p>线程包含有表示执行环境所必须的信息，包括线程ID、一组寄存器值、栈、调度优先级和策略、信号屏蔽字、errno变量以及线程私有数据。一个进程的所有信息对该进程的所有线程都是共享的，包括可执行程序的代码、程序的全局内存和堆内存、栈以及文件描述符。</p>
 <h2 id="线程标识"><a href="#线程标识" class="headerlink" title="线程标识"></a>线程标识</h2><p>每个线程有一个线程ID，进程ID在整个系统中是唯一的，但线程ID不同，线程ID只有它所属的进程上下文中才有意义。</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_equal</span><span class="params">(<span class="keyword">pthread_t</span> tid1, <span class="keyword">pthread_t</span> tid2)</span></span>; <span class="comment">//比较两个线程是否相等</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">pthread_t</span> <span class="title">pthread_self</span><span class="params">(<span class="keyword">void</span>)</span></span>; <span class="comment">//获取调用线程的线程ID</span></span><br></pre></td></tr></table></figure>
@@ -583,8 +585,54 @@
       </tags>
   </entry>
   <entry>
+    <title>工作心得总结</title>
+    <url>/2019/12/13/%E5%B7%A5%E4%BD%9C%E5%BF%83%E5%BE%97%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<h3 id="时间评估"><a href="#时间评估" class="headerlink" title="时间评估"></a>时间评估</h3><p>​    当leader给你一个任务问你多久能完成时，不要简单的看一看就给一个估摸的大概的时间，要培养对工作量评估的能力，这很重要。评估时要做到尽量准确，具体注意以下几点：</p>
+<ol>
+<li>不要想着三个小时的工作,我加加班赶一赶两个小时搞定——在仓促状态下赶工，质量必然会收到影响，你做的每一件事的质量代表着你的个人水平，它直接影响着你在别人心中的看法，而且一旦再出什么额外状况，这个任务就会delay。</li>
+<li>两个小时的工作量，不要想着我给自己估宽松点，估三个小时——该是多少就是多少，这直接影响别人对你的信任，如果同一份工作你给估了一个月，老板去问另一个开发，他只估了半个月，那老板以后可能就不会再找你分配工作。一天八小时工作制，由于各种各样的原因实际可支配的时间其实并没有这么多，那你可以提前说明比如我每天要给别人解决各种各样的问题或者晚上想留出两小时的时间学习，所以每天实际的开发时间只有5h，那一份40h工作量的任务对我来说就需要8day，但一定不要把这些额外事情的时间算到这个任务里。</li>
+<li>评估任务尽量拆解的细一些，想的全面一些。一个需求中复杂的坑和细节尽量一开始就考虑到搞清楚，并留出相应的时间，以避免做到一半发现有坑再delay，承诺过的事情要有契约精神。我知道这很难，但尽量做，其实每个任务实际完成的时间比预期差个一天半天都是正常的，关键是要总结经验，想想这次评估中有哪些不足，让下次的评估可以更准确。如果每次评估都是糊弄了事，你会逐渐丧失时间评估的能力。</li>
+</ol>
+<a id="more"></a>
+
+<h3 id="时间管理"><a href="#时间管理" class="headerlink" title="时间管理"></a>时间管理</h3><p>​    时间是你最宝贵的财富，所以一定要利用好。要学会主动管理，对于学习上，每天一定要抽出整块的不被打扰的时间用来学习，提升个人技术能力和自身价值，是走技术这条路最最重要的一步，活到老学到老。对于工作上，学会使用任务管理工具（如tower），一些小的零碎的事情，短时间能解决的优先解决，别给自己攒太多压力，然后集中精力去做那些大块的工作。如果一个任务的工作是一周或两周，那就提前拆解好每天要做到什么程度，每晚review一下工作情况，对总体的进度有个把控，如果感觉搞不完要delay就加加班或者提前向上反馈，因为什么什么原因，这个任务要delay多久，并给出解决方案，要么加班，要么整体延期。一定不要等到deadline了才发现做不完，影响整个团队的进度。</p>
+<h3 id="同事之间的交往"><a href="#同事之间的交往" class="headerlink" title="同事之间的交往"></a>同事之间的交往</h3><p>​    大家一起共事都是缘分，一个团队中每个人的技术肯定是有高有低参差不齐的，性格也是多种多样。相处时要做到谦虚和尊敬他人，学会倾听和站在他人的角度思考问题，每个人身上肯定都有比自己强值得学习的地方，要学会发现这些闪光点。当别人来找自己问问题的时候，要注意自己的态度，对事不对人，如果一个人对同一个问题或类似的问题找你问很多遍，你可以说这个问题我给你讲过很多次了，你先自己想一下有没有思路，该怎么解决，想好方案再来找我；但如果他带来的是个新问题还是要耐心解答的，不能因为他老问问题就不理他。</p>
+<h3 id="责任与心态"><a href="#责任与心态" class="headerlink" title="责任与心态"></a>责任与心态</h3><p>​    出现问题时leader询问情况，要先快速定位问题，并给出解决方案，分析利弊；如出的问题跟自己没关系，也可以待命看看有什么能帮的上忙的，帮忙思考下解决方案；问题解决后，思考问题是怎么造成的，以后怎么避免，总结经验；如果是自身的原因主动承担错误，如果是别人的原因，自己也要引以为戒。一定不要出了问题先说这代码是谁谁谁写的，把自己撇的一干二净，这给人感觉很不好，直接决定了你做事的高度。出问题是在所难免的，这并不可怕，很多时候leader也只是问问想搞清楚情况，并没有要责怪谁的意思，关键是不要让范过的错误重复的发生在自己身上。</p>
+]]></content>
+      <categories>
+        <category>经验反思</category>
+      </categories>
+      <tags>
+        <tag>work</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>关于优惠券资金问题的反思</title>
+    <url>/2019/12/06/%E5%85%B3%E4%BA%8E%E4%BC%98%E6%83%A0%E5%88%B8%E8%B5%84%E9%87%91%E9%97%AE%E9%A2%98%E7%9A%84%E5%8F%8D%E6%80%9D/</url>
+    <content><![CDATA[<ul>
+<li><p>offline脚本漏掉了回滚资金逻辑：<br>这块因为是离线脚本，只是在测试环境手动调用测的能不能跑通，线上因为不方便测就直接对接了。<br>以后这块有改动还是要多review，不能疏忽。</p>
+</li>
+<li><p>cms追加优惠券时忽略了事务一致性问题<br>事务一致性的问题本来一开始整理的时候列到了，把各项目到查了一遍，还是漏掉了一个，惭愧。。<br>后面需要推进事务协调器，撤掉解决这种问题出现的可能。</p>
+</li>
+<li><p>问题及时向上反馈<br>问题一开始出现时，只有我、春光和潘静在查这个问题，因为当时不知道问题2和少了30万预算这两件事的存在，<br>所以我和春光查了两天这个数怎么也对不上，如果早点向上反馈的话知道少了30万预算说不定这个问题早就解决了。。</p>
+</li>
+<li><p>找不到问题原因时的思考思路<br>昨天一天用各种方案算的数都对不上，这时候我们应该把已知并确定正确的信息列出来，和现有的数据做对比，<br>如果发现对不上，大胆的列出所有的可能性，并一一排查验证，排除掉不可能的，剩下的就是正确答案。</p>
+<blockquote>
+<p>比如 现有冻结金额远小于应有冻结金额，那么猜测可能的原因：<br>过期回滚时冻结资金扣多了 （验证后被排除<br>删除回滚时冻结资金扣多了（验证后被排除<br>创建时没有加冻结资金（验证后被排除<br>追加时没有加冻结资金————找到正确答案</p>
+</blockquote>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>经验反思</category>
+      </categories>
+      <tags>
+        <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《APUE》ch10——信号</title>
-    <url>/2020/02/24/%E3%80%8AAPUE%E3%80%8Bch10%E2%80%94%E2%80%94%E4%BF%A1%E5%8F%B7/</url>
+    <url>/2019/12/03/%E3%80%8AAPUE%E3%80%8Bch10%E2%80%94%E2%80%94%E4%BF%A1%E5%8F%B7/</url>
     <content><![CDATA[<h2 id="信号概念"><a href="#信号概念" class="headerlink" title="信号概念"></a>信号概念</h2><p>信号是软件中断。它提供了一种处理异步事件的方法。<br>每个信号都有一个名字，以SIG开头。在头文件&lt;signal.h&gt;中，信号名都被定义为正整数常量（信号编号）。<br>不存在编号为0的信号。kill函数对信号编号0有特殊的作用。POSIX.1将此中信号编号值称为空信号。</p>
 <p>信号出现时，内核按下列三种方式之一进行处理：</p>
 <ul>
@@ -738,25 +786,8 @@
       </tags>
   </entry>
   <entry>
-    <title>为什么calloc会比malloc+memset快</title>
-    <url>/2020/02/23/%E4%B8%BA%E4%BB%80%E4%B9%88calloc%E4%BC%9A%E6%AF%94malloc-memset%E5%BF%AB/</url>
-    <content><![CDATA[<ol>
-<li><code>malloc</code>和<code>calloc</code>分配小的内存时直接从内存池分配，内存池不够时向内核申请更多内存；分配大内存时会直接调用<code>mmap</code>或<code>sbrk</code>系统调用</li>
-<li>内核分配的内存可能是前一个进程用过的，为保证不泄漏敏感数据，内核始终在将内存交给进程前先将内存置0，因此<code>mmap()</code>保证返回的新内存始终为零</li>
-<li>当程序申请内存时，内核并不会马上修改页表为进程提供RAM，而是在进程中找到一些地址空间，记下应该去的地方，并保证如果您的程序实际使用RAM，它将在其中放置RAM。当程序尝试读写那些地址，会出发缺页故障，内核将RAM分配给这些地址，继续执行程序。如果不读写，内核就不会分配RAM给进程。</li>
-<li>有的进程分配内存后只读不写，这意味着跨不同进程的内存中的许多页面可能填充有从<code>mmap()</code>返回的原始零。由于这些页面都是相同的，因此内核使所有这些虚拟地址指向一个共享的4 KiB内存页面，其中填充了零。如果您尝试写入该内存，则处理器会触发另一个页面错误（写时复制），内核会介入，从而为您提供一个零的新页面，该页面不会与任何其他程序共享。</li>
-</ol>
-]]></content>
-      <categories>
-        <category>知识点总结</category>
-      </categories>
-      <tags>
-        <tag>C</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《APUE》ch9——进程关系</title>
-    <url>/2020/02/16/%E3%80%8AAPUE%E3%80%8Bch9%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E5%85%B3%E7%B3%BB/</url>
+    <url>/2019/11/26/%E3%80%8AAPUE%E3%80%8Bch9%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E5%85%B3%E7%B3%BB/</url>
     <content><![CDATA[<h2 id="终端登录"><a href="#终端登录" class="headerlink" title="终端登录"></a>终端登录</h2><p>我们现在描述的过程用于经由终端登录至UNIX系统。该过程几乎与所使用的终端类型无关，可以是基于字符的终端、仿真基于字符终端的图形终端，或者运行窗口系统的图形终端。</p>
 <h3 id="BSD终端登录"><a href="#BSD终端登录" class="headerlink" title="BSD终端登录"></a>BSD终端登录</h3><p>系统管理者创建通常名为/etc/ttys的文件，其中每个终端设备都有一行，说明设备名和传到getty程序的参数。当系统自举时，内核创建进程ID为1的进程，也就是init进程。<br>init进程使系统进入多用户模式。init读取文件/etc/ttys，对每一个允许登录的终端设备，init调用一次fork，它所生成的子进程则exec getty程序。<br><img src="9-1.png" alt=""></p>
 <a id="more"></a>
@@ -830,7 +861,7 @@
   </entry>
   <entry>
     <title>《APUE》ch8——进程控制</title>
-    <url>/2020/02/11/%E3%80%8AAPUE%E3%80%8Bch8%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6/</url>
+    <url>/2019/11/09/%E3%80%8AAPUE%E3%80%8Bch8%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E6%8E%A7%E5%88%B6/</url>
     <content><![CDATA[<h2 id="进程标识"><a href="#进程标识" class="headerlink" title="进程标识"></a>进程标识</h2><p>每个进程都有一个非负整型表示的唯一进程ID。</p>
 <p>ID为0的进程通常是调度进程，常常被称为交换进程（swapper）。该进程是内核的一部分，它并不执行任何磁盘上的程序，因此也被称为系统进程。</p>
 <p>进程ID 1通常是init进程，在自举过程结束时由内核调用。该进程的程序文件是/etc/init或/sbin/init。此进程负责在自举内核后启动一个UNIX系统。init读取与系统有关的初始化文件，并将系统引导到一个状态。init进程不会终止，它是一个普通的用户进程（与交换进程不同，它不是内核中的系统进程），以超级用户特权运行。</p>
@@ -940,8 +971,28 @@
       </tags>
   </entry>
   <entry>
+    <title>反思总结：优惠券服务拆分</title>
+    <url>/2019/11/06/%E4%BC%98%E6%83%A0%E5%88%B8%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86-%E5%8F%8D%E6%80%9D%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<h2 id="过程中出现的问题："><a href="#过程中出现的问题：" class="headerlink" title="过程中出现的问题："></a>过程中出现的问题：</h2><p><strong>思考问题</strong></p>
+<p>​    安全意识还是不够，不能因为这块是朝沛拆的就不怎么看，导致要上线了才发现回滚逻辑有这么多问题，临上线又重构代码，给测试也带来很多麻烦；想的不够细，有些逻辑靠衍雷提出来才想到，这一点感觉还是得靠多实践去改变。</p>
+<p><strong>买家端无法提供服务</strong></p>
+<p>​    虽然不是我的主要问题，但出问题时看到nginx的error_log：recv() failed (104: Connection reset by peer) while reading response header from upstream，应该能及时联想到是fpm的问题，然后随手ps下看看进程就能及时发现子进程只有5个；使用新机器时先看下机器配置。</p>
+<p><strong>一些要注意的点：</strong></p>
+<p>​    做服务这块一定要多了解业务，多思考可能存在的问题，心思要缜密，考虑全面，想的越多，出问题的概率才越小。尤其是涉及到事务相关的部分要考虑到成功失败的各种情况。</p>
+<p>​    涉及多项目的服务与接口代码上线，要保证各种case都测过没问题了，先把服务上了，再逐个上客户端。尽量避免后期改动服务的情况，一旦服务有改动，就得各项目都测一遍，带来不必不要的成本与风险。</p>
+<p>​    上线后及时的观察有没有各种异常，做好监控。</p>
+<p>​</p>
+]]></content>
+      <categories>
+        <category>经验反思</category>
+      </categories>
+      <tags>
+        <tag>architecture</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>《APUE》ch7——进程环境</title>
-    <url>/2020/02/06/%E3%80%8AAPUE%E3%80%8Bch7%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/</url>
+    <url>/2019/10/19/%E3%80%8AAPUE%E3%80%8Bch7%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/</url>
     <content><![CDATA[<h2 id="进程开始"><a href="#进程开始" class="headerlink" title="进程开始"></a>进程开始</h2>   <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">int main(int argc, char *argv[]);</span><br></pre></td></tr></table></figure>
 <p>   以main函数开始执行。当内核执行C程序时，在调用main前先调用一个特殊的启动例程。可执行程序将此启动例程指定为程序的起始地址——这是由链接编辑器设置的，而链接编辑器则由C编译器调用。启动例程从内核取得命令行参数和环境变量值，然后为按上述方式调用做好安排。</p>
 <h2 id="进程终止"><a href="#进程终止" class="headerlink" title="进程终止"></a>进程终止</h2><h3 id="终止方式"><a href="#终止方式" class="headerlink" title="终止方式"></a>终止方式</h3><p>有8种终止方式，前5种为正常终止，后3种为异常终止：</p>
@@ -1008,7 +1059,7 @@
   </entry>
   <entry>
     <title>《APUE》ch5——标准I/O库</title>
-    <url>/2020/02/01/%E3%80%8AAPUE%E3%80%8Bch5%E2%80%94%E2%80%94%E6%A0%87%E5%87%86I-O%E5%BA%93/</url>
+    <url>/2019/10/03/%E3%80%8AAPUE%E3%80%8Bch5%E2%80%94%E2%80%94%E6%A0%87%E5%87%86I-O%E5%BA%93/</url>
     <content><![CDATA[<h2 id="流和FILE对象"><a href="#流和FILE对象" class="headerlink" title="流和FILE对象"></a>流和<code>FILE</code>对象</h2><p>所有不带缓冲的I/O函数都是围绕文件描述符进行的。而对于标准I/O库，它们的操作是围绕流进行的。当用标准I/O库打开或创建一个文件时，我们已使一个流与一个文件相关联。<br>对于ASCII字符集，一个字符用一个字节表示，对于国际字符集，一个字符用多个字节表示。标准I/O文件流可用于单字节或多字节字符集，由流的定向决定。</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//设置流的定向</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fwide</span><span class="params">(FILE *fp, <span class="keyword">int</span> mode)</span></span>;</span><br></pre></td></tr></table></figure>
 
@@ -1079,7 +1130,7 @@
   </entry>
   <entry>
     <title>《APUE》ch4——文件和目录</title>
-    <url>/2020/01/28/%E3%80%8AAPUE%E3%80%8Bch4%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95/</url>
+    <url>/2019/09/27/%E3%80%8AAPUE%E3%80%8Bch4%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95/</url>
     <content><![CDATA[<h2 id="文件属性"><a href="#文件属性" class="headerlink" title="文件属性"></a>文件属性</h2><h3 id="文件结构-stat"><a href="#文件结构-stat" class="headerlink" title="文件结构 stat"></a>文件结构 stat</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">stat</span> &#123;</span></span><br><span class="line">  <span class="keyword">mode_t</span>            st_mode;    <span class="comment">// file type &amp; mode (permisssions)</span></span><br><span class="line">  <span class="keyword">ino_t</span>             st_ino;     <span class="comment">// i-node number (serial number)</span></span><br><span class="line">  <span class="keyword">dev_t</span>             st_dev;     <span class="comment">// device number (file system)</span></span><br><span class="line">  <span class="keyword">dev_t</span>             st_rdev;    <span class="comment">// device number for special files</span></span><br><span class="line">  <span class="keyword">nlink_t</span>           st_link;    <span class="comment">// number of links</span></span><br><span class="line">  <span class="keyword">uid_t</span>             st_uid;     <span class="comment">// user ID of owner</span></span><br><span class="line">  <span class="keyword">gid_t</span>             st_gid;     <span class="comment">// group ID of owner</span></span><br><span class="line">  <span class="keyword">off_t</span>             st_size;    <span class="comment">// size in bytes, for regular files</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>   <span class="title">st_atime</span>;</span>   <span class="comment">// time of last access</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>   <span class="title">st_mtime</span>;</span>   <span class="comment">// time of last modification</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>   <span class="title">st_ctime</span>;</span>   <span class="comment">// time of last file status change</span></span><br><span class="line">  <span class="keyword">blksize_t</span>         st_blksize; <span class="comment">// best I/O block size 对文件I/O较适合的块长度</span></span><br><span class="line">  <span class="keyword">blkcnt_t</span>          st_blocks;  <span class="comment">// number of disk blocks allocated 所分配的实际512字节块块数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 <p>相关函数：</p>
@@ -1195,7 +1246,7 @@
   </entry>
   <entry>
     <title>《APUE》ch3——文件I/O</title>
-    <url>/2020/01/23/%E3%80%8AAPUE%E3%80%8Bch3%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6I-O/</url>
+    <url>/2019/09/11/%E3%80%8AAPUE%E3%80%8Bch3%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6I-O/</url>
     <content><![CDATA[<h2 id="文件描述符"><a href="#文件描述符" class="headerlink" title="文件描述符"></a>文件描述符</h2><p>对于内核而言，所有打开的文件都通过文件描述符引用。文件描述符是一个非负整数。当打开一个现有文件或创建一个新文件时，内核向进程返回一个文件描述符。</p>
 <ul>
 <li>0 - STDIN_FILENO - 标准输入</li>
@@ -1261,7 +1312,7 @@
   </entry>
   <entry>
     <title>《APUE》ch2——UNIX标准及实现</title>
-    <url>/2020/01/18/%E3%80%8AAPUE%E3%80%8Bch2%E2%80%94%E2%80%94UNIX%E6%A0%87%E5%87%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/</url>
+    <url>/2019/08/27/%E3%80%8AAPUE%E3%80%8Bch2%E2%80%94%E2%80%94UNIX%E6%A0%87%E5%87%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/</url>
     <content><![CDATA[<h2 id="UNIX标准化"><a href="#UNIX标准化" class="headerlink" title="UNIX标准化"></a>UNIX标准化</h2><h3 id="ISO-C"><a href="#ISO-C" class="headerlink" title="ISO C"></a>ISO C</h3><p>ISO（国际标准化组织） C标准的意图是提供C程序的可移植性，使其能适合于大量不同的操作系统，而不只是适合UNIX系统。此标准不仅定了C程序设计语言的语法和语义，还定义了其标准库。</p>
 <h3 id="IEEE-POSIX"><a href="#IEEE-POSIX" class="headerlink" title="IEEE POSIX"></a>IEEE POSIX</h3><p>POSIX是由IEEE（电气和电子工程师学会）指定的标准族。POSIX指的是可移植操作系统接口。</p>
 <h3 id="Single-UNIX-Specification"><a href="#Single-UNIX-Specification" class="headerlink" title="Single UNIX Specification"></a>Single UNIX Specification</h3><p>Single UNIX Specification（SUS，单一UNIX规范）是POSIX.1标准的一个超集，它定义了一些附加接口扩展了POSIX.1规范提供的功能。POSIX.1相当于Single UNIX Specification中的基本规范部分。</p>
@@ -1292,7 +1343,7 @@
   </entry>
   <entry>
     <title>《APUE》ch1——UNIX基础知识</title>
-    <url>/2020/01/13/%E3%80%8AAPUE%E3%80%8Bch1%E2%80%94%E2%80%94UNIX%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</url>
+    <url>/2019/08/13/%E3%80%8AAPUE%E3%80%8Bch1%E2%80%94%E2%80%94UNIX%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</url>
     <content><![CDATA[<h2 id="UNIX-体系结构"><a href="#UNIX-体系结构" class="headerlink" title="UNIX 体系结构"></a>UNIX 体系结构</h2><p>严格意义上说，可将操作系统定义为一种软件，它控制计算机硬件资源，提供程序运行环境。我们称这种软件为内核，内核的接口被称为 <strong>系统调用（system call）</strong>。<br>广义上说，操作系统包括了内核和一些其他软件，这些软件使得计算机能够发挥作用，使其具有自己的特性。这里说的软件包括系统实用程序、应用程序、shell以及公用函数库等。<br>例如，Linux是GNU操作系统使用的内核。<br><img src="1-1.png" alt=""></p>
 <a id="more"></a>
 
@@ -1324,68 +1375,33 @@
       </tags>
   </entry>
   <entry>
-    <title>关于优惠券资金问题的反思</title>
-    <url>/2019/12/06/%E5%85%B3%E4%BA%8E%E4%BC%98%E6%83%A0%E5%88%B8%E8%B5%84%E9%87%91%E9%97%AE%E9%A2%98%E7%9A%84%E5%8F%8D%E6%80%9D/</url>
-    <content><![CDATA[<ul>
-<li><p>offline脚本漏掉了回滚资金逻辑：<br>这块因为是离线脚本，只是在测试环境手动调用测的能不能跑通，线上因为不方便测就直接对接了。<br>以后这块有改动还是要多review，不能疏忽。</p>
-</li>
-<li><p>cms追加优惠券时忽略了事务一致性问题<br>事务一致性的问题本来一开始整理的时候列到了，把各项目到查了一遍，还是漏掉了一个，惭愧。。<br>后面需要推进事务协调器，撤掉解决这种问题出现的可能。</p>
-</li>
-<li><p>问题及时向上反馈<br>问题一开始出现时，只有我、春光和潘静在查这个问题，因为当时不知道问题2和少了30万预算这两件事的存在，<br>所以我和春光查了两天这个数怎么也对不上，如果早点向上反馈的话知道少了30万预算说不定这个问题早就解决了。。</p>
-</li>
-<li><p>找不到问题原因时的思考思路<br>昨天一天用各种方案算的数都对不上，这时候我们应该把已知并确定正确的信息列出来，和现有的数据做对比，<br>如果发现对不上，大胆的列出所有的可能性，并一一排查验证，排除掉不可能的，剩下的就是正确答案。</p>
-<blockquote>
-<p>比如 现有冻结金额远小于应有冻结金额，那么猜测可能的原因：<br>过期回滚时冻结资金扣多了 （验证后被排除<br>删除回滚时冻结资金扣多了（验证后被排除<br>创建时没有加冻结资金（验证后被排除<br>追加时没有加冻结资金————找到正确答案</p>
-</blockquote>
-</li>
-</ul>
+    <title>最近的问题反思</title>
+    <url>/2019/05/18/%E6%9C%80%E8%BF%91%E7%9A%84%E9%97%AE%E9%A2%98%E5%8F%8D%E6%80%9D/</url>
+    <content><![CDATA[<p>关于最近的问题：</p>
+<p>1、要解决问题，首先得学会分析一个问题具体出在哪个环节，越细越好</p>
+<p>2、每个人都有犯错的机会，但是犯同类的错误会降低别人对你的信任，一定要会反思</p>
+<p>3、你对每一个问题的责任心和态度都会有人记在心上，尽量给每个关注问题的人及时的反馈</p>
 ]]></content>
       <categories>
         <category>经验反思</category>
       </categories>
       <tags>
-        <tag>架构</tag>
+        <tag>work</tag>
       </tags>
   </entry>
   <entry>
-    <title>CS知识点总结</title>
-    <url>/2019/03/17/CS%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<h2 id="计算机操作系统"><a href="#计算机操作系统" class="headerlink" title="计算机操作系统"></a>计算机操作系统</h2><h3 id="进程与线程区别"><a href="#进程与线程区别" class="headerlink" title="进程与线程区别"></a>进程与线程区别</h3><ol>
-<li>进程是资源分配的基本单位，但是线程不拥有资源，线程可以访问隶属进程的资源。</li>
-<li>线程是独立调度的基本单位，在同一进程中，线程的切换不会引起进程切换，从一个进程中的线程切换到另一个进程中的线程时，会引起进程切换。</li>
-<li>由于创建或撤销进程时，系统都要为之分配或回收资源，如内存空间、I/O 设备等，所付出的开销远大于创建或撤销线程时的开销。类似地，在进行进程切换时，涉及当前执行进程 CPU 环境的保存及新调度进程 CPU 环境的设置，而线程切换时只需保存和设置少量寄存器内容，开销很小。</li>
-<li>线程间可以通过直接读写同一进程中的数据进行通信，但是进程通信需要借助 IPC。</li>
-</ol>
-<h3 id="进程间通信"><a href="#进程间通信" class="headerlink" title="进程间通信"></a>进程间通信</h3><ol>
-<li>管道（半双工，只能父子间使用）</li>
-<li>FIFO（命名管道，去除了父子间限制）</li>
-<li>消息队列（消息队列可以独立于读写进程存在，从而避免了 FIFO 中同步管道的打开和关闭时可能产生的困难）</li>
-<li>信号量（一个计数器，用于为多个进程提供对共享数据对象的访问。）</li>
-<li>共享存储（允许多个进程共享一个给定的存储区。因为数据不需要在进程之间复制，所以这是最快的一种 IPC）</li>
-<li>套接字（与其它通信机制不同的是，它可用于不同机器间的进程通信）</li>
-</ol>
-<a id="more"></a>
-
-<h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h3><p><strong>必要条件</strong></p>
-<ul>
-<li>互斥：每个资源要么已经分配给了一个进程，要么就是可用的。</li>
-<li>占有和等待：已经得到了某个资源的进程可以再请求新的资源。</li>
-<li>不可抢占：已经分配给一个进程的资源不能强制性地被抢占，它只能被占有它的进程显式地释放。</li>
-<li>环路等待：有两个或者两个以上的进程组成一条环路，该环路中的每个进程都在等待下一个进程所占有的资源。</li>
-</ul>
-<p><strong>处理方法</strong></p>
-<ul>
-<li>鸵鸟策略</li>
-<li>死锁检测与死锁恢复</li>
-<li>死锁预防</li>
-<li>死锁避免</li>
+    <title>strlen与sizeof区别</title>
+    <url>/2019/03/02/strlen%E4%B8%8Esizeof%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<ul>
+<li>strlen计算不包含终止null字节的字符串长度，而sizeof则计算包括终止null字节的缓冲区长度</li>
+<li>strlen需要进行一次函数调用，而对于sizeof，缓冲区长度在编译时计算，是固定的</li>
 </ul>
 ]]></content>
       <categories>
         <category>知识点总结</category>
       </categories>
       <tags>
-        <tag>CS</tag>
+        <tag>C</tag>
       </tags>
   </entry>
   <entry>
@@ -1785,26 +1801,6 @@
       </tags>
   </entry>
   <entry>
-    <title>反思总结：优惠券服务拆分</title>
-    <url>/2018/11/06/%E4%BC%98%E6%83%A0%E5%88%B8%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86-%E5%8F%8D%E6%80%9D%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<h2 id="过程中出现的问题："><a href="#过程中出现的问题：" class="headerlink" title="过程中出现的问题："></a>过程中出现的问题：</h2><p><strong>思考问题</strong></p>
-<p>​    安全意识还是不够，不能因为这块是朝沛拆的就不怎么看，导致要上线了才发现回滚逻辑有这么多问题，临上线又重构代码，给测试也带来很多麻烦；想的不够细，有些逻辑靠衍雷提出来才想到，这一点感觉还是得靠多实践去改变。</p>
-<p><strong>买家端无法提供服务</strong></p>
-<p>​    虽然不是我的主要问题，但出问题时看到nginx的error_log：recv() failed (104: Connection reset by peer) while reading response header from upstream，应该能及时联想到是fpm的问题，然后随手ps下看看进程就能及时发现子进程只有5个；使用新机器时先看下机器配置。</p>
-<p><strong>一些要注意的点：</strong></p>
-<p>​    做服务这块一定要多了解业务，多思考可能存在的问题，心思要缜密，考虑全面，想的越多，出问题的概率才越小。尤其是涉及到事务相关的部分要考虑到成功失败的各种情况。</p>
-<p>​    涉及多项目的服务与接口代码上线，要保证各种case都测过没问题了，先把服务上了，再逐个上客户端。尽量避免后期改动服务的情况，一旦服务有改动，就得各项目都测一遍，带来不必不要的成本与风险。</p>
-<p>​    上线后及时的观察有没有各种异常，做好监控。</p>
-<p>​</p>
-]]></content>
-      <categories>
-        <category>经验反思</category>
-      </categories>
-      <tags>
-        <tag>architecture</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Go语言学习笔记</title>
     <url>/2018/11/01/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</url>
     <content><![CDATA[<h2 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h2><p>Go语言的自动圾收集器是如何知道一个变量是何时可以被回收的呢?这里我们可以避开 完整的技术细节，基本的实现思路是，从每个包级的变量和每个当前运行函数的每一个局部 变量开始，通过指针或引用的访问路径遍历，是否可以找到该变量。如果不存在这样的访问 路径，那么说明该变量是不可达的，也就是说它是否存在并不会影响程序后续的计算结果。<br>因为一个变量的有效周期只取决于是否可达，因此一个循环迭代内部的局部变量的生命周期 可能超出其局部作用域。同时，局部变量可能在函数返回之后依然存在。<br>编译器会自动选择在栈上还是在堆上分配局部变量的存储空间，但可能令人惊讶的是，这个 选择并不是由用var还是new声明变量的方式决定的。</p>
@@ -1860,21 +1856,6 @@
       </tags>
   </entry>
   <entry>
-    <title>最近的问题反思</title>
-    <url>/2018/10/18/%E6%9C%80%E8%BF%91%E7%9A%84%E9%97%AE%E9%A2%98%E5%8F%8D%E6%80%9D/</url>
-    <content><![CDATA[<p>关于最近的问题：</p>
-<p>1、要解决问题，首先得学会分析一个问题具体出在哪个环节，越细越好</p>
-<p>2、每个人都有犯错的机会，但是犯同类的错误会降低别人对你的信任，一定要会反思</p>
-<p>3、你对每一个问题的责任心和态度都会有人记在心上，尽量给每个关注问题的人及时的反馈</p>
-]]></content>
-      <categories>
-        <category>经验反思</category>
-      </categories>
-      <tags>
-        <tag>work</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>arts-11</title>
     <url>/2018/10/16/arts-11/</url>
     <content><![CDATA[<h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>You are given two <strong>non-empty</strong> linked lists representing two non-negative integers. The digits are stored in <strong>reverse order</strong> and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.</p>
@@ -1892,28 +1873,6 @@
       </categories>
       <tags>
         <tag>ARTS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>工作心得总结</title>
-    <url>/2018/10/13/%E5%B7%A5%E4%BD%9C%E5%BF%83%E5%BE%97%E6%80%BB%E7%BB%93/</url>
-    <content><![CDATA[<h3 id="时间评估"><a href="#时间评估" class="headerlink" title="时间评估"></a>时间评估</h3><p>​    当leader给你一个任务问你多久能完成时，不要简单的看一看就给一个估摸的大概的时间，要培养对工作量评估的能力，这很重要。评估时要做到尽量准确，具体注意以下几点：</p>
-<ol>
-<li>不要想着三个小时的工作,我加加班赶一赶两个小时搞定——在仓促状态下赶工，质量必然会收到影响，你做的每一件事的质量代表着你的个人水平，它直接影响着你在别人心中的看法，而且一旦再出什么额外状况，这个任务就会delay。</li>
-<li>两个小时的工作量，不要想着我给自己估宽松点，估三个小时——该是多少就是多少，这直接影响别人对你的信任，如果同一份工作你给估了一个月，老板去问另一个开发，他只估了半个月，那老板以后可能就不会再找你分配工作。一天八小时工作制，由于各种各样的原因实际可支配的时间其实并没有这么多，那你可以提前说明比如我每天要给别人解决各种各样的问题或者晚上想留出两小时的时间学习，所以每天实际的开发时间只有5h，那一份40h工作量的任务对我来说就需要8day，但一定不要把这些额外事情的时间算到这个任务里。</li>
-<li>评估任务尽量拆解的细一些，想的全面一些。一个需求中复杂的坑和细节尽量一开始就考虑到搞清楚，并留出相应的时间，以避免做到一半发现有坑再delay，承诺过的事情要有契约精神。我知道这很难，但尽量做，其实每个任务实际完成的时间比预期差个一天半天都是正常的，关键是要总结经验，想想这次评估中有哪些不足，让下次的评估可以更准确。如果每次评估都是糊弄了事，你会逐渐丧失时间评估的能力。</li>
-</ol>
-<a id="more"></a>
-
-<h3 id="时间管理"><a href="#时间管理" class="headerlink" title="时间管理"></a>时间管理</h3><p>​       时间是你最宝贵的财富，所以一定要利用好。要学会主动管理，对于学习上，每天一定要抽出整块的不被打扰的时间用来学习，提升个人技术能力和自身价值，是走技术这条路最最重要的一步，活到老学到老。对于工作上，学会使用任务管理工具（如tower），一些小的零碎的事情，短时间能解决的优先解决，别给自己攒太多压力，然后集中精力去做那些大块的工作。如果一个任务的工作是一周或两周，那就提前拆解好每天要做到什么程度，每晚review一下工作情况，对总体的进度有个把控，如果感觉搞不完要delay就加加班或者提前向上反馈，因为什么什么原因，这个任务要delay多久，并给出解决方案，要么加班，要么整体延期。一定不要等到deadline了才发现做不完，影响整个团队的进度。</p>
-<h3 id="同事之间的交往"><a href="#同事之间的交往" class="headerlink" title="同事之间的交往"></a>同事之间的交往</h3><p>​    大家一起共事都是缘分，一个团队中每个人的技术肯定是有高有低参差不齐的，性格也是多种多样。相处时要做到谦虚和尊敬他人，学会倾听和站在他人的角度思考问题，每个人身上肯定都有比自己强值得学习的地方，要学会发现这些闪光点。当别人来找自己问问题的时候，要注意自己的态度，对事不对人，如果一个人对同一个问题或类似的问题找你问很多遍，你可以说这个问题我给你讲过很多次了，你先自己想一下有没有思路，该怎么解决，想好方案再来找我；但如果他带来的是个新问题还是要耐心解答的，不能因为他老问问题就不理他。</p>
-<h3 id="责任与心态"><a href="#责任与心态" class="headerlink" title="责任与心态"></a>责任与心态</h3><p>​    出现问题时leader询问情况，要先快速定位问题，并给出解决方案，分析利弊；如出的问题跟自己没关系，也可以待命看看有什么能帮的上忙的，帮忙思考下解决方案；问题解决后，思考问题是怎么造成的，以后怎么避免，总结经验；如果是自身的原因主动承担错误，如果是别人的原因，自己也要引以为戒。一定不要出了问题先说这代码是谁谁谁写的，把自己撇的一干二净，这给人感觉很不好，直接决定了你做事的高度。出问题是在所难免的，这并不可怕，很多时候leader也只是问问想搞清楚情况，并没有要责怪谁的意思，关键是不要让范过的错误重复的发生在自己身上。</p>
-]]></content>
-      <categories>
-        <category>经验反思</category>
-      </categories>
-      <tags>
-        <tag>work</tag>
       </tags>
   </entry>
   <entry>
@@ -2976,6 +2935,47 @@ find(强大，但比较吃硬盘，影响速度)<figure class="highlight plain">
       </categories>
       <tags>
         <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CS知识点总结</title>
+    <url>/2018/03/17/CS%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<h2 id="计算机操作系统"><a href="#计算机操作系统" class="headerlink" title="计算机操作系统"></a>计算机操作系统</h2><h3 id="进程与线程区别"><a href="#进程与线程区别" class="headerlink" title="进程与线程区别"></a>进程与线程区别</h3><ol>
+<li>进程是资源分配的基本单位，但是线程不拥有资源，线程可以访问隶属进程的资源。</li>
+<li>线程是独立调度的基本单位，在同一进程中，线程的切换不会引起进程切换，从一个进程中的线程切换到另一个进程中的线程时，会引起进程切换。</li>
+<li>由于创建或撤销进程时，系统都要为之分配或回收资源，如内存空间、I/O 设备等，所付出的开销远大于创建或撤销线程时的开销。类似地，在进行进程切换时，涉及当前执行进程 CPU 环境的保存及新调度进程 CPU 环境的设置，而线程切换时只需保存和设置少量寄存器内容，开销很小。</li>
+<li>线程间可以通过直接读写同一进程中的数据进行通信，但是进程通信需要借助 IPC。</li>
+</ol>
+<h3 id="进程间通信"><a href="#进程间通信" class="headerlink" title="进程间通信"></a>进程间通信</h3><ol>
+<li>管道（半双工，只能父子间使用）</li>
+<li>FIFO（命名管道，去除了父子间限制）</li>
+<li>消息队列（消息队列可以独立于读写进程存在，从而避免了 FIFO 中同步管道的打开和关闭时可能产生的困难）</li>
+<li>信号量（一个计数器，用于为多个进程提供对共享数据对象的访问。）</li>
+<li>共享存储（允许多个进程共享一个给定的存储区。因为数据不需要在进程之间复制，所以这是最快的一种 IPC）</li>
+<li>套接字（与其它通信机制不同的是，它可用于不同机器间的进程通信）</li>
+</ol>
+<a id="more"></a>
+
+<h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h3><p><strong>必要条件</strong></p>
+<ul>
+<li>互斥：每个资源要么已经分配给了一个进程，要么就是可用的。</li>
+<li>占有和等待：已经得到了某个资源的进程可以再请求新的资源。</li>
+<li>不可抢占：已经分配给一个进程的资源不能强制性地被抢占，它只能被占有它的进程显式地释放。</li>
+<li>环路等待：有两个或者两个以上的进程组成一条环路，该环路中的每个进程都在等待下一个进程所占有的资源。</li>
+</ul>
+<p><strong>处理方法</strong></p>
+<ul>
+<li>鸵鸟策略</li>
+<li>死锁检测与死锁恢复</li>
+<li>死锁预防</li>
+<li>死锁避免</li>
+</ul>
+]]></content>
+      <categories>
+        <category>知识点总结</category>
+      </categories>
+      <tags>
+        <tag>CS</tag>
       </tags>
   </entry>
   <entry>
