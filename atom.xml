@@ -544,6 +544,35 @@
   </entry>
   
   <entry>
+    <title>关于优惠券资金问题的反思</title>
+    <link href="https://akaqin.github.io/2019/12/06/%E5%85%B3%E4%BA%8E%E4%BC%98%E6%83%A0%E5%88%B8%E8%B5%84%E9%87%91%E9%97%AE%E9%A2%98%E7%9A%84%E5%8F%8D%E6%80%9D/"/>
+    <id>https://akaqin.github.io/2019/12/06/%E5%85%B3%E4%BA%8E%E4%BC%98%E6%83%A0%E5%88%B8%E8%B5%84%E9%87%91%E9%97%AE%E9%A2%98%E7%9A%84%E5%8F%8D%E6%80%9D/</id>
+    <published>2019-12-06T08:01:03.000Z</published>
+    <updated>2020-05-06T13:14:49.352Z</updated>
+    
+    <content type="html"><![CDATA[<ul><li><p>offline脚本漏掉了回滚资金逻辑：<br>这块因为是离线脚本，只是在测试环境手动调用测的能不能跑通，线上因为不方便测就直接对接了。<br>以后这块有改动还是要多review，不能疏忽。</p></li><li><p>cms追加优惠券时忽略了事务一致性问题<br>事务一致性的问题本来一开始整理的时候列到了，把各项目到查了一遍，还是漏掉了一个，惭愧。。<br>后面需要推进事务协调器，撤掉解决这种问题出现的可能。</p></li><li><p>问题及时向上反馈<br>问题一开始出现时，只有我、春光和潘静在查这个问题，因为当时不知道问题2和少了30万预算这两件事的存在，<br>所以我和春光查了两天这个数怎么也对不上，如果早点向上反馈的话知道少了30万预算说不定这个问题早就解决了。。</p></li><li><p>找不到问题原因时的思考思路<br>昨天一天用各种方案算的数都对不上，这时候我们应该把已知并确定正确的信息列出来，和现有的数据做对比，<br>如果发现对不上，大胆的列出所有的可能性，并一一排查验证，排除掉不可能的，剩下的就是正确答案。</p><blockquote><p>比如 现有冻结金额远小于应有冻结金额，那么猜测可能的原因：<br>过期回滚时冻结资金扣多了 （验证后被排除<br>删除回滚时冻结资金扣多了（验证后被排除<br>创建时没有加冻结资金（验证后被排除<br>追加时没有加冻结资金————找到正确答案</p></blockquote></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;ul&gt;
+&lt;li&gt;&lt;p&gt;offline脚本漏掉了回滚资金逻辑：&lt;br&gt;这块因为是离线脚本，只是在测试环境手动调用测的能不能跑通，线上因为不方便测就直接对接了。&lt;br&gt;以后这块有改动还是要多review，不能疏忽。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;cms追加优惠券时忽略了事务一致
+      
+    
+    </summary>
+    
+    
+      <category term="经验反思" scheme="https://akaqin.github.io/categories/%E7%BB%8F%E9%AA%8C%E5%8F%8D%E6%80%9D/"/>
+    
+    
+      <category term="架构" scheme="https://akaqin.github.io/tags/%E6%9E%B6%E6%9E%84/"/>
+    
+  </entry>
+  
+  <entry>
     <title>CS知识点总结</title>
     <link href="https://akaqin.github.io/2019/03/17/CS%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/"/>
     <id>https://akaqin.github.io/2019/03/17/CS%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/</id>
@@ -676,35 +705,6 @@
     
     
       <category term="MySQL" scheme="https://akaqin.github.io/tags/MySQL/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>关于优惠券资金问题的反思</title>
-    <link href="https://akaqin.github.io/2018/12/06/%E5%85%B3%E4%BA%8E%E4%BC%98%E6%83%A0%E5%88%B8%E8%B5%84%E9%87%91%E9%97%AE%E9%A2%98%E7%9A%84%E5%8F%8D%E6%80%9D/"/>
-    <id>https://akaqin.github.io/2018/12/06/%E5%85%B3%E4%BA%8E%E4%BC%98%E6%83%A0%E5%88%B8%E8%B5%84%E9%87%91%E9%97%AE%E9%A2%98%E7%9A%84%E5%8F%8D%E6%80%9D/</id>
-    <published>2018-12-06T08:01:03.000Z</published>
-    <updated>2020-03-08T07:42:56.753Z</updated>
-    
-    <content type="html"><![CDATA[<ul><li><p>offline脚本漏掉了回滚资金逻辑：<br>这块因为是离线脚本，只是在测试环境手动调用测的能不能跑通，线上因为不方便测就直接对接了。<br>以后这块有改动还是要多review，不能疏忽。</p></li><li><p>cms追加优惠券时忽略了事务一致性问题<br>事务一致性的问题本来一开始整理的时候列到了，把各项目到查了一遍，还是漏掉了一个，惭愧。。<br>后面需要推进事务协调器，撤掉解决这种问题出现的可能。</p></li><li><p>问题及时向上反馈<br>问题一开始出现时，只有我、春光和潘静在查这个问题，因为当时不知道问题2和少了30万预算这两件事的存在，<br>所以我和春光查了两天这个数怎么也对不上，如果早点向上反馈的话知道少了30万预算说不定这个问题早就解决了。。</p></li><li><p>找不到问题原因时的思考思路<br>昨天一天用各种方案算的数都对不上，这时候我们应该把已知并确定正确的信息列出来，和现有的数据做对比，<br>如果发现对不上，大胆的列出所有的可能性，并一一排查验证，排除掉不可能的，剩下的就是正确答案。</p><blockquote><p>比如 现有冻结金额远小于应有冻结金额，那么猜测可能的原因：<br>过期回滚时冻结资金扣多了 （验证后被排除<br>删除回滚时冻结资金扣多了（验证后被排除<br>创建时没有加冻结资金（验证后被排除<br>追加时没有加冻结资金————找到正确答案</p></blockquote></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;offline脚本漏掉了回滚资金逻辑：&lt;br&gt;这块因为是离线脚本，只是在测试环境手动调用测的能不能跑通，线上因为不方便测就直接对接了。&lt;br&gt;以后这块有改动还是要多review，不能疏忽。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;cms追加优惠券时忽略了事务一致
-      
-    
-    </summary>
-    
-    
-      <category term="经验反思" scheme="https://akaqin.github.io/categories/%E7%BB%8F%E9%AA%8C%E5%8F%8D%E6%80%9D/"/>
-    
-    
-      <category term="架构" scheme="https://akaqin.github.io/tags/%E6%9E%B6%E6%9E%84/"/>
     
   </entry>
   
