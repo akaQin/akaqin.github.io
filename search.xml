@@ -1,45 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>register、volatile、restrict和extern</title>
-    <url>/2020/04/15/register%E3%80%81volatile%E3%80%81restrict%E5%92%8Cextern/</url>
-    <content><![CDATA[<h2 id="register"><a href="#register" class="headerlink" title="register"></a>register</h2><h3 id="含义："><a href="#含义：" class="headerlink" title="含义："></a>含义：</h3><p>这个关键字暗示编译器相应的变量将被频繁地使用，如果可能的话尽可能的将变量存在CPU内部寄存器中，而不是通过内存寻址访问，以提高效率。注意是尽可能，不是绝对。</p>
-<h3 id="补充："><a href="#补充：" class="headerlink" title="补充："></a>补充：</h3><p>首先，register变量必须是能被CPU所接受的类型。这通常意味着register变量必须是一个单个的值，并且长度应该小于或者等于整型的长度。不过，有些机器的寄存器也能存放浮点数。</p>
+    <title>vnode与inode区别</title>
+    <url>/2020/03/08/vnode%E4%B8%8Einode%E5%8C%BA%E5%88%AB/</url>
+    <content><![CDATA[<h1 id="vnode与inode的区别"><a href="#vnode与inode的区别" class="headerlink" title="vnode与inode的区别"></a>vnode与inode的区别</h1><blockquote>
+<p>文章整理自  <a href="https://www.freebsd.org/cgi/man.cgi?query=vnode" target="_blank" rel="noopener">FreeBSD docs</a> 和  <a href="https://stackoverflow.com/questions/27345342/inode-vs-vnode-difference" target="_blank" rel="noopener">StackOverflow</a></p>
+</blockquote>
+<h2 id="vnode"><a href="#vnode" class="headerlink" title="vnode"></a>vnode</h2><h3 id="名称"><a href="#名称" class="headerlink" title="名称"></a>名称</h3><p>vnode —— 文件或目录的内部表示</p>
+<h3 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/param.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/vnode.h&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><ul>
+<li>vnode是UNIX中所有文件活动的焦点。</li>
+<li>vnode节点由<code>struct vnode</code>声明。</li>
+<li>每个活动文件、当前目录、挂载文件、文本文件和根目录都分配了一个vnode节点。</li>
+<li>vnode最初是为FreeBSD创建的，因为需要使用的不同类型的文件系统（例如UFS、NFS等）激增。</li>
+<li>Vnode旨在为所有可能的文件系统提供抽象，以便OS可以与它们进行对接，从而让内核方法不必兼容每个特定的文件系统；内核只需要知道如何与Vnode进行交互。</li>
+<li>Vnode抽象在内存中，可以与UFS、ext4等文件系统进行交互；而inode存储在磁盘上，只能用于特定的文件系统。</li>
+<li>inode节点包含文件大小、拥有者、指向地址块的指针等元数据。</li>
+<li>vnode仅包含在文件生命周期中不会改变的一些属性，因此如果想获得更多信息请使用inode作为参考。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>知识点总结</category>
+      </categories>
+      <tags>
+        <tag>File System</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《APUE》ch15——进程间通信</title>
+    <url>/2020/02/25/%E3%80%8AAPUE%E3%80%8Bch15%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/</url>
+    <content><![CDATA[<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>本章将说明进程之间互相通信的技术——<code>进程间通信（InterProcess Communication，IPC）</code>。<br><img src="15-1.png" alt=""></p>
 <a id="more"></a>
 
-<p>其次，因为register变量可能不存放在内存中，所以不能用“&amp;”来获取register变量的地址。</p>
-<p>由于寄存器的数量有限，而且某些寄存器只能接受特定类型的数据（如指针和浮点数），因此真正起作用的register修饰符的数目和类型都依赖于运行程序的机器，而任何多余的register修饰符都将被编译程序所忽略。</p>
-<p>在某些情况下，把变量保存在寄存器中反而会降低程序的运行速度。因为被占用的寄存器不能再用于其它目的；或者变量被使用的次数不够多，不足以装入和存储变量所带来的额外开销。</p>
-<p>早期的C编译程序不会把变量保存在寄存器中，除非你命令它这样做，这时register修饰符是C语言的一种很有价值的补充。然而，随着编译程序设计技术的进步，在决定那些变量应该被存到寄存器中时，现在的C编译环境能比程序员做出更好的决定。实际上，许多编译程序都会忽略register修饰符，因为尽管它完全合法，但它仅仅是暗示而不是命令。</p>
-<h2 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h2><h3 id="含义"><a href="#含义" class="headerlink" title="含义"></a>含义</h3><p>volatile提醒编译器，它后面所定义的变量的值随时都有可能改变，因此编译后的程序每次需要存储或读取这个变量的时候，都会直接从变量地址中读取数据。</p>
-<p>如果没有volatile关键字，则编译器可能优化读取和存储，可能暂时使用寄存器中的值，如果这个变量由别的程序更新了的话，将出现不一致的现象</p>
-<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><ul>
-<li><p>中断服务程序中修改的供其它程序检测的变量需要加volatile；</p>
-</li>
-<li><p>多任务环境下各任务间共享的标志应该加volatile；</p>
-</li>
-<li><p>存储器映射的硬件寄存器通常也要加volatile说明，因为每次对它的读写都可能有不同意义；</p>
-</li>
-</ul>
-<h3 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h3><p>volatile总是与优化有关，编译器有一种技术叫做数据流分析，分析程序中的变量在哪里赋值、在哪里使用、在哪里失效，分析结果可以用于常量合并，常量传播等优化，进一步可以死代码消除。但有时这些优化不是程序所需要的，这时可以用volatile关键字禁止做这些优化，volatile的字面含义是易变的，它有下面的作用</p>
+<h2 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h2><p>管道是UNIX系统最古老最常用的IPC形式，所有UNIX系统都提供此种通信机制。管道有以下两种局限性：</p>
 <ul>
-<li><p>不会在两个操作之间把volatile变量缓存在寄存器中。在多任务、中断、甚至setjmp环境下，变量可能被其他的程序改变，编译器自己无法知道，volatile就是告诉编译器这种情况。</p>
-</li>
-<li><p>不做常量合并、常量传播等优化</p>
-</li>
-<li><p>对volatile变量的读写不会被优化掉。如果你对一个变量赋值但后面没用到，编译器常常可以省略那个赋值操作</p>
-</li>
+<li>历史上，他们是半双工的。现在，某些系统提供了全双工管道，但我们不能预先假设系统支持全双工管道。</li>
+<li>管道只能在具有公共祖先的两个进程间使用。</li>
 </ul>
-<h2 id="restrict"><a href="#restrict" class="headerlink" title="restrict"></a>restrict</h2><p>restrict是c99标准引入的，它只可以用于限定和约束指针，并表明指针是访问一个数据对象的唯一且初始的方式.即它告诉编译器，所有修改该指针所指向内存中内容的操作都必须通过该指针来修改,而不能通过其它途径(其它变量或指针)来修改;这样做的好处是,能帮助编译器进行更好的优化代码,生成更有效率的汇编代码.</p>
-<p>考虑下面的例子：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">foo</span><span class="params">(<span class="keyword">int</span> *a, <span class="keyword">int</span> *b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  *a = <span class="number">1</span>;</span><br><span class="line">  *b = <span class="number">2</span>;</span><br><span class="line">  <span class="keyword">return</span> *a + *b; <span class="comment">//并不一定等于3！</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>a 和 b可能指向同一个数据，所以编译器在计算<em>a + *b时需要重新读取</em>a的值</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">foo</span><span class="params">(<span class="keyword">int</span> *<span class="keyword">restrict</span> a, <span class="keyword">int</span> *<span class="keyword">restrict</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  *a = <span class="number">1</span>;</span><br><span class="line">  *b = <span class="number">2</span>;</span><br><span class="line">  <span class="keyword">return</span> *a + *b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>编译器可以根据修饰符做出优化</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">rfoo:</span><br><span class="line">    movl    $3, %eax # 在编译期已计算出3</span><br><span class="line">    movl    $1, %rdi # 存储1至*a</span><br><span class="line">    movl    $2, %rsi # 存储2至*b</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pipe</span><span class="params">(<span class="keyword">int</span> fd[<span class="number">2</span>])</span></span>; <span class="comment">//创建管道</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//popen实现一系列操作：创建一个管道，fork一个子进程，关闭未使用的管道端，执行一个shell运行命令，然后等待命令终止</span></span><br><span class="line"><span class="function">FILE *<span class="title">popen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *cmdstring, <span class="keyword">const</span> <span class="keyword">char</span> *type)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pclose</span><span class="params">(FILE *fp)</span></span>; <span class="comment">//关闭由popen创建的管道文件，返回cmdstring的终止状态</span></span><br></pre></td></tr></table></figure>
+<p><img src="15-2.png" alt=""><br><img src="15-3.png" alt=""><br><img src="15-4.png" alt=""></p>
+<h3 id="实例：利用管道实现进程间同步"><a href="#实例：利用管道实现进程间同步" class="headerlink" title="实例：利用管道实现进程间同步"></a>实例：利用管道实现进程间同步</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> pfd1[<span class="number">2</span>], pfd2[<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TELL_WAIT</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (pipe(pfd1) &lt; <span class="number">0</span> || pipe(pfd2) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TELL_CHILD</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">write</span>(pfd1[<span class="number">1</span>], <span class="string">"p"</span>, <span class="number">1</span>) != <span class="number">1</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TELL_PARENT</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">write</span>(pfd2[<span class="number">1</span>], <span class="string">"c"</span>, <span class="number">1</span>) != <span class="number">1</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">WAIT_PATENT</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> c;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">read</span>(pfd2[<span class="number">0</span>], &amp;c, <span class="number">1</span>) != <span class="number">1</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (c != <span class="string">'p'</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">WAIT_PARENT</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> c;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">read</span>(pfd1[<span class="number">0</span>], &amp;c, <span class="number">1</span>) != <span class="number">1</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (c != <span class="string">'c'</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="extern"><a href="#extern" class="headerlink" title="extern"></a>extern</h2><h3 id="含义-1"><a href="#含义-1" class="headerlink" title="含义"></a>含义</h3><p>extern可以置于变量或者函数前，以标示变量或者函数的定义在别的文件中，提示编译器遇到此变量和函数时在其他模块中寻找其定义。</p>
-<p>此外extern也可用来进行链接指定</p>
+<h3 id="实例：popen和pclose的实现"><a href="#实例：popen和pclose的实现" class="headerlink" title="实例：popen和pclose的实现"></a>实例：popen和pclose的实现</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">pid_t</span> *child_ptr = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> max_fd;</span><br><span class="line"></span><br><span class="line"><span class="function">FILE *<span class="title">popen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *cmd, <span class="keyword">const</span> <span class="keyword">char</span> *type)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> pfd[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    FILE * fp;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//检验参数</span></span><br><span class="line">    <span class="keyword">if</span> (cmd == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        errno = EINVAL;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (type[<span class="number">0</span>] != <span class="string">'r'</span> &amp;&amp; type[<span class="number">0</span>] != <span class="string">'w'</span> || type[<span class="number">1</span>] != <span class="number">0</span>) &#123;</span><br><span class="line">        errno = EINVAL;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建描述符与进程id的对应关系，在关闭时使用</span></span><br><span class="line">    <span class="keyword">if</span> (child_ptr == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        max_fd = open_max();</span><br><span class="line">        <span class="keyword">if</span> ((child_ptr = <span class="built_in">calloc</span>(max_fd, <span class="keyword">sizeof</span>(<span class="keyword">pid_t</span>))) == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            err_sys(<span class="string">"error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建管道</span></span><br><span class="line">    <span class="keyword">if</span> (pipe(pfd) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//检测描述符</span></span><br><span class="line">    <span class="keyword">if</span> (pfd[<span class="number">0</span>] &gt;= max_fd || pfd[<span class="number">1</span>] &gt;= max_fd) &#123;</span><br><span class="line">        <span class="built_in">close</span>(pfd[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">close</span>(pfd[<span class="number">1</span>]);</span><br><span class="line">        errno = EMFILE;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((pid = fork()) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123; <span class="comment">//子进程关闭多于描述符</span></span><br><span class="line">        <span class="keyword">if</span> (*type == <span class="string">'r'</span>) &#123;</span><br><span class="line">            <span class="built_in">close</span>(pfd[<span class="number">0</span>]);</span><br><span class="line">            <span class="keyword">if</span> (pfd[<span class="number">1</span>] != STDOUT_FILENO) &#123;</span><br><span class="line">                dup2(pfd[<span class="number">1</span>], STDOUT_FILENO);</span><br><span class="line">                <span class="built_in">close</span>(pfd[<span class="number">1</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">close</span>(pfd[<span class="number">1</span>]);</span><br><span class="line">            <span class="keyword">if</span> (pfd[<span class="number">0</span>] != STDIN_FILENO) &#123;</span><br><span class="line">                dup2(pfd[<span class="number">0</span>], STDOUT_FILENO);</span><br><span class="line">                <span class="built_in">close</span>(pfd[<span class="number">0</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//关闭子进程中映射关系里所有的描述符，因为子进程用不到</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; max_fd; ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (child_ptr[i] &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="built_in">close</span>(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        execl(<span class="string">"/bin/sh"</span>, <span class="string">"sh"</span>, <span class="string">"-c"</span>, (<span class="keyword">char</span> *)<span class="number">0</span>);</span><br><span class="line">        _exit(<span class="number">127</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//父进程关闭多于描述符，并获取描述符对应文件指针</span></span><br><span class="line">    <span class="keyword">if</span> (*type == <span class="string">'r'</span>) &#123;</span><br><span class="line">        <span class="built_in">close</span>(pfd[<span class="number">1</span>]);</span><br><span class="line">        <span class="keyword">if</span> ((fp = fdopen(pfd[<span class="number">0</span>], type)) == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">close</span>(pfd[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">if</span> ((fp = fdopen(pfd[<span class="number">1</span>], type)) == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//将描述符与子进程id绑定，为了在关闭时通过描述符能找到子进程ID</span></span><br><span class="line">    child_ptr[fileno(fp)] = pid;</span><br><span class="line">    <span class="keyword">return</span> fp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pclose</span><span class="params">(FILE *fp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fd, status;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="keyword">if</span> (fp == <span class="literal">NULL</span> || <span class="comment">//参数错误</span></span><br><span class="line">        child_ptr == <span class="literal">NULL</span> || <span class="comment">//子进程指针未初始化</span></span><br><span class="line">        (fd = fileno(fp)) &lt; <span class="number">0</span> || <span class="comment">//文件指针获取不到对应的描述符</span></span><br><span class="line">        (pid = child_ptr[fd]) == <span class="number">0</span>) <span class="comment">// 找不到与该描述符对应的进程ID</span></span><br><span class="line">    &#123;</span><br><span class="line">        errno = EINVAL;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    child_ptr[fd] = <span class="number">0</span>; <span class="comment">//解除描述符与子进程ID的绑定关系</span></span><br><span class="line">    <span class="keyword">if</span> (fclose(fp) == EOF) &#123; <span class="comment">//关闭管道文件</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (waitpid(pid, &amp;status, <span class="number">0</span>) &lt; <span class="number">0</span>) &#123; <span class="comment">//等待失败有一种情况时被中断的系统调用，这种情况需要重新等待</span></span><br><span class="line">        <span class="keyword">if</span> (errno != EINTR) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="协同进程"><a href="#协同进程" class="headerlink" title="协同进程"></a>协同进程</h2><p>UNIX系统过滤程序从标准输入读取数据，向标准输出写数据。介个过滤程序通常在shell管道中线性连接。当一个过滤程序既产生某个过滤程序的输入，又读取该过滤程序的输出时，它就变成了<code>协同进程（coprocess）</code>。</p>
+<p>popen只提供连接到另一个进程的标准输入或标准输出的一个单向管道，而系统进程则有连接到另一个进程的两个单向管道：一个连接到其标准输入，另一个则来自其标准输出。<br><img src="15-16.png" alt=""></p>
+<h3 id="实例：将两个数相加的过滤程序"><a href="#实例：将两个数相加的过滤程序" class="headerlink" title="实例：将两个数相加的过滤程序"></a>实例：将两个数相加的过滤程序</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sig_pipe</span><span class="params">(<span class="keyword">int</span> signo)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"SIGPIPE caught\n"</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="keyword">char</span> <span class="built_in">line</span>[MAXLINE];</span><br><span class="line">    <span class="keyword">int</span> n, pfd1[<span class="number">2</span>], pfd2[<span class="number">2</span>]; <span class="comment">//pfd1是父进程-&gt;子进程的单向管道，pfd2是子进程-&gt;父进程的单向管道</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (signal(SIGPIPE, sig_pipe) == SIG_ERR) &#123;</span><br><span class="line">        err_sys(<span class="string">"signal error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pipe(pfd1) &lt; <span class="number">0</span> || pipe(pfd2) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"pipe error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((pid = fork()) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"fork error"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">//用标准输入与标准输出的描述符和父进程进行通信，关闭其他描述符</span></span><br><span class="line">        <span class="built_in">close</span>(pfd1[<span class="number">1</span>]);</span><br><span class="line">        <span class="built_in">close</span>(pfd2[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">if</span> (pfd1[<span class="number">0</span>] != STDIN_FILENO) &#123;</span><br><span class="line">            dup2(pfd1[<span class="number">0</span>], STDIN_FILENO);</span><br><span class="line">            <span class="built_in">close</span>(pfd1[<span class="number">0</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (pfd2[<span class="number">1</span>] != STDOUT_FILENO) &#123;</span><br><span class="line">            dup2(pfd2[<span class="number">1</span>], STDOUT_FILENO);</span><br><span class="line">            <span class="built_in">close</span>(pfd2[<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (execl(<span class="string">"./add2"</span>, <span class="string">"add2"</span>, (<span class="keyword">char</span> *)<span class="number">0</span>) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            err_sys(<span class="string">"execl error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">close</span>(pfd1[<span class="number">0</span>]);</span><br><span class="line">    <span class="built_in">close</span>(pfd2[<span class="number">1</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (fgets(<span class="built_in">line</span>, MAXLINE, <span class="built_in">stdin</span>) != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        n = <span class="built_in">strlen</span>(<span class="built_in">line</span>);</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">write</span>(pfd1[<span class="number">1</span>], <span class="built_in">line</span>, n) != n) &#123;</span><br><span class="line">            err_sys(<span class="string">"write error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> ((n = <span class="built_in">read</span>(pfd2[<span class="number">0</span>], <span class="built_in">line</span>, MAXLINE)) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            err_sys(<span class="string">"read error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (n == <span class="number">0</span>) &#123;</span><br><span class="line">            err_msg(<span class="string">"child closed pipe"</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">line</span>[n] = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">fputs</span>(<span class="built_in">line</span>, <span class="built_in">stdout</span>) == EOF) &#123;</span><br><span class="line">            err_sys(<span class="string">"fputs error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//fgets完要用ferror判断是否发生错误</span></span><br><span class="line">    <span class="keyword">if</span> (ferror(<span class="built_in">stdin</span>)) &#123;</span><br><span class="line">        err_sys(<span class="string">"ferror error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意，对管道的读写使用了底层IO（UNIX系统调用）：read和write，因为如果使用标准库I/O，对于非终端的I/O是全缓冲的，对管道的读写会发生阻塞，产生死锁。</p>
+<h2 id="FIFO"><a href="#FIFO" class="headerlink" title="FIFO"></a>FIFO</h2><p>FIFO被称为命名管道。未命名的管道只能在两个相关的进程之间使用，而且这两个相关的进程还要有一个共同的创建了它们的祖先进程。但是通过FIFO，不相关的进程也能交换数据。</p>
+<p>FIFO是一种文件类型，通过stat结构的st_mode成员的编码可以知道文件是否是FIFO类型。可以用S_ISFIFO宏对此进行测试。<br>创建FIFO类似于创建文件，FIFO的路径名也确实存在于文件系统中。对它的操作也都和文件一样（open、close、read、write和unlink）</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mkfifo</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">mode_t</span> mode)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mkfifoat</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">mode_t</span> mode)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>当open一个FIFO时，非阻塞标志（O_NONBLOCK）会产生下列影响：</p>
+<ul>
+<li>在一般情况下（没有指定O_NONBLOCK），只读open要阻塞到某个其他进程为写打开这个FIFO为止。类似地，只写open要阻塞到某个其他进程为读开它为止。</li>
+<li>如果指定了（O_NONBLOCK），则只读open立即返回。但是如果没有进程为读而打开一个FIFO，那么只写open将返回-1，并将errno产生一个文件结束标志。</li>
+</ul>
+<p>类似于管道，若write一个尚无进程为读而打开的FIFO，则产生信号SIGPIPE。若某个FIFO的最后一个写进程关闭了该FIFO，则将为该FIFO的读进程产生一个文件结束标志。</p>
+<p>FIFO 有以下两种用途</p>
+<ul>
+<li>shell命令使用FIFO将数据从一条管道传到另一条时，无需创建中间临时文件。</li>
+<li>客户进程-服务器进程应用程序中，FIFO用作汇聚点，在客户进程和服务器进程二者之间传递数据。</li>
+</ul>
+<h3 id="实例：用FIFO复制输出流"><a href="#实例：用FIFO复制输出流" class="headerlink" title="实例：用FIFO复制输出流"></a>实例：用FIFO复制输出流</h3><p>FIFO可用于复制一系列shell命令中的输出流。这就防止了将数据写向中间磁盘文件。但与管道不同的是，管道只能用于两个进程之间的线性连接，而FIFO是有名字的，因此它可用于非线性连接。<br><img src="15-20.png" alt=""></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkfifo fifo1</span><br><span class="line">prog3 &lt; fifo1 &amp;</span><br><span class="line">prog1 &lt; infile | tee fifo1 | prog2</span><br></pre></td></tr></table></figure>
+<p><img src="15-21.png" alt=""></p>
+<h3 id="实例：使用FIFO进行客户进程-服务器进程通信"><a href="#实例：使用FIFO进行客户进程-服务器进程通信" class="headerlink" title="实例：使用FIFO进行客户进程-服务器进程通信"></a>实例：使用FIFO进行客户进程-服务器进程通信</h3><p><img src="15-22.png" alt=""><br><img src="15-23.png" alt=""></p>
+<h2 id="XSI-IPC"><a href="#XSI-IPC" class="headerlink" title="XSI IPC"></a>XSI IPC</h2><p>有3种称作XSI IPC的IPC：消息队列，信号量以及共享存储器，这里先介绍共有、类似特征。</p>
+<h3 id="标识符和键"><a href="#标识符和键" class="headerlink" title="标识符和键"></a>标识符和键</h3><p>每个内核中的IPC结构（消息队列、信号量或共享存储段）都用一个非负整数的标识符加以引用。标识符是IPC对象的内部名。为使多个合作进程能够在同一IPC对象上汇聚，需要提供一个外部命名方案。为此，每个IPC对象都与一个键（key）相关联，将这个键作为该对象的外部名。<br>无论何时创建IPC结构（通过调用msgget、semget或shmget创建），都应指定一个键。这个键的数据类型是基本系统数据类型key_t，通常在头文件&lt;sys/types.h&gt;中被定义为长整型。这个键由内核变换成标识符。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">key_t</span> <span class="title">ftok</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">int</span> id)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>XSI IPC为每一个IPC结构关联了一个ipc_perm结构。该结构规定了权限和所有者，它至少包括下列成员：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ipc_perm</span> &#123;</span></span><br><span class="line">  <span class="keyword">uid_t</span> uid;</span><br><span class="line">  <span class="keyword">gid_t</span> gid;</span><br><span class="line">  <span class="keyword">uid_t</span> cuid;</span><br><span class="line">  <span class="keyword">gid_t</span> cgid;</span><br><span class="line">  <span class="keyword">mode_t</span> mode;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="优点和缺点"><a href="#优点和缺点" class="headerlink" title="优点和缺点"></a>优点和缺点</h3><p>缺点：</p>
+<ul>
+<li>IPC结构是在系统范围内起作用的，没有引用计数。</li>
+<li>这些IPC结构在文件系统中没有名字。</li>
+</ul>
+<h3 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h3><p>消息队列是消息的链接表，存储在内核中，由消息队列标识符标识。</p>
+<h3 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h3>]]></content>
+      <categories>
+        <category>《APUE》笔记</category>
+      </categories>
+      <tags>
+        <tag>IPC</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>为什么calloc会比malloc+memset快</title>
+    <url>/2020/02/23/%E4%B8%BA%E4%BB%80%E4%B9%88calloc%E4%BC%9A%E6%AF%94malloc-memset%E5%BF%AB/</url>
+    <content><![CDATA[<ol>
+<li><code>malloc</code>和<code>calloc</code>分配小的内存时直接从内存池分配，内存池不够时向内核申请更多内存；分配大内存时会直接调用<code>mmap</code>或<code>sbrk</code>系统调用</li>
+<li>内核分配的内存可能是前一个进程用过的，为保证不泄漏敏感数据，内核始终在将内存交给进程前先将内存置0，因此<code>mmap()</code>保证返回的新内存始终为零</li>
+<li>当程序申请内存时，内核并不会马上修改页表为进程提供RAM，而是在进程中找到一些地址空间，记下应该去的地方，并保证如果您的程序实际使用RAM，它将在其中放置RAM。当程序尝试读写那些地址，会出发缺页故障，内核将RAM分配给这些地址，继续执行程序。如果不读写，内核就不会分配RAM给进程。</li>
+<li>有的进程分配内存后只读不写，这意味着跨不同进程的内存中的许多页面可能填充有从<code>mmap()</code>返回的原始零。由于这些页面都是相同的，因此内核使所有这些虚拟地址指向一个共享的4 KiB内存页面，其中填充了零。如果您尝试写入该内存，则处理器会触发另一个页面错误（写时复制），内核会介入，从而为您提供一个零的新页面，该页面不会与任何其他程序共享。</li>
+</ol>
 ]]></content>
       <categories>
         <category>知识点总结</category>
@@ -49,89 +105,8 @@
       </tags>
   </entry>
   <entry>
-    <title>理解inode</title>
-    <url>/2020/04/14/%E7%90%86%E8%A7%A3inode/</url>
-    <content><![CDATA[<p>作者：阮一峰<br>转自：<a href="http://www.ruanyifeng.com/blog/2011/12/inode.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2011/12/inode.html</a></p>
-<p>inode是一个重要概念，是理解Unix/Linux文件系统和硬盘储存的基础。</p>
-<p>我觉得，理解inode，不仅有助于提高系统操作水平，还有助于体会Unix设计哲学，即如何把底层的复杂性抽象成一个简单概念，从而大大简化用户接口。</p>
-<p>下面就是我的inode学习笔记，尽量保持简单。</p>
-<a id="more"></a>
-<p>===================================</p>
-<h3 id="一、inode是什么？"><a href="#一、inode是什么？" class="headerlink" title="一、inode是什么？"></a>一、inode是什么？</h3><p>理解inode，要从文件储存说起。</p>
-<p>文件储存在硬盘上，硬盘的最小存储单位叫做”扇区”（Sector）。每个扇区储存512字节（相当于0.5KB）。</p>
-<p>操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个”块”（block）。这种由多个扇区组成的”块”，是文件存取的最小单位。”块”的大小，最常见的是4KB，即连续八个 sector组成一个 block。</p>
-<p>文件数据都储存在”块”中，那么很显然，我们还必须找到一个地方储存文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种储存文件元信息的区域就叫做inode，中文译名为”索引节点”。</p>
-<p>每一个文件都有对应的inode，里面包含了与该文件有关的一些信息。</p>
-<h3 id="二、inode的内容"><a href="#二、inode的内容" class="headerlink" title="二、inode的内容"></a>二、inode的内容</h3><p>inode包含文件的元信息，具体来说有以下内容：</p>
-<p>　　* 文件的字节数</p>
-<p>　　* 文件拥有者的User ID</p>
-<p>　　* 文件的Group ID</p>
-<p>　　* 文件的读、写、执行权限</p>
-<p>　　* 文件的时间戳，共有三个：ctime指inode上一次变动的时间，mtime指文件内容上一次变动的时间，atime指文件上一次打开的时间。</p>
-<p>　　* 链接数，即有多少文件名指向这个inode</p>
-<p>　　* 文件数据block的位置</p>
-<p>可以用stat命令，查看某个文件的inode信息：</p>
-<p>　　stat example.txt</p>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120402.png" alt=""></p>
-<p>总之，除了文件名以外的所有文件信息，都存在inode之中。至于为什么没有文件名，下文会有详细解释。</p>
-<h3 id="三、inode的大小"><a href="#三、inode的大小" class="headerlink" title="三、inode的大小"></a>三、inode的大小</h3><p>inode也会消耗硬盘空间，所以硬盘格式化的时候，操作系统自动将硬盘分成两个区域。一个是数据区，存放文件数据；另一个是inode区（inode table），存放inode所包含的信息。</p>
-<p>每个inode节点的大小，一般是128字节或256字节。inode节点的总数，在格式化时就给定，一般是每1KB或每2KB就设置一个inode。假定在一块1GB的硬盘中，每个inode节点的大小为128字节，每1KB就设置一个inode，那么inode table的大小就会达到128MB，占整块硬盘的12.8%。</p>
-<p>查看每个硬盘分区的inode总数和已经使用的数量，可以使用df命令。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">　　df -i</span><br></pre></td></tr></table></figure>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120403.png" alt=""></p>
-<p>查看每个inode节点的大小，可以用如下命令：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">　　sudo dumpe2fs -h &#x2F;dev&#x2F;hda | grep &quot;Inode size&quot;</span><br></pre></td></tr></table></figure>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120404.png" alt=""></p>
-<p>由于每个文件都必须有一个inode，因此有可能发生inode已经用光，但是硬盘还未存满的情况。这时，就无法在硬盘上创建新文件。</p>
-<h3 id="四、inode号码"><a href="#四、inode号码" class="headerlink" title="四、inode号码"></a>四、inode号码</h3><p>每个inode都有一个号码，操作系统用inode号码来识别不同的文件。</p>
-<p>这里值得重复一遍，Unix/Linux系统内部不使用文件名，而使用inode号码来识别文件。对于系统来说，文件名只是inode号码便于识别的别称或者绰号。</p>
-<p>表面上，用户通过文件名，打开文件。实际上，系统内部这个过程分成三步：首先，系统找到这个文件名对应的inode号码；其次，通过inode号码，获取inode信息；最后，根据inode信息，找到文件数据所在的block，读出数据。</p>
-<p>使用ls -i命令，可以看到文件名对应的inode号码：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">　　ls -i example.txt</span><br></pre></td></tr></table></figure>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120405.png" alt=""></p>
-<h3 id="五、目录文件"><a href="#五、目录文件" class="headerlink" title="五、目录文件"></a>五、目录文件</h3><p>Unix/Linux系统中，目录（directory）也是一种文件。打开目录，实际上就是打开目录文件。</p>
-<p>目录文件的结构非常简单，就是一系列目录项（dirent）的列表。每个目录项，由两部分组成：所包含文件的文件名，以及该文件名对应的inode号码。</p>
-<p>ls命令只列出目录文件中的所有文件名：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">　　ls &#x2F;etc</span><br></pre></td></tr></table></figure>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120406.png" alt=""></p>
-<p>ls -i命令列出整个目录文件，即文件名和inode号码：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">　　ls -i &#x2F;etc</span><br></pre></td></tr></table></figure>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120407.png" alt=""></p>
-<p>如果要查看文件的详细信息，就必须根据inode号码，访问inode节点，读取信息。ls -l命令列出文件的详细信息。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">　　ls -l &#x2F;etc</span><br></pre></td></tr></table></figure>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120408.png" alt=""></p>
-<p>理解了上面这些知识，就能理解目录的权限。目录文件的读权限（r）和写权限（w），都是针对目录文件本身。由于目录文件内只有文件名和inode号码，所以如果只有读权限，只能获取文件名，无法获取其他信息，因为其他信息都储存在inode节点中，而读取inode节点内的信息需要目录文件的执行权限（x）。</p>
-<h3 id="六、硬链接"><a href="#六、硬链接" class="headerlink" title="六、硬链接"></a>六、硬链接</h3><p>一般情况下，文件名和inode号码是”一一对应”关系，每个inode号码对应一个文件名。但是，Unix/Linux系统允许，多个文件名指向同一个inode号码。</p>
-<p>这意味着，可以用不同的文件名访问同样的内容；对文件内容进行修改，会影响到所有文件名；但是，删除一个文件名，不影响另一个文件名的访问。这种情况就被称为”硬链接”（hard link）。</p>
-<p>ln命令可以创建硬链接：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">　　ln 源文件 目标文件</span><br></pre></td></tr></table></figure>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120409.png" alt=""></p>
-<p>运行上面这条命令以后，源文件与目标文件的inode号码相同，都指向同一个inode。inode信息中有一项叫做”链接数”，记录指向该inode的文件名总数，这时就会增加1。</p>
-<p>反过来，删除一个文件名，就会使得inode节点中的”链接数”减1。当这个值减到0，表明没有文件名指向这个inode，系统就会回收这个inode号码，以及其所对应block区域。</p>
-<p>这里顺便说一下目录文件的”链接数”。创建目录时，默认会生成两个目录项：”.”和”..”。前者的inode号码就是当前目录的inode号码，等同于当前目录的”硬链接”；后者的inode号码就是当前目录的父目录的inode号码，等同于父目录的”硬链接”。所以，任何一个目录的”硬链接”总数，总是等于2加上它的子目录总数（含隐藏目录）。</p>
-<h3 id="七、软链接"><a href="#七、软链接" class="headerlink" title="七、软链接"></a>七、软链接</h3><p>除了硬链接以外，还有一种特殊情况。</p>
-<p>文件A和文件B的inode号码虽然不一样，但是文件A的内容是文件B的路径。读取文件A时，系统会自动将访问者导向文件B。因此，无论打开哪一个文件，最终读取的都是文件B。这时，文件A就称为文件B的”软链接”（soft link）或者”符号链接（symbolic link）。</p>
-<p>这意味着，文件A依赖于文件B而存在，如果删除了文件B，打开文件A就会报错：”No such file or directory”。这是软链接与硬链接最大的不同：文件A指向文件B的文件名，而不是文件B的inode号码，文件B的inode”链接数”不会因此发生变化。</p>
-<p>ln -s命令可以创建软链接。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">　　ln -s 源文文件或目录 目标文件或目录</span><br></pre></td></tr></table></figure>
-<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120410.png" alt=""></p>
-<h3 id="八、inode的特殊作用"><a href="#八、inode的特殊作用" class="headerlink" title="八、inode的特殊作用"></a>八、inode的特殊作用</h3><p>由于inode号码与文件名分离，这种机制导致了一些Unix/Linux系统特有的现象。</p>
-<p>　　1. 有时，文件名包含特殊字符，无法正常删除。这时，直接删除inode节点，就能起到删除文件的作用。</p>
-<p>　　2. 移动文件或重命名文件，只是改变文件名，不影响inode号码。</p>
-<p>　　3. 打开一个文件以后，系统就以inode号码来识别这个文件，不再考虑文件名。因此，通常来说，系统无法从inode号码得知文件名。</p>
-<p>第3点使得软件更新变得简单，可以在不关闭软件的情况下进行更新，不需要重启。因为系统通过inode号码，识别运行中的文件，不通过文件名。更新的时候，新版文件以同样的文件名，生成一个新的inode，不会影响到运行中的文件。等到下一次运行这个软件的时候，文件名就自动指向新版文件，旧版文件的inode则被回收。</p>
-<p>（完）</p>
-]]></content>
-      <categories>
-        <category>转载</category>
-      </categories>
-      <tags>
-        <tag>inode</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《APUE》ch14——高级I/O</title>
-    <url>/2020/03/20/%E3%80%8AAPUE%E3%80%8Bch14%E2%80%94%E2%80%94%E9%AB%98%E7%BA%A7I-O/</url>
+    <url>/2020/02/11/%E3%80%8AAPUE%E3%80%8Bch14%E2%80%94%E2%80%94%E9%AB%98%E7%BA%A7I-O/</url>
     <content><![CDATA[<h2 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h2><h3 id="同步，异步，阻塞，非阻塞"><a href="#同步，异步，阻塞，非阻塞" class="headerlink" title="同步，异步，阻塞，非阻塞"></a>同步，异步，阻塞，非阻塞</h3><p><strong>同步与异步</strong><br>同步是指代码调用IO操作时，必须等待IO操作完成才返回的调用方式。<br>异步是指代码调用IO操作时，不必等IO操作完成就返回的调用方式。</p>
 <p>同步是最原始的调用方式。<br>异步则需要多线程，多CPU或者非阻塞IO的支持。<br><strong>阻塞与非阻塞</strong><br>阻塞是指调用线程或者进程被操作系统挂起。<br>非阻塞是指调用线程或者进程不会被操作系统挂起。</p>
 <p>没有IO操作，所有的代码基本都是同步的<br>有了IO操作后，如果没有多进程多线程，所有代码还是同步的<br>有了IO操作，有了多进程多线程，代码才有了异步的可能性，同时也产生了阻塞与非阻塞</p>
@@ -276,110 +251,6 @@
       </tags>
   </entry>
   <entry>
-    <title>vnode与inode区别</title>
-    <url>/2020/03/08/vnode%E4%B8%8Einode%E5%8C%BA%E5%88%AB/</url>
-    <content><![CDATA[<h1 id="vnode与inode的区别"><a href="#vnode与inode的区别" class="headerlink" title="vnode与inode的区别"></a>vnode与inode的区别</h1><blockquote>
-<p>文章整理自  <a href="https://www.freebsd.org/cgi/man.cgi?query=vnode" target="_blank" rel="noopener">FreeBSD docs</a> 和  <a href="https://stackoverflow.com/questions/27345342/inode-vs-vnode-difference" target="_blank" rel="noopener">StackOverflow</a></p>
-</blockquote>
-<h2 id="vnode"><a href="#vnode" class="headerlink" title="vnode"></a>vnode</h2><h3 id="名称"><a href="#名称" class="headerlink" title="名称"></a>名称</h3><p>vnode —— 文件或目录的内部表示</p>
-<h3 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/param.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/vnode.h&gt;</span></span></span><br></pre></td></tr></table></figure>
-
-<h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><ul>
-<li>vnode是UNIX中所有文件活动的焦点。</li>
-<li>vnode节点由<code>struct vnode</code>声明。</li>
-<li>每个活动文件、当前目录、挂载文件、文本文件和根目录都分配了一个vnode节点。</li>
-<li>vnode最初是为FreeBSD创建的，因为需要使用的不同类型的文件系统（例如UFS、NFS等）激增。</li>
-<li>Vnode旨在为所有可能的文件系统提供抽象，以便OS可以与它们进行对接，从而让内核方法不必兼容每个特定的文件系统；内核只需要知道如何与Vnode进行交互。</li>
-<li>Vnode抽象在内存中，可以与UFS、ext4等文件系统进行交互；而inode存储在磁盘上，只能用于特定的文件系统。</li>
-<li>inode节点包含文件大小、拥有者、指向地址块的指针等元数据。</li>
-<li>vnode仅包含在文件生命周期中不会改变的一些属性，因此如果想获得更多信息请使用inode作为参考。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>知识点总结</category>
-      </categories>
-      <tags>
-        <tag>File System</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《APUE》ch15——进程间通信</title>
-    <url>/2020/03/05/%E3%80%8AAPUE%E3%80%8Bch15%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/</url>
-    <content><![CDATA[<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>本章将说明进程之间互相通信的技术——<code>进程间通信（InterProcess Communication，IPC）</code>。<br><img src="15-1.png" alt=""></p>
-<a id="more"></a>
-
-<h2 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h2><p>管道是UNIX系统最古老最常用的IPC形式，所有UNIX系统都提供此种通信机制。管道有以下两种局限性：</p>
-<ul>
-<li>历史上，他们是半双工的。现在，某些系统提供了全双工管道，但我们不能预先假设系统支持全双工管道。</li>
-<li>管道只能在具有公共祖先的两个进程间使用。</li>
-</ul>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pipe</span><span class="params">(<span class="keyword">int</span> fd[<span class="number">2</span>])</span></span>; <span class="comment">//创建管道</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//popen实现一系列操作：创建一个管道，fork一个子进程，关闭未使用的管道端，执行一个shell运行命令，然后等待命令终止</span></span><br><span class="line"><span class="function">FILE *<span class="title">popen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *cmdstring, <span class="keyword">const</span> <span class="keyword">char</span> *type)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pclose</span><span class="params">(FILE *fp)</span></span>; <span class="comment">//关闭由popen创建的管道文件，返回cmdstring的终止状态</span></span><br></pre></td></tr></table></figure>
-<p><img src="15-2.png" alt=""><br><img src="15-3.png" alt=""><br><img src="15-4.png" alt=""></p>
-<h3 id="实例：利用管道实现进程间同步"><a href="#实例：利用管道实现进程间同步" class="headerlink" title="实例：利用管道实现进程间同步"></a>实例：利用管道实现进程间同步</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> pfd1[<span class="number">2</span>], pfd2[<span class="number">2</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TELL_WAIT</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (pipe(pfd1) &lt; <span class="number">0</span> || pipe(pfd2) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TELL_CHILD</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">write</span>(pfd1[<span class="number">1</span>], <span class="string">"p"</span>, <span class="number">1</span>) != <span class="number">1</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TELL_PARENT</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">write</span>(pfd2[<span class="number">1</span>], <span class="string">"c"</span>, <span class="number">1</span>) != <span class="number">1</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">WAIT_PATENT</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> c;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">read</span>(pfd2[<span class="number">0</span>], &amp;c, <span class="number">1</span>) != <span class="number">1</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (c != <span class="string">'p'</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">WAIT_PARENT</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> c;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">read</span>(pfd1[<span class="number">0</span>], &amp;c, <span class="number">1</span>) != <span class="number">1</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (c != <span class="string">'c'</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="实例：popen和pclose的实现"><a href="#实例：popen和pclose的实现" class="headerlink" title="实例：popen和pclose的实现"></a>实例：popen和pclose的实现</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">pid_t</span> *child_ptr = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> max_fd;</span><br><span class="line"></span><br><span class="line"><span class="function">FILE *<span class="title">popen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *cmd, <span class="keyword">const</span> <span class="keyword">char</span> *type)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> pfd[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    FILE * fp;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//检验参数</span></span><br><span class="line">    <span class="keyword">if</span> (cmd == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        errno = EINVAL;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (type[<span class="number">0</span>] != <span class="string">'r'</span> &amp;&amp; type[<span class="number">0</span>] != <span class="string">'w'</span> || type[<span class="number">1</span>] != <span class="number">0</span>) &#123;</span><br><span class="line">        errno = EINVAL;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建描述符与进程id的对应关系，在关闭时使用</span></span><br><span class="line">    <span class="keyword">if</span> (child_ptr == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        max_fd = open_max();</span><br><span class="line">        <span class="keyword">if</span> ((child_ptr = <span class="built_in">calloc</span>(max_fd, <span class="keyword">sizeof</span>(<span class="keyword">pid_t</span>))) == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            err_sys(<span class="string">"error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建管道</span></span><br><span class="line">    <span class="keyword">if</span> (pipe(pfd) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//检测描述符</span></span><br><span class="line">    <span class="keyword">if</span> (pfd[<span class="number">0</span>] &gt;= max_fd || pfd[<span class="number">1</span>] &gt;= max_fd) &#123;</span><br><span class="line">        <span class="built_in">close</span>(pfd[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">close</span>(pfd[<span class="number">1</span>]);</span><br><span class="line">        errno = EMFILE;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((pid = fork()) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123; <span class="comment">//子进程关闭多于描述符</span></span><br><span class="line">        <span class="keyword">if</span> (*type == <span class="string">'r'</span>) &#123;</span><br><span class="line">            <span class="built_in">close</span>(pfd[<span class="number">0</span>]);</span><br><span class="line">            <span class="keyword">if</span> (pfd[<span class="number">1</span>] != STDOUT_FILENO) &#123;</span><br><span class="line">                dup2(pfd[<span class="number">1</span>], STDOUT_FILENO);</span><br><span class="line">                <span class="built_in">close</span>(pfd[<span class="number">1</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">close</span>(pfd[<span class="number">1</span>]);</span><br><span class="line">            <span class="keyword">if</span> (pfd[<span class="number">0</span>] != STDIN_FILENO) &#123;</span><br><span class="line">                dup2(pfd[<span class="number">0</span>], STDOUT_FILENO);</span><br><span class="line">                <span class="built_in">close</span>(pfd[<span class="number">0</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//关闭子进程中映射关系里所有的描述符，因为子进程用不到</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; max_fd; ++i) &#123;</span><br><span class="line">            <span class="keyword">if</span> (child_ptr[i] &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="built_in">close</span>(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        execl(<span class="string">"/bin/sh"</span>, <span class="string">"sh"</span>, <span class="string">"-c"</span>, (<span class="keyword">char</span> *)<span class="number">0</span>);</span><br><span class="line">        _exit(<span class="number">127</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//父进程关闭多于描述符，并获取描述符对应文件指针</span></span><br><span class="line">    <span class="keyword">if</span> (*type == <span class="string">'r'</span>) &#123;</span><br><span class="line">        <span class="built_in">close</span>(pfd[<span class="number">1</span>]);</span><br><span class="line">        <span class="keyword">if</span> ((fp = fdopen(pfd[<span class="number">0</span>], type)) == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">close</span>(pfd[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">if</span> ((fp = fdopen(pfd[<span class="number">1</span>], type)) == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//将描述符与子进程id绑定，为了在关闭时通过描述符能找到子进程ID</span></span><br><span class="line">    child_ptr[fileno(fp)] = pid;</span><br><span class="line">    <span class="keyword">return</span> fp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pclose</span><span class="params">(FILE *fp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fd, status;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="keyword">if</span> (fp == <span class="literal">NULL</span> || <span class="comment">//参数错误</span></span><br><span class="line">        child_ptr == <span class="literal">NULL</span> || <span class="comment">//子进程指针未初始化</span></span><br><span class="line">        (fd = fileno(fp)) &lt; <span class="number">0</span> || <span class="comment">//文件指针获取不到对应的描述符</span></span><br><span class="line">        (pid = child_ptr[fd]) == <span class="number">0</span>) <span class="comment">// 找不到与该描述符对应的进程ID</span></span><br><span class="line">    &#123;</span><br><span class="line">        errno = EINVAL;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    child_ptr[fd] = <span class="number">0</span>; <span class="comment">//解除描述符与子进程ID的绑定关系</span></span><br><span class="line">    <span class="keyword">if</span> (fclose(fp) == EOF) &#123; <span class="comment">//关闭管道文件</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (waitpid(pid, &amp;status, <span class="number">0</span>) &lt; <span class="number">0</span>) &#123; <span class="comment">//等待失败有一种情况时被中断的系统调用，这种情况需要重新等待</span></span><br><span class="line">        <span class="keyword">if</span> (errno != EINTR) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="协同进程"><a href="#协同进程" class="headerlink" title="协同进程"></a>协同进程</h2><p>UNIX系统过滤程序从标准输入读取数据，向标准输出写数据。介个过滤程序通常在shell管道中线性连接。当一个过滤程序既产生某个过滤程序的输入，又读取该过滤程序的输出时，它就变成了<code>协同进程（coprocess）</code>。</p>
-<p>popen只提供连接到另一个进程的标准输入或标准输出的一个单向管道，而系统进程则有连接到另一个进程的两个单向管道：一个连接到其标准输入，另一个则来自其标准输出。<br><img src="15-16.png" alt=""></p>
-<h3 id="实例：将两个数相加的过滤程序"><a href="#实例：将两个数相加的过滤程序" class="headerlink" title="实例：将两个数相加的过滤程序"></a>实例：将两个数相加的过滤程序</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sig_pipe</span><span class="params">(<span class="keyword">int</span> signo)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"SIGPIPE caught\n"</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pid_t</span> pid;</span><br><span class="line">    <span class="keyword">char</span> <span class="built_in">line</span>[MAXLINE];</span><br><span class="line">    <span class="keyword">int</span> n, pfd1[<span class="number">2</span>], pfd2[<span class="number">2</span>]; <span class="comment">//pfd1是父进程-&gt;子进程的单向管道，pfd2是子进程-&gt;父进程的单向管道</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (signal(SIGPIPE, sig_pipe) == SIG_ERR) &#123;</span><br><span class="line">        err_sys(<span class="string">"signal error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (pipe(pfd1) &lt; <span class="number">0</span> || pipe(pfd2) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"pipe error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((pid = fork()) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        err_sys(<span class="string">"fork error"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">//用标准输入与标准输出的描述符和父进程进行通信，关闭其他描述符</span></span><br><span class="line">        <span class="built_in">close</span>(pfd1[<span class="number">1</span>]);</span><br><span class="line">        <span class="built_in">close</span>(pfd2[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">if</span> (pfd1[<span class="number">0</span>] != STDIN_FILENO) &#123;</span><br><span class="line">            dup2(pfd1[<span class="number">0</span>], STDIN_FILENO);</span><br><span class="line">            <span class="built_in">close</span>(pfd1[<span class="number">0</span>]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (pfd2[<span class="number">1</span>] != STDOUT_FILENO) &#123;</span><br><span class="line">            dup2(pfd2[<span class="number">1</span>], STDOUT_FILENO);</span><br><span class="line">            <span class="built_in">close</span>(pfd2[<span class="number">1</span>]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (execl(<span class="string">"./add2"</span>, <span class="string">"add2"</span>, (<span class="keyword">char</span> *)<span class="number">0</span>) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            err_sys(<span class="string">"execl error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">close</span>(pfd1[<span class="number">0</span>]);</span><br><span class="line">    <span class="built_in">close</span>(pfd2[<span class="number">1</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (fgets(<span class="built_in">line</span>, MAXLINE, <span class="built_in">stdin</span>) != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        n = <span class="built_in">strlen</span>(<span class="built_in">line</span>);</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">write</span>(pfd1[<span class="number">1</span>], <span class="built_in">line</span>, n) != n) &#123;</span><br><span class="line">            err_sys(<span class="string">"write error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> ((n = <span class="built_in">read</span>(pfd2[<span class="number">0</span>], <span class="built_in">line</span>, MAXLINE)) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            err_sys(<span class="string">"read error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (n == <span class="number">0</span>) &#123;</span><br><span class="line">            err_msg(<span class="string">"child closed pipe"</span>);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">line</span>[n] = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">fputs</span>(<span class="built_in">line</span>, <span class="built_in">stdout</span>) == EOF) &#123;</span><br><span class="line">            err_sys(<span class="string">"fputs error"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//fgets完要用ferror判断是否发生错误</span></span><br><span class="line">    <span class="keyword">if</span> (ferror(<span class="built_in">stdin</span>)) &#123;</span><br><span class="line">        err_sys(<span class="string">"ferror error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>注意，对管道的读写使用了底层IO（UNIX系统调用）：read和write，因为如果使用标准库I/O，对于非终端的I/O是全缓冲的，对管道的读写会发生阻塞，产生死锁。</p>
-<h2 id="FIFO"><a href="#FIFO" class="headerlink" title="FIFO"></a>FIFO</h2><p>FIFO被称为命名管道。未命名的管道只能在两个相关的进程之间使用，而且这两个相关的进程还要有一个共同的创建了它们的祖先进程。但是通过FIFO，不相关的进程也能交换数据。</p>
-<p>FIFO是一种文件类型，通过stat结构的st_mode成员的编码可以知道文件是否是FIFO类型。可以用S_ISFIFO宏对此进行测试。<br>创建FIFO类似于创建文件，FIFO的路径名也确实存在于文件系统中。对它的操作也都和文件一样（open、close、read、write和unlink）</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mkfifo</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">mode_t</span> mode)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">mkfifoat</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">mode_t</span> mode)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>当open一个FIFO时，非阻塞标志（O_NONBLOCK）会产生下列影响：</p>
-<ul>
-<li>在一般情况下（没有指定O_NONBLOCK），只读open要阻塞到某个其他进程为写打开这个FIFO为止。类似地，只写open要阻塞到某个其他进程为读开它为止。</li>
-<li>如果指定了（O_NONBLOCK），则只读open立即返回。但是如果没有进程为读而打开一个FIFO，那么只写open将返回-1，并将errno产生一个文件结束标志。</li>
-</ul>
-<p>类似于管道，若write一个尚无进程为读而打开的FIFO，则产生信号SIGPIPE。若某个FIFO的最后一个写进程关闭了该FIFO，则将为该FIFO的读进程产生一个文件结束标志。</p>
-<p>FIFO 有以下两种用途</p>
-<ul>
-<li>shell命令使用FIFO将数据从一条管道传到另一条时，无需创建中间临时文件。</li>
-<li>客户进程-服务器进程应用程序中，FIFO用作汇聚点，在客户进程和服务器进程二者之间传递数据。</li>
-</ul>
-<h3 id="实例：用FIFO复制输出流"><a href="#实例：用FIFO复制输出流" class="headerlink" title="实例：用FIFO复制输出流"></a>实例：用FIFO复制输出流</h3><p>FIFO可用于复制一系列shell命令中的输出流。这就防止了将数据写向中间磁盘文件。但与管道不同的是，管道只能用于两个进程之间的线性连接，而FIFO是有名字的，因此它可用于非线性连接。<br><img src="15-20.png" alt=""></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkfifo fifo1</span><br><span class="line">prog3 &lt; fifo1 &amp;</span><br><span class="line">prog1 &lt; infile | tee fifo1 | prog2</span><br></pre></td></tr></table></figure>
-<p><img src="15-21.png" alt=""></p>
-<h3 id="实例：使用FIFO进行客户进程-服务器进程通信"><a href="#实例：使用FIFO进行客户进程-服务器进程通信" class="headerlink" title="实例：使用FIFO进行客户进程-服务器进程通信"></a>实例：使用FIFO进行客户进程-服务器进程通信</h3><p><img src="15-22.png" alt=""><br><img src="15-23.png" alt=""></p>
-<h2 id="XSI-IPC"><a href="#XSI-IPC" class="headerlink" title="XSI IPC"></a>XSI IPC</h2><p>有3种称作XSI IPC的IPC：消息队列，信号量以及共享存储器，这里先介绍共有、类似特征。</p>
-<h3 id="标识符和键"><a href="#标识符和键" class="headerlink" title="标识符和键"></a>标识符和键</h3><p>每个内核中的IPC结构（消息队列、信号量或共享存储段）都用一个非负整数的标识符加以引用。标识符是IPC对象的内部名。为使多个合作进程能够在同一IPC对象上汇聚，需要提供一个外部命名方案。为此，每个IPC对象都与一个键（key）相关联，将这个键作为该对象的外部名。<br>无论何时创建IPC结构（通过调用msgget、semget或shmget创建），都应指定一个键。这个键的数据类型是基本系统数据类型key_t，通常在头文件&lt;sys/types.h&gt;中被定义为长整型。这个键由内核变换成标识符。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">key_t</span> <span class="title">ftok</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">int</span> id)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>XSI IPC为每一个IPC结构关联了一个ipc_perm结构。该结构规定了权限和所有者，它至少包括下列成员：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">ipc_perm</span> &#123;</span></span><br><span class="line">  <span class="keyword">uid_t</span> uid;</span><br><span class="line">  <span class="keyword">gid_t</span> gid;</span><br><span class="line">  <span class="keyword">uid_t</span> cuid;</span><br><span class="line">  <span class="keyword">gid_t</span> cgid;</span><br><span class="line">  <span class="keyword">mode_t</span> mode;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="优点和缺点"><a href="#优点和缺点" class="headerlink" title="优点和缺点"></a>优点和缺点</h3><p>缺点：</p>
-<ul>
-<li>IPC结构是在系统范围内起作用的，没有引用计数。</li>
-<li>这些IPC结构在文件系统中没有名字。</li>
-</ul>
-<h3 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h3><p>消息队列是消息的链接表，存储在内核中，由消息队列标识符标识。</p>
-<h3 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h3>]]></content>
-      <categories>
-        <category>《APUE》笔记</category>
-      </categories>
-      <tags>
-        <tag>IPC</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>为什么calloc会比malloc+memset快</title>
-    <url>/2020/02/23/%E4%B8%BA%E4%BB%80%E4%B9%88calloc%E4%BC%9A%E6%AF%94malloc-memset%E5%BF%AB/</url>
-    <content><![CDATA[<ol>
-<li><code>malloc</code>和<code>calloc</code>分配小的内存时直接从内存池分配，内存池不够时向内核申请更多内存；分配大内存时会直接调用<code>mmap</code>或<code>sbrk</code>系统调用</li>
-<li>内核分配的内存可能是前一个进程用过的，为保证不泄漏敏感数据，内核始终在将内存交给进程前先将内存置0，因此<code>mmap()</code>保证返回的新内存始终为零</li>
-<li>当程序申请内存时，内核并不会马上修改页表为进程提供RAM，而是在进程中找到一些地址空间，记下应该去的地方，并保证如果您的程序实际使用RAM，它将在其中放置RAM。当程序尝试读写那些地址，会出发缺页故障，内核将RAM分配给这些地址，继续执行程序。如果不读写，内核就不会分配RAM给进程。</li>
-<li>有的进程分配内存后只读不写，这意味着跨不同进程的内存中的许多页面可能填充有从<code>mmap()</code>返回的原始零。由于这些页面都是相同的，因此内核使所有这些虚拟地址指向一个共享的4 KiB内存页面，其中填充了零。如果您尝试写入该内存，则处理器会触发另一个页面错误（写时复制），内核会介入，从而为您提供一个零的新页面，该页面不会与任何其他程序共享。</li>
-</ol>
-]]></content>
-      <categories>
-        <category>知识点总结</category>
-      </categories>
-      <tags>
-        <tag>C</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《APUE》ch13——守护进程</title>
     <url>/2020/01/20/%E3%80%8AAPUE%E3%80%8Bch13%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/</url>
     <content><![CDATA[<p>守护进程（daemon）是生存期长的一种进程。它们常常在系统引导装入时启动，仅在系统关闭时才终止。守护进程没有控制终端，终端名为问号。后台运行，大多数都以超级用户（root）特权运行。用户层守护进程的父进程是init。</p>
@@ -416,6 +287,87 @@
       </categories>
       <tags>
         <tag>daemon</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>理解inode</title>
+    <url>/2020/01/14/%E7%90%86%E8%A7%A3inode/</url>
+    <content><![CDATA[<p>作者：阮一峰<br>转自：<a href="http://www.ruanyifeng.com/blog/2011/12/inode.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2011/12/inode.html</a></p>
+<p>inode是一个重要概念，是理解Unix/Linux文件系统和硬盘储存的基础。</p>
+<p>我觉得，理解inode，不仅有助于提高系统操作水平，还有助于体会Unix设计哲学，即如何把底层的复杂性抽象成一个简单概念，从而大大简化用户接口。</p>
+<p>下面就是我的inode学习笔记，尽量保持简单。</p>
+<a id="more"></a>
+<p>===================================</p>
+<h3 id="一、inode是什么？"><a href="#一、inode是什么？" class="headerlink" title="一、inode是什么？"></a>一、inode是什么？</h3><p>理解inode，要从文件储存说起。</p>
+<p>文件储存在硬盘上，硬盘的最小存储单位叫做”扇区”（Sector）。每个扇区储存512字节（相当于0.5KB）。</p>
+<p>操作系统读取硬盘的时候，不会一个个扇区地读取，这样效率太低，而是一次性连续读取多个扇区，即一次性读取一个”块”（block）。这种由多个扇区组成的”块”，是文件存取的最小单位。”块”的大小，最常见的是4KB，即连续八个 sector组成一个 block。</p>
+<p>文件数据都储存在”块”中，那么很显然，我们还必须找到一个地方储存文件的元信息，比如文件的创建者、文件的创建日期、文件的大小等等。这种储存文件元信息的区域就叫做inode，中文译名为”索引节点”。</p>
+<p>每一个文件都有对应的inode，里面包含了与该文件有关的一些信息。</p>
+<h3 id="二、inode的内容"><a href="#二、inode的内容" class="headerlink" title="二、inode的内容"></a>二、inode的内容</h3><p>inode包含文件的元信息，具体来说有以下内容：</p>
+<p>　　* 文件的字节数</p>
+<p>　　* 文件拥有者的User ID</p>
+<p>　　* 文件的Group ID</p>
+<p>　　* 文件的读、写、执行权限</p>
+<p>　　* 文件的时间戳，共有三个：ctime指inode上一次变动的时间，mtime指文件内容上一次变动的时间，atime指文件上一次打开的时间。</p>
+<p>　　* 链接数，即有多少文件名指向这个inode</p>
+<p>　　* 文件数据block的位置</p>
+<p>可以用stat命令，查看某个文件的inode信息：</p>
+<p>　　stat example.txt</p>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120402.png" alt=""></p>
+<p>总之，除了文件名以外的所有文件信息，都存在inode之中。至于为什么没有文件名，下文会有详细解释。</p>
+<h3 id="三、inode的大小"><a href="#三、inode的大小" class="headerlink" title="三、inode的大小"></a>三、inode的大小</h3><p>inode也会消耗硬盘空间，所以硬盘格式化的时候，操作系统自动将硬盘分成两个区域。一个是数据区，存放文件数据；另一个是inode区（inode table），存放inode所包含的信息。</p>
+<p>每个inode节点的大小，一般是128字节或256字节。inode节点的总数，在格式化时就给定，一般是每1KB或每2KB就设置一个inode。假定在一块1GB的硬盘中，每个inode节点的大小为128字节，每1KB就设置一个inode，那么inode table的大小就会达到128MB，占整块硬盘的12.8%。</p>
+<p>查看每个硬盘分区的inode总数和已经使用的数量，可以使用df命令。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">　　df -i</span><br></pre></td></tr></table></figure>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120403.png" alt=""></p>
+<p>查看每个inode节点的大小，可以用如下命令：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">　　sudo dumpe2fs -h &#x2F;dev&#x2F;hda | grep &quot;Inode size&quot;</span><br></pre></td></tr></table></figure>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120404.png" alt=""></p>
+<p>由于每个文件都必须有一个inode，因此有可能发生inode已经用光，但是硬盘还未存满的情况。这时，就无法在硬盘上创建新文件。</p>
+<h3 id="四、inode号码"><a href="#四、inode号码" class="headerlink" title="四、inode号码"></a>四、inode号码</h3><p>每个inode都有一个号码，操作系统用inode号码来识别不同的文件。</p>
+<p>这里值得重复一遍，Unix/Linux系统内部不使用文件名，而使用inode号码来识别文件。对于系统来说，文件名只是inode号码便于识别的别称或者绰号。</p>
+<p>表面上，用户通过文件名，打开文件。实际上，系统内部这个过程分成三步：首先，系统找到这个文件名对应的inode号码；其次，通过inode号码，获取inode信息；最后，根据inode信息，找到文件数据所在的block，读出数据。</p>
+<p>使用ls -i命令，可以看到文件名对应的inode号码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">　　ls -i example.txt</span><br></pre></td></tr></table></figure>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120405.png" alt=""></p>
+<h3 id="五、目录文件"><a href="#五、目录文件" class="headerlink" title="五、目录文件"></a>五、目录文件</h3><p>Unix/Linux系统中，目录（directory）也是一种文件。打开目录，实际上就是打开目录文件。</p>
+<p>目录文件的结构非常简单，就是一系列目录项（dirent）的列表。每个目录项，由两部分组成：所包含文件的文件名，以及该文件名对应的inode号码。</p>
+<p>ls命令只列出目录文件中的所有文件名：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">　　ls &#x2F;etc</span><br></pre></td></tr></table></figure>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120406.png" alt=""></p>
+<p>ls -i命令列出整个目录文件，即文件名和inode号码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">　　ls -i &#x2F;etc</span><br></pre></td></tr></table></figure>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120407.png" alt=""></p>
+<p>如果要查看文件的详细信息，就必须根据inode号码，访问inode节点，读取信息。ls -l命令列出文件的详细信息。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">　　ls -l &#x2F;etc</span><br></pre></td></tr></table></figure>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120408.png" alt=""></p>
+<p>理解了上面这些知识，就能理解目录的权限。目录文件的读权限（r）和写权限（w），都是针对目录文件本身。由于目录文件内只有文件名和inode号码，所以如果只有读权限，只能获取文件名，无法获取其他信息，因为其他信息都储存在inode节点中，而读取inode节点内的信息需要目录文件的执行权限（x）。</p>
+<h3 id="六、硬链接"><a href="#六、硬链接" class="headerlink" title="六、硬链接"></a>六、硬链接</h3><p>一般情况下，文件名和inode号码是”一一对应”关系，每个inode号码对应一个文件名。但是，Unix/Linux系统允许，多个文件名指向同一个inode号码。</p>
+<p>这意味着，可以用不同的文件名访问同样的内容；对文件内容进行修改，会影响到所有文件名；但是，删除一个文件名，不影响另一个文件名的访问。这种情况就被称为”硬链接”（hard link）。</p>
+<p>ln命令可以创建硬链接：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">　　ln 源文件 目标文件</span><br></pre></td></tr></table></figure>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120409.png" alt=""></p>
+<p>运行上面这条命令以后，源文件与目标文件的inode号码相同，都指向同一个inode。inode信息中有一项叫做”链接数”，记录指向该inode的文件名总数，这时就会增加1。</p>
+<p>反过来，删除一个文件名，就会使得inode节点中的”链接数”减1。当这个值减到0，表明没有文件名指向这个inode，系统就会回收这个inode号码，以及其所对应block区域。</p>
+<p>这里顺便说一下目录文件的”链接数”。创建目录时，默认会生成两个目录项：”.”和”..”。前者的inode号码就是当前目录的inode号码，等同于当前目录的”硬链接”；后者的inode号码就是当前目录的父目录的inode号码，等同于父目录的”硬链接”。所以，任何一个目录的”硬链接”总数，总是等于2加上它的子目录总数（含隐藏目录）。</p>
+<h3 id="七、软链接"><a href="#七、软链接" class="headerlink" title="七、软链接"></a>七、软链接</h3><p>除了硬链接以外，还有一种特殊情况。</p>
+<p>文件A和文件B的inode号码虽然不一样，但是文件A的内容是文件B的路径。读取文件A时，系统会自动将访问者导向文件B。因此，无论打开哪一个文件，最终读取的都是文件B。这时，文件A就称为文件B的”软链接”（soft link）或者”符号链接（symbolic link）。</p>
+<p>这意味着，文件A依赖于文件B而存在，如果删除了文件B，打开文件A就会报错：”No such file or directory”。这是软链接与硬链接最大的不同：文件A指向文件B的文件名，而不是文件B的inode号码，文件B的inode”链接数”不会因此发生变化。</p>
+<p>ln -s命令可以创建软链接。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">　　ln -s 源文文件或目录 目标文件或目录</span><br></pre></td></tr></table></figure>
+<p><img src="http://www.ruanyifeng.com/blogimg/asset/201112/bg2011120410.png" alt=""></p>
+<h3 id="八、inode的特殊作用"><a href="#八、inode的特殊作用" class="headerlink" title="八、inode的特殊作用"></a>八、inode的特殊作用</h3><p>由于inode号码与文件名分离，这种机制导致了一些Unix/Linux系统特有的现象。</p>
+<p>　　1. 有时，文件名包含特殊字符，无法正常删除。这时，直接删除inode节点，就能起到删除文件的作用。</p>
+<p>　　2. 移动文件或重命名文件，只是改变文件名，不影响inode号码。</p>
+<p>　　3. 打开一个文件以后，系统就以inode号码来识别这个文件，不再考虑文件名。因此，通常来说，系统无法从inode号码得知文件名。</p>
+<p>第3点使得软件更新变得简单，可以在不关闭软件的情况下进行更新，不需要重启。因为系统通过inode号码，识别运行中的文件，不通过文件名。更新的时候，新版文件以同样的文件名，生成一个新的inode，不会影响到运行中的文件。等到下一次运行这个软件的时候，文件名就自动指向新版文件，旧版文件的inode则被回收。</p>
+<p>（完）</p>
+]]></content>
+      <categories>
+        <category>转载</category>
+      </categories>
+      <tags>
+        <tag>inode</tag>
       </tags>
   </entry>
   <entry>
@@ -1387,6 +1339,54 @@
       </categories>
       <tags>
         <tag>work</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>register、volatile、restrict和extern</title>
+    <url>/2019/04/15/register%E3%80%81volatile%E3%80%81restrict%E5%92%8Cextern/</url>
+    <content><![CDATA[<h2 id="register"><a href="#register" class="headerlink" title="register"></a>register</h2><h3 id="含义："><a href="#含义：" class="headerlink" title="含义："></a>含义：</h3><p>这个关键字暗示编译器相应的变量将被频繁地使用，如果可能的话尽可能的将变量存在CPU内部寄存器中，而不是通过内存寻址访问，以提高效率。注意是尽可能，不是绝对。</p>
+<h3 id="补充："><a href="#补充：" class="headerlink" title="补充："></a>补充：</h3><p>首先，register变量必须是能被CPU所接受的类型。这通常意味着register变量必须是一个单个的值，并且长度应该小于或者等于整型的长度。不过，有些机器的寄存器也能存放浮点数。</p>
+<a id="more"></a>
+
+<p>其次，因为register变量可能不存放在内存中，所以不能用“&amp;”来获取register变量的地址。</p>
+<p>由于寄存器的数量有限，而且某些寄存器只能接受特定类型的数据（如指针和浮点数），因此真正起作用的register修饰符的数目和类型都依赖于运行程序的机器，而任何多余的register修饰符都将被编译程序所忽略。</p>
+<p>在某些情况下，把变量保存在寄存器中反而会降低程序的运行速度。因为被占用的寄存器不能再用于其它目的；或者变量被使用的次数不够多，不足以装入和存储变量所带来的额外开销。</p>
+<p>早期的C编译程序不会把变量保存在寄存器中，除非你命令它这样做，这时register修饰符是C语言的一种很有价值的补充。然而，随着编译程序设计技术的进步，在决定那些变量应该被存到寄存器中时，现在的C编译环境能比程序员做出更好的决定。实际上，许多编译程序都会忽略register修饰符，因为尽管它完全合法，但它仅仅是暗示而不是命令。</p>
+<h2 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h2><h3 id="含义"><a href="#含义" class="headerlink" title="含义"></a>含义</h3><p>volatile提醒编译器，它后面所定义的变量的值随时都有可能改变，因此编译后的程序每次需要存储或读取这个变量的时候，都会直接从变量地址中读取数据。</p>
+<p>如果没有volatile关键字，则编译器可能优化读取和存储，可能暂时使用寄存器中的值，如果这个变量由别的程序更新了的话，将出现不一致的现象</p>
+<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><ul>
+<li><p>中断服务程序中修改的供其它程序检测的变量需要加volatile；</p>
+</li>
+<li><p>多任务环境下各任务间共享的标志应该加volatile；</p>
+</li>
+<li><p>存储器映射的硬件寄存器通常也要加volatile说明，因为每次对它的读写都可能有不同意义；</p>
+</li>
+</ul>
+<h3 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h3><p>volatile总是与优化有关，编译器有一种技术叫做数据流分析，分析程序中的变量在哪里赋值、在哪里使用、在哪里失效，分析结果可以用于常量合并，常量传播等优化，进一步可以死代码消除。但有时这些优化不是程序所需要的，这时可以用volatile关键字禁止做这些优化，volatile的字面含义是易变的，它有下面的作用</p>
+<ul>
+<li><p>不会在两个操作之间把volatile变量缓存在寄存器中。在多任务、中断、甚至setjmp环境下，变量可能被其他的程序改变，编译器自己无法知道，volatile就是告诉编译器这种情况。</p>
+</li>
+<li><p>不做常量合并、常量传播等优化</p>
+</li>
+<li><p>对volatile变量的读写不会被优化掉。如果你对一个变量赋值但后面没用到，编译器常常可以省略那个赋值操作</p>
+</li>
+</ul>
+<h2 id="restrict"><a href="#restrict" class="headerlink" title="restrict"></a>restrict</h2><p>restrict是c99标准引入的，它只可以用于限定和约束指针，并表明指针是访问一个数据对象的唯一且初始的方式.即它告诉编译器，所有修改该指针所指向内存中内容的操作都必须通过该指针来修改,而不能通过其它途径(其它变量或指针)来修改;这样做的好处是,能帮助编译器进行更好的优化代码,生成更有效率的汇编代码.</p>
+<p>考虑下面的例子：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">foo</span><span class="params">(<span class="keyword">int</span> *a, <span class="keyword">int</span> *b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  *a = <span class="number">1</span>;</span><br><span class="line">  *b = <span class="number">2</span>;</span><br><span class="line">  <span class="keyword">return</span> *a + *b; <span class="comment">//并不一定等于3！</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>a 和 b可能指向同一个数据，所以编译器在计算<em>a + *b时需要重新读取</em>a的值</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">foo</span><span class="params">(<span class="keyword">int</span> *<span class="keyword">restrict</span> a, <span class="keyword">int</span> *<span class="keyword">restrict</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  *a = <span class="number">1</span>;</span><br><span class="line">  *b = <span class="number">2</span>;</span><br><span class="line">  <span class="keyword">return</span> *a + *b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译器可以根据修饰符做出优化</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">rfoo:</span><br><span class="line">    movl    $3, %eax # 在编译期已计算出3</span><br><span class="line">    movl    $1, %rdi # 存储1至*a</span><br><span class="line">    movl    $2, %rsi # 存储2至*b</span><br></pre></td></tr></table></figure>
+
+<h2 id="extern"><a href="#extern" class="headerlink" title="extern"></a>extern</h2><h3 id="含义-1"><a href="#含义-1" class="headerlink" title="含义"></a>含义</h3><p>extern可以置于变量或者函数前，以标示变量或者函数的定义在别的文件中，提示编译器遇到此变量和函数时在其他模块中寻找其定义。</p>
+<p>此外extern也可用来进行链接指定</p>
+]]></content>
+      <categories>
+        <category>知识点总结</category>
+      </categories>
+      <tags>
+        <tag>C</tag>
       </tags>
   </entry>
   <entry>
