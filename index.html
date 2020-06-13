@@ -170,7 +170,7 @@
 <h3 id="控制平面组件（Control-Plane-Components）"><a href="#控制平面组件（Control-Plane-Components）" class="headerlink" title="控制平面组件（Control Plane Components）"></a>控制平面组件（Control Plane Components）</h3><p>控制平面的组件对集群做出全局决策(比如调度)，以及检测和响应集群事件（例如，当不满足部署的 replicas 字段时，启动新的 pod）。</p>
 <p>控制平面组件可以在集群中的任何节点上运行。然而，为了简单起见，设置脚本通常会在同一个计算机上启动所有控制平面组件，并且不会在此计算机上运行用户容器，这台计算机也就是所谓的<code>Master节点</code>。当这些组件运行在多个节点上时，也就实现了高可用。</p>
 <ul>
-<li><p>kube-apiserver<br>主节点上负责提供 Kubernetes API 服务的组件；它是 Kubernetes 控制面的前端。<br>kube-apiserver 在设计上考虑了水平扩缩的需要。 换言之，通过部署多个实例可以实现扩缩。 参见<a href="https://kubernetes.io/docs/admin/high-availability/" target="_blank" rel="noopener">构造高可用集群</a>。</p>
+<li><p>kube-apiserver<br>主节点上负责提供<code>Kubernetes API</code>服务的组件；它是 Kubernetes 控制面的前端。<br>kube-apiserver 在设计上考虑了水平扩缩的需要。 换言之，通过部署多个实例可以实现扩缩。 参见<a href="https://kubernetes.io/docs/admin/high-availability/" target="_blank" rel="noopener">构造高可用集群</a>。</p>
 </li>
 <li><p>etcd<br>etcd 是兼具一致性和高可用性的键值数据库，可以作为保存 Kubernetes 所有集群数据的后台数据库。<br>您的 Kubernetes 集群的 etcd 数据库通常需要有个备份计划。要了解 etcd 更深层次的信息，请参考 <a href="https://etcd.io/docs" target="_blank" rel="noopener">etcd 文档</a>。</p>
 </li>
@@ -187,6 +187,25 @@
 <li><p>云控制器管理器 (cloud-controller-manager)<br><code>cloud-controller-manager</code>运行与基础云提供商交互的控制器。cloud-controller-manager 二进制文件是 Kubernetes 1.6 版本中引入的 alpha 功能。</p>
 </li>
 </ul>
+<h3 id="Node-组件"><a href="#Node-组件" class="headerlink" title="Node 组件"></a>Node 组件</h3><p>节点组件在每个节点上运行，维护运行的 Pod 并提供 Kubernetes 运行环境。</p>
+<ul>
+<li>kubelet<br>一个在集群中每个节点上运行的代理。它保证容器都运行在 Pod 中。</li>
+</ul>
+<p>kubelet 接收一组通过各类机制提供给它的 PodSpecs，确保这些 PodSpecs 中描述的容器处于运行状态且健康。kubelet 不会管理不是由 Kubernetes 创建的容器。</p>
+<p>kube-proxy<br>kube-proxy 是集群中每个节点上运行的网络代理,实现 Kubernetes Service 概念的一部分。</p>
+<p>kube-proxy 维护节点上的网络规则。这些网络规则允许从集群内部或外部的网络会话与 Pod 进行网络通信。</p>
+<p>如果操作系统提供了数据包过滤层并可用的话，kube-proxy会通过它来实现网络规则。否则，kube-proxy 仅转发流量本身。</p>
+<p>容器运行环境(Container Runtime)<br>容器运行环境是负责运行容器的软件。</p>
+<p>Kubernetes 支持多个容器运行环境: Docker、 containerd、cri-o、 rktlet 以及任何实现 Kubernetes CRI (容器运行环境接口)。</p>
+<p>插件(Addons)<br>插件使用 Kubernetes 资源 (DaemonSet, Deployment等) 实现集群功能。因为这些提供集群级别的功能，所以插件的命名空间资源属于 kube-system 命名空间。</p>
+<p>所选的插件如下所述：有关可用插件的扩展列表，请参见插件 (Addons)。</p>
+<p>DNS<br>尽管并非严格要求其他附加组件，但所有示例都依赖集群 DNS，因此所有 Kubernetes 集群都应具有 DNS。</p>
+<p>除了您环境中的其他 DNS 服务器之外，集群 DNS 还是一个 DNS 服务器，它为 Kubernetes 服务提供 DNS 记录。</p>
+<p>Cluster DNS 是一个 DNS 服务器，和您部署环境中的其他 DNS 服务器一起工作，为 Kubernetes 服务提供DNS记录。</p>
+<p>Kubernetes 启动的容器自动将 DNS 服务器包含在 DNS 搜索中。</p>
+<p>用户界面(Dashboard)<br>Dashboard 是 Kubernetes 集群的通用基于 Web 的 UI。它使用户可以管理集群中运行的应用程序以及集群本身并进行故障排除。</p>
+<p>容器资源监控<br>容器资源监控将关于容器的一些常见的时间序列度量值保存到一个集中的数据库中，并提供用于浏览这些数据的界面。</p>
+<p>集群层面日志<br>集群层面日志 机制负责将容器的日志数据保存到一个集中的日志存储中，该存储能够提供搜索和浏览接口。</p>
 <p><code>Kubernetes</code>使用<code>Kubernetes API</code>对象 描述集群的 <em>预期状态（desired state）</em>：包括要运行的应用或负载、它们使用的镜像、副本数，以及所需网络和磁盘资源等。你可以通过使用命令行工具<code>kubectl</code>来调用Kubernetes API创建对象，通过创建这些对象来配置预期状态。</p>
 
       
