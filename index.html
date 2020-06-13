@@ -167,6 +167,7 @@
 <p>工作节点托管作为应用程序组件的<code>Pod</code>。主节点管理集群中的工作节点和<code>Pod</code>。多个主节点用于为集群提供故障转移和高可用性。</p>
 <p>下面这张图表展示了包含所有相互关联组件的<code>Kubernetes</code>集群：</p>
 <p><img src="https://d33wubrfki0l68.cloudfront.net/7016517375d10c702489167e704dcb99e570df85/7bb53/images/docs/components-of-kubernetes.png" alt=""></p>
+<p><img src="1.png" alt=""></p>
 <h3 id="控制平面组件（Control-Plane-Components）"><a href="#控制平面组件（Control-Plane-Components）" class="headerlink" title="控制平面组件（Control Plane Components）"></a>控制平面组件（Control Plane Components）</h3><p>控制平面的组件对集群做出全局决策(比如调度)，以及检测和响应集群事件（例如，当不满足部署的 replicas 字段时，启动新的 pod）。</p>
 <p>控制平面组件可以在集群中的任何节点上运行。然而，为了简单起见，设置脚本通常会在同一个计算机上启动所有控制平面组件，并且不会在此计算机上运行用户容器，这台计算机也就是所谓的<code>Master节点</code>。当这些组件运行在多个节点上时，也就实现了高可用。</p>
 <ul>
