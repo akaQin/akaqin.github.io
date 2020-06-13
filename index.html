@@ -116,7 +116,7 @@
       
       <p><strong>前言</strong></p>
 <blockquote>
-<p>今天开始将开一个系列的新坑：把k8s的学习心得整理成笔记。内容源自<a href="https://kubernetes.io/zh/docs/home/" target="_blank" rel="noopener">k8s官方文档</a>、<a href="https://kubernetes.feisky.xyz/" target="_blank" rel="noopener">Kubernetes指南</a>以及<a href="https://jimmysong.io/kubernetes-handbook/" target="_blank" rel="noopener">Kubernetes Handbook</a>，如有错误欢迎指正。</p>
+<p>今天开始将开一个系列的新坑：把k8s的学习心得整理成笔记。内容源自<a href="https://kubernetes.io/zh/docs/home/" target="_blank" rel="noopener">k8s官方文档</a>、<a href="https://kubernetes.feisky.xyz/" target="_blank" rel="noopener">Kubernetes指南</a>以及<a href="https://jimmysong.io/kubernetes-handbook/" target="_blank" rel="noopener">Kubernetes Handbook</a>，这三个文档都是对于学习k8s来说非常优秀的学习资料，我将它们进行整合并砍掉一些冗长的细枝末节，方便刚入门的新手学习理解，如有错误欢迎指正。</p>
 </blockquote>
 <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><h3 id="Kubernetes是什么？"><a href="#Kubernetes是什么？" class="headerlink" title="Kubernetes是什么？"></a>Kubernetes是什么？</h3><p><code>Kubernetes</code>是一个可移植的、可扩展的开源平台，用于管理容器化的工作负载和服务，可促进声明式配置和自动化。Kubernetes 拥有一个庞大且快速增长的生态系统。Kubernetes 的服务、支持和工具广泛可用。</p>
 <blockquote>
@@ -209,7 +209,28 @@
 <li><p>集群层面日志<br>集群层面日志 机制负责将容器的日志数据保存到一个集中的日志存储中，该存储能够提供搜索和浏览接口。</p>
 </li>
 </ul>
-<h2 id="Kubernetes-API"><a href="#Kubernetes-API" class="headerlink" title="Kubernetes API"></a>Kubernetes API</h2><h2 id="Kubernetes-对象"><a href="#Kubernetes-对象" class="headerlink" title="Kubernetes 对象"></a>Kubernetes 对象</h2><p><code>Kubernetes</code>使用<code>Kubernetes API</code>对象 描述集群的 <em>预期状态（desired state）</em>：包括要运行的应用或负载、它们使用的镜像、副本数，以及所需网络和磁盘资源等。你可以通过使用命令行工具<code>kubectl</code>来调用Kubernetes API创建对象，通过创建这些对象来配置预期状态。</p>
+<h2 id="Kubernetes-API"><a href="#Kubernetes-API" class="headerlink" title="Kubernetes API"></a>Kubernetes API</h2><p><code>Kubernetes API</code>是系统描述性配置的基础。 Kubectl 命令行工具被用于创建、更新、删除、获取API对象。</p>
+<p>Kubernetes 通过API资源存储自己序列化状态(现在存储在etcd)。</p>
+<p>Kubernetes 被分成多个组件，各部分通过API相互交互。</p>
+<h3 id="API版本"><a href="#API版本" class="headerlink" title="API版本"></a>API版本</h3><p>为了使删除字段或者重构资源表示更加容易，Kubernetes 支持 多个API版本。每一个版本都在不同API路径下，例如 /api/v1 或者 /apis/extensions/v1beta1。</p>
+<p>K8s选择在API级别进行版本化，而不是在资源或字段级别进行版本化，以确保API提供清晰，一致的系统资源和行为视图，并控制对已废止的API或实验性API的访问。 JSON和Protobuf序列化模式遵循架构更改的相同准则 - 下面的所有描述都同时适用于这两种格式。</p>
+<p>不同的API版本名称意味着不同级别的软件稳定性和支持程度。 每个级别的标准在API变更文档中有更详细的描述。 内容主要概括如下：</p>
+<ul>
+<li><p>Alpha 测试版本：<br>版本名称包含了 alpha (例如：v1alpha1)。<br>可能是有缺陷的。启用该功能可能会带来隐含的问题，默认情况是关闭的。<br>支持的功能可能在没有通知的情况下随时删除。</p>
+</li>
+<li><p>Beta 测试版本：<br>版本名称包含了 beta (例如: v2beta3)。<br>代码已经测试过。启用该功能被认为是安全的，功能默认已启用。<br>所有已支持的功能不会被删除，细节可能会发生变化。</p>
+</li>
+<li><p>稳定版本：<br>版本名称是 vX，其中 X 是整数。<br>功能的稳定版本将出现在许多后续版本的发行软件中。</p>
+</li>
+</ul>
+<h3 id="API组"><a href="#API组" class="headerlink" title="API组"></a>API组</h3><p>为了更容易地扩展Kubernetes API，K8s实现了<a href="https://git.k8s.io/community/contributors/design-proposals/api-machinery/api-group.md" target="_blank" rel="noopener">API组</a>。 API组在REST路径和序列化对象的 apiVersion 字段中指定。</p>
+<p>目前有几个API组正在使用中：</p>
+<ul>
+<li><p>核心组<code>core</code>（通常被称为遗留组<code>legacy</code>）位于REST路径 /api/v1 并使用 apiVersion：v1。</p>
+</li>
+<li><p>指定的组位于REST路径 /apis/$GROUP_NAME/$VERSION，并使用 apiVersion：$GROUP_NAME/$VERSION （例如 apiVersion：batch/v1）。 在<a href="https://kubernetes.io/docs/reference/" target="_blank" rel="noopener">Kubernetes API参考</a>中可以看到支持的API组的完整列表。</p>
+</li>
+</ul>
 
       
       <!-- reward -->
