@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>k8s学习笔记-1 概述</title>
-    <url>/2020/06/13/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-1%20%E6%A6%82%E8%BF%B0/</url>
+    <url>/2020/06/06/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-1%20%E6%A6%82%E8%BF%B0/</url>
     <content><![CDATA[<p><strong>前言</strong></p>
 <blockquote>
 <p>今天开始将开一个系列的新坑：把k8s的学习心得整理成笔记。内容源自<a href="https://kubernetes.io/zh/docs/home/" target="_blank" rel="noopener">k8s官方文档</a>、<a href="https://kubernetes.feisky.xyz/" target="_blank" rel="noopener">Kubernetes指南</a>以及<a href="https://jimmysong.io/kubernetes-handbook/" target="_blank" rel="noopener">Kubernetes Handbook</a>，这三个文档都是对于学习k8s来说非常优秀的学习资料，我将它们进行整合并砍掉一些冗长的细枝末节，方便刚入门的新手学习理解，如有错误欢迎指正。</p>
