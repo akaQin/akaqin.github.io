@@ -175,23 +175,25 @@
 </ul>
 <h3 id="Node-组件"><a href="#Node-组件" class="headerlink" title="Node 组件"></a>Node 组件</h3><p>节点组件在每个节点上运行，维护运行的 Pod 并提供 Kubernetes 运行环境。</p>
 <ul>
-<li>kubelet<br>一个在集群中每个节点上运行的代理。它保证容器都运行在 Pod 中。</li>
+<li><p>kubelet<br>一个在集群中每个节点上运行的代理。它保证容器都运行在 Pod 中。<br>kubelet 接收一组通过各类机制提供给它的 PodSpecs，确保这些 PodSpecs 中描述的容器处于运行状态且健康。kubelet 不会管理不是由 Kubernetes 创建的容器。</p>
+</li>
+<li><p>kube-proxy<br>kube-proxy 是集群中每个节点上运行的网络代理,实现 Kubernetes Service 概念的一部分。<br>kube-proxy 维护节点上的网络规则。这些网络规则允许从集群内部或外部的网络会话与 Pod 进行网络通信。<br>如果操作系统提供了数据包过滤层并可用的话，kube-proxy会通过它来实现网络规则。否则，kube-proxy 仅转发流量本身。</p>
+</li>
+<li><p>容器运行环境(Container Runtime)<br>容器运行环境是负责运行容器的软件。<br>Kubernetes 支持多个容器运行环境: Docker、 containerd、cri-o、 rktlet 以及任何实现 Kubernetes CRI (容器运行环境接口)。</p>
+</li>
 </ul>
-<p>kubelet 接收一组通过各类机制提供给它的 PodSpecs，确保这些 PodSpecs 中描述的容器处于运行状态且健康。kubelet 不会管理不是由 Kubernetes 创建的容器。</p>
-<p>kube-proxy<br>kube-proxy 是集群中每个节点上运行的网络代理,实现 Kubernetes Service 概念的一部分。</p>
-<p>kube-proxy 维护节点上的网络规则。这些网络规则允许从集群内部或外部的网络会话与 Pod 进行网络通信。</p>
-<p>如果操作系统提供了数据包过滤层并可用的话，kube-proxy会通过它来实现网络规则。否则，kube-proxy 仅转发流量本身。</p>
-<p>容器运行环境(Container Runtime)<br>容器运行环境是负责运行容器的软件。</p>
-<p>Kubernetes 支持多个容器运行环境: Docker、 containerd、cri-o、 rktlet 以及任何实现 Kubernetes CRI (容器运行环境接口)。</p>
-<p>插件(Addons)<br>插件使用 Kubernetes 资源 (DaemonSet, Deployment等) 实现集群功能。因为这些提供集群级别的功能，所以插件的命名空间资源属于 kube-system 命名空间。</p>
-<p>所选的插件如下所述：有关可用插件的扩展列表，请参见插件 (Addons)。</p>
-<p>DNS<br>尽管并非严格要求其他附加组件，但所有示例都依赖集群 DNS，因此所有 Kubernetes 集群都应具有 DNS。</p>
-<p>除了您环境中的其他 DNS 服务器之外，集群 DNS 还是一个 DNS 服务器，它为 Kubernetes 服务提供 DNS 记录。</p>
-<p>Cluster DNS 是一个 DNS 服务器，和您部署环境中的其他 DNS 服务器一起工作，为 Kubernetes 服务提供DNS记录。</p>
-<p>Kubernetes 启动的容器自动将 DNS 服务器包含在 DNS 搜索中。</p>
-<p>用户界面(Dashboard)<br>Dashboard 是 Kubernetes 集群的通用基于 Web 的 UI。它使用户可以管理集群中运行的应用程序以及集群本身并进行故障排除。</p>
-<p>容器资源监控<br>容器资源监控将关于容器的一些常见的时间序列度量值保存到一个集中的数据库中，并提供用于浏览这些数据的界面。</p>
-<p>集群层面日志<br>集群层面日志 机制负责将容器的日志数据保存到一个集中的日志存储中，该存储能够提供搜索和浏览接口。</p>
+<h3 id="插件-Addons"><a href="#插件-Addons" class="headerlink" title="插件(Addons)"></a>插件(Addons)</h3><p>插件使用 Kubernetes 资源 (DaemonSet, Deployment等) 实现集群功能。因为这些提供集群级别的功能，所以插件的命名空间资源属于 kube-system 命名空间。</p>
+<p>所选的插件如下所述：有关可用插件的扩展列表，请参见<a href="https://kubernetes.io/docs/concepts/cluster-administration/addons/" target="_blank" rel="noopener">插件 (Addons)</a>。</p>
+<ul>
+<li><p>DNS<br>尽管并非严格要求其他附加组件，但所有示例都依赖集群 DNS，因此所有 Kubernetes 集群都应具有 DNS。<br>除了您环境中的其他 DNS 服务器之外，集群 DNS 还是一个 DNS 服务器，它为 Kubernetes 服务提供 DNS 记录。<br>Cluster DNS 是一个 DNS 服务器，和您部署环境中的其他 DNS 服务器一起工作，为 Kubernetes 服务提供DNS记录。<br>Kubernetes 启动的容器自动将 DNS 服务器包含在 DNS 搜索中。</p>
+</li>
+<li><p>用户界面(Dashboard)<br>Dashboard 是 Kubernetes 集群的通用基于 Web 的 UI。它使用户可以管理集群中运行的应用程序以及集群本身并进行故障排除。</p>
+</li>
+<li><p>容器资源监控<br>容器资源监控将关于容器的一些常见的时间序列度量值保存到一个集中的数据库中，并提供用于浏览这些数据的界面。</p>
+</li>
+<li><p>集群层面日志<br>集群层面日志 机制负责将容器的日志数据保存到一个集中的日志存储中，该存储能够提供搜索和浏览接口。</p>
+</li>
+</ul>
 <p><code>Kubernetes</code>使用<code>Kubernetes API</code>对象 描述集群的 <em>预期状态（desired state）</em>：包括要运行的应用或负载、它们使用的镜像、副本数，以及所需网络和磁盘资源等。你可以通过使用命令行工具<code>kubectl</code>来调用Kubernetes API创建对象，通过创建这些对象来配置预期状态。</p>
 
       
