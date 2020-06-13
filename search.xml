@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>k8s学习笔记-1 概述</title>
+    <url>/2020/06/13/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-1%20%E6%A6%82%E8%BF%B0/</url>
+    <content><![CDATA[<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><h3 id="Kubernetes是什么？"><a href="#Kubernetes是什么？" class="headerlink" title="Kubernetes是什么？"></a>Kubernetes是什么？</h3><p><code>Kubernetes</code>是一个可移植的、可扩展的开源平台，用于管理容器化的工作负载和服务，可促进声明式配置和自动化。Kubernetes 拥有一个庞大且快速增长的生态系统。Kubernetes 的服务、支持和工具广泛可用。</p>
+<blockquote>
+<p>名称 Kubernetes 源于希腊语，意为 “舵手” 或 “飞行员”。Google 在 2014 年开源了 Kubernetes 项目。Kubernetes 建立在 Google 在大规模运行生产工作负载方面拥有十几年的经验的基础上，结合了社区中最好的想法和实践。</p>
+</blockquote>
+<h3 id="历史"><a href="#历史" class="headerlink" title="历史"></a>历史</h3><p><img src="https://d33wubrfki0l68.cloudfront.net/26a177ede4d7b032362289c6fccd448fc4a91174/eb693/images/docs/container_evolution.svg" alt=""></p>
+<p><code>Kubernetes</code>使用<code>Kubernetes API</code>对象 描述集群的 <em>预期状态（desired state）</em>：包括要运行的应用或负载、它们使用的镜像、副本数，以及所需网络和磁盘资源等。你可以通过使用命令行工具<code>kubectl</code>来调用Kubernetes API创建对象，通过创建这些对象来配置预期状态。</p>
+]]></content>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>vnode与inode区别</title>
     <url>/2020/03/08/vnode%E4%B8%8Einode%E5%8C%BA%E5%88%AB/</url>
     <content><![CDATA[<h1 id="vnode与inode的区别"><a href="#vnode与inode的区别" class="headerlink" title="vnode与inode的区别"></a>vnode与inode的区别</h1><blockquote>

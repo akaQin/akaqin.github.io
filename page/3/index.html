@@ -75,6 +75,82 @@
     
     
     
+    <article id="post-《APUE》ch1——UNIX基础知识" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2019/08/13/%E3%80%8AAPUE%E3%80%8Bch1%E2%80%94%E2%80%94UNIX%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/"
+    >《APUE》ch1——UNIX基础知识</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2019/08/13/%E3%80%8AAPUE%E3%80%8Bch1%E2%80%94%E2%80%94UNIX%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="article-date">
+  <time datetime="2019-08-13T13:57:59.000Z" itemprop="datePublished">2019-08-13</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E3%80%8AAPUE%E3%80%8B%E7%AC%94%E8%AE%B0/">《APUE》笔记</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="UNIX-体系结构"><a href="#UNIX-体系结构" class="headerlink" title="UNIX 体系结构"></a>UNIX 体系结构</h2><p>严格意义上说，可将操作系统定义为一种软件，它控制计算机硬件资源，提供程序运行环境。我们称这种软件为内核，内核的接口被称为 <strong>系统调用（system call）</strong>。<br>广义上说，操作系统包括了内核和一些其他软件，这些软件使得计算机能够发挥作用，使其具有自己的特性。这里说的软件包括系统实用程序、应用程序、shell以及公用函数库等。<br>例如，Linux是GNU操作系统使用的内核。<br><img src="1-1.png" alt=""></p>
+      
+      <a class="article-more-link" href="/2019/08/13/%E3%80%8AAPUE%E3%80%8Bch1%E2%80%94%E2%80%94UNIX%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/UNIX/" rel="tag">UNIX</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
     <article id="post-最近的问题反思" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -785,85 +861,6 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: &quot;abcabcbb&quot;</span><br><span class="line">Output: 3</span><br><span class="line">Explanation: The answer is &quot;abc&quot;, with the length of 3.</span><br></pre></td></tr></table></figure>
       
       <a class="article-more-link" href="/2018/10/29/arts-12/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARTS/" rel="tag">ARTS</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
-    <article id="post-arts-11" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2018/10/16/arts-11/"
-    >arts-11</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2018/10/16/arts-11/" class="article-date">
-  <time datetime="2018-10-16T04:18:52.000Z" itemprop="datePublished">2018-10-16</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/ARTS/">ARTS</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>You are given two <strong>non-empty</strong> linked lists representing two non-negative integers. The digits are stored in <strong>reverse order</strong> and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.</p>
-<p>You may assume the two numbers do not contain any leading zero, except the number 0 itself.</p>
-<p><strong>Example:</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: (2 -&gt; 4 -&gt; 3) + (5 -&gt; 6 -&gt; 4)</span><br><span class="line">Output: 7 -&gt; 0 -&gt; 8</span><br><span class="line">Explanation: 342 + 465 &#x3D; 807.</span><br></pre></td></tr></table></figure>
-      
-      <a class="article-more-link" href="/2018/10/16/arts-11/">阅读更多...</a>
       
       
       <!-- reward -->

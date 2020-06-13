@@ -75,6 +75,88 @@
     
     
     
+    <article id="post-《APUE》ch10——信号" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2019/12/03/%E3%80%8AAPUE%E3%80%8Bch10%E2%80%94%E2%80%94%E4%BF%A1%E5%8F%B7/"
+    >《APUE》ch10——信号</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2019/12/03/%E3%80%8AAPUE%E3%80%8Bch10%E2%80%94%E2%80%94%E4%BF%A1%E5%8F%B7/" class="article-date">
+  <time datetime="2019-12-03T12:35:08.000Z" itemprop="datePublished">2019-12-03</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E3%80%8AAPUE%E3%80%8B%E7%AC%94%E8%AE%B0/">《APUE》笔记</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="信号概念"><a href="#信号概念" class="headerlink" title="信号概念"></a>信号概念</h2><p>信号是软件中断。它提供了一种处理异步事件的方法。<br>每个信号都有一个名字，以SIG开头。在头文件&lt;signal.h&gt;中，信号名都被定义为正整数常量（信号编号）。<br>不存在编号为0的信号。kill函数对信号编号0有特殊的作用。POSIX.1将此中信号编号值称为空信号。</p>
+<p>信号出现时，内核按下列三种方式之一进行处理：</p>
+<ul>
+<li>忽略此信号<br>大多数信号都可使用这种方式进行处理，但有两种信号决不能被忽略，它们是SIGKILL和SIGSTOP。原因是它们向内核和超级用户提供了使进程终止或停止的可靠方法。</li>
+<li>捕捉信号<br>为了做到这一点，要通知内核在某种信号发生时，调用一个可执行用户希望对这种事件进行的处理的用户函数。</li>
+<li>执行系统默认动作<br>对大多数信号的系统默认动作是终止该进程。</li>
+</ul>
+      
+      <a class="article-more-link" href="/2019/12/03/%E3%80%8AAPUE%E3%80%8Bch10%E2%80%94%E2%80%94%E4%BF%A1%E5%8F%B7/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/signal/" rel="tag">signal</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
     <article id="post-《APUE》ch9——进程关系" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -777,82 +859,6 @@
 <h3 id="Single-UNIX-Specification"><a href="#Single-UNIX-Specification" class="headerlink" title="Single UNIX Specification"></a>Single UNIX Specification</h3><p>Single UNIX Specification（SUS，单一UNIX规范）是POSIX.1标准的一个超集，它定义了一些附加接口扩展了POSIX.1规范提供的功能。POSIX.1相当于Single UNIX Specification中的基本规范部分。</p>
       
       <a class="article-more-link" href="/2019/08/27/%E3%80%8AAPUE%E3%80%8Bch2%E2%80%94%E2%80%94UNIX%E6%A0%87%E5%87%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/UNIX/" rel="tag">UNIX</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
-    <article id="post-《APUE》ch1——UNIX基础知识" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2019/08/13/%E3%80%8AAPUE%E3%80%8Bch1%E2%80%94%E2%80%94UNIX%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/"
-    >《APUE》ch1——UNIX基础知识</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2019/08/13/%E3%80%8AAPUE%E3%80%8Bch1%E2%80%94%E2%80%94UNIX%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="article-date">
-  <time datetime="2019-08-13T13:57:59.000Z" itemprop="datePublished">2019-08-13</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E3%80%8AAPUE%E3%80%8B%E7%AC%94%E8%AE%B0/">《APUE》笔记</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="UNIX-体系结构"><a href="#UNIX-体系结构" class="headerlink" title="UNIX 体系结构"></a>UNIX 体系结构</h2><p>严格意义上说，可将操作系统定义为一种软件，它控制计算机硬件资源，提供程序运行环境。我们称这种软件为内核，内核的接口被称为 <strong>系统调用（system call）</strong>。<br>广义上说，操作系统包括了内核和一些其他软件，这些软件使得计算机能够发挥作用，使其具有自己的特性。这里说的软件包括系统实用程序、应用程序、shell以及公用函数库等。<br>例如，Linux是GNU操作系统使用的内核。<br><img src="1-1.png" alt=""></p>
-      
-      <a class="article-more-link" href="/2019/08/13/%E3%80%8AAPUE%E3%80%8Bch1%E2%80%94%E2%80%94UNIX%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">阅读更多...</a>
       
       
       <!-- reward -->

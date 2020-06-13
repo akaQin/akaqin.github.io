@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+   
+  <meta name="keywords" content="生活,旅行,思考,代码,博客" />
+   
+  <meta name="description" content="一座孤岛" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    MySQL知识点整理 |  akaQin&#39;s Blog
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<script src="/js/pace.min.js"></script>
+
+
+  
+
+  
+
+<link rel="alternate" href="/atom.xml" title="akaQin's Blog" type="application/atom+xml">
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-MySQL知识点整理" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  MySQL知识点整理
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2019/03/01/MySQL%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/" class="article-date">
+  <time datetime="2019-03-01T01:36:09.000Z" itemprop="datePublished">2019-03-01</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/">知识点总结</a>
+  </div>
+
+      
+      
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">6.1k字</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">21分钟</span>
+        </span>
+    </span>
+</div>
+
+      
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h3 id="InnoDB与MyISAM区别："><a href="#InnoDB与MyISAM区别：" class="headerlink" title="InnoDB与MyISAM区别："></a>InnoDB与MyISAM区别：</h3><ul>
+<li><p>InnoDB支持事务，MyISAM不支持，对于InnoDB每一条SQL语言都默认封装成事务，自动提交，这样会影响速度，所以最好把多条SQL语言放在begin和commit之间，组成一个事务</p>
+</li>
+<li><p>InnoDB支持外键，而MyISAM不支持。对一个包含外键的InnoDB表转为MYISAM会失败</p>
+</li>
+<li><p>InnoDB是聚集索引，数据文件是和索引绑在一起的，必须要有主键，通过主键索引效率很高。但是辅助索引需要两次查询，先查询到主键，然后再通过主键查询到数据。因此，主键不应该过大，因为主键太大，其他索引也都会很大。而MyISAM是非聚集索引，数据文件是分离的，索引保存的是数据文件的指针。主键索引和辅助索引是独立的。</p>
+</li>
+<li><p>InnoDB不保存表的具体行数，执行select count(*) from table时需要全表扫描。而MyISAM用一个变量保存了整个表的行数，执行上述语句时只需要读出该变量即可，速度很快</p>
+</li>
+<li><p>Innodb不支持全文索引，而MyISAM支持全文索引，查询效率上MyISAM要高；</p>
+</li>
+</ul>
+<h3 id="如何选择："><a href="#如何选择：" class="headerlink" title="如何选择："></a>如何选择：</h3><ul>
+<li><p>是否要支持事务，如果要请选择innodb，如果不需要可以考虑MyISAM；</p>
+</li>
+<li><p>如果表中绝大多数都只是读查询，可以考虑MyISAM，如果既有读写也挺频繁，请使用InnoDB。</p>
+</li>
+<li><p>系统奔溃后，MyISAM恢复起来更困难，能否接受；</p>
+</li>
+</ul>
+<a id="more"></a>
+
+<h3 id="varchar和char的区别："><a href="#varchar和char的区别：" class="headerlink" title="varchar和char的区别："></a>varchar和char的区别：</h3><ul>
+<li><p>char(M)类型的数据列里，每个值都占用M个字节，如果某个长度小于M，MySQL就会在它的右边用空格字符补足．（在检索操作中那些填补出来的空格字符将被去掉）</p>
+</li>
+<li><p>在varchar(M)类型的数据列里，每个值只占用刚好够用的字节再加上一个用来记录其长度的字节（即总长度为L+1字节）．</p>
+</li>
+<li><p>varchar最多能存储65535个字节的数据。varchar 的最大长度受限于最大行长度（max row size，65535bytes）。65535并不是一个很精确的上限，可以继续缩小这个上限。65535个字节包括所有字段的长度，变长字段的长度标识（每个变长字段额外使用1或者2个字节记录实际数据长度）、NULL标识位的累计。</p>
+</li>
+</ul>
+<h3 id="null与最大长度"><a href="#null与最大长度" class="headerlink" title="null与最大长度:"></a>null与最大长度:</h3><ul>
+<li><p>NULL标识位，如果varchar字段定义中带有default null允许列空,则需要需要1bit来标识，每8个bits的标识组成一个字段。一张表中存在N个varchar字段，那么需要（N+7）/8 （取整）bytes存储所有的NULL标识位</p>
+</li>
+<li><p>如果数据表只有一个varchar字段且该字段DEFAULT NULL，那么该varchar字段的最大长度为65532个字节，即65535-2-1=65532 byte。</p>
+</li>
+<li><p>如果数据表只有一个varchar字段且该字段NOT NULL，那么该varchar字段的最大长度为65533个字节，即65535-2=65533byte</p>
+</li>
+<li><p>字符类型若为gbk，每个字符最多占2个字节，最大长度不能超过32766;</p>
+</li>
+<li><p>字符类型若为utf8，每个字符最多占3个字节，最大长度不能超过21845。</p>
+</li>
+<li><p>若定义的时候超过上述限制，则varchar字段会被强行转为text类型，并产生warning。</p>
+</li>
+</ul>
+<h3 id="utf8-与-utf8mb4-："><a href="#utf8-与-utf8mb4-：" class="headerlink" title="utf8 与 utf8mb4 ："></a>utf8 与 utf8mb4 ：</h3><ul>
+<li><p>utf-8中，一个字符最多3字节（汉字3字节，英文字母1字节）。</p>
+</li>
+<li><p>utf8_mb4是utf8的超集，一个字符最多4字节，支持补充字符。</p>
+</li>
+</ul>
+<p>** 3、varchar物理存储**</p>
+<p><strong>在物理存储上，varchar使用1到2个额外的字节表示实际存储的字符串长度（bytes）。如果列的最大长度小于256个字节，用一个字节表示（标识）。如果最大长度大于等于256，使用两个字节。</strong></p>
+<p><strong>当选择的字符集为latin1，一个字符占用一个byte</strong></p>
+<p><strong>varchar(255)存储一个字符，一共使用2个bytes物理空间存储数据实际数据长度和数据值。</strong></p>
+<p><strong>varchar(256)存储一个字符，使用2 bytes表示实际数据长度，一共需要3 bytes物理存储空间。</strong></p>
+<p><strong>varchar对于不同的RDBMS引擎，有不通的物理存储方式，虽然有统一的逻辑意义。对于mysql的不同存储引擎，其实现方法与数据的物理存放方式也不同。</strong></p>
+<p><strong>4、InnoDB中的varchar</strong></p>
+<p><strong>InnoDB中varchar的物理存储方式与InnoDB使用的innodb_file_format有关。早期的innodb_file_forma使用的Antelope文件格式，支持redundant和compact两种row_format。从5.5开始或者InnoDB1.1，可以使用一种新的file format，Barracuda。Barracuda兼容Redundant，另外还支持dynamic和compressed两种row_format.</strong></p>
+<p><strong>当innodb_file_format=Antelope，ROW_FORMAT=REDUNDANT 或者COMPACT。</strong></p>
+<p><strong>innodb的聚集索引（cluster index）仅仅存储varchar、text、blob字段的前768个字节，多余的字节存储在一个独立的overflow page中，这个列也被称作off-page。768个字节前缀后面紧跟着20字节指针，指向overflow pages的位置。</strong></p>
+<p><strong>另外，在innodb_file_format=Antelope情况下，InnoDB中最多能存储10个大字段（需要使用off-page存储）。innodbd的默认page size为16KB，InnoDB单行的长度不能超过16k/2=8k个字节，（768+20）*10 &lt; 8k。</strong></p>
+<p><strong>当innodb_file_format=Barracuda, ROW_FORMAT=DYNAMIC 或者 COMPRESSED</strong></p>
+<p><strong>innodb中所有的varchar、text、blob字段数据是否完全off-page存储，根据该字段的长度和整行的总长度而定。对off-page存储的列，cluster index中仅仅存储20字节的指针，指向实际的overflow page存储位置。如果单行的长度太大而不能完全适配cluster index page，innodb将会选择最长的列作为off-page存储，直到行的长度能够适配cluster index page。</strong></p>
+<p><strong>5、MyISAM中的varchar</strong></p>
+<p><strong>对于MyISAM引擎，varchar字段所有数据存储在数据行内（in-line）。myisam表的row_format也影响到varchar的物理存储行为。</strong></p>
+<p><strong>MyISAM的row_format可以通过create或者alter sql语句设为fixed和dynamic。另外可以通过myisampack生成row_format=compresse的存储格式。</strong></p>
+<p><strong>当myisam表中不存在text或者blob类型的字段，那么可以把row_format设置为fixed(也可以为dynamic)，否则只能为dynamic。</strong></p>
+<p><strong>当表中存在varchar字段的时候，row_format可以设定为fixed或者dynamic。使用row_format=fixed存储varchar字段数据，浪费存储空间，varchar此时会定长存储。row_format为fixed和dynamic，varchar的物理实现方式也不同（可以查看源代码文件field.h和field.cc），因而myisam的row_format在fixed和dynamic之间发生转换的时候，varchar字段的物理存储方式也将会发生变化。</strong></p>
+<h3 id="隔离级别："><a href="#隔离级别：" class="headerlink" title="隔离级别："></a>隔离级别：</h3><p><strong>一、首先什么是事务？</strong></p>
+<p>事务是应用程序中一系列严密的操作，所有操作必须成功完成，否则在每个操作中所作的所有更改都会被撤消。也就是事务具有原子性，一个事务中的一系列的操作要么全部成功，要么一个都不做。</p>
+<p>事务的结束有两种，当事务中的所有步骤全部成功执行时，事务提交。如果其中一个步骤失败，将发生回滚操作，撤消事务开始时的所有操作。</p>
+<p><strong>二、事务的ACID</strong></p>
+<p>事务具有四个特征：原子性（ Atomicity ）、一致性（ Consistency ）、隔离性（ Isolation ）和持续性（ Durability ）。这四个特性简称为 ACID 特性。</p>
+<p>1 、原子性。事务是数据库的逻辑工作单位，事务中包含的各操作要么都做，要么都不做。</p>
+<p>2 、一致性。事务执行的结果必须是使数据库从一个一致性状态变到另一个一致性状态。因此当数据库只包含成功事务提交的结果时，就说数据库处于一致性状态。如果数据库系统运行中发生故障，有些事务尚未完成就被迫中断，这些未完成事务对数据库所做的修改有一部分已写入物理数据库，这时数据库就处于一种不正确的状态，或者说是不一致的状态。</p>
+<p>3 、隔离性。一个事务的执行不能被其它事务干扰。即一个事务内部的操作及使用的数据对其它并发事务是隔离的，并发执行的各个事务之间不能互相干扰。</p>
+<p>4 、持续性。也称永久性，指一个事务一旦提交，它对数据库中的数据的改变就应该是永久性的。接下来的其它操作或故障不应该对其执行结果有任何影响。</p>
+<p><strong>三、MySQL的四种隔离级别</strong></p>
+<p>SQL标准定义了4类隔离级别，包括了一些具体规则，用来限定事务内外的哪些改变是可见的，哪些是不可见的。低级别的隔离级一般支持更高的并发处理，并拥有更低的系统开销。</p>
+<p><strong>Read Uncommitted（读取未提交内容）</strong></p>
+<p>在该隔离级别，所有事务都可以看到其他未提交事务的执行结果。本隔离级别很少用于实际应用，因为它的性能也不比其他级别好多少。读取未提交的数据，也被称之为脏读（Dirty Read）。</p>
+<p><strong>Read Committed（读取提交内容）</strong></p>
+<p>这是大多数数据库系统的默认隔离级别（但不是MySQL默认的）。它满足了隔离的简单定义：一个事务只能看见已经提交事务所做的改变。这种隔离级别也支持所谓的不可重复读（Nonrepeatable Read），因为同一事务的其他实例在该实例处理期间可能会有新的commit，所以同一select可能返回不同结果。</p>
+<p><strong>Repeatable Read（可重读）</strong></p>
+<p>这是MySQL的默认事务隔离级别，它确保同一事务的多个实例在并发读取数据时，会看到同样的数据行。不过理论上，这会导致另一个棘手的问题：幻读 （Phantom Read）。简单的说，幻读指当用户读取某一范围的数据行时，另一个事务又在该范围内插入了新行，当用户再读取该范围的数据行时，会发现有新的“幻影” 行。InnoDB和Falcon存储引擎通过多版本并发控制（MVCC，Multiversion Concurrency Control）机制解决了该问题。</p>
+<p><strong>Serializable（可串行化）</strong></p>
+<p>这是最高的隔离级别，它通过强制事务排序，使之不可能相互冲突，从而解决幻读问题。简言之，它是在每个读的数据行上加上共享锁。在这个级别，可能导致大量的超时现象和锁竞争。</p>
+<p>这四种隔离级别采取不同的锁类型来实现，若读取的是同一个数据的话，就容易发生问题。</p>
+<p>脏读(Drity Read)：某个事务已更新一份数据，另一个事务在此时读取了同一份数据，由于某些原因，前一个RollBack了操作，则后一个事务所读取的数据就会是不正确的。</p>
+<p>不可重复读(Non-repeatable read)：在一个事务的两次查询之中数据不一致，这可能是两次查询过程中间插入了一个事务更新的原有的数据。</p>
+<p>幻读(Phantom Read)：在一个事务的两次查询中数据笔数不一致，例如有一个事务查询了几列(Row)数据，而另一个事务却在此时插入了新的几列数据，先前的事务在接下来的查询中，就会发现有几列数据是它先前所没有的。</p>
+<p>在MySQL中，实现了这四种隔离级别，分别有可能产生问题如下所示：</p>
+<p><img src="https:////upload-images.jianshu.io/upload_images/5219651-fdd241489731111a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/686/format/webp" alt="img"></p>
+<p><strong>四、事务隔离的原理是什么？</strong></p>
+<p>我们都知道事务的几种性质，数据库为了维护这些性质，尤其是一致性和隔离性，一般使用加锁这种方式。同时数据库又是个高并发的应用，同一时间会有大量的并发访问，如果加锁过度，会极大的降低并发处理能力。所以对于加锁的处理，可以说就是数据库对于事务处理的精髓所在。这里通过分析MySQL中InnoDB引擎的加锁机制，来抛砖引玉，让我们更好的理解，在事务处理中数据库到底做了什么。</p>
+<p><strong>4.1、一次封锁or两段锁？</strong></p>
+<p>因为有大量的并发访问，为了预防死锁，一般应用中推荐使用一次封锁法，就是在方法的开始阶段，已经预先知道会用到哪些数据，然后全部锁住，在方法运行之后，再全部解锁。这种方式可以有效的避免循环死锁，但在数据库中却不适用，因为在事务开始阶段，数据库并不知道会用到哪些数据。</p>
+<p>数据库遵循的是两段锁协议，将事务分成两个阶段，加锁阶段和解锁阶段（所以叫两段锁）。</p>
+<p>加锁阶段：在该阶段可以进行加锁操作。在对任何数据进行读操作之前要申请并获得S锁（共享锁，其它事务可以继续加共享锁，但不能加排它锁），在进行写操作之前要申请并获得X锁（排它锁，其它事务不能再获得任何锁）。加锁不成功，则事务进入等待状态，直到加锁成功才继续执行。</p>
+<p>解锁阶段：当事务释放了一个封锁以后，事务进入解锁阶段，在该阶段只能进行解锁操作不能再进行加锁操作。</p>
+<blockquote>
+<p><strong>事务                 加锁/解锁处理</strong></p>
+<p>begin；</p>
+<p>insert into test …..     # 加insert对应的锁</p>
+<p>update test set…      # 加update对应的锁</p>
+<p>delete from test ….   # 加delete对应的锁</p>
+<p>commit;                    # 事务提交时，同时释放insert、update、delete对应的锁</p>
+</blockquote>
+<p>这种方式虽然无法避免死锁，但是两段锁协议可以保证事务的并发调度是串行化（串行化很重要，尤其是在数据恢复和备份的时候）的。</p>
+<p><strong>4.2、事务中的加锁方式</strong></p>
+<p>在数据库操作中，为了有效保证并发读取数据的正确性，提出的事务隔离级别。我们的数据库锁，也是为了构建这些隔离级别存在的。</p>
+<p>我们在前面已经介绍了MySQL的四种隔离级别：</p>
+<blockquote>
+<p>未提交读(Read Uncommitted)：允许脏读，也就是可能读取到其他会话中未提交事务修改的数据。</p>
+<p>提交读(Read Committed)：只能读取到已经提交的数据。Oracle等多数数据库默认都是该级别 (不重复读)。</p>
+<p>可重复读(Repeated Read)：可重复读。在同一个事务内的查询都是事务开始时刻一致的，InnoDB默认级别。在SQL标准中，该隔离级别消除了不可重复读，但是还存在幻象读。</p>
+<p>串行读(Serializable)：完全串行化的读，每次读都需要获得表级共享锁，读写相互都会阻塞。</p>
+</blockquote>
+<p><strong>Read UnCommitted（读取未提交内容）</strong></p>
+<p>Read Uncommitted这种级别，数据库一般都不会用，而且任何操作都不会加锁，这里就不讨论了。</p>
+<blockquote>
+<p>MySQL中锁的种类：</p>
+<p>MySQL中锁的种类很多，有常见的表锁和行锁，也有新加入的Metadata Lock等等,表锁是对一整张表加锁，虽然可分为读锁和写锁，但毕竟是锁住整张表，会导致并发能力下降，一般是做ddl处理时使用。</p>
+<p>行锁则是锁住数据行，这种加锁方法比较复杂，但是由于只锁住有限的数据，对于其它数据不加限制，所以并发能力强，MySQL一般都是用行锁来处理并发事务。这里主要讨论的也就是行锁。</p>
+</blockquote>
+<p><strong>Read Committed（读取提交内容）</strong></p>
+<p>在RC级别中，数据的读取都是不加锁的，但是数据的写入、修改和删除是需要加锁的。这种隔离级别也支持所谓的不可重复读（Nonrepeatable Read）。</p>
+<p><strong>Repeatable Read（可重读）</strong></p>
+<p>这是MySQL中InnoDB默认的隔离级别。我们姑且分“读”和“写”两个模块来讲解。</p>
+<p><strong>读（快照读）</strong></p>
+<p>读就是可重读，可重读这个概念是一事务的多个实例在并发读取数据时。我们前面已经讲过“理论上，这会导致另一个棘手的问题：幻读 （Phantom Read）”。</p>
+<p>讲到这里，我们先来好好地说明下不可重复读和幻读的区别：</p>
+<blockquote>
+<p>很多人容易搞混不可重复读和幻读，确实这两者有些相似。但不可重复读重点在于update和delete，而幻读的重点在于insert。</p>
+<p>如果使用锁机制来实现这两种隔离级别，在可重复读中，该sql第一次读取到数据后，就将这些数据加锁，其它事务无法修改这些数据，就可以实现可重复读了。但这种方法却无法锁住insert的数据，所以当事务A先前读取了数据，或者修改了全部数据，事务B还是可以insert数据提交，这时事务A就会发现莫名其妙多了一条之前没有的数据，这就是幻读，不能通过行锁来避免。需要Serializable隔离级别 ，读用读锁，写用写锁，读锁和写锁互斥，这么做可以有效的避免幻读、不可重复读、脏读等问题，但会极大的降低数据库的并发能力。</p>
+<p>所以说不可重复读和幻读最大的区别，就在于如何通过锁机制来解决他们产生的问题。</p>
+<p>MySQL、ORACLE、PostgreSQL等成熟的数据库，出于性能考虑，都是使用了以乐观锁为理论基础的MVCC（多版本并发控制）来避免这两种问题。</p>
+</blockquote>
+<p>这里继续扩展下悲观锁和乐观锁的知识。</p>
+<blockquote>
+<p>悲观锁：</p>
+<p>正如其名，它指的是对数据被外界（包括本系统当前的其他事务，以及来自外部系统的事务处理）修改持保守态度，因此，在整个数据处理过程中，将数据处于锁定状态。悲观锁的实现，往往依靠数据库提供的锁机制（也只有数据库层提供的锁机制才能真正保证数据访问的排他性，否则，即使在本系统中实现了加锁机制，也无法保证外部系统不会修改数据）。</p>
+<p>在悲观锁的情况下，为了保证事务的隔离性，就需要一致性锁定读。读取数据时给加锁，其它事务无法修改这些数据。修改删除数据时也要加锁，其它事务无法读取这些数据。</p>
+<p>乐观锁：</p>
+<p>相对悲观锁而言，乐观锁机制采取了更加宽松的加锁机制。悲观锁大多数情况下依靠数据库的锁机制实现，以保证操作最大程度的独占性。但随之而来的就是数据库性能的大量开销，特别是对长事务而言，这样的开销往往无法承受。</p>
+<p>而乐观锁机制在一定程度上解决了这个问题。乐观锁，大多是基于数据版本（ Version ）记录机制实现。何谓数据版本？即为数据增加一个版本标识，在基于数据库表的版本解决方案中，一般是通过为数据库表增加一个 “version” 字段来实现。读取出数据时，将此版本号一同读出，之后更新时，对此版本号加一。此时，将提交数据的版本数据与数据库表对应记录的当前版本信息进行比对，如果提交的数据版本号大于数据库表当前版本号，则予以更新，否则认为是过期数据。</p>
+<p>要说明的是，MVCC的实现没有固定的规范，每个数据库都会有不同的实现方式，这里讨论的是InnoDB的MVCC。</p>
+</blockquote>
+<p>接下来讲解MVCC在MySQL的InnoDB中的实现：</p>
+<blockquote>
+<p>在InnoDB中，会在每行数据后添加两个额外的隐藏的值来实现MVCC，这两个值一个记录这行数据何时被创建，另外一个记录这行数据何时过期（或者被删除）。 在实际操作中，存储的并不是时间，而是事务的版本号，每开启一个新事务，事务的版本号就会递增。 在可重读Repeatable reads事务隔离级别下：</p>
+<p>SELECT时，读取创建版本号&lt;=当前事务版本号，删除版本号为空或&gt;当前事务版本号。</p>
+<p>INSERT时，保存当前事务版本号为行的创建版本号。</p>
+<p>DELETE时，保存当前事务版本号为行的删除版本号。</p>
+<p>UPDATE时，插入一条新纪录，保存当前事务版本号为行创建版本号，同时保存当前事务版本号到原来删除的行。</p>
+<p>通过MVCC，虽然每行记录都需要额外的存储空间，更多的行检查工作以及一些额外的维护工作，但可以减少锁的使用，大多数读操作都不用加锁，读数据操作很简单，性能很好，并且也能保证只会读取到符合标准的行，也只锁住必要行。</p>
+</blockquote>
+<p>注：“读”与“读”的区别。</p>
+<p>事务的隔离级别其实都是对于读数据的定义，但到了这里，就被拆成了读和写两个模块来讲解。这主要是因为MySQL中的读，和事务隔离级别中的读，是不一样的。</p>
+<p>我们且看，在RR级别中，通过MVCC机制，虽然让数据变得可重复读，但我们读到的数据可能是历史数据，是不及时的数据，不是数据库当前的数据！这在一些对于数据的时效特别敏感的业务中，就很可能出问题。</p>
+<p>对于这种读取历史数据的方式，我们叫它快照读 (snapshot read)，而读取数据库当前版本数据的方式，叫当前读 (current read)。很显然，在MVCC中：</p>
+<blockquote>
+<p>快照读：就是select</p>
+<p>select * from table ….;</p>
+<p>当前读：特殊的读操作，插入/更新/删除操作，属于当前读，处理的都是当前的数据，需要加锁。</p>
+<p>select * from table where ? lock in share mode;</p>
+<p>select * from table where ? for update;</p>
+<p>insert;</p>
+<p>update ;</p>
+<p>delete;</p>
+</blockquote>
+<p>事务的隔离级别实际上都是定义了当前读的级别，MySQL为了减少锁处理（包括等待其它锁）的时间，提升并发能力，引入了快照读的概念，使得select不用加锁。而update、insert这些“当前读”，就需要另外的模块来解决了。</p>
+<p><strong>因为更新数据、插入数据是针对当前数据的，所以不能以快照的历史数据为参考，此处就是这个意思。</strong></p>
+<p><strong>写（”当前读”）</strong></p>
+<p>事务的隔离级别中虽然只定义了读数据的要求，实际上这也可以说是写数据的要求。上文的“读”，实际是讲的快照读，而这里说的“写”就是当前读了。</p>
+<p>为了解决当前读中的幻读问题，MySQL事务使用了Next-Key锁。</p>
+<p>Next-Key锁是行锁和GAP（间隙锁）的合并，行锁上文已经介绍了，接下来说下GAP间隙锁。</p>
+<p>行锁可以防止不同事务版本的数据修改提交时造成数据冲突的情况。但如何避免别的事务插入数据就成了问题。行锁防止别的事务修改或删除，GAP锁防止别的事务新增，行锁和GAP锁结合形成的的Next-Key锁共同解决了RR级别在写数据时的幻读问题。</p>
+<p><strong>Serializable</strong></p>
+<p>这个级别很简单，读加共享锁，写加排他锁，读写互斥。使用的悲观锁的理论，实现简单，数据更加安全，但是并发能力非常差。如果你的业务并发的特别少或者没有并发，同时又要求数据及时可靠的话，可以使用这种模式。</p>
+<p>这里需要注意改变一个观念，不要看到select就说不会加锁了，在Serializable这个级别，还是会加锁的</p>
+
+      
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+        <div class="declare">
+          <ul class="post-copyright">
+            <li>
+              <i class="ri-copyright-line"></i>
+              <strong>版权声明： </strong s>
+              本博客所有文章除特别声明外，均采用 <a href="https://www.apache.org/licenses/LICENSE-2.0.html" rel="external nofollow"
+                target="_blank">Apache License 2.0</a> 许可协议。转载请注明出处！
+            </li>
+          </ul>
+        </div>
+        
+    <footer class="article-footer">
+      
+          
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://akaqin.github.io/2019/03/01/MySQL%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+      <a href="/2019/03/02/strlen%E4%B8%8Esizeof%E5%8C%BA%E5%88%AB/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            strlen与sizeof区别
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2019/02/23/PHP%E5%86%85%E6%A0%B8%E8%A7%A3%E6%9E%90HashTable/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">PHP HashTable 解析</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        app_id: 'X2Yrs2HgM1dBr94LBlfP7Jsj-gzGzoHsz',
+        app_key: 'x2WQjNYF5CQseEAN1iSqXOLQ',
+        path: window.location.pathname,
+        notify: 'true',
+        verify: 'false',
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2019-2020
+        Aaron Qin
+      </li>
+      <li>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <span>
+  <i>PV:<span id="busuanzi_value_page_pv"></span></i>
+  <i>UV:<span id="busuanzi_value_site_uv"></span></i>
+</span>
+        
+      </li>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+    <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+      <aside class="sidebar">
+        <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="akaQin&#39;s Blog"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about/me">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+      </aside>
+      <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+      
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<script src="/js/share.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script>
+  try {
+    var typed = new Typed("#subtitle", {
+    strings: ['面朝大海，春暖花开','愿你一生努力，一生被爱','想要的都拥有，得不到的都释怀'],
+    startDelay: 0,
+    typeSpeed: 200,
+    loop: true,
+    backSpeed: 100,
+    showCursor: true
+    });
+  } catch (err) {
+  }
+  
+</script>
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer:'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    onClick: (e) => {
+      $('.toc-link').removeClass('is-active-link');
+      $(`a[href=${e.target.hash}]`).addClass('is-active-link');
+      $(e.target.hash).scrollIntoView();
+      return false;
+    }
+  });
+</script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: false
+  }
+</script>
+
+
+<script src="/js/ayer.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+  </div>
+</body>
+
+</html>

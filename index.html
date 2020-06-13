@@ -75,6 +75,81 @@
     
     
     
+    <article id="post-k8s学习笔记-1 概述" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/06/13/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-1%20%E6%A6%82%E8%BF%B0/"
+    >k8s学习笔记-1 概述</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/06/13/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-1%20%E6%A6%82%E8%BF%B0/" class="article-date">
+  <time datetime="2020-06-13T04:25:18.000Z" itemprop="datePublished">2020-06-13</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><h3 id="Kubernetes是什么？"><a href="#Kubernetes是什么？" class="headerlink" title="Kubernetes是什么？"></a>Kubernetes是什么？</h3><p><code>Kubernetes</code>是一个可移植的、可扩展的开源平台，用于管理容器化的工作负载和服务，可促进声明式配置和自动化。Kubernetes 拥有一个庞大且快速增长的生态系统。Kubernetes 的服务、支持和工具广泛可用。</p>
+<blockquote>
+<p>名称 Kubernetes 源于希腊语，意为 “舵手” 或 “飞行员”。Google 在 2014 年开源了 Kubernetes 项目。Kubernetes 建立在 Google 在大规模运行生产工作负载方面拥有十几年的经验的基础上，结合了社区中最好的想法和实践。</p>
+</blockquote>
+<h3 id="历史"><a href="#历史" class="headerlink" title="历史"></a>历史</h3><p><img src="https://d33wubrfki0l68.cloudfront.net/26a177ede4d7b032362289c6fccd448fc4a91174/eb693/images/docs/container_evolution.svg" alt=""></p>
+<p><code>Kubernetes</code>使用<code>Kubernetes API</code>对象 描述集群的 <em>预期状态（desired state）</em>：包括要运行的应用或负载、它们使用的镜像、副本数，以及所需网络和磁盘资源等。你可以通过使用命令行工具<code>kubectl</code>来调用Kubernetes API创建对象，通过创建这些对象来配置预期状态。</p>
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/k8s/" rel="tag">k8s</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
     <article id="post-vnode与inode区别" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -794,88 +869,6 @@
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
-    <article id="post-《APUE》ch10——信号" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2019/12/03/%E3%80%8AAPUE%E3%80%8Bch10%E2%80%94%E2%80%94%E4%BF%A1%E5%8F%B7/"
-    >《APUE》ch10——信号</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2019/12/03/%E3%80%8AAPUE%E3%80%8Bch10%E2%80%94%E2%80%94%E4%BF%A1%E5%8F%B7/" class="article-date">
-  <time datetime="2019-12-03T12:35:08.000Z" itemprop="datePublished">2019-12-03</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E3%80%8AAPUE%E3%80%8B%E7%AC%94%E8%AE%B0/">《APUE》笔记</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="信号概念"><a href="#信号概念" class="headerlink" title="信号概念"></a>信号概念</h2><p>信号是软件中断。它提供了一种处理异步事件的方法。<br>每个信号都有一个名字，以SIG开头。在头文件&lt;signal.h&gt;中，信号名都被定义为正整数常量（信号编号）。<br>不存在编号为0的信号。kill函数对信号编号0有特殊的作用。POSIX.1将此中信号编号值称为空信号。</p>
-<p>信号出现时，内核按下列三种方式之一进行处理：</p>
-<ul>
-<li>忽略此信号<br>大多数信号都可使用这种方式进行处理，但有两种信号决不能被忽略，它们是SIGKILL和SIGSTOP。原因是它们向内核和超级用户提供了使进程终止或停止的可靠方法。</li>
-<li>捕捉信号<br>为了做到这一点，要通知内核在某种信号发生时，调用一个可执行用户希望对这种事件进行的处理的用户函数。</li>
-<li>执行系统默认动作<br>对大多数信号的系统默认动作是终止该进程。</li>
-</ul>
-      
-      <a class="article-more-link" href="/2019/12/03/%E3%80%8AAPUE%E3%80%8Bch10%E2%80%94%E2%80%94%E4%BF%A1%E5%8F%B7/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/signal/" rel="tag">signal</a></li></ul>
 
 
     </footer>
