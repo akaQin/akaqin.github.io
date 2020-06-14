@@ -36,7 +36,7 @@
 <li>kind - 想要创建的对象的类型</li>
 <li>metadata - 帮助识别对象唯一性的数据，包括一个 name 字符串、UID 和可选的 namespace</li>
 </ul>
-<p>您也需要提供对象的 spec 字段。对象 spec 的精确格式对每个 Kubernetes 对象来说是不同的，包含了特定于该对象的嵌套字段。Kubernetes API 参考能够帮助我们找到任何我们想创建的对象的 spec 格式。 例如，可以从 这里 查看 Pod 的 spec 格式， 并且可以从 这里 查看 Deployment 的 spec 格式。</p>
+<p>您也需要提供对象的 spec 字段。对象 spec 的精确格式对每个 Kubernetes 对象来说是不同的，包含了特定于该对象的嵌套字段。Kubernetes API 参考能够帮助我们找到任何我们想创建的对象的 spec 格式。 例如，可以从 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#podspec-v1-core" target="_blank" rel="noopener">这里</a> 查看 Pod 的 spec 格式， 并且可以从 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#deployment-v1-apps" target="_blank" rel="noopener">这里</a>查看 Deployment 的 spec 格式。</p>
 ]]></content>
       <tags>
         <tag>k8s</tag>
