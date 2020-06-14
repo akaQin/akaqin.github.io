@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>k8s学习笔记-2 Kubernetes对象</title>
+    <url>/2020/06/14/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2%20Kubernetes%E5%AF%B9%E8%B1%A1/</url>
+    <content><![CDATA[<a id="more"></a>
+]]></content>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>k8s学习笔记-1 概述</title>
     <url>/2020/06/06/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-1%20%E6%A6%82%E8%BF%B0/</url>
     <content><![CDATA[<p><strong>前言</strong></p>
 <blockquote>
-<p>今天开始将开一个系列的新坑：把k8s的学习心得整理成笔记。内容源自<a href="https://kubernetes.io/zh/docs/home/" target="_blank" rel="noopener">k8s官方文档</a>、<a href="https://kubernetes.feisky.xyz/" target="_blank" rel="noopener">Kubernetes指南</a>以及<a href="https://jimmysong.io/kubernetes-handbook/" target="_blank" rel="noopener">Kubernetes Handbook</a>，这三个文档都是对于学习k8s来说非常优秀的学习资料，我将它们进行整合并砍掉一些冗长的细枝末节，方便刚入门的新手学习理解，如有错误欢迎指正。</p>
+<p>今天开始将开一个系列的新坑：把k8s的学习心得整理成笔记。内容源自<a href="https://kubernetes.io/zh/docs/home/" target="_blank" rel="noopener">k8s官方文档</a>、<a href="https://kubernetes.feisky.xyz/" target="_blank" rel="noopener">Kubernetes指南</a>、<a href="https://jimmysong.io/kubernetes-handbook/" target="_blank" rel="noopener">Kubernetes Handbook</a>以及我自己整理的一些思维导图，这三个文档都是对于学习k8s来说非常优秀的学习资料，我将它们进行简化整合，砍掉一些冗长的细枝末节，方便刚入门的新手学习理解，如有错误欢迎指正。</p>
 </blockquote>
 <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><h3 id="Kubernetes是什么？"><a href="#Kubernetes是什么？" class="headerlink" title="Kubernetes是什么？"></a>Kubernetes是什么？</h3><p><code>Kubernetes</code>是一个可移植的、可扩展的开源平台，用于管理容器化的工作负载和服务，可促进声明式配置和自动化。Kubernetes 拥有一个庞大且快速增长的生态系统。Kubernetes 的服务、支持和工具广泛可用。</p>
 <blockquote>
@@ -1385,8 +1394,8 @@
         <category>《APUE》笔记</category>
       </categories>
       <tags>
-        <tag>文件</tag>
         <tag>I/O</tag>
+        <tag>文件</tag>
       </tags>
   </entry>
   <entry>
