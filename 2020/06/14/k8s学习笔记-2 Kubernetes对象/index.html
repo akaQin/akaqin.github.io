@@ -64,7 +64,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">3.6k字</span>
+            <span class="post-count">4.4k字</span>
         </span>
     </span>
 
@@ -73,7 +73,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">13分钟</span>
+            <span class="post-count">16分钟</span>
         </span>
     </span>
 </div>
@@ -255,6 +255,47 @@
 
 <p>matchLabels 是由 {key，value} 对组成的映射。matchLabels 映射中的单个 {key，value } 等同于 matchExpressions 的元素，其 key字段为 “key”，operator 为 “In”，而 values 数组仅包含 “value”。matchExpressions 是 pod 选择器要求的列表。有效的运算符包括 In，NotIn，Exists 和 DoesNotExist。在 In 和 NotIn 的情况下，设置的值必须是非空的。来自 matchLabels 和 matchExpressions 的所有要求都是合在一起 – 它们必须都满足才能匹配。</p>
 <h2 id="注解"><a href="#注解" class="headerlink" title="注解"></a>注解</h2><p>你可以使用 Kubernetes 注解为对象附加任意的非标识的元数据。客户端程序（例如工具和库）能够获取这些元数据信息。</p>
+<p>您可以使用标签或注解将元数据附加到 Kubernetes 对象。 标签可以用来选择对象和查找满足某些条件的对象集合。 相反，注解不用于标识和选择对象。 注解中的元数据，可以很小，也可以很大，可以是结构化的，也可以是非结构化的，能够包含标签不允许的字符。</p>
+<p>注解和标签一样，是键/值对:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">"metadata": &#123;</span><br><span class="line">  "annotations": &#123;</span><br><span class="line">    "key1" : "value1",</span><br><span class="line">    "key2" : "value2"</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以下是一些例子，用来说明哪些信息可以使用注解来记录:</p>
+<ul>
+<li>由声明性配置所管理的字段。 将这些字段附加为注解，能够将它们与客户端或服务端设置的默认值、自动生成的字段以及通过自动调整大小或自动伸缩系统设置的字段区分开来。</li>
+<li>构建、发布或镜像信息（如时间戳、发布 ID、Git 分支、PR 数量、镜像哈希、仓库地址）。</li>
+<li>指向日志记录、监控、分析或审计仓库的指针。</li>
+<li>可用于调试目的的客户端库或工具信息：例如，名称、版本和构建信息。</li>
+<li>用户或者工具/系统的来源信息，例如来自其他生态系统组件的相关对象的 URL。</li>
+<li>推出的轻量级工具的元数据信息：例如，配置或检查点。</li>
+<li>负责人员的电话或呼机号码，或指定在何处可以找到该信息的目录条目，如团队网站。</li>
+</ul>
+<h2 id="字段选择器"><a href="#字段选择器" class="headerlink" title="字段选择器"></a>字段选择器</h2><p>字段选择器（Field selectors）允许您根据一个或多个资源字段的值筛选 Kubernetes 资源。 下面是一些使用字段选择器查询的例子：</p>
+<ul>
+<li>metadata.name=my-service</li>
+<li>metadata.namespace!=default</li>
+<li>status.phase=Pending</li>
+</ul>
+<p>下面这个 kubectl 命令将筛选出 status.phase 字段值为 Running 的所有 Pod：</p>
+<blockquote>
+<p>kubectl get pods –field-selector status.phase=Running</p>
+</blockquote>
+<h3 id="支持的字段"><a href="#支持的字段" class="headerlink" title="支持的字段"></a>支持的字段</h3><p>不同的 Kubernetes 资源类型支持不同的字段选择器。所有资源类型都支持 metadata.name 和 metadata.namespace 字段。使用不被支持的字段选择器会产生错误，例如：</p>
+<blockquote>
+<p>kubectl get ingress –field-selector foo.bar=baz</p>
+</blockquote>
+<blockquote>
+<p>Error from server (BadRequest): Unable to find “ingresses” that match label selector “”, field selector “foo.bar=baz”: “foo.bar” is not a known field selector: only “metadata.name”, “metadata.namespace”</p>
+</blockquote>
+<h3 id="支持的运算符"><a href="#支持的运算符" class="headerlink" title="支持的运算符"></a>支持的运算符</h3><p>您可以使用 =、==和 != 对字段选择器进行运算（= 和 == 的意义是相同的）。例如，下面这个 kubectl 命令将筛选所有不属于 default 命名空间的 Kubernetes Service：</p>
+<blockquote>
+<p>kubectl get services  –all-namespaces –field-selector metadata.namespace!=default</p>
+</blockquote>
+<h3 id="链式选择器"><a href="#链式选择器" class="headerlink" title="链式选择器"></a>链式选择器</h3><p>同标签和其他选择器一样，字段选择器可以通过使用逗号分隔的列表组成一个选择链。下面这个 kubectl 命令将筛选 status.phase 字段不等于 Running 同时 spec.restartPolicy 字段等于 Always 的所有 Pod：</p>
+<p>kubectl get pods –field-selector=status.phase!=Running,spec.restartPolicy=Always</p>
+<h3 id="多种资源类型"><a href="#多种资源类型" class="headerlink" title="多种资源类型"></a>多种资源类型</h3><p>您能够跨多种资源类型来使用字段选择器。下面这个 kubectl 命令将筛选出所有不在 default 命名空间中的 StatefulSet 和 Service：</p>
+<blockquote>
+<p>kubectl get statefulsets,services –all-namespaces –field-selector metadata.namespace!=default</p>
+</blockquote>
 
       
       <!-- reward -->
