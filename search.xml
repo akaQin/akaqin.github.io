@@ -109,6 +109,60 @@
 <blockquote>
 <p>kubectl run nginx –image=nginx –namespace=<insert-namespace-name-here><br>kubectl get pods –namespace=<insert-namespace-name-here></p>
 </blockquote>
+<h2 id="标签和选择器"><a href="#标签和选择器" class="headerlink" title="标签和选择器"></a>标签和选择器</h2><h3 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h3><p>标签 是附加到 Kubernetes 对象（比如 Pods）上的键值对。 标签旨在用于指定对用户有意义且相关的对象的标识属性，但不直接对核心系统有语义含义。 标签可以用于组织和选择对象的子集。标签可以在创建时附加到对象，随后可以随时添加和修改。 每个对象都可以定义一组键/值标签。每个键对于给定对象必须是唯一的。</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">"metadata": &#123;</span><br><span class="line">  "labels": &#123;</span><br><span class="line">    "key1" : "value1",</span><br><span class="line">    "key2" : "value2"</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="选择器"><a href="#选择器" class="headerlink" title="选择器"></a>选择器</h3><p>与 名称和 UID 不同，标签不提供唯一性。通常，我们希望许多对象携带相同的标签。</p>
+<p>通过 标签选择器，客户端/用户可以识别一组对象。标签选择器是 Kubernetes 中的核心分组原语。</p>
+<p>API 目前支持两种类型的选择器：基于相等性的 和 基于集合的。 标签选择器可以由逗号分隔的多个 需求 组成。在多个需求的情况下，必须满足所有要求，因此逗号分隔符充当逻辑 与（&amp;&amp;）运算符。</p>
+<p>空标签选择器（即，需求为零的选择器）选择集合中的每个对象。</p>
+<p>null 值的标签选择器（仅可用于可选选择器字段）不选择任何对象。</p>
+<p><strong>基于相等性的需求</strong></p>
+<p>基于相等性 或 不相等 的需求允许按标签键和值进行过滤。匹配对象必须满足所有指定的标签约束，尽管它们也可能具有其他标签。 可接受的运算符有=、== 和 ！= 三种。 前两个表示 相等（并且只是同义词），而后者表示 不相等。 例如：</p>
+<blockquote>
+<p>environment = production<br>tier != frontend</p>
+</blockquote>
+<p>前者选择键名等于 environment，值等于 production 的所有资源。 后者选择键名等于 tier，值不等于 frontend 或没有带有 tier 键的标签的所有资源。<br>可以使用逗号运算符来过滤 production 环境中的非 frontend 层资源：</p>
+<blockquote>
+<p>environment=production,tier!=frontend</p>
+</blockquote>
+<p>基于相等性的标签要求的一种使用场景是 Pods 要指定节点选择标准。例如，下面的示例 Pod 选择带有标签 “accelerator=nvidia-tesla-p100”。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">cuda-test</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">cuda-test</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">"k8s.gcr.io/cuda-vector-add:v0.1"</span></span><br><span class="line">      <span class="attr">resources:</span></span><br><span class="line">        <span class="attr">limits:</span></span><br><span class="line">          <span class="attr">nvidia.com/gpu:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">nodeSelector:</span></span><br><span class="line">    <span class="attr">accelerator:</span> <span class="string">nvidia-tesla-p100</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>基于集合的需求</strong></p>
+<p>基于集合 的标签需求允许您通过一组值来过滤键。支持三种操作符：in,notin and exists (只可以用在键标识符上)。例如：</p>
+<blockquote>
+<p>environment in (production, qa)<br>tier notin (frontend, backend)<br>partition<br>!partition</p>
+</blockquote>
+<p>第一个示例选择了所有键等于 environment 并且值等于 production 或者 qa 的资源。</p>
+<p>第二个示例选择了所有键等于 tier 并且值不等于 frontend 或者 backend 的资源，以及所有没有 tier 键标签的资源。</p>
+<p>第三个示例选择了所有 有 partition 标签的资源；没有校验它的值。</p>
+<p>第四个示例选择了所有没有 partition 标签的资源；没有校验它的值。</p>
+<p>类似地，逗号分隔符充当 AND 运算符。因此，使用 partition 键（无论为何值）和 environment 不等于 qa 来过滤资源可以使用 partition，environment notin（qa) 来实现。</p>
+<p>基于集合 的标签选择器是相等标签选择器的一般形式，因为 environment = production 等同于 environment in（production）; != 和 notin 也是类似的。</p>
+<p>基于集合 的要求可以与基于 相等 的要求混合使用。例如：partition in (customerA, customerB),environment!=qa。</p>
+<h4 id="选择器的使用"><a href="#选择器的使用" class="headerlink" title="选择器的使用"></a>选择器的使用</h4><p><strong>url中</strong><br>LIST and WATCH 操作可以使用查询参数指定标签选择器过滤一组对象。两种需求都是允许的。（这里显示的是它们出现在 URL 查询字符串中）</p>
+<ul>
+<li>基于相等性 的需求: ?labelSelector=environment=production,tier=frontend</li>
+<li>基于集合 的需求: ?labelSelector=environment+in+(production,qa),tier+in+(frontend)</li>
+</ul>
+<p>两种标签选择器都可以通过 REST 客户端用于 list 或者 watch 资源。</p>
+<p><strong>kubectl中使用</strong></p>
+<blockquote>
+<p>$ kubectl get pods -l environment=production,tier=frontend<br>$ kubectl get pods -l ‘environment in (production),tier in (frontend)’<br>$ kubectl get pods -l ‘environment in (production, qa)’<br>$ kubectl get pods -l ‘environment,environment notin (frontend)’</p>
+</blockquote>
+<p><strong>在API对象上设置引用</strong><br>一些 Kubernetes 对象，例如 services 和 replicationcontrollers ，也使用了标签选择器去指定了其他资源的集合，例如 pods。</p>
+<p>一个 Service 指向的一组 pods 是由标签选择器定义的。同样，一个 ReplicationController 应该管理的 pods 的数量也是由标签选择器定义的。</p>
+<p>两个对象的标签选择器都是在 json 或者 yaml 文件中使用映射定义的，并且 <strong>只支持 基于相等性 需求的选择器</strong>：</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">"selector": &#123;</span><br><span class="line">    "component" : "redis",</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>或</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">selector:</span></span><br><span class="line">    <span class="attr">component:</span> <span class="string">redis</span></span><br></pre></td></tr></table></figure>
+
+<p>比较新的资源，例如 Job、Deployment、Replica Set 和Daemon Set ,也支持 基于集合的 需求。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">selector:</span></span><br><span class="line">  <span class="attr">matchLabels:</span></span><br><span class="line">    <span class="attr">component:</span> <span class="string">redis</span></span><br><span class="line">  <span class="attr">matchExpressions:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&#123;key:</span> <span class="string">tier,</span> <span class="attr">operator:</span> <span class="string">In,</span> <span class="attr">values:</span> <span class="string">[cache]&#125;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&#123;key:</span> <span class="string">environment,</span> <span class="attr">operator:</span> <span class="string">NotIn,</span> <span class="attr">values:</span> <span class="string">[dev]&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>matchLabels 是由 {key，value} 对组成的映射。matchLabels 映射中的单个 {key，value } 等同于 matchExpressions 的元素，其 key字段为 “key”，operator 为 “In”，而 values 数组仅包含 “value”。matchExpressions 是 pod 选择器要求的列表。有效的运算符包括 In，NotIn，Exists 和 DoesNotExist。在 In 和 NotIn 的情况下，设置的值必须是非空的。来自 matchLabels 和 matchExpressions 的所有要求都是合在一起 – 它们必须都满足才能匹配。</p>
+<h2 id="注解"><a href="#注解" class="headerlink" title="注解"></a>注解</h2><p>你可以使用 Kubernetes 注解为对象附加任意的非标识的元数据。客户端程序（例如工具和库）能够获取这些元数据信息。</p>
 ]]></content>
       <tags>
         <tag>k8s</tag>
