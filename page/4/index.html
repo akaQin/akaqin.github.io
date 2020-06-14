@@ -75,6 +75,97 @@
     
     
     
+    <article id="post-Go语言学习笔记" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2018/11/01/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"
+    >Go语言学习笔记</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2018/11/01/Go%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="article-date">
+  <time datetime="2018-11-01T04:08:15.000Z" itemprop="datePublished">2018-11-01</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E3%80%8AThe-Go-Programing-Language%E3%80%8B%E7%AC%94%E8%AE%B0/">《The Go Programing Language》笔记</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h2><p>Go语言的自动圾收集器是如何知道一个变量是何时可以被回收的呢?这里我们可以避开 完整的技术细节，基本的实现思路是，从每个包级的变量和每个当前运行函数的每一个局部 变量开始，通过指针或引用的访问路径遍历，是否可以找到该变量。如果不存在这样的访问 路径，那么说明该变量是不可达的，也就是说它是否存在并不会影响程序后续的计算结果。<br>因为一个变量的有效周期只取决于是否可达，因此一个循环迭代内部的局部变量的生命周期 可能超出其局部作用域。同时，局部变量可能在函数返回之后依然存在。<br>编译器会自动选择在栈上还是在堆上分配局部变量的存储空间，但可能令人惊讶的是，这个 选择并不是由用var还是new声明变量的方式决定的。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> global *<span class="keyword">int</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> x <span class="keyword">int</span></span><br><span class="line">    x=<span class="number">1</span></span><br><span class="line">    global = &amp;x</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">g</span><span class="params">()</span></span> &#123;</span><br><span class="line">    y := <span class="built_in">new</span>(<span class="keyword">int</span>)</span><br><span class="line">    *y = <span class="number">1</span></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>f函数里的x变量必须在堆上分配，因为它在函数退出后依然可以通过包一级的global变量找 到，虽然它是在函数内部定义的;用Go语言的术语说，这个x局部变量从函数f中逃逸了。相 反，当g函数返回时，变量 *y 将是不可达的，也就是说可以马上被回收的。因此，*y 并没 有从函数g中逃逸，编译器可以选择在栈上分配 *y 的存储空间(也可以选择在堆上分 配，然后由Go语言的GC回收这个变量的内存空间)，虽然这里用的是new方式。其实在任何 时候，你并不需为了编写正确的代码而要考虑变量的逃逸行为，要记住的是，逃逸的变量需 要额外分配内存，同时对性能的优化可能会产生细微的影响。</p>
+<p>Go语言的自动垃圾收集器对编写正确的代码是一个巨大的帮助，但也并不是说你完全不用考 虑内存了。你虽然不需要显式地分配和释放内存，但是要编写高效的程序你依然需要了解变 量的生命周期。例如，如果将指向短生命周期对象的指针保存到具有长生命周期的对象中， 特别是保存到全局变量时，会阻止对短生命周期对象的垃圾回收(从而可能影响程序的性能)。</p>
+<h2 id="生命周期与作用域"><a href="#生命周期与作用域" class="headerlink" title="生命周期与作用域"></a>生命周期与作用域</h2><p>不要将作用域和生命周期混为一谈。声明语句的作用域对应的是一个源代码的文本区域;它 是一个编译时的属性。一个变量的生命周期是指程序运行时变量存在的有效时间段，在此时 间区域内它可以被程序的其他部分引用;是一个运行时的概念。</p>
+<h2 id="字符串与字节Slice"><a href="#字符串与字节Slice" class="headerlink" title="字符串与字节Slice"></a>字符串与字节Slice</h2><p>一个字符串是包含的只读字节数组，一旦创建，是不可变的。相比之下，一个字节slice的元 素则可以自由地修改。</p>
+<p>字符串和字节slice之间可以相互转换:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">s := <span class="string">"abc"</span></span><br><span class="line">b := []<span class="keyword">byte</span>(s)</span><br><span class="line">s2 := <span class="keyword">string</span>(b)</span><br></pre></td></tr></table></figure>
+<p>从概念上讲，一个[]byte(s)转换是分配了一个新的字节数组用于保存字符串数据的拷贝，然后 引用这个底层的字节数组。编译器的优化可以避免在一些场景下分配和复制字符串数据，但 总的来说需要确保在变量b被修改的情况下，原始的s字符串也不会改变。将一个字节slice转 到字符串的string(b)操作则是构造一个字符串拷贝，以确保s2字符串是只读的。</p>
+<h2 id="数组和切片Slice"><a href="#数组和切片Slice" class="headerlink" title="数组和切片Slice"></a>数组和切片Slice</h2><p>slice和数组的字面值 语法很类似，它们都是用花括弧包含一系列的初始化元素，但是对于slice并没有指明序列的 长度。这会隐式地创建一个合适大小的数组，然后slice的指针指向底层的数组。就像数组字面值一样，slice的字面值也可以按顺序指定初始化值序列，或者是通过索引和元素值指定，或者的两种风格的混合语法初始化。</p>
+<p>和数组不同的是，<strong>slice之间不能比较</strong>，因此我们不能使用==操作符来判断两个slice是否含有 全部相等元素。不过标准库提供了高度优化的bytes.Equal函数来判断两个字节型slice是否相 等([]byte)，但是对于其他类型的slice，我们必须自己展开每个元素进行比较:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">equal</span><span class="params">(x, y []<span class="keyword">string</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(x) != <span class="built_in">len</span>(y) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="keyword">range</span> x &#123;</span><br><span class="line">        <span class="keyword">if</span> x[i] != y[i] &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面关于两个slice的深度相等测试，运行的时间并不比支持==操作的数组或字符串更多，但 是为何slice不直接支持比较运算符呢?这方面有两个原因。第一个原因，一个slice的元素是 间接引用的，一个slice甚至可以包含自身。虽然有很多办法处理这种情形，但是没有一个是 简单有效的。</p>
+<p>第二个原因，因为slice的元素是间接引用的，一个固定值的slice在不同的时间可能包含不同 的元素，因为底层数组的元素可能会被修改。并且Go语言中map等哈希表之类的数据结构的 key只做简单的浅拷贝，它要求在整个声明周期中相等的key必须对相同的元素。对于像指针 或chan之类的引用类型，==相等测试可以判断两个是否是引用相同的对象。一个针对slice的 浅相等测试的==操作符可能是有一定用处的，也能临时解决map类型的key问题，但是slice和 数组不同的相等测试行为会让人困惑。因此，安全的做法是直接禁止slice之间的比较操作。<br>slice唯一合法的比较操作是和nil比较，例如:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> summer == <span class="literal">nil</span> &#123; <span class="comment">/* ... */</span> &#125;</span><br></pre></td></tr></table></figure>
+<p> 一个零值的slice等于nil。一个nil值的slice并没有底层数组。一个nil值的slice的长度和容量都 是0，但是也有非nil值的slice的长度和容量也是0的，例如[]int{}或make([]int, 3)[3:]。</p>
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Go/" rel="tag">Go</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
     <article id="post-arts-12" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -795,96 +886,6 @@
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARTS/" rel="tag">ARTS</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
-    <article id="post-指针学习笔记" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2018/09/09/%E6%8C%87%E9%92%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"
-    >指针学习笔记</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2018/09/09/%E6%8C%87%E9%92%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="article-date">
-  <time datetime="2018-09-09T02:36:27.000Z" itemprop="datePublished">2018-09-09</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/">知识点总结</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="C语言指针的总结"><a href="#C语言指针的总结" class="headerlink" title="C语言指针的总结"></a>C语言指针的总结</h1><p>原文出自xx_cc</p>
-<p>链接：<a href="https://www.jianshu.com/p/63f3bfb58687" target="_blank" rel="noopener">https://www.jianshu.com/p/63f3bfb58687</a></p>
-<h2 id="1-变量"><a href="#1-变量" class="headerlink" title="1. 变量"></a>1. 变量</h2><ol>
-<li>不同类型的变量在内存中占据不同的字节空间。</li>
-<li>内存中存储数据的最小基本单位是字节，每一个字节都有一个内存地址，这个地址是一个十六进制的数。</li>
-<li>声明一个变量，在内存中是从高字节向低字节分配连续的指定字节数的空间。</li>
-<li>任何数据在内存中都是以其二进制的补码形式存储的，低位存储在低字节，高位存储在高字节。</li>
-<li>变量的值：存储在变量中的数据，叫做变量的值。</li>
-<li>变量的地址：一个变量是由一个或者多个字节组成的，组成这个变量的低字节的地址，就是这个变量的地址。</li>
-<li>如何取出变量的地址：使用&amp;（取地址运算符）运算符，&amp;变量名；这个表达式的值就是这个变量的地址。使用%p控制度输出变量的地址。</li>
-<li>什么是指针：变量的地址叫做指针，指针就是地址，地址就是指针。</li>
-</ol>
-<p>下面通过一张图可以更直观的理解内存中的地址</p>
-<p><img src="https:////upload-images.jianshu.io/upload_images/1434508-3146d4e4c4362be7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/925/format/webp" alt="img"></p>
-<p>内存中的地址演示图</p>
-      
-      <a class="article-more-link" href="/2018/09/09/%E6%8C%87%E9%92%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pointer/" rel="tag">pointer</a></li></ul>
 
 
     </footer>

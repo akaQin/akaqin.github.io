@@ -75,6 +75,73 @@
     
     
     
+    <article id="post-k8s学习笔记-x Kubectl命令" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/06/14/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-x%20Kubectl%E5%91%BD%E4%BB%A4/"
+    >k8s学习笔记-x Kubectl命令</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/06/14/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-x%20Kubectl%E5%91%BD%E4%BB%A4/" class="article-date">
+  <time datetime="2020-06-14T09:59:30.000Z" itemprop="datePublished">2020-06-14</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
     <article id="post-k8s学习笔记-2 Kubernetes对象" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -115,6 +182,30 @@
 
       
       <a id="more"></a>
+<h1 id="Kubernetes对象"><a href="#Kubernetes对象" class="headerlink" title="Kubernetes对象"></a>Kubernetes对象</h1><h2 id="理解Kubernetes对象"><a href="#理解Kubernetes对象" class="headerlink" title="理解Kubernetes对象"></a>理解Kubernetes对象</h2><p>在 Kubernetes 系统中，Kubernetes 对象 是持久化的实体。Kubernetes 使用这些实体去表示整个集群的状态。特别地，它们描述了如下信息：</p>
+<ul>
+<li>哪些容器化应用在运行（以及在哪个 Node 上）</li>
+<li>可以被应用使用的资源</li>
+<li>关于应用运行时表现的策略，比如重启策略、升级策略，以及容错策略<br>Kubernetes 对象是 “目标性记录” —— 一旦创建对象，Kubernetes 系统将持续工作以确保对象存在。通过创建对象，本质上是在告知 Kubernetes 系统，所需要的集群工作负载看起来是什么样子的，这就是 Kubernetes 集群的 期望状态（Desired State）。</li>
+</ul>
+<p>操作 Kubernetes 对象 —— 无论是创建、修改，或者删除 —— 需要使用 Kubernetes API。比如，当使用 kubectl 命令行接口时，CLI 会执行必要的 Kubernetes API 调用，也可以在程序中使用 客户端库 直接调用 Kubernetes API。</p>
+<h3 id="对象规约（Spec）与状态（Status）"><a href="#对象规约（Spec）与状态（Status）" class="headerlink" title="对象规约（Spec）与状态（Status）"></a>对象规约（Spec）与状态（Status）</h3><p>每个 Kubernetes 对象包含两个嵌套的对象字段，它们负责管理对象的配置：对象 spec 和 对象 status 。 spec 是必需的，它描述了对象的<code>期望状态（Desired State）</code> —— 希望对象所具有的特征。 status 描述了对象的<code>实际状态（Actual State）</code>，它是由 Kubernetes 系统提供和更新的。在任何时刻，Kubernetes 控制面一直努力地管理着对象的实际状态以与期望状态相匹配。</p>
+<p>例如，Kubernetes Deployment 对象能够表示运行在集群中的应用。 当创建 Deployment 时，可能需要设置 Deployment 的规约，以指定该应用需要有 3 个副本在运行。 Kubernetes 系统读取 Deployment 规约，并启动我们所期望的该应用的 3 个实例 —— 更新状态以与规约相匹配。 如果那些实例中有失败的（一种状态变更），Kubernetes 系统通过修正来响应规约和状态之间的不一致 —— 这种情况，会启动一个新的实例来替换。</p>
+<p>关于对象 spec、status 和 metadata 的更多信息，查看 <a href="https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md" target="_blank" rel="noopener">Kubernetes API约定</a> 。</p>
+<h3 id="描述-Kubernetes-对象"><a href="#描述-Kubernetes-对象" class="headerlink" title="描述 Kubernetes 对象"></a>描述 Kubernetes 对象</h3><p>当创建 Kubernetes 对象时，必须提供对象的规约，用来描述该对象的期望状态，以及关于对象的一些基本信息（例如名称）。 当使用 Kubernetes API 创建对象时（或者直接创建，或者基于kubectl），API 请求必须在请求体中包含 JSON 格式的信息。<strong>大多数情况下，需要在 .yaml 文件中为 kubectl 提供这些信息。</strong> kubectl 在发起 API 请求时，将这些信息转换成 JSON 格式。</p>
+<p>这里有一个 .yaml 示例文件，展示了 Kubernetes Deployment 的必需字段和对象规约：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span> <span class="comment"># for versions before 1.9.0 use apps/v1beta2</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-deployment</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span> <span class="comment"># tells deployment to run 2 pods matching the template</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">nginx:1.14.2</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<p>使用类似于上面的 .yaml 文件来创建 Deployment，一种方式是使用 kubectl 命令行接口（CLI）中的 kubectl apply 命令， 将 .yaml 文件作为参数。下面是一个示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://k8s.io/examples/application/deployment.yaml --record</span><br></pre></td></tr></table></figure>
+<p>输出类似如下这样：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deployment.apps/nginx-deployment created</span><br></pre></td></tr></table></figure>
+<p>必需字段<br>在想要创建的 Kubernetes 对象对应的 .yaml 文件中，需要配置如下的字段：</p>
+<ul>
+<li>apiVersion - 创建该对象所使用的 Kubernetes API 的版本</li>
+<li>kind - 想要创建的对象的类型</li>
+<li>metadata - 帮助识别对象唯一性的数据，包括一个 name 字符串、UID 和可选的 namespace</li>
+</ul>
+<p>您也需要提供对象的 spec 字段。对象 spec 的精确格式对每个 Kubernetes 对象来说是不同的，包含了特定于该对象的嵌套字段。Kubernetes API 参考能够帮助我们找到任何我们想创建的对象的 spec 格式。 例如，可以从 这里 查看 Pod 的 spec 格式， 并且可以从 这里 查看 Deployment 的 spec 格式。</p>
 
       
       <!-- reward -->
@@ -776,87 +867,6 @@
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pthread/" rel="tag">pthread</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
-    <article id="post-工作心得总结" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2019/12/13/%E5%B7%A5%E4%BD%9C%E5%BF%83%E5%BE%97%E6%80%BB%E7%BB%93/"
-    >工作心得总结</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2019/12/13/%E5%B7%A5%E4%BD%9C%E5%BF%83%E5%BE%97%E6%80%BB%E7%BB%93/" class="article-date">
-  <time datetime="2019-12-13T04:09:43.000Z" itemprop="datePublished">2019-12-13</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%BB%8F%E9%AA%8C%E5%8F%8D%E6%80%9D/">经验反思</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h3 id="时间评估"><a href="#时间评估" class="headerlink" title="时间评估"></a>时间评估</h3><p>​    当leader给你一个任务问你多久能完成时，不要简单的看一看就给一个估摸的大概的时间，要培养对工作量评估的能力，这很重要。评估时要做到尽量准确，具体注意以下几点：</p>
-<ol>
-<li>不要想着三个小时的工作,我加加班赶一赶两个小时搞定——在仓促状态下赶工，质量必然会收到影响，你做的每一件事的质量代表着你的个人水平，它直接影响着你在别人心中的看法，而且一旦再出什么额外状况，这个任务就会delay。</li>
-<li>两个小时的工作量，不要想着我给自己估宽松点，估三个小时——该是多少就是多少，这直接影响别人对你的信任，如果同一份工作你给估了一个月，老板去问另一个开发，他只估了半个月，那老板以后可能就不会再找你分配工作。一天八小时工作制，由于各种各样的原因实际可支配的时间其实并没有这么多，那你可以提前说明比如我每天要给别人解决各种各样的问题或者晚上想留出两小时的时间学习，所以每天实际的开发时间只有5h，那一份40h工作量的任务对我来说就需要8day，但一定不要把这些额外事情的时间算到这个任务里。</li>
-<li>评估任务尽量拆解的细一些，想的全面一些。一个需求中复杂的坑和细节尽量一开始就考虑到搞清楚，并留出相应的时间，以避免做到一半发现有坑再delay，承诺过的事情要有契约精神。我知道这很难，但尽量做，其实每个任务实际完成的时间比预期差个一天半天都是正常的，关键是要总结经验，想想这次评估中有哪些不足，让下次的评估可以更准确。如果每次评估都是糊弄了事，你会逐渐丧失时间评估的能力。</li>
-</ol>
-      
-      <a class="article-more-link" href="/2019/12/13/%E5%B7%A5%E4%BD%9C%E5%BF%83%E5%BE%97%E6%80%BB%E7%BB%93/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/work/" rel="tag">work</a></li></ul>
 
 
     </footer>
