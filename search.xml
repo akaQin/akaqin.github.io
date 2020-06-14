@@ -39,7 +39,7 @@
 </ul>
 <p>您也需要提供对象的 spec 字段。对象 spec 的精确格式对每个 Kubernetes 对象来说是不同的，包含了特定于该对象的嵌套字段。Kubernetes API 参考能够帮助我们找到任何我们想创建的对象的 spec 格式。 例如，可以从 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#podspec-v1-core" target="_blank" rel="noopener">这里</a> 查看 Pod 的 spec 格式， 并且可以从 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#deployment-v1-apps" target="_blank" rel="noopener">这里</a>查看 Deployment 的 spec 格式。</p>
 <h2 id="Kubernetes-对象管理"><a href="#Kubernetes-对象管理" class="headerlink" title="Kubernetes 对象管理"></a>Kubernetes 对象管理</h2><p>有三种方式管理Kubernetes对象：</p>
-<h3 id="命令式命令"><a href="#命令式命令" class="headerlink" title="命令式命令"></a>命令式命令</h3><p>使用命令式命令时，用户可以在集群中的活动对象上进行操作。用户将操作传给 kubectl 命令作为参数或标志。</p>
+<h3 id="命令式命令（Imperative-commands）"><a href="#命令式命令（Imperative-commands）" class="headerlink" title="命令式命令（Imperative commands）"></a>命令式命令（Imperative commands）</h3><p>使用命令式命令时，用户可以在集群中的活动对象上进行操作。用户将操作传给 kubectl 命令作为参数或标志。</p>
 <p>这是开始或者在集群中运行一次性任务的最简单方法。因为这个技术直接在活动对象上操作，所以它不提供以前配置的历史记录。</p>
 <p><strong>例子</strong></p>
 <p>通过创建 Deployment 对象来运行 nginx 容器的实例：</p>
@@ -50,7 +50,7 @@
 <blockquote>
 <p>kubectl create deployment nginx –image nginx</p>
 </blockquote>
-<h3 id="命令式对象配置"><a href="#命令式对象配置" class="headerlink" title="命令式对象配置"></a>命令式对象配置</h3><p>在命令式对象配置中，kubectl 命令指定操作（创建，替换等），可选标志和至少一个文件名。指定的文件必须包含 YAML 或 JSON 格式的对象的完整定义。</p>
+<h3 id="命令式对象配置（Imperative-object-configuration）"><a href="#命令式对象配置（Imperative-object-configuration）" class="headerlink" title="命令式对象配置（Imperative object configuration）"></a>命令式对象配置（Imperative object configuration）</h3><p>在命令式对象配置中，kubectl 命令指定操作（创建，替换等），可选标志和至少一个文件名。指定的文件必须包含 YAML 或 JSON 格式的对象的完整定义。</p>
 <p>有关对象定义的详细信息，请查看 <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/" target="_blank" rel="noopener">API 参考</a>。</p>
 <p><strong>例子</strong></p>
 <p>创建配置文件中定义的对象：</p>
@@ -68,6 +68,16 @@
 <p><strong>apply和replace的区别：</strong></p>
 <blockquote>
 <p>不同之处在于，<code>replace</code>首先删除资源，然后从您提供的文件中创建资源；而<code>apply</code>尝试直接在当前活动资源中仅更新文件中赋予它的属性。请参阅就地更新和破坏性更新。<br>结果是，您在中使用的文件<code>apply</code>可能是不完整的规范，即仅是您要更改的文件；而使用<code>replace</code>，则规范必须完整。<br>因此，您可以<code>apply</code>只更改注释，而不指定资源的任何其他属性的文件；但是，如果您尝试通过<code>replace</code>命令使用同一文件，则由于缺少信息，该命令将失败。<br>而且，<code>apply</code>仅适用于资源的某些属性；如果您需要更新<code>apply</code>不适用的属性，则必须使用<code>replace</code>。</p>
+</blockquote>
+<h3 id="声明方对象配置（Declarative-object-configuration）"><a href="#声明方对象配置（Declarative-object-configuration）" class="headerlink" title="声明方对象配置（Declarative object configuration）"></a>声明方对象配置（Declarative object configuration）</h3><p>使用声明式对象配置时，用户对本地存储的对象配置文件进行操作，但是用户未定义要对该文件执行的操作。kubectl 会自动检测每个文件的创建、更新和删除操作。这使得配置可以在目录上工作，根据目录中配置文件对不同的对象执行不同的操作。</p>
+<p><strong>例子：</strong></p>
+<p>处理 configs 目录中的所有对象配置文件，创建并更新活动对象。可以首先使用 diff 子命令查看将要进行的更改，然后在进行应用：</p>
+<blockquote>
+<p>kubectl diff -f configs/<br>kubectl apply -f configs/</p>
+</blockquote>
+<p>递归处理目录：</p>
+<blockquote>
+<p>kubectl diff -R -f configs/<br>kubectl apply -R -f configs/</p>
 </blockquote>
 ]]></content>
       <tags>
