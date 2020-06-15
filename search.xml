@@ -13,21 +13,39 @@
 </tr>
 </thead>
 <tbody><tr>
-<td>col 3 is</td>
-<td align="center">right-aligned</td>
-<td align="right">$1600</td>
+<td>｜ app.kubernetes.io/name        ｜    应用程序的名称                               ｜     mysql                ｜ 字符串    ｜</td>
+<td align="center"></td>
+<td align="right"></td>
 <td align="right"></td>
 </tr>
 <tr>
-<td>col 2 is</td>
-<td align="center">centered</td>
-<td align="right">$12</td>
+<td>｜ app.kubernetes.io/instance    ｜ 用于唯一确定应用实例的名称                     ｜     wordpress-abcxzy   ｜     字符串   ｜</td>
+<td align="center"></td>
+<td align="right"></td>
 <td align="right"></td>
 </tr>
 <tr>
-<td>zebra stripes</td>
-<td align="center">are neat</td>
-<td align="right">$1</td>
+<td>｜ app.kubernetes.io/version     ｜    应用程序的当前版本（例如，语义版本，修订版哈希等） ｜     5.7.21</td>
+<td align="center">字符串  ｜</td>
+<td align="right"></td>
+<td align="right"></td>
+</tr>
+<tr>
+<td>｜ app.kubernetes.io/component   ｜    架构中的组件</td>
+<td align="center">database             ｜     字符串   ｜</td>
+<td align="right"></td>
+<td align="right"></td>
+</tr>
+<tr>
+<td>｜ app.kubernetes.io/part-of     ｜    此级别的更高级别应用程序的名称</td>
+<td align="center">wordpress</td>
+<td align="right">字符串  ｜</td>
+<td align="right"></td>
+</tr>
+<tr>
+<td>｜ app.kubernetes.io/managed-by  ｜ 用于管理应用程序的工具</td>
+<td align="center">helm</td>
+<td align="right">字符串    ｜</td>
 <td align="right"></td>
 </tr>
 </tbody></table>
