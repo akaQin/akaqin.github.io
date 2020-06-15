@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>k8s学习笔记-3 Kubenetes架构</title>
+    <url>/2020/06/15/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-3-Kubenetes%E6%9E%B6%E6%9E%84/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
     <title>k8s学习笔记-x Kubectl命令</title>
     <url>/2020/06/14/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-x%20Kubectl%E5%91%BD%E4%BB%A4/</url>
     <content><![CDATA[<table>

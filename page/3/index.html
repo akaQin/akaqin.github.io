@@ -75,6 +75,82 @@
     
     
     
+    <article id="post-《APUE》ch4——文件和目录" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2019/09/27/%E3%80%8AAPUE%E3%80%8Bch4%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95/"
+    >《APUE》ch4——文件和目录</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2019/09/27/%E3%80%8AAPUE%E3%80%8Bch4%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95/" class="article-date">
+  <time datetime="2019-09-27T01:54:37.000Z" itemprop="datePublished">2019-09-27</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E3%80%8AAPUE%E3%80%8B%E7%AC%94%E8%AE%B0/">《APUE》笔记</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="文件属性"><a href="#文件属性" class="headerlink" title="文件属性"></a>文件属性</h2><h3 id="文件结构-stat"><a href="#文件结构-stat" class="headerlink" title="文件结构 stat"></a>文件结构 stat</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">stat</span> &#123;</span></span><br><span class="line">  <span class="keyword">mode_t</span>            st_mode;    <span class="comment">// file type &amp; mode (permisssions)</span></span><br><span class="line">  <span class="keyword">ino_t</span>             st_ino;     <span class="comment">// i-node number (serial number)</span></span><br><span class="line">  <span class="keyword">dev_t</span>             st_dev;     <span class="comment">// device number (file system)</span></span><br><span class="line">  <span class="keyword">dev_t</span>             st_rdev;    <span class="comment">// device number for special files</span></span><br><span class="line">  <span class="keyword">nlink_t</span>           st_link;    <span class="comment">// number of links</span></span><br><span class="line">  <span class="keyword">uid_t</span>             st_uid;     <span class="comment">// user ID of owner</span></span><br><span class="line">  <span class="keyword">gid_t</span>             st_gid;     <span class="comment">// group ID of owner</span></span><br><span class="line">  <span class="keyword">off_t</span>             st_size;    <span class="comment">// size in bytes, for regular files</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>   <span class="title">st_atime</span>;</span>   <span class="comment">// time of last access</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>   <span class="title">st_mtime</span>;</span>   <span class="comment">// time of last modification</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timespec</span>   <span class="title">st_ctime</span>;</span>   <span class="comment">// time of last file status change</span></span><br><span class="line">  <span class="keyword">blksize_t</span>         st_blksize; <span class="comment">// best I/O block size 对文件I/O较适合的块长度</span></span><br><span class="line">  <span class="keyword">blkcnt_t</span>          st_blocks;  <span class="comment">// number of disk blocks allocated 所分配的实际512字节块块数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+      <a class="article-more-link" href="/2019/09/27/%E3%80%8AAPUE%E3%80%8Bch4%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%96%87%E4%BB%B6/" rel="tag">文件</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%9B%AE%E5%BD%95/" rel="tag">目录</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
     <article id="post-《APUE》ch3——文件I-O" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -782,89 +858,6 @@
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
-    <article id="post-arts-13" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2018/11/12/arts-13/"
-    >arts-13</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2018/11/12/arts-13/" class="article-date">
-  <time datetime="2018-11-12T12:52:53.000Z" itemprop="datePublished">2018-11-12</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/ARTS/">ARTS</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="Algorithim"><a href="#Algorithim" class="headerlink" title="Algorithim"></a>Algorithim</h2><p>Given a linked list, determine if it has a cycle in it.</p>
-<p>Follow up:<br>Can you solve it without using extra space?</p>
-<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><p><strong>Approach:1</strong></p>
-<p>Imagine two runners running on a track at different speed. What happens when the track is actually a circle?</p>
-<p>The space complexity can be reduced to O(1)O(1) by considering two pointers at <strong>different speed</strong> - a slow pointer and a fast pointer. The slow pointer moves one step at a time while the fast pointer moves two steps at a time.</p>
-<p>If there is no cycle in the list, the fast pointer will eventually reach the end and we can return false in this case.</p>
-<p>Now consider a cyclic list and imagine the slow and fast pointers are two runners racing around a circle track. The fast runner will eventually meet the slow runner. Why? Consider this case (we name it case A) - The fast runner is just one step behind the slow runner. In the next iteration, they both increment one and two steps respectively and meet each other.</p>
-<p>How about other cases? For example, we have not considered cases where the fast runner is two or three steps behind the slow runner yet. This is simple, because in the next or next’s next iteration, this case will be reduced to case A mentioned above.</p>
-      
-      <a class="article-more-link" href="/2018/11/12/arts-13/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARTS/" rel="tag">ARTS</a></li></ul>
 
 
     </footer>
