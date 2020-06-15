@@ -5655,7 +5655,7 @@ button {
 }
 .article-entry table {
   width: 100%;
-  max-width: 70rem;
+  max-width: 100rem;
   border: 1px solid #dedede;
   margin: 15px auto;
   border-collapse: collapse;
@@ -6448,7 +6448,7 @@ button {
 .tocbot {
   position: absolute;
   top: 14rem;
-  left: calc((100vw - 70rem) / 2 + 70rem);
+  left: calc((100vw - 100rem) / 2 + 100rem);
   font-size: 80%;
   opacity: 0.8;
 }
