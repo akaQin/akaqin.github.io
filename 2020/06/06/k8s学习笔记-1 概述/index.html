@@ -64,7 +64,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">4.3k字</span>
+            <span class="post-count">4.5k字</span>
         </span>
     </span>
 
@@ -73,7 +73,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">14分钟</span>
+            <span class="post-count">16分钟</span>
         </span>
     </span>
 </div>
@@ -186,6 +186,25 @@
 <li><p>容器运行环境(Container Runtime)<br>容器运行环境是负责运行容器的软件。<br>Kubernetes 支持多个容器运行环境: Docker、 containerd、cri-o、 rktlet 以及任何实现 Kubernetes CRI (容器运行环境接口)。</p>
 </li>
 </ul>
+<h3 id="组件通信"><a href="#组件通信" class="headerlink" title="组件通信"></a>组件通信</h3><p>Kubernetes 多组件之间的通信原理为</p>
+<ul>
+<li>API Server 负责 etcd 存储的所有操作，且只有 API Server 才直接操作 etcd 集群</li>
+<li>API Server 对内（集群中的其他组件）和对外（用户）提供统一的 REST API，其他组件均通过 API Server 进行通信<ul>
+<li>Controller Manager、Scheduler、Kube-proxy 和 Kubelet 等均通过 API Server watch API 监测资源变化情况，并对资源作相应的操作</li>
+<li>所有需要更新资源状态的操作均通过 API Server 的 REST API 进行</li>
+</ul>
+</li>
+<li>API Server 也会直接调用 Kubelet API（如 logs, exec, attach 等），默认不校验 Kubelet 证书，但可以通过 <code>--kubelet-certificate-authority</code> 开启（而 GKE 通过 SSH 隧道保护它们之间的通信）</li>
+</ul>
+<p>比如典型的创建 Pod 的流程为:</p>
+<p><img src="https://gblobscdn.gitbook.com/assets%2F-LDAOok5ngY4pc1lEDes%2F-LpOIkR-zouVcB8QsFj_%2F-LpOIpXSDktwl5EzzhsB%2Fworkflow.png?alt=media" alt=""></p>
+<ol>
+<li>用户通过 REST API 创建一个 Pod</li>
+<li>API Server 将其写入 etcd</li>
+<li>Scheduluer 检测到未绑定 Node 的 Pod，开始调度并更新 Pod 的 Node 绑定</li>
+<li>Kubelet 检测到有新的 Pod 调度过来，通过 Container Runtime 运行该 Pod</li>
+<li>Kubelet 通过 Container Runtime 取到 Pod 状态，并更新到 API Server 中</li>
+</ol>
 <h3 id="插件-Addons"><a href="#插件-Addons" class="headerlink" title="插件(Addons)"></a>插件(Addons)</h3><p>插件使用 Kubernetes 资源 (DaemonSet, Deployment等) 实现集群功能。因为这些提供集群级别的功能，所以插件的命名空间资源属于 kube-system 命名空间。</p>
 <p>所选的插件如下所述：有关可用插件的扩展列表，请参见<a href="https://kubernetes.io/docs/concepts/cluster-administration/addons/" target="_blank" rel="noopener">插件 (Addons)</a>。</p>
 <ul>
