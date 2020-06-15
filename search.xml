@@ -13,10 +13,10 @@
 </tr>
 </thead>
 <tbody><tr>
-<td>a</td>
-<td>b</td>
-<td>c</td>
-<td>d</td>
+<td>app.kubernetes.io/name</td>
+<td>应用程序的名称</td>
+<td>mysql</td>
+<td>字符串</td>
 </tr>
 </tbody></table>
 <hr>
