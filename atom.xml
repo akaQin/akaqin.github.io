@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://akaqin.github.io/"/>
-  <updated>2020-06-15T04:48:02.302Z</updated>
+  <updated>2020-06-15T04:51:07.134Z</updated>
   <id>https://akaqin.github.io/</id>
   
   <author>
@@ -21,9 +21,9 @@
     <link href="https://akaqin.github.io/2020/06/14/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-x%20Kubectl%E5%91%BD%E4%BB%A4/"/>
     <id>https://akaqin.github.io/2020/06/14/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-x%20Kubectl%E5%91%BD%E4%BB%A4/</id>
     <published>2020-06-14T09:59:30.000Z</published>
-    <updated>2020-06-15T04:48:02.302Z</updated>
+    <updated>2020-06-15T04:51:07.134Z</updated>
     
-    <content type="html"><![CDATA[<table><thead><tr><th>键</th><th>描述</th><th>示例</th><th>类型</th></tr></thead><tbody><tr><td>app.kubernetes.io/name</td><td>应用程序的名称</td><td>mysql</td><td>字符串</td></tr></tbody></table><hr><p>｜ 键 ｜ 描述 | 示例 | 类型 |<br>｜ —————————– ｜ —————————————– ｜ ——————- ｜ ——— ｜<br>｜ app.kubernetes.io/name        ｜    应用程序的名称                               ｜     mysql                ｜ 字符串    ｜<br>｜ app.kubernetes.io/instance    ｜ 用于唯一确定应用实例的名称                     ｜     wordpress-abcxzy   ｜     字符串   ｜<br>｜ app.kubernetes.io/version     ｜    应用程序的当前版本（例如，语义版本，修订版哈希等） ｜     5.7.21              |     字符串  ｜<br>｜ app.kubernetes.io/component   ｜    架构中的组件                                 |    database             ｜     字符串   ｜<br>｜ app.kubernetes.io/part-of     ｜    此级别的更高级别应用程序的名称                  |    wordpress               |    字符串  ｜<br>｜ app.kubernetes.io/managed-by  ｜ 用于管理应用程序的工具                         |         helm            |    字符串    ｜</p>]]></content>
+    <content type="html"><![CDATA[<table><thead><tr><th align="center">键</th><th align="center">描述</th><th align="center">示例</th><th align="center">类型</th></tr></thead><tbody><tr><td align="center">app.kubernetes.io/name</td><td align="center">应用程序的名称</td><td align="center">mysql</td><td align="center">字符串</td></tr><tr><td align="center">app.kubernetes.io/instance</td><td align="center">用于唯一确定应用实例的名称</td><td align="center">wordpress-abcxzy</td><td align="center">字符串</td></tr><tr><td align="center">app.kubernetes.io/version</td><td align="center">应用程序的当前版本（例如，语义版本，修订版哈希等）</td><td align="center">5.7.21</td><td align="center">字符串</td></tr><tr><td align="center">app.kubernetes.io/component</td><td align="center">架构中的组件</td><td align="center">database</td><td align="center">字符串</td></tr><tr><td align="center">app.kubernetes.io/part-of</td><td align="center">此级别的更高级别应用程序的名称</td><td align="center">wordpress</td><td align="center">字符串</td></tr><tr><td align="center">app.kubernetes.io/managed-by</td><td align="center">用于管理应用程序的工具</td><td align="center">helm</td><td align="center">字符串</td></tr></tbody></table>]]></content>
     
     <summary type="html">
     
@@ -32,15 +32,12 @@
         &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
-&lt;th&gt;键&lt;/th&gt;
-&lt;th&gt;描述&lt;/th&gt;
-&lt;th&gt;示例&lt;/th&gt;
-&lt;th&gt;类型&lt;/th&gt;
+&lt;th align=&quot;center&quot;&gt;键&lt;/th&gt;
+&lt;th align=&quot;center&quot;&gt;描述&lt;/th&gt;
+&lt;th align=&quot;center&quot;&gt;示例&lt;/th&gt;
+&lt;th align=&quot;center&quot;&gt;类型&lt;/th&gt;
 &lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;&lt;tr&gt;
-&lt;td&gt;app.kubernetes.io/name&lt;/td&gt;
-&lt;td&gt;应用程序的名称&lt;/
+&lt;/thea
       
     
     </summary>
