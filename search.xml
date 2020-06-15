@@ -3,7 +3,31 @@
   <entry>
     <title>k8s学习笔记-x Kubectl命令</title>
     <url>/2020/06/14/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-x%20Kubectl%E5%91%BD%E4%BB%A4/</url>
-    <content><![CDATA[]]></content>
+    <content><![CDATA[<table>
+<thead>
+<tr>
+<th>Tables</th>
+<th align="center">Are</th>
+<th align="right">Cool</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>col 3 is</td>
+<td align="center">right-aligned</td>
+<td align="right">$1600</td>
+</tr>
+<tr>
+<td>col 2 is</td>
+<td align="center">centered</td>
+<td align="right">$12</td>
+</tr>
+<tr>
+<td>zebra stripes</td>
+<td align="center">are neat</td>
+<td align="right">$1</td>
+</tr>
+</tbody></table>
+]]></content>
   </entry>
   <entry>
     <title>k8s学习笔记-2 Kubernetes对象</title>

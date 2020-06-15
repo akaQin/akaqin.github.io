@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://akaqin.github.io/"/>
-  <updated>2020-06-14T10:00:05.827Z</updated>
+  <updated>2020-06-15T04:39:21.931Z</updated>
   <id>https://akaqin.github.io/</id>
   
   <author>
@@ -21,9 +21,26 @@
     <link href="https://akaqin.github.io/2020/06/14/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-x%20Kubectl%E5%91%BD%E4%BB%A4/"/>
     <id>https://akaqin.github.io/2020/06/14/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-x%20Kubectl%E5%91%BD%E4%BB%A4/</id>
     <published>2020-06-14T09:59:30.000Z</published>
-    <updated>2020-06-14T10:00:05.827Z</updated>
+    <updated>2020-06-15T04:39:21.931Z</updated>
+    
+    <content type="html"><![CDATA[<table><thead><tr><th>Tables</th><th align="center">Are</th><th align="right">Cool</th></tr></thead><tbody><tr><td>col 3 is</td><td align="center">right-aligned</td><td align="right">$1600</td></tr><tr><td>col 2 is</td><td align="center">centered</td><td align="right">$12</td></tr><tr><td>zebra stripes</td><td align="center">are neat</td><td align="right">$1</td></tr></tbody></table>]]></content>
     
     <summary type="html">
+    
+      
+      
+        &lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Tables&lt;/th&gt;
+&lt;th align=&quot;center&quot;&gt;Are&lt;/th&gt;
+&lt;th align=&quot;right&quot;&gt;Cool&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;&lt;tr&gt;
+&lt;td&gt;col 3 is&lt;/td&gt;
+&lt;t
+      
     
     </summary>
     
