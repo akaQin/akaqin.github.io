@@ -1,86 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>k8s学习笔记-3 Kubenetes架构</title>
-    <url>/2020/06/15/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-3-Kubenetes%E6%9E%B6%E6%9E%84/</url>
-    <content><![CDATA[<h1 id="Kubernetes架构"><a href="#Kubernetes架构" class="headerlink" title="Kubernetes架构"></a>Kubernetes架构</h1><p>Kubernetes借鉴了Borg的设计理念，比如Pod、Service、Label和单Pod单IP等。Kubernetes的整体架构跟Borg非常像，如下图所示。</p>
-<p><img src="https://jimmysong.io/kubernetes-handbook/images/architecture.png" alt=""></p>
-<a id="more"></a>
-
-<p>下图清晰表明了Kubernetes的架构设计以及组件之间的通信协议。</p>
-<p><img src="https://jimmysong.io/kubernetes-handbook/images/kubernetes-high-level-component-archtecture.jpg" alt=""></p>
-<p>下面是更抽象的一个视图：</p>
-<p><img src="https://jimmysong.io/kubernetes-handbook/images/kubernetes-whole-arch.png" alt=""></p>
-<p><strong>Master架构</strong></p>
-<p><img src="https://jimmysong.io/kubernetes-handbook/images/kubernetes-master-arch.png" alt=""></p>
-<p><strong>Node架构</strong></p>
-<p><img src="https://jimmysong.io/kubernetes-handbook/images/kubernetes-node-arch.png" alt=""></p>
-<p><strong>分层架构</strong></p>
-<p>Kubernetes设计理念和功能其实就是一个类似Linux的分层架构，如下图所示。</p>
-<p><img src="https://jimmysong.io/kubernetes-handbook/images/006tNc79ly1fzniqvmi51j31gq0s0q5u.jpg" alt=""></p>
-<ul>
-<li>核心层：Kubernetes最核心的功能，对外提供API构建高层的应用，对内提供插件式应用执行环境</li>
-<li>应用层：部署（无状态应用、有状态应用、批处理任务、集群应用等）和路由（服务发现、DNS解析等）、Service Mesh（部分位于应用层）</li>
-<li>管理层：系统度量（如基础设施、容器和网络的度量），自动化（如自动扩展、动态Provision等）以及策略管理（RBAC、Quota、PSP、NetworkPolicy等）、Service Mesh（部分位于管理层）</li>
-<li>接口层：kubectl命令行工具、客户端SDK以及集群联邦</li>
-<li>生态系统：在接口层之上的庞大容器集群管理调度的生态系统，可以划分为两个范畴<ul>
-<li>Kubernetes外部：日志、监控、配置管理、CI/CD、Workflow、FaaS、OTS应用、ChatOps、GitOps、SecOps等</li>
-<li>Kubernetes内部：CRI、CNI、CSI、镜像仓库、Cloud Provider、集群自身的配置和管理等</li>
-</ul>
-</li>
-</ul>
-<h2 id="节点"><a href="#节点" class="headerlink" title="节点"></a>节点</h2><p>在 Kubernetes 中，节点（Node）是执行工作的机器，以前叫做<code>minion</code>。根据你的集群环境，节点可以是一个虚拟机或者物理机器。每个节点都包含用于运行 pods 的必要服务，并由主控组件管理。节点上的服务包括 容器运行时、kubelet 和 kube-proxy。</p>
-<h3 id="节点状态"><a href="#节点状态" class="headerlink" title="节点状态"></a>节点状态</h3><p>一个节点的状态包含以下信息：</p>
-<ul>
-<li>地址</li>
-<li>条件</li>
-<li>容量与可分配</li>
-<li>信息</li>
-</ul>
-<p>可以使用下面的命令查看节点状态和其他详细信息：</p>
-<blockquote>
-<p>kubectl describe node <node-name></p>
-</blockquote>
-<h4 id="地址"><a href="#地址" class="headerlink" title="地址"></a>地址</h4><p>这些字段组合的用法取决于你的云服务商或者裸机配置。</p>
-<ul>
-<li>HostName：由节点的内核指定。可以通过 kubelet 的<code>--hostname-override</code>参数覆盖。</li>
-<li>ExternalIP：通常是可以外部路由的节点 IP 地址（从集群外可访问）。</li>
-<li>InternalIP：通常是仅可在集群内部路由的节点 IP 地址。</li>
-</ul>
-<h4 id="条件"><a href="#条件" class="headerlink" title="条件"></a>条件</h4><p><code>conditions</code>字段描述了所有<code>Running</code>节点的状态。条件的示例包括：</p>
-<ul>
-<li>OutOfDisk</li>
-<li>Ready</li>
-<li>MemoryPressure</li>
-<li>PIDPressure</li>
-<li>DiskPressure</li>
-<li>NetworkUnavailable</li>
-</ul>
-<p>节点条件使用一个 JSON 对象表示。例如，下面的响应描述了一个健康的节点。</p>
-<figure class="highlight"><table><tr><td class="code"><pre><span class="line">"conditions": [</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">"type"</span>: <span class="string">"Ready"</span>,</span><br><span class="line">    <span class="attr">"status"</span>: <span class="string">"True"</span>,</span><br><span class="line">    <span class="attr">"reason"</span>: <span class="string">"KubeletReady"</span>,</span><br><span class="line">    <span class="attr">"message"</span>: <span class="string">"kubelet is posting ready status"</span>,</span><br><span class="line">    <span class="attr">"lastHeartbeatTime"</span>: <span class="string">"2019-06-05T18:38:35Z"</span>,</span><br><span class="line">    <span class="attr">"lastTransitionTime"</span>: <span class="string">"2019-06-05T11:41:27Z"</span></span><br><span class="line">  &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<p>如果Ready条件处于<code>Unknown</code>或<code>False</code>状态超过了<code>pod-eviction-timeout</code>，节点上的所有pods都会被节点控制器计划删除。默认的删除超时时长是5分钟。</p>
-<h4 id="容量与可分配"><a href="#容量与可分配" class="headerlink" title="容量与可分配"></a>容量与可分配</h4><p>描述节点上的可用资源：CPU、内存和可以调度到节点上的 pods 的最大数量。</p>
-<p>capacity 块中的字段指示节点拥有的资源总量。allocatable 块指示节点上可供普通 Pod 消耗的资源量。</p>
-<h4 id="信息"><a href="#信息" class="headerlink" title="信息"></a>信息</h4><p>关于节点的通用信息，例如内核版本、Kubernetes 版本（kubelet 和 kube-proxy 版本）、Docker 版本（如果使用了）和操作系统名称。这些信息由 kubelet 从节点上搜集而来。</p>
-<h3 id="管理"><a href="#管理" class="headerlink" title="管理"></a>管理</h3><p>当 Kubernetes 创建一个节点时，它其实仅仅创建了一个对象来代表这个节点。创建以后，Kubernetes 将检查这个节点是否可用。例如，如果你尝试使用如下内容创建一个节点：</p>
-<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"kind"</span>: <span class="string">"Node"</span>,</span><br><span class="line">  <span class="attr">"apiVersion"</span>: <span class="string">"v1"</span>,</span><br><span class="line">  <span class="attr">"metadata"</span>: &#123;</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"10.240.79.157"</span>,</span><br><span class="line">    <span class="attr">"labels"</span>: &#123;</span><br><span class="line">      <span class="attr">"name"</span>: <span class="string">"my-first-k8s-node"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Kubernetes 会在内部创一个 Node 对象（用以表示节点），并基于 metadata.name 字段执行健康检查，对节点进行验证。如果节点可用，意即所有必要服务都已运行，它就符合了运行一个 pod 的条件；否则它将被所有的集群动作忽略直到变为可用。</p>
-<p>当前，有 3 个组件同 Kubernetes 节点接口交互：节点控制器、kubelet 和 kubectl。</p>
-<h4 id="节点控制器"><a href="#节点控制器" class="headerlink" title="节点控制器"></a>节点控制器</h4><p>节点控制器是一个 Kubernetes master 组件，管理节点的方方面面。</p>
-<p>节点控制器在节点的生命周期中扮演了多个角色。第一个是当节点注册时为它分配一个CIDR block。</p>
-<p>第二个是保持节点控制器内的节点列表更新。从中删除不可用的节点。</p>
-<p>第三个是监控节点的健康状态。如果节点持续不可访问，控制器将删除节点上的所有pods（优雅终止）。</p>
-<h5 id="心跳机制"><a href="#心跳机制" class="headerlink" title="心跳机制"></a>心跳机制</h5><p>Kubernetes 节点发送的心跳有助于确定节点的可用性。 心跳有两种形式：NodeStatus 和 Lease 对象。 每个节点在 kube-node-lease命名空间 中都有一个关联的 Lease 对象。 Lease 是一种轻量级的资源，可在集群扩展时提高节点心跳机制的性能。</p>
-<h5 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h5><h4 id="节点自注册"><a href="#节点自注册" class="headerlink" title="节点自注册"></a>节点自注册</h4><p>当 kubelet 标志 –register-node 为 true （默认）时，它会尝试向 API 服务注册自己。这是首选模式，被绝大多数发行版选用。</p>
-<h4 id="节点容量"><a href="#节点容量" class="headerlink" title="节点容量"></a>节点容量</h4><p>节点的容量（cpu 数量和内存容量）是节点对象的一部分。通常情况下，在创建节点对象时，它们会注册自己并报告自己的容量。如果你正在执行手动节点管理，那么你需要在添加节点时手动设置节点容量。</p>
-<p>Kubernetes 调度器保证一个节点上有足够的资源供其上的所有 pods 使用。它会检查节点上所有容器要求的总和不会超过节点的容量。这包括由 kubelet 启动的所有容器，但不包括由 container runtime 直接启动的容器，也不包括在容器外部运行的任何进程。</p>
-]]></content>
-  </entry>
-  <entry>
     <title>k8s学习笔记-x Kubectl命令</title>
     <url>/2020/06/14/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-x%20Kubectl%E5%91%BD%E4%BB%A4/</url>
-    <content><![CDATA[]]></content>
+    <content><![CDATA[<table>
+<thead>
+<tr>
+<th>Tables</th>
+<th align="center">Are</th>
+<th align="right">Cool</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>col 3 is</td>
+<td align="center">right-aligned</td>
+<td align="right">$1600</td>
+</tr>
+<tr>
+<td>col 2 is</td>
+<td align="center">centered</td>
+<td align="right">$12</td>
+</tr>
+<tr>
+<td>zebra stripes</td>
+<td align="center">are neat</td>
+<td align="right">$1</td>
+</tr>
+</tbody></table>
+]]></content>
   </entry>
   <entry>
     <title>k8s学习笔记-2 Kubernetes对象</title>
@@ -240,52 +187,7 @@
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">selector:</span></span><br><span class="line">  <span class="attr">matchLabels:</span></span><br><span class="line">    <span class="attr">component:</span> <span class="string">redis</span></span><br><span class="line">  <span class="attr">matchExpressions:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&#123;key:</span> <span class="string">tier,</span> <span class="attr">operator:</span> <span class="string">In,</span> <span class="attr">values:</span> <span class="string">[cache]&#125;</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&#123;key:</span> <span class="string">environment,</span> <span class="attr">operator:</span> <span class="string">NotIn,</span> <span class="attr">values:</span> <span class="string">[dev]&#125;</span></span><br></pre></td></tr></table></figure>
 
 <p>matchLabels 是由 {key，value} 对组成的映射。matchLabels 映射中的单个 {key，value } 等同于 matchExpressions 的元素，其 key字段为 “key”，operator 为 “In”，而 values 数组仅包含 “value”。matchExpressions 是 pod 选择器要求的列表。有效的运算符包括 In，NotIn，Exists 和 DoesNotExist。在 In 和 NotIn 的情况下，设置的值必须是非空的。来自 matchLabels 和 matchExpressions 的所有要求都是合在一起 – 它们必须都满足才能匹配。</p>
-<h3 id="官方推荐的标签"><a href="#官方推荐的标签" class="headerlink" title="官方推荐的标签"></a>官方推荐的标签</h3><table>
-<thead>
-<tr>
-<th align="center">键</th>
-<th align="center">描述</th>
-<th align="center">示例</th>
-<th align="center">类型</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">app.kubernetes.io/name</td>
-<td align="center">应用程序的名称</td>
-<td align="center">mysql</td>
-<td align="center">字符串</td>
-</tr>
-<tr>
-<td align="center">app.kubernetes.io/instance</td>
-<td align="center">用于唯一确定应用实例的名称</td>
-<td align="center">wordpress-abcxzy</td>
-<td align="center">字符串</td>
-</tr>
-<tr>
-<td align="center">app.kubernetes.io/version</td>
-<td align="center">应用程序的当前版本（例如，语义版本，修订版哈希等）</td>
-<td align="center">5.7.21</td>
-<td align="center">字符串</td>
-</tr>
-<tr>
-<td align="center">app.kubernetes.io/component</td>
-<td align="center">架构中的组件</td>
-<td align="center">database</td>
-<td align="center">字符串</td>
-</tr>
-<tr>
-<td align="center">app.kubernetes.io/part-of</td>
-<td align="center">此级别的更高级别应用程序的名称</td>
-<td align="center">wordpress</td>
-<td align="center">字符串</td>
-</tr>
-<tr>
-<td align="center">app.kubernetes.io/managed-by</td>
-<td align="center">用于管理应用程序的工具</td>
-<td align="center">helm</td>
-<td align="center">字符串</td>
-</tr>
-</tbody></table>
+<h3 id="官方推荐的标签"><a href="#官方推荐的标签" class="headerlink" title="官方推荐的标签"></a>官方推荐的标签</h3><p>｜ 键 ｜ 描述 | 示例 | 类型 |<br>｜ —————————– ｜ —————————————– ｜ ——————- ｜ ——— ｜<br>｜ app.kubernetes.io/name        ｜    应用程序的名称                               ｜     mysql                ｜ 字符串    ｜<br>｜ app.kubernetes.io/instance    ｜ 用于唯一确定应用实例的名称                     ｜     wordpress-abcxzy   ｜     字符串   ｜<br>｜ app.kubernetes.io/version     ｜    应用程序的当前版本（例如，语义版本，修订版哈希等） ｜     5.7.21              |     字符串  ｜<br>｜ app.kubernetes.io/component   ｜    架构中的组件                                 |    database             ｜     字符串   ｜<br>｜ app.kubernetes.io/part-of     ｜    此级别的更高级别应用程序的名称                  |    wordpress               |    字符串  ｜<br>｜ app.kubernetes.io/managed-by  ｜ 用于管理应用程序的工具                         |         helm            |    字符串    ｜</p>
 <h2 id="注解"><a href="#注解" class="headerlink" title="注解"></a>注解</h2><p>你可以使用 Kubernetes 注解为对象附加任意的非标识的元数据。客户端程序（例如工具和库）能够获取这些元数据信息。</p>
 <p>您可以使用标签或注解将元数据附加到 Kubernetes 对象。 标签可以用来选择对象和查找满足某些条件的对象集合。 相反，注解不用于标识和选择对象。 注解中的元数据，可以很小，也可以很大，可以是结构化的，也可以是非结构化的，能够包含标签不允许的字符。</p>
 <p>注解和标签一样，是键/值对:</p>
@@ -340,10 +242,7 @@
 <blockquote>
 <p>今天开始将开一个系列的新坑：把k8s的学习心得整理成笔记。内容源自<a href="https://kubernetes.io/zh/docs/home/" target="_blank" rel="noopener">k8s官方文档</a>、<a href="https://kubernetes.feisky.xyz/" target="_blank" rel="noopener">Kubernetes指南</a>、<a href="https://jimmysong.io/kubernetes-handbook/" target="_blank" rel="noopener">Kubernetes Handbook</a>以及我自己整理的一些思维导图，这三个文档都是对于学习k8s来说非常优秀的学习资料，我将它们进行简化整合，砍掉一些冗长的细枝末节，方便刚入门的新手学习理解，如有错误欢迎指正。</p>
 </blockquote>
-<br/>
-# 概述
-
-<hr>
+<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><hr>
 <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><h3 id="Kubernetes是什么？"><a href="#Kubernetes是什么？" class="headerlink" title="Kubernetes是什么？"></a>Kubernetes是什么？</h3><p><code>Kubernetes</code>是一个可移植的、可扩展的开源平台，用于管理容器化的工作负载和服务，可促进声明式配置和自动化。Kubernetes 拥有一个庞大且快速增长的生态系统。Kubernetes 的服务、支持和工具广泛可用。</p>
 <blockquote>
 <p>名称 Kubernetes 源于希腊语，意为 “舵手” 或 “飞行员”。Google 在 2014 年开源了 Kubernetes 项目。Kubernetes 建立在 Google 在大规模运行生产工作负载方面拥有十几年的经验的基础上，结合了社区中最好的想法和实践。</p>
@@ -425,25 +324,6 @@
 <li><p>容器运行环境(Container Runtime)<br>容器运行环境是负责运行容器的软件。<br>Kubernetes 支持多个容器运行环境: Docker、 containerd、cri-o、 rktlet 以及任何实现 Kubernetes CRI (容器运行环境接口)。</p>
 </li>
 </ul>
-<h3 id="组件通信"><a href="#组件通信" class="headerlink" title="组件通信"></a>组件通信</h3><p>Kubernetes 多组件之间的通信原理为</p>
-<ul>
-<li>API Server 负责 etcd 存储的所有操作，且只有 API Server 才直接操作 etcd 集群</li>
-<li>API Server 对内（集群中的其他组件）和对外（用户）提供统一的 REST API，其他组件均通过 API Server 进行通信<ul>
-<li>Controller Manager、Scheduler、Kube-proxy 和 Kubelet 等均通过 API Server watch API 监测资源变化情况，并对资源作相应的操作</li>
-<li>所有需要更新资源状态的操作均通过 API Server 的 REST API 进行</li>
-</ul>
-</li>
-<li>API Server 也会直接调用 Kubelet API（如 logs, exec, attach 等），默认不校验 Kubelet 证书，但可以通过 <code>--kubelet-certificate-authority</code> 开启（而 GKE 通过 SSH 隧道保护它们之间的通信）</li>
-</ul>
-<p>比如典型的创建 Pod 的流程为:</p>
-<p><img src="https://gblobscdn.gitbook.com/assets%2F-LDAOok5ngY4pc1lEDes%2F-LpOIkR-zouVcB8QsFj_%2F-LpOIpXSDktwl5EzzhsB%2Fworkflow.png?alt=media" alt=""></p>
-<ol>
-<li>用户通过 REST API 创建一个 Pod</li>
-<li>API Server 将其写入 etcd</li>
-<li>Scheduluer 检测到未绑定 Node 的 Pod，开始调度并更新 Pod 的 Node 绑定</li>
-<li>Kubelet 检测到有新的 Pod 调度过来，通过 Container Runtime 运行该 Pod</li>
-<li>Kubelet 通过 Container Runtime 取到 Pod 状态，并更新到 API Server 中</li>
-</ol>
 <h3 id="插件-Addons"><a href="#插件-Addons" class="headerlink" title="插件(Addons)"></a>插件(Addons)</h3><p>插件使用 Kubernetes 资源 (DaemonSet, Deployment等) 实现集群功能。因为这些提供集群级别的功能，所以插件的命名空间资源属于 kube-system 命名空间。</p>
 <p>所选的插件如下所述：有关可用插件的扩展列表，请参见<a href="https://kubernetes.io/docs/concepts/cluster-administration/addons/" target="_blank" rel="noopener">插件 (Addons)</a>。</p>
 <ul>

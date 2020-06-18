@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    k8s学习笔记-3 Kubenetes架构 |  akaQin&#39;s Blog
+    关于Mac升级Mojave后的一些坑 |  akaQin&#39;s Blog
   </title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   
@@ -36,7 +36,7 @@
   <div id="app">
     <main class="content">
       <section class="outer">
-  <article id="post-k8s学习笔记-3-Kubenetes架构" class="article article-type-post" itemscope
+  <article id="post-关于Mac升级Mojave后的一些坑" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -44,7 +44,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  k8s学习笔记-3 Kubenetes架构
+  关于Mac升级Mojave后的一些坑
 </h1>
   
 
@@ -53,10 +53,14 @@
 
     
     <div class="article-meta">
-      <a href="/2020/06/15/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-3-Kubenetes%E6%9E%B6%E6%9E%84/" class="article-date">
-  <time datetime="2020-06-15T04:52:00.000Z" itemprop="datePublished">2020-06-15</time>
+      <a href="/2018/10/04/%E5%85%B3%E4%BA%8EMac%E5%8D%87%E7%BA%A7Mojave%E5%90%8E%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/" class="article-date">
+  <time datetime="2018-10-04T05:58:18.000Z" itemprop="datePublished">2018-10-04</time>
 </a>
       
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/">踩坑记录</a>
+  </div>
+
       
       
 <div class="word_count">
@@ -64,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.5k字</span>
+            <span class="post-count">144字</span>
         </span>
     </span>
 
@@ -73,7 +77,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">5分钟</span>
+            <span class="post-count">1分钟</span>
         </span>
     </span>
 </div>
@@ -84,8 +88,6 @@
 
     
     
-    <div class="tocbot"></div>
-
 
 
 
@@ -100,78 +102,18 @@
       
 
       
-      <h1 id="Kubernetes架构"><a href="#Kubernetes架构" class="headerlink" title="Kubernetes架构"></a>Kubernetes架构</h1><p>Kubernetes借鉴了Borg的设计理念，比如Pod、Service、Label和单Pod单IP等。Kubernetes的整体架构跟Borg非常像，如下图所示。</p>
-<p><img src="https://jimmysong.io/kubernetes-handbook/images/architecture.png" alt=""></p>
-<a id="more"></a>
-
-<p>下图清晰表明了Kubernetes的架构设计以及组件之间的通信协议。</p>
-<p><img src="https://jimmysong.io/kubernetes-handbook/images/kubernetes-high-level-component-archtecture.jpg" alt=""></p>
-<p>下面是更抽象的一个视图：</p>
-<p><img src="https://jimmysong.io/kubernetes-handbook/images/kubernetes-whole-arch.png" alt=""></p>
-<p><strong>Master架构</strong></p>
-<p><img src="https://jimmysong.io/kubernetes-handbook/images/kubernetes-master-arch.png" alt=""></p>
-<p><strong>Node架构</strong></p>
-<p><img src="https://jimmysong.io/kubernetes-handbook/images/kubernetes-node-arch.png" alt=""></p>
-<p><strong>分层架构</strong></p>
-<p>Kubernetes设计理念和功能其实就是一个类似Linux的分层架构，如下图所示。</p>
-<p><img src="https://jimmysong.io/kubernetes-handbook/images/006tNc79ly1fzniqvmi51j31gq0s0q5u.jpg" alt=""></p>
-<ul>
-<li>核心层：Kubernetes最核心的功能，对外提供API构建高层的应用，对内提供插件式应用执行环境</li>
-<li>应用层：部署（无状态应用、有状态应用、批处理任务、集群应用等）和路由（服务发现、DNS解析等）、Service Mesh（部分位于应用层）</li>
-<li>管理层：系统度量（如基础设施、容器和网络的度量），自动化（如自动扩展、动态Provision等）以及策略管理（RBAC、Quota、PSP、NetworkPolicy等）、Service Mesh（部分位于管理层）</li>
-<li>接口层：kubectl命令行工具、客户端SDK以及集群联邦</li>
-<li>生态系统：在接口层之上的庞大容器集群管理调度的生态系统，可以划分为两个范畴<ul>
-<li>Kubernetes外部：日志、监控、配置管理、CI/CD、Workflow、FaaS、OTS应用、ChatOps、GitOps、SecOps等</li>
-<li>Kubernetes内部：CRI、CNI、CSI、镜像仓库、Cloud Provider、集群自身的配置和管理等</li>
-</ul>
+      <ol>
+<li><p>Git无法使用，原因是每次大版本升级后，CommandLineTools回被卸载，而Git这种命令行工具依赖于CommandLineTools，解决方案是重新安装CommandLineTools。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcode-select --install</span><br></pre></td></tr></table></figure>
 </li>
-</ul>
-<h2 id="节点"><a href="#节点" class="headerlink" title="节点"></a>节点</h2><p>在 Kubernetes 中，节点（Node）是执行工作的机器，以前叫做<code>minion</code>。根据你的集群环境，节点可以是一个虚拟机或者物理机器。每个节点都包含用于运行 pods 的必要服务，并由主控组件管理。节点上的服务包括 容器运行时、kubelet 和 kube-proxy。</p>
-<h3 id="节点状态"><a href="#节点状态" class="headerlink" title="节点状态"></a>节点状态</h3><p>一个节点的状态包含以下信息：</p>
-<ul>
-<li>地址</li>
-<li>条件</li>
-<li>容量与可分配</li>
-<li>信息</li>
-</ul>
-<p>可以使用下面的命令查看节点状态和其他详细信息：</p>
-<blockquote>
-<p>kubectl describe node <node-name></p>
-</blockquote>
-<h4 id="地址"><a href="#地址" class="headerlink" title="地址"></a>地址</h4><p>这些字段组合的用法取决于你的云服务商或者裸机配置。</p>
-<ul>
-<li>HostName：由节点的内核指定。可以通过 kubelet 的<code>--hostname-override</code>参数覆盖。</li>
-<li>ExternalIP：通常是可以外部路由的节点 IP 地址（从集群外可访问）。</li>
-<li>InternalIP：通常是仅可在集群内部路由的节点 IP 地址。</li>
-</ul>
-<h4 id="条件"><a href="#条件" class="headerlink" title="条件"></a>条件</h4><p><code>conditions</code>字段描述了所有<code>Running</code>节点的状态。条件的示例包括：</p>
-<ul>
-<li>OutOfDisk</li>
-<li>Ready</li>
-<li>MemoryPressure</li>
-<li>PIDPressure</li>
-<li>DiskPressure</li>
-<li>NetworkUnavailable</li>
-</ul>
-<p>节点条件使用一个 JSON 对象表示。例如，下面的响应描述了一个健康的节点。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">"conditions": [</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">"type"</span>: <span class="string">"Ready"</span>,</span><br><span class="line">    <span class="attr">"status"</span>: <span class="string">"True"</span>,</span><br><span class="line">    <span class="attr">"reason"</span>: <span class="string">"KubeletReady"</span>,</span><br><span class="line">    <span class="attr">"message"</span>: <span class="string">"kubelet is posting ready status"</span>,</span><br><span class="line">    <span class="attr">"lastHeartbeatTime"</span>: <span class="string">"2019-06-05T18:38:35Z"</span>,</span><br><span class="line">    <span class="attr">"lastTransitionTime"</span>: <span class="string">"2019-06-05T11:41:27Z"</span></span><br><span class="line">  &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<li><p>gcc编译文件时找不到头文件，报类似于 stdio.h file not found 的错误，具体情况可以看<a href="https://stackoverflow.com/questions/52509602/cant-compile-c-program-on-a-mac-after-upgrade-to-mojave" target="_blank" rel="noopener">StackOverflow</a>上这个提问。解决方案是使用brew安装或升级gcc最新版本，并在你的IDE中配置它，这里给出CLion的<a href="https://www.jetbrains.com/help/clion/how-to-switch-compilers-in-clion.html" target="_blank" rel="noopener">配置教程</a>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew install gcc</span><br><span class="line">brew upgrade gcc</span><br></pre></td></tr></table></figure>
 
-<p>如果Ready条件处于<code>Unknown</code>或<code>False</code>状态超过了<code>pod-eviction-timeout</code>，节点上的所有pods都会被节点控制器计划删除。默认的删除超时时长是5分钟。</p>
-<h4 id="容量与可分配"><a href="#容量与可分配" class="headerlink" title="容量与可分配"></a>容量与可分配</h4><p>描述节点上的可用资源：CPU、内存和可以调度到节点上的 pods 的最大数量。</p>
-<p>capacity 块中的字段指示节点拥有的资源总量。allocatable 块指示节点上可供普通 Pod 消耗的资源量。</p>
-<h4 id="信息"><a href="#信息" class="headerlink" title="信息"></a>信息</h4><p>关于节点的通用信息，例如内核版本、Kubernetes 版本（kubelet 和 kube-proxy 版本）、Docker 版本（如果使用了）和操作系统名称。这些信息由 kubelet 从节点上搜集而来。</p>
-<h3 id="管理"><a href="#管理" class="headerlink" title="管理"></a>管理</h3><p>当 Kubernetes 创建一个节点时，它其实仅仅创建了一个对象来代表这个节点。创建以后，Kubernetes 将检查这个节点是否可用。例如，如果你尝试使用如下内容创建一个节点：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"kind"</span>: <span class="string">"Node"</span>,</span><br><span class="line">  <span class="attr">"apiVersion"</span>: <span class="string">"v1"</span>,</span><br><span class="line">  <span class="attr">"metadata"</span>: &#123;</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"10.240.79.157"</span>,</span><br><span class="line">    <span class="attr">"labels"</span>: &#123;</span><br><span class="line">      <span class="attr">"name"</span>: <span class="string">"my-first-k8s-node"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Kubernetes 会在内部创一个 Node 对象（用以表示节点），并基于 metadata.name 字段执行健康检查，对节点进行验证。如果节点可用，意即所有必要服务都已运行，它就符合了运行一个 pod 的条件；否则它将被所有的集群动作忽略直到变为可用。</p>
-<p>当前，有 3 个组件同 Kubernetes 节点接口交互：节点控制器、kubelet 和 kubectl。</p>
-<h4 id="节点控制器"><a href="#节点控制器" class="headerlink" title="节点控制器"></a>节点控制器</h4><p>节点控制器是一个 Kubernetes master 组件，管理节点的方方面面。</p>
-<p>节点控制器在节点的生命周期中扮演了多个角色。第一个是当节点注册时为它分配一个CIDR block。</p>
-<p>第二个是保持节点控制器内的节点列表更新。从中删除不可用的节点。</p>
-<p>第三个是监控节点的健康状态。如果节点持续不可访问，控制器将删除节点上的所有pods（优雅终止）。</p>
-<h5 id="心跳机制"><a href="#心跳机制" class="headerlink" title="心跳机制"></a>心跳机制</h5><p>Kubernetes 节点发送的心跳有助于确定节点的可用性。 心跳有两种形式：NodeStatus 和 Lease 对象。 每个节点在 kube-node-lease命名空间 中都有一个关联的 Lease 对象。 Lease 是一种轻量级的资源，可在集群扩展时提高节点心跳机制的性能。</p>
-<h5 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h5><h4 id="节点自注册"><a href="#节点自注册" class="headerlink" title="节点自注册"></a>节点自注册</h4><p>当 kubelet 标志 –register-node 为 true （默认）时，它会尝试向 API 服务注册自己。这是首选模式，被绝大多数发行版选用。</p>
-<h4 id="节点容量"><a href="#节点容量" class="headerlink" title="节点容量"></a>节点容量</h4><p>节点的容量（cpu 数量和内存容量）是节点对象的一部分。通常情况下，在创建节点对象时，它们会注册自己并报告自己的容量。如果你正在执行手动节点管理，那么你需要在添加节点时手动设置节点容量。</p>
-<p>Kubernetes 调度器保证一个节点上有足够的资源供其上的所有 pods 使用。它会检查节点上所有容器要求的总和不会超过节点的容量。这包括由 kubelet 启动的所有容器，但不包括由 container runtime 直接启动的容器，也不包括在容器外部运行的任何进程。</p>
+
+
+</li>
+</ol>
+<p>如果你遇到了一些其他问题，欢迎给我留言讨论。</p>
 
       
       <!-- reward -->
@@ -241,13 +183,15 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://akaqin.github.io/2020/06/15/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-3-Kubenetes%E6%9E%B6%E6%9E%84/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://akaqin.github.io/2018/10/04/%E5%85%B3%E4%BA%8EMac%E5%8D%87%E7%BA%A7Mojave%E5%90%8E%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/" rel="tag">macOS</a></li></ul>
+
 
     </footer>
 
@@ -257,10 +201,19 @@
   
   <nav class="article-nav">
     
+      <a href="/2018/10/06/arts-9/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            arts-9
+          
+        </div>
+      </a>
     
-      <a href="/2020/06/14/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-x%20Kubectl%E5%91%BD%E4%BB%A4/" class="article-nav-link">
+    
+      <a href="/2018/10/03/arts-8/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">k8s学习笔记-x Kubectl命令</div>
+        <div class="article-nav-title">arts-8</div>
       </a>
     
   </nav>
