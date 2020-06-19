@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>k8s学习笔记-4 Pods</title>
+    <url>/2020/06/19/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-4-Pods/</url>
+    <content><![CDATA[<a id="more"></a>
+]]></content>
+  </entry>
+  <entry>
     <title>k8s学习笔记-3 Kubenetes架构</title>
     <url>/2020/06/15/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-3-Kubenetes%E6%9E%B6%E6%9E%84/</url>
     <content><![CDATA[<h1 id="Kubernetes架构"><a href="#Kubernetes架构" class="headerlink" title="Kubernetes架构"></a>Kubernetes架构</h1><p>Kubernetes借鉴了Borg的设计理念，比如Pod、Service、Label和单Pod单IP等。Kubernetes的整体架构跟Borg非常像，如下图所示。</p>
@@ -1741,8 +1747,8 @@
         <category>《APUE》笔记</category>
       </categories>
       <tags>
-        <tag>I/O</tag>
         <tag>文件</tag>
+        <tag>I/O</tag>
       </tags>
   </entry>
   <entry>
