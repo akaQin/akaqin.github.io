@@ -1,18 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>k8s学习笔记-5 API约定</title>
+    <url>/2020/07/11/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-5-API%E7%BA%A6%E5%AE%9A/</url>
+    <content><![CDATA[<ul>
+<li>本文翻译自<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md" target="_blank" rel="noopener">API Conventions</a>，面向想要深入理解k8s结构和用户以及想要扩展k8s API的开发者。在<a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/object-management/" target="_blank" rel="noopener">对象管理概述</a>中可以找到将资源与kubectl一起使用的介绍。 *</li>
+</ul>
+<ul>
+<li><a href="#types-kinds">Types (Kinds)</a><ul>
+<li><a href="#resources">Resources</a></li>
+<li><a href="#objects">Objects</a><ul>
+<li><a href="#metadata">Metadata</a></li>
+<li><a href="#spec-and-status">Spec and Status</a><ul>
+<li><a href="#typical-status-properties">Typical status properties</a></li>
+</ul>
+</li>
+<li><a href="#references-to-related-objects">References to related objects</a></li>
+<li><a href="#lists-of-named-subobjects-preferred-over-maps">Lists of named subobjects preferred over maps</a></li>
+<li><a href="#primitive-types">Primitive types</a></li>
+<li><a href="#constants">Constants</a></li>
+<li><a href="#unions">Unions</a></li>
+</ul>
+</li>
+<li><a href="#lists-and-simple-kinds">Lists and Simple kinds</a></li>
+</ul>
+</li>
+<li><a href="#differing-representations">Differing Representations</a></li>
+<li><a href="#verbs-on-resources">Verbs on Resources</a><ul>
+<li><a href="#patch-operations">PATCH operations</a></li>
+</ul>
+</li>
+<li><a href="#idempotency">Idempotency</a></li>
+<li><a href="#optional-vs-required">Optional vs. Required</a></li>
+<li><a href="#defaulting">Defaulting</a></li>
+<li><a href="#late-initialization">Late Initialization</a></li>
+<li><a href="#concurrency-control-and-consistency">Concurrency Control and Consistency</a></li>
+<li><a href="#serialization-format">Serialization Format</a></li>
+<li><a href="#units">Units</a></li>
+<li><a href="#selecting-fields">Selecting Fields</a></li>
+<li><a href="#object-references">Object references</a></li>
+<li><a href="#http-status-codes">HTTP Status codes</a><ul>
+<li><a href="#success-codes">Success codes</a></li>
+<li><a href="#error-codes">Error codes</a></li>
+</ul>
+</li>
+<li><a href="#response-status-kind">Response Status Kind</a></li>
+<li><a href="#events">Events</a></li>
+<li><a href="#naming-conventions">Naming conventions</a></li>
+<li><a href="#label-selector-and-annotation-conventions">Label, selector, and annotation conventions</a></li>
+<li><a href="#websockets-and-spdy">WebSockets and SPDY</a></li>
+<li><a href="#validation">Validation</a></li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
     <title>k8s学习笔记-4 Pods</title>
     <url>/2020/06/19/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-4-Pods/</url>
-    <content><![CDATA[<a id="more"></a>
+    <content><![CDATA[<h2 id="理解Pod"><a href="#理解Pod" class="headerlink" title="理解Pod"></a>理解Pod</h2><p><code>Pod</code>是Kubernetes应用程序的基本单元，即它是Kubernetes对象模型中创建或部署的最小和最简单的单元。</p>
+<p>Pod表示在集群上运行的进程。一个Pod中可以运行一个或多个进程。</p>
+<p>每个Pod表示运行给定应用程序的单个实例。如果希望横向扩展应用程序则应使用多个Pod。</p>
+<a id="more"></a>
+
+<h3 id="Pod管理容器"><a href="#Pod管理容器" class="headerlink" title="Pod管理容器"></a>Pod管理容器</h3><p>Pod 被设计成支持形成内聚服务单元的多个协作过程（作为容器）。 Pod 中的容器被自动的安排到集群中的同一物理或虚拟机上，并可以一起进行调度。 容器可以共享资源和依赖、彼此通信、协调何时以及何种方式终止它们。</p>
+<h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><p>每个 Pod 分配一个唯一的 IP 地址。 Pod 中的每个容器共享网络命名空间，包括 IP 地址和网络端口。 Pod 内的容器 可以使用 localhost 互相通信。 当 Pod 中的容器与 Pod 之外 的实体通信时，它们必须协调如何使用共享的网络资源（例如端口）。</p>
+<h3 id="存储"><a href="#存储" class="headerlink" title="存储"></a>存储</h3><p>一个 Pod 可以指定一组共享存储卷。 Pod 中的所有容器都可以访问共享卷，允许这些容器共享数据。 卷还允许 Pod 中的持久数据保留下来，以防其中的容器需要重新启动。</p>
+<h2 id="使用Pod"><a href="#使用Pod" class="headerlink" title="使用Pod"></a>使用Pod</h2><p>你很少在 Kubernetes 中直接创建单独的 Pod，甚至是单个存在的 Pod。 这是因为 Pod 被设计成了相对短暂的一次性的实体。 当 Pod 由您创建或者间接地由控制器创建时，它被调度在集群中的 节点 上运行。 Pod 会保持在该节点上运行，直到进程被终止、Pod 对象被删除、Pod 因资源不足而被 驱逐 或者节点失效为止。</p>
+<h3 id="Pod和控制器"><a href="#Pod和控制器" class="headerlink" title="Pod和控制器"></a>Pod和控制器</h3><p>控制器可以为您创建和管理多个 Pod，管理副本和上线，并在集群范围内提供自修复能力。 例如，如果一个节点失败，控制器可以在不同的节点上调度一样的替身来自动替换 Pod。</p>
+<h3 id="Pod-模版"><a href="#Pod-模版" class="headerlink" title="Pod 模版"></a>Pod 模版</h3><p>工作负载资源的控制器从pod模版创建pods，并帮助你管理他们。</p>
 ]]></content>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
   </entry>
   <entry>
     <title>k8s学习笔记-3 Kubenetes架构</title>
     <url>/2020/06/15/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-3-Kubenetes%E6%9E%B6%E6%9E%84/</url>
-    <content><![CDATA[<h1 id="Kubernetes架构"><a href="#Kubernetes架构" class="headerlink" title="Kubernetes架构"></a>Kubernetes架构</h1><p>Kubernetes借鉴了Borg的设计理念，比如Pod、Service、Label和单Pod单IP等。Kubernetes的整体架构跟Borg非常像，如下图所示。</p>
-<p><img src="https://jimmysong.io/kubernetes-handbook/images/architecture.png" alt=""></p>
+    <content><![CDATA[<p>Kubernetes借鉴了Borg的设计理念，比如Pod、Service、Label和单Pod单IP等。Kubernetes的整体架构跟Borg非常像，如下图所示。</p>
 <a id="more"></a>
 
+<p><img src="https://jimmysong.io/kubernetes-handbook/images/architecture.png" alt=""></p>
 <p>下图清晰表明了Kubernetes的架构设计以及组件之间的通信协议。</p>
 <p><img src="https://jimmysong.io/kubernetes-handbook/images/kubernetes-high-level-component-archtecture.jpg" alt=""></p>
 <p>下面是更抽象的一个视图：</p>
@@ -82,6 +148,9 @@
 <h4 id="节点容量"><a href="#节点容量" class="headerlink" title="节点容量"></a>节点容量</h4><p>节点的容量（cpu 数量和内存容量）是节点对象的一部分。通常情况下，在创建节点对象时，它们会注册自己并报告自己的容量。如果你正在执行手动节点管理，那么你需要在添加节点时手动设置节点容量。</p>
 <p>Kubernetes 调度器保证一个节点上有足够的资源供其上的所有 pods 使用。它会检查节点上所有容器要求的总和不会超过节点的容量。这包括由 kubelet 启动的所有容器，但不包括由 container runtime 直接启动的容器，也不包括在容器外部运行的任何进程。</p>
 ]]></content>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
   </entry>
   <entry>
     <title>k8s学习笔记-x Kubectl命令</title>
@@ -1747,8 +1816,8 @@
         <category>《APUE》笔记</category>
       </categories>
       <tags>
-        <tag>文件</tag>
         <tag>I/O</tag>
+        <tag>文件</tag>
       </tags>
   </entry>
   <entry>

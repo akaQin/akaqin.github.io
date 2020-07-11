@@ -75,6 +75,121 @@
     
     
     
+    <article id="post-k8s学习笔记-5-API约定" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/07/11/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-5-API%E7%BA%A6%E5%AE%9A/"
+    >k8s学习笔记-5 API约定</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/07/11/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-5-API%E7%BA%A6%E5%AE%9A/" class="article-date">
+  <time datetime="2020-07-11T02:38:05.000Z" itemprop="datePublished">2020-07-11</time>
+</a>
+      
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <ul>
+<li>本文翻译自<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md" target="_blank" rel="noopener">API Conventions</a>，面向想要深入理解k8s结构和用户以及想要扩展k8s API的开发者。在<a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/object-management/" target="_blank" rel="noopener">对象管理概述</a>中可以找到将资源与kubectl一起使用的介绍。 *</li>
+</ul>
+<ul>
+<li><a href="#types-kinds">Types (Kinds)</a><ul>
+<li><a href="#resources">Resources</a></li>
+<li><a href="#objects">Objects</a><ul>
+<li><a href="#metadata">Metadata</a></li>
+<li><a href="#spec-and-status">Spec and Status</a><ul>
+<li><a href="#typical-status-properties">Typical status properties</a></li>
+</ul>
+</li>
+<li><a href="#references-to-related-objects">References to related objects</a></li>
+<li><a href="#lists-of-named-subobjects-preferred-over-maps">Lists of named subobjects preferred over maps</a></li>
+<li><a href="#primitive-types">Primitive types</a></li>
+<li><a href="#constants">Constants</a></li>
+<li><a href="#unions">Unions</a></li>
+</ul>
+</li>
+<li><a href="#lists-and-simple-kinds">Lists and Simple kinds</a></li>
+</ul>
+</li>
+<li><a href="#differing-representations">Differing Representations</a></li>
+<li><a href="#verbs-on-resources">Verbs on Resources</a><ul>
+<li><a href="#patch-operations">PATCH operations</a></li>
+</ul>
+</li>
+<li><a href="#idempotency">Idempotency</a></li>
+<li><a href="#optional-vs-required">Optional vs. Required</a></li>
+<li><a href="#defaulting">Defaulting</a></li>
+<li><a href="#late-initialization">Late Initialization</a></li>
+<li><a href="#concurrency-control-and-consistency">Concurrency Control and Consistency</a></li>
+<li><a href="#serialization-format">Serialization Format</a></li>
+<li><a href="#units">Units</a></li>
+<li><a href="#selecting-fields">Selecting Fields</a></li>
+<li><a href="#object-references">Object references</a></li>
+<li><a href="#http-status-codes">HTTP Status codes</a><ul>
+<li><a href="#success-codes">Success codes</a></li>
+<li><a href="#error-codes">Error codes</a></li>
+</ul>
+</li>
+<li><a href="#response-status-kind">Response Status Kind</a></li>
+<li><a href="#events">Events</a></li>
+<li><a href="#naming-conventions">Naming conventions</a></li>
+<li><a href="#label-selector-and-annotation-conventions">Label, selector, and annotation conventions</a></li>
+<li><a href="#websockets-and-spdy">WebSockets and SPDY</a></li>
+<li><a href="#validation">Validation</a></li>
+</ul>
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
     <article id="post-k8s学习笔记-4-Pods" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -114,8 +229,12 @@
       
 
       
-      <a id="more"></a>
-
+      <h2 id="理解Pod"><a href="#理解Pod" class="headerlink" title="理解Pod"></a>理解Pod</h2><p><code>Pod</code>是Kubernetes应用程序的基本单元，即它是Kubernetes对象模型中创建或部署的最小和最简单的单元。</p>
+<p>Pod表示在集群上运行的进程。一个Pod中可以运行一个或多个进程。</p>
+<p>每个Pod表示运行给定应用程序的单个实例。如果希望横向扩展应用程序则应使用多个Pod。</p>
+      
+      <a class="article-more-link" href="/2020/06/19/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-4-Pods/">阅读更多...</a>
+      
       
       <!-- reward -->
       
@@ -127,6 +246,8 @@
     <footer class="article-footer">
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/k8s/" rel="tag">k8s</a></li></ul>
+
 
     </footer>
 
@@ -182,8 +303,7 @@
       
 
       
-      <h1 id="Kubernetes架构"><a href="#Kubernetes架构" class="headerlink" title="Kubernetes架构"></a>Kubernetes架构</h1><p>Kubernetes借鉴了Borg的设计理念，比如Pod、Service、Label和单Pod单IP等。Kubernetes的整体架构跟Borg非常像，如下图所示。</p>
-<p><img src="https://jimmysong.io/kubernetes-handbook/images/architecture.png" alt=""></p>
+      <p>Kubernetes借鉴了Borg的设计理念，比如Pod、Service、Label和单Pod单IP等。Kubernetes的整体架构跟Borg非常像，如下图所示。</p>
       
       <a class="article-more-link" href="/2020/06/15/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-3-Kubenetes%E6%9E%B6%E6%9E%84/">阅读更多...</a>
       
@@ -198,6 +318,8 @@
     <footer class="article-footer">
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/k8s/" rel="tag">k8s</a></li></ul>
+
 
     </footer>
 
@@ -753,85 +875,6 @@
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/daemon/" rel="tag">daemon</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
-    <article id="post-理解inode" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/01/14/%E7%90%86%E8%A7%A3inode/"
-    >理解inode</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/01/14/%E7%90%86%E8%A7%A3inode/" class="article-date">
-  <time datetime="2020-01-14T05:46:05.000Z" itemprop="datePublished">2020-01-14</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%BD%AC%E8%BD%BD/">转载</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>作者：阮一峰<br>转自：<a href="http://www.ruanyifeng.com/blog/2011/12/inode.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2011/12/inode.html</a></p>
-<p>inode是一个重要概念，是理解Unix/Linux文件系统和硬盘储存的基础。</p>
-<p>我觉得，理解inode，不仅有助于提高系统操作水平，还有助于体会Unix设计哲学，即如何把底层的复杂性抽象成一个简单概念，从而大大简化用户接口。</p>
-<p>下面就是我的inode学习笔记，尽量保持简单。</p>
-      
-      <a class="article-more-link" href="/2020/01/14/%E7%90%86%E8%A7%A3inode/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/inode/" rel="tag">inode</a></li></ul>
 
 
     </footer>

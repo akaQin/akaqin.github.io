@@ -75,6 +75,85 @@
     
     
     
+    <article id="post-理解inode" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/01/14/%E7%90%86%E8%A7%A3inode/"
+    >理解inode</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/01/14/%E7%90%86%E8%A7%A3inode/" class="article-date">
+  <time datetime="2020-01-14T05:46:05.000Z" itemprop="datePublished">2020-01-14</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%BD%AC%E8%BD%BD/">转载</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>作者：阮一峰<br>转自：<a href="http://www.ruanyifeng.com/blog/2011/12/inode.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2011/12/inode.html</a></p>
+<p>inode是一个重要概念，是理解Unix/Linux文件系统和硬盘储存的基础。</p>
+<p>我觉得，理解inode，不仅有助于提高系统操作水平，还有助于体会Unix设计哲学，即如何把底层的复杂性抽象成一个简单概念，从而大大简化用户接口。</p>
+<p>下面就是我的inode学习笔记，尽量保持简单。</p>
+      
+      <a class="article-more-link" href="/2020/01/14/%E7%90%86%E8%A7%A3inode/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/inode/" rel="tag">inode</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
     <article id="post-《APUE》ch12——线程控制" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -794,94 +873,6 @@
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/architecture/" rel="tag">architecture</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
-    <article id="post-《APUE》ch7——进程环境" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2019/10/19/%E3%80%8AAPUE%E3%80%8Bch7%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/"
-    >《APUE》ch7——进程环境</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2019/10/19/%E3%80%8AAPUE%E3%80%8Bch7%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/" class="article-date">
-  <time datetime="2019-10-19T08:03:39.000Z" itemprop="datePublished">2019-10-19</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E3%80%8AAPUE%E3%80%8B%E7%AC%94%E8%AE%B0/">《APUE》笔记</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="进程开始"><a href="#进程开始" class="headerlink" title="进程开始"></a>进程开始</h2>   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc, char *argv[]);</span><br></pre></td></tr></table></figure>
-<p>   以main函数开始执行。当内核执行C程序时，在调用main前先调用一个特殊的启动例程。可执行程序将此启动例程指定为程序的起始地址——这是由链接编辑器设置的，而链接编辑器则由C编译器调用。启动例程从内核取得命令行参数和环境变量值，然后为按上述方式调用做好安排。</p>
-<h2 id="进程终止"><a href="#进程终止" class="headerlink" title="进程终止"></a>进程终止</h2><h3 id="终止方式"><a href="#终止方式" class="headerlink" title="终止方式"></a>终止方式</h3><p>有8种终止方式，前5种为正常终止，后3种为异常终止：</p>
-<ol>
-<li>从main返回</li>
-<li>调用exit</li>
-<li>调用_exit或_Exit</li>
-<li>最后一个线程从启动例程返回</li>
-<li>从最后一个线程调用pthread_exit</li>
-<li>调用abort</li>
-<li>遇到一个信号</li>
-<li>最后一个线程对取消请求做出响应</li>
-</ol>
-      
-      <a class="article-more-link" href="/2019/10/19/%E3%80%8AAPUE%E3%80%8Bch7%E2%80%94%E2%80%94%E8%BF%9B%E7%A8%8B%E7%8E%AF%E5%A2%83/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/process/" rel="tag">process</a></li></ul>
 
 
     </footer>
