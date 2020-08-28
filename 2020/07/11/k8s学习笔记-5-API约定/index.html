@@ -64,7 +64,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.4k字</span>
+            <span class="post-count">1.3k字</span>
         </span>
     </span>
 
@@ -73,7 +73,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">5分钟</span>
+            <span class="post-count">4分钟</span>
         </span>
     </span>
 </div>
@@ -100,53 +100,9 @@
       
 
       
-      <p>*本文翻译自<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md" target="_blank" rel="noopener">API Conventions</a>，面向想要深入理解k8s结构和用户以及想要扩展k8s API的开发者。在<a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/object-management/" target="_blank" rel="noopener">对象管理概述</a>中可以找到将资源与kubectl一起使用的介绍。</p>
-<p><strong>目录</strong></p>
-<ul>
-<li><a href="#types-kinds">Types (Kinds)</a><ul>
-<li><a href="#resources">Resources</a></li>
-<li><a href="#objects">Objects</a><ul>
-<li><a href="#metadata">Metadata</a></li>
-<li><a href="#spec-and-status">Spec and Status</a><ul>
-<li><a href="#typical-status-properties">Typical status properties</a></li>
-</ul>
-</li>
-<li><a href="#references-to-related-objects">References to related objects</a></li>
-<li><a href="#lists-of-named-subobjects-preferred-over-maps">Lists of named subobjects preferred over maps</a></li>
-<li><a href="#primitive-types">Primitive types</a></li>
-<li><a href="#constants">Constants</a></li>
-<li><a href="#unions">Unions</a></li>
-</ul>
-</li>
-<li><a href="#lists-and-simple-kinds">Lists and Simple kinds</a></li>
-</ul>
-</li>
-<li><a href="#differing-representations">Differing Representations</a></li>
-<li><a href="#verbs-on-resources">Verbs on Resources</a><ul>
-<li><a href="#patch-operations">PATCH operations</a></li>
-</ul>
-</li>
-<li><a href="#idempotency">Idempotency</a></li>
-<li><a href="#optional-vs-required">Optional vs. Required</a></li>
-<li><a href="#defaulting">Defaulting</a></li>
-<li><a href="#late-initialization">Late Initialization</a></li>
-<li><a href="#concurrency-control-and-consistency">Concurrency Control and Consistency</a></li>
-<li><a href="#serialization-format">Serialization Format</a></li>
-<li><a href="#units">Units</a></li>
-<li><a href="#selecting-fields">Selecting Fields</a></li>
-<li><a href="#object-references">Object references</a></li>
-<li><a href="#http-status-codes">HTTP Status codes</a><ul>
-<li><a href="#success-codes">Success codes</a></li>
-<li><a href="#error-codes">Error codes</a></li>
-</ul>
-</li>
-<li><a href="#response-status-kind">Response Status Kind</a></li>
-<li><a href="#events">Events</a></li>
-<li><a href="#naming-conventions">Naming conventions</a></li>
-<li><a href="#label-selector-and-annotation-conventions">Label, selector, and annotation conventions</a></li>
-<li><a href="#websockets-and-spdy">WebSockets and SPDY</a></li>
-<li><a href="#validation">Validation</a></li>
-</ul>
+      <p><em>本文翻译自<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md" target="_blank" rel="noopener">API Conventions</a>，面向想要深入理解k8s结构和用户以及想要扩展k8s API的开发者。在<a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/object-management/" target="_blank" rel="noopener">对象管理概述</a>中可以找到将资源与kubectl一起使用的介绍。</em></p>
+<a id="more"></a>
+
 <p>K8S API的约定旨在简化客户端的开发，确保可以实施能够在各种用例中保持一致的配置机制。</p>
 <p>K8S API通用的方式是RESTful——客户端通过标准的HTTP动词（POST、PUT、DELETE和GET）创建，更新，删除或检索一个对象的描述——并且这些API优先接受并返回JSON。k8s也为非标准动词开房了其他端点，并允许使用其他内容类型。所有服务器接受和返回的JSON都有一个结构，用“kind”和“apiVersion”字段标识。如果HTTP header头里有这样的字段，则应该在JSON里镜像一份内容，而不是只在header头里。</p>
 <p>下面是一些术语的定义：</p>
@@ -266,6 +222,8 @@
 <div id="share-mask"></div>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/k8s/" rel="tag">k8s</a></li></ul>
+
 
     </footer>
 
@@ -274,6 +232,15 @@
   
   
   <nav class="article-nav">
+    
+      <a href="/2020/08/27/%E5%8A%A8%E6%80%81%E5%8D%B7%E4%BE%9B%E5%BA%94/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            动态卷供应
+          
+        </div>
+      </a>
     
     
       <a href="/2020/06/19/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-4-Pods/" class="article-nav-link">

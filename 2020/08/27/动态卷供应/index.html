@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+   
+  <meta name="keywords" content="生活,旅行,思考,代码,博客" />
+   
+  <meta name="description" content="一座孤岛" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    动态卷供应 |  akaQin&#39;s Blog
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<script src="/js/pace.min.js"></script>
+
+
+  
+
+  
+
+<link rel="alternate" href="/atom.xml" title="akaQin's Blog" type="application/atom+xml">
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-动态卷供应" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  动态卷供应
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/08/27/%E5%8A%A8%E6%80%81%E5%8D%B7%E4%BE%9B%E5%BA%94/" class="article-date">
+  <time datetime="2020-08-27T11:05:40.000Z" itemprop="datePublished">2020-08-27</time>
+</a>
+      
+      
+      
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.5k字</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">5分钟</span>
+        </span>
+    </span>
+</div>
+
+      
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>我们目前使用的存储服务是<code>MooseFS</code>，部署工具会在启动k8s前为每个节点挂载好共享路径<code>/mnt/shareroot</code>。<br>当应用有存储需求时，需要手动在Pod中声明类型为<code>hostpath</code>的<code>volume</code>，并在<code>.containers.volumeMounts</code>中进行映射。</p>
+<p>这种方案有以下弊端：</p>
+<ul>
+<li>需要为每个应用手动的在yaml中声明PV</li>
+<li>无法对卷的访问模式和容量进行限制及扩展</li>
+</ul>
+<p>为此，我们引入 Kubernetes 中的<code>PVC</code>和<code>StorageClass</code>两个重要的资源对象来实现对存储的管理。</p>
+<a id="more"></a>
+
+<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><h3 id="PVC"><a href="#PVC" class="headerlink" title="PVC"></a>PVC</h3><p><code>PVC</code>的全称是：PersistentVolumeClaim（持久化卷声明），PVC 是用户存储的一种声明，PVC 和 Pod 比较类似，Pod 消耗的是节点，PVC 消耗的是 PV 资源，Pod 可以请求 CPU 和内存，而 PVC 可以请求特定的存储空间和访问模式。</p>
+<p>对于真正使用存储的用户不需要关心底层的存储实现细节，只需要直接使用 PVC 即可。但是通过 PVC 请求到一定的存储空间也很有可能不足以满足应用对于存储设备的各种需求，而且不同的应用程序对于存储性能的要求可能也不尽相同，比如读写速度、并发性能等。</p>
+<p><strong>Volume和Claim的生命周期</strong></p>
+<ul>
+<li>供应<ul>
+<li>静态供应</li>
+<li>动态供应</li>
+</ul>
+</li>
+<li>绑定</li>
+<li>使用中（附加保护状态，延迟删除）</li>
+<li>回收<ul>
+<li>保留：PVC被删除，PV的状态是<code>released</code>，需要管理员手动处理</li>
+<li>删除：PV和PVC都被删除</li>
+<li>回收：PVC被删除，PV的状态是<code>avaliable</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="StorageClass"><a href="#StorageClass" class="headerlink" title="StorageClass"></a>StorageClass</h3><p>为了解决这一问题，Kubernetes 又为我们引入了一个新的资源对象：<code>StorageClass</code>，通过<code>StorageClass</code>的定义，管理员可以将存储资源定义为某种类型的资源，比如快速存储、慢速存储等，用户根据<code>StorageClass</code>的描述就可以非常直观的知道各种存储资源的具体特性了，这样就可以根据应用的特性去申请合适的存储资源了。</p>
+<h3 id="动态卷供应"><a href="#动态卷供应" class="headerlink" title="动态卷供应"></a>动态卷供应</h3><p>动态卷供应允许按需创建PV。 如果没有动态供应，集群管理员必须手动地联系他们的云或存储提供商来创建新的PV， 然后在 Kubernetes 集群创建<code>PersistentVolume</code>对象来表示这些卷。 动态供应功能消除了集群管理员预先配置存储的需要。 相反，它在用户请求时自动供应存储。</p>
+<p>动态卷供应的实现基于<code>storage.k8s.io</code>API 组中的<code>StorageClass</code>API 对象。 集群管理员可以根据需要定义多个<code>StorageClass</code>对象，每个对象指定一个卷插件（又名<code>Provisioner</code>）， 卷插件向卷供应商提供在创建卷时需要的数据卷信息及相关参数。</p>
+<p>集群管理员可以在集群中定义和公开多种存储（来自相同或不同的存储系统），每种都具有自定义参数集。 该设计也确保终端用户不必担心存储供应的复杂性和细微差别，但仍然能够从多个存储选项中进行选择。</p>
+<h2 id="设计方案"><a href="#设计方案" class="headerlink" title="设计方案"></a>设计方案</h2><p>第一版依旧使用dfs以<code>hostpath</code>类型的<code>volume</code>提供存储服务，后面会考虑以实现<code>CSI</code>的方式对接其他存储服务。</p>
+<p>下面是一套完整的运转流程：</p>
+<ol>
+<li>所有节点上挂载好dfs</li>
+<li>集群中安装<code>provisioner</code>组件，创建对应的<code>StorageClass</code>资源</li>
+<li>创建<code>PVC</code></li>
+<li><code>provisioner</code>处理<code>PVC</code><ol>
+<li>创建满足配额和权限限制的底层资源（对于当前实现只是mkdir）</li>
+<li>创建<code>PV</code></li>
+<li>将<code>PV</code>和<code>PVC</code>绑定</li>
+</ol>
+</li>
+<li>使用了<code>PVC</code>的pod被创建</li>
+<li><code>kubelet</code>监测到新的pod被调度到当前节点<ol>
+<li>准备挂载（因为SC声明的类型是<code>hostpath</code>，所以实际上无需操作）</li>
+<li>pod被启动，进入<code>Runing</code>阶段</li>
+</ol>
+</li>
+<li><code>PV</code>或<code>PVC</code>被删除<ol>
+<li>如果当前有pod在使用此<code>PVC</code>，则不会立即删除，而是等到不再有pod使用此<code>PVC</code></li>
+<li>同理，如果有<code>PVC</code>在和<code>PV</code>绑定，<code>PV</code>的删除事件也会推迟到与<code>PVC</code>解绑</li>
+<li>当上述1或2满足时，<code>StorageClass</code>的回收策略默认是delete，<code>Provisioner</code>会删除底层资源（对于当前实现是rm dir）</li>
+</ol>
+</li>
+</ol>
+<h2 id="技术实现"><a href="#技术实现" class="headerlink" title="技术实现"></a>技术实现</h2><h3 id="实现Provisioner"><a href="#实现Provisioner" class="headerlink" title="实现Provisioner"></a>实现<code>Provisioner</code></h3><p>我们第一版的卷插件暂不使用第三方的存储服务，当<code>Provisioner</code>监测到有指定我们的<code>StorageClass</code>的<code>PVC</code>时，只是在本地为其创建个文件夹，例如<code>/mnt/shareroot/pv-data/pv-xxx</code>。</p>
+<p>下面是核心代码:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> provisionerName = <span class="string">"example.com/hostpath"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// provisioner 创建底层资源和PV</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *hostPathProvisioner)</span> <span class="title">Provision</span><span class="params">(ctx context.Context, options controller.ProvisionOptions)</span> <span class="params">(*v1.PersistentVolume, controller.ProvisioningState, error)</span></span> &#123;</span><br><span class="line">	path := path.Join(p.pvDir, options.PVName)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := os.MkdirAll(path, <span class="number">0777</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, controller.ProvisioningFinished, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	pv := &amp;v1.PersistentVolume&#123;</span><br><span class="line">		ObjectMeta: metav1.ObjectMeta&#123;</span><br><span class="line">			Name: options.PVName,</span><br><span class="line">			Annotations: <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>&#123;</span><br><span class="line">				<span class="string">"hostPathProvisionerIdentity"</span>: p.identity,</span><br><span class="line">			&#125;,</span><br><span class="line">		&#125;,</span><br><span class="line">		Spec: v1.PersistentVolumeSpec&#123;</span><br><span class="line">			PersistentVolumeReclaimPolicy: *options.StorageClass.ReclaimPolicy,</span><br><span class="line">			AccessModes:                   options.PVC.Spec.AccessModes,</span><br><span class="line">			Capacity: v1.ResourceList&#123;</span><br><span class="line">				v1.ResourceName(v1.ResourceStorage): options.PVC.Spec.Resources.Requests[v1.ResourceName(v1.ResourceStorage)],</span><br><span class="line">			&#125;,</span><br><span class="line">			PersistentVolumeSource: v1.PersistentVolumeSource&#123;</span><br><span class="line">				HostPath: &amp;v1.HostPathVolumeSource&#123;</span><br><span class="line">					Path: path,</span><br><span class="line">				&#125;,</span><br><span class="line">			&#125;,</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> pv, controller.ProvisioningFinished, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// provisioner 处理PV的删除逻辑</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *hostPathProvisioner)</span> <span class="title">Delete</span><span class="params">(ctx context.Context, volume *v1.PersistentVolume)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	ann, ok := volume.Annotations[<span class="string">"hostPathProvisionerIdentity"</span>]</span><br><span class="line">	<span class="keyword">if</span> !ok &#123;</span><br><span class="line">		<span class="keyword">return</span> errors.New(<span class="string">"identity annotation not found on PV"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ann != p.identity &#123;</span><br><span class="line">		<span class="keyword">return</span> &amp;controller.IgnoredError&#123;Reason: <span class="string">"identity annotation on PV does not match ours"</span>&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	path := path.Join(p.pvDir, volume.Name)</span><br><span class="line">	<span class="keyword">if</span> err := os.RemoveAll(path); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="启用动态卷供应"><a href="#启用动态卷供应" class="headerlink" title="启用动态卷供应"></a>启用动态卷供应</h3><p>要启用动态供应功能，集群管理员需要为用户预先创建一个或多个 StorageClass 对象。 StorageClass 对象定义当动态供应被调用时，哪一个驱动将被使用和哪些参数将被传递给驱动。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">storage.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">StorageClass</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">fhmc-sc</span></span><br><span class="line"><span class="attr">provisioner:</span> <span class="string">hostpathProvisioner</span></span><br><span class="line"><span class="attr">parameters:</span></span><br><span class="line">  <span class="attr">foo:</span> <span class="string">bar</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="使用动态卷供应"><a href="#使用动态卷供应" class="headerlink" title="使用动态卷供应"></a>使用动态卷供应</h3><p>用户通过在<code>PersistentVolumeClaim</code>中包含存储类来请求动态供应的存储。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">claim1</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">fhmcStorageClass</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">30Gi</span></span><br></pre></td></tr></table></figure>
+
+      
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+        <div class="declare">
+          <ul class="post-copyright">
+            <li>
+              <i class="ri-copyright-line"></i>
+              <strong>版权声明： </strong s>
+              本博客所有文章除特别声明外，均采用 <a href="https://www.apache.org/licenses/LICENSE-2.0.html" rel="external nofollow"
+                target="_blank">Apache License 2.0</a> 许可协议。转载请注明出处！
+            </li>
+          </ul>
+        </div>
+        
+    <footer class="article-footer">
+      
+          
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://akaqin.github.io/2020/08/27/%E5%8A%A8%E6%80%81%E5%8D%B7%E4%BE%9B%E5%BA%94/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/k8s/" rel="tag">k8s</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+    
+      <a href="/2020/07/11/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-5-API%E7%BA%A6%E5%AE%9A/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">k8s学习笔记-5 API约定</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        app_id: 'X2Yrs2HgM1dBr94LBlfP7Jsj-gzGzoHsz',
+        app_key: 'x2WQjNYF5CQseEAN1iSqXOLQ',
+        path: window.location.pathname,
+        notify: 'true',
+        verify: 'false',
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2019-2020
+        Aaron Qin
+      </li>
+      <li>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <span>
+  <i>PV:<span id="busuanzi_value_page_pv"></span></i>
+  <i>UV:<span id="busuanzi_value_site_uv"></span></i>
+</span>
+        
+      </li>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+    <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+      <aside class="sidebar">
+        <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="akaQin&#39;s Blog"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about/me">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+      </aside>
+      <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+      
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<script src="/js/share.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script>
+  try {
+    var typed = new Typed("#subtitle", {
+    strings: ['面朝大海，春暖花开','愿你一生努力，一生被爱','想要的都拥有，得不到的都释怀'],
+    startDelay: 0,
+    typeSpeed: 200,
+    loop: true,
+    backSpeed: 100,
+    showCursor: true
+    });
+  } catch (err) {
+  }
+  
+</script>
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer:'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    onClick: (e) => {
+      $('.toc-link').removeClass('is-active-link');
+      $(`a[href=${e.target.hash}]`).addClass('is-active-link');
+      $(e.target.hash).scrollIntoView();
+      return false;
+    }
+  });
+</script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: false
+  }
+</script>
+
+
+<script src="/js/ayer.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+  </div>
+</body>
+
+</html>

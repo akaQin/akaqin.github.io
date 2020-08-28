@@ -1,55 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>动态卷供应</title>
+    <url>/2020/08/27/%E5%8A%A8%E6%80%81%E5%8D%B7%E4%BE%9B%E5%BA%94/</url>
+    <content><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>我们目前使用的存储服务是<code>MooseFS</code>，部署工具会在启动k8s前为每个节点挂载好共享路径<code>/mnt/shareroot</code>。<br>当应用有存储需求时，需要手动在Pod中声明类型为<code>hostpath</code>的<code>volume</code>，并在<code>.containers.volumeMounts</code>中进行映射。</p>
+<p>这种方案有以下弊端：</p>
+<ul>
+<li>需要为每个应用手动的在yaml中声明PV</li>
+<li>无法对卷的访问模式和容量进行限制及扩展</li>
+</ul>
+<p>为此，我们引入 Kubernetes 中的<code>PVC</code>和<code>StorageClass</code>两个重要的资源对象来实现对存储的管理。</p>
+<a id="more"></a>
+
+<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><h3 id="PVC"><a href="#PVC" class="headerlink" title="PVC"></a>PVC</h3><p><code>PVC</code>的全称是：PersistentVolumeClaim（持久化卷声明），PVC 是用户存储的一种声明，PVC 和 Pod 比较类似，Pod 消耗的是节点，PVC 消耗的是 PV 资源，Pod 可以请求 CPU 和内存，而 PVC 可以请求特定的存储空间和访问模式。</p>
+<p>对于真正使用存储的用户不需要关心底层的存储实现细节，只需要直接使用 PVC 即可。但是通过 PVC 请求到一定的存储空间也很有可能不足以满足应用对于存储设备的各种需求，而且不同的应用程序对于存储性能的要求可能也不尽相同，比如读写速度、并发性能等。</p>
+<p><strong>Volume和Claim的生命周期</strong></p>
+<ul>
+<li>供应<ul>
+<li>静态供应</li>
+<li>动态供应</li>
+</ul>
+</li>
+<li>绑定</li>
+<li>使用中（附加保护状态，延迟删除）</li>
+<li>回收<ul>
+<li>保留：PVC被删除，PV的状态是<code>released</code>，需要管理员手动处理</li>
+<li>删除：PV和PVC都被删除</li>
+<li>回收：PVC被删除，PV的状态是<code>avaliable</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="StorageClass"><a href="#StorageClass" class="headerlink" title="StorageClass"></a>StorageClass</h3><p>为了解决这一问题，Kubernetes 又为我们引入了一个新的资源对象：<code>StorageClass</code>，通过<code>StorageClass</code>的定义，管理员可以将存储资源定义为某种类型的资源，比如快速存储、慢速存储等，用户根据<code>StorageClass</code>的描述就可以非常直观的知道各种存储资源的具体特性了，这样就可以根据应用的特性去申请合适的存储资源了。</p>
+<h3 id="动态卷供应"><a href="#动态卷供应" class="headerlink" title="动态卷供应"></a>动态卷供应</h3><p>动态卷供应允许按需创建PV。 如果没有动态供应，集群管理员必须手动地联系他们的云或存储提供商来创建新的PV， 然后在 Kubernetes 集群创建<code>PersistentVolume</code>对象来表示这些卷。 动态供应功能消除了集群管理员预先配置存储的需要。 相反，它在用户请求时自动供应存储。</p>
+<p>动态卷供应的实现基于<code>storage.k8s.io</code>API 组中的<code>StorageClass</code>API 对象。 集群管理员可以根据需要定义多个<code>StorageClass</code>对象，每个对象指定一个卷插件（又名<code>Provisioner</code>）， 卷插件向卷供应商提供在创建卷时需要的数据卷信息及相关参数。</p>
+<p>集群管理员可以在集群中定义和公开多种存储（来自相同或不同的存储系统），每种都具有自定义参数集。 该设计也确保终端用户不必担心存储供应的复杂性和细微差别，但仍然能够从多个存储选项中进行选择。</p>
+<h2 id="设计方案"><a href="#设计方案" class="headerlink" title="设计方案"></a>设计方案</h2><p>第一版依旧使用dfs以<code>hostpath</code>类型的<code>volume</code>提供存储服务，后面会考虑以实现<code>CSI</code>的方式对接其他存储服务。</p>
+<p>下面是一套完整的运转流程：</p>
+<ol>
+<li>所有节点上挂载好dfs</li>
+<li>集群中安装<code>provisioner</code>组件，创建对应的<code>StorageClass</code>资源</li>
+<li>创建<code>PVC</code></li>
+<li><code>provisioner</code>处理<code>PVC</code><ol>
+<li>创建满足配额和权限限制的底层资源（对于当前实现只是mkdir）</li>
+<li>创建<code>PV</code></li>
+<li>将<code>PV</code>和<code>PVC</code>绑定</li>
+</ol>
+</li>
+<li>使用了<code>PVC</code>的pod被创建</li>
+<li><code>kubelet</code>监测到新的pod被调度到当前节点<ol>
+<li>准备挂载（因为SC声明的类型是<code>hostpath</code>，所以实际上无需操作）</li>
+<li>pod被启动，进入<code>Runing</code>阶段</li>
+</ol>
+</li>
+<li><code>PV</code>或<code>PVC</code>被删除<ol>
+<li>如果当前有pod在使用此<code>PVC</code>，则不会立即删除，而是等到不再有pod使用此<code>PVC</code></li>
+<li>同理，如果有<code>PVC</code>在和<code>PV</code>绑定，<code>PV</code>的删除事件也会推迟到与<code>PVC</code>解绑</li>
+<li>当上述1或2满足时，<code>StorageClass</code>的回收策略默认是delete，<code>Provisioner</code>会删除底层资源（对于当前实现是rm dir）</li>
+</ol>
+</li>
+</ol>
+<h2 id="技术实现"><a href="#技术实现" class="headerlink" title="技术实现"></a>技术实现</h2><h3 id="实现Provisioner"><a href="#实现Provisioner" class="headerlink" title="实现Provisioner"></a>实现<code>Provisioner</code></h3><p>我们第一版的卷插件暂不使用第三方的存储服务，当<code>Provisioner</code>监测到有指定我们的<code>StorageClass</code>的<code>PVC</code>时，只是在本地为其创建个文件夹，例如<code>/mnt/shareroot/pv-data/pv-xxx</code>。</p>
+<p>下面是核心代码:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> provisionerName = <span class="string">"example.com/hostpath"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// provisioner 创建底层资源和PV</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *hostPathProvisioner)</span> <span class="title">Provision</span><span class="params">(ctx context.Context, options controller.ProvisionOptions)</span> <span class="params">(*v1.PersistentVolume, controller.ProvisioningState, error)</span></span> &#123;</span><br><span class="line">	path := path.Join(p.pvDir, options.PVName)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := os.MkdirAll(path, <span class="number">0777</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, controller.ProvisioningFinished, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	pv := &amp;v1.PersistentVolume&#123;</span><br><span class="line">		ObjectMeta: metav1.ObjectMeta&#123;</span><br><span class="line">			Name: options.PVName,</span><br><span class="line">			Annotations: <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>&#123;</span><br><span class="line">				<span class="string">"hostPathProvisionerIdentity"</span>: p.identity,</span><br><span class="line">			&#125;,</span><br><span class="line">		&#125;,</span><br><span class="line">		Spec: v1.PersistentVolumeSpec&#123;</span><br><span class="line">			PersistentVolumeReclaimPolicy: *options.StorageClass.ReclaimPolicy,</span><br><span class="line">			AccessModes:                   options.PVC.Spec.AccessModes,</span><br><span class="line">			Capacity: v1.ResourceList&#123;</span><br><span class="line">				v1.ResourceName(v1.ResourceStorage): options.PVC.Spec.Resources.Requests[v1.ResourceName(v1.ResourceStorage)],</span><br><span class="line">			&#125;,</span><br><span class="line">			PersistentVolumeSource: v1.PersistentVolumeSource&#123;</span><br><span class="line">				HostPath: &amp;v1.HostPathVolumeSource&#123;</span><br><span class="line">					Path: path,</span><br><span class="line">				&#125;,</span><br><span class="line">			&#125;,</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> pv, controller.ProvisioningFinished, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// provisioner 处理PV的删除逻辑</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *hostPathProvisioner)</span> <span class="title">Delete</span><span class="params">(ctx context.Context, volume *v1.PersistentVolume)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	ann, ok := volume.Annotations[<span class="string">"hostPathProvisionerIdentity"</span>]</span><br><span class="line">	<span class="keyword">if</span> !ok &#123;</span><br><span class="line">		<span class="keyword">return</span> errors.New(<span class="string">"identity annotation not found on PV"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ann != p.identity &#123;</span><br><span class="line">		<span class="keyword">return</span> &amp;controller.IgnoredError&#123;Reason: <span class="string">"identity annotation on PV does not match ours"</span>&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	path := path.Join(p.pvDir, volume.Name)</span><br><span class="line">	<span class="keyword">if</span> err := os.RemoveAll(path); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="启用动态卷供应"><a href="#启用动态卷供应" class="headerlink" title="启用动态卷供应"></a>启用动态卷供应</h3><p>要启用动态供应功能，集群管理员需要为用户预先创建一个或多个 StorageClass 对象。 StorageClass 对象定义当动态供应被调用时，哪一个驱动将被使用和哪些参数将被传递给驱动。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">storage.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">StorageClass</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">fhmc-sc</span></span><br><span class="line"><span class="attr">provisioner:</span> <span class="string">hostpathProvisioner</span></span><br><span class="line"><span class="attr">parameters:</span></span><br><span class="line">  <span class="attr">foo:</span> <span class="string">bar</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="使用动态卷供应"><a href="#使用动态卷供应" class="headerlink" title="使用动态卷供应"></a>使用动态卷供应</h3><p>用户通过在<code>PersistentVolumeClaim</code>中包含存储类来请求动态供应的存储。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">claim1</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">fhmcStorageClass</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">30Gi</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>k8s学习笔记-5 API约定</title>
     <url>/2020/07/11/k8s%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-5-API%E7%BA%A6%E5%AE%9A/</url>
-    <content><![CDATA[<p>*本文翻译自<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md" target="_blank" rel="noopener">API Conventions</a>，面向想要深入理解k8s结构和用户以及想要扩展k8s API的开发者。在<a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/object-management/" target="_blank" rel="noopener">对象管理概述</a>中可以找到将资源与kubectl一起使用的介绍。</p>
-<p><strong>目录</strong></p>
-<ul>
-<li><a href="#types-kinds">Types (Kinds)</a><ul>
-<li><a href="#resources">Resources</a></li>
-<li><a href="#objects">Objects</a><ul>
-<li><a href="#metadata">Metadata</a></li>
-<li><a href="#spec-and-status">Spec and Status</a><ul>
-<li><a href="#typical-status-properties">Typical status properties</a></li>
-</ul>
-</li>
-<li><a href="#references-to-related-objects">References to related objects</a></li>
-<li><a href="#lists-of-named-subobjects-preferred-over-maps">Lists of named subobjects preferred over maps</a></li>
-<li><a href="#primitive-types">Primitive types</a></li>
-<li><a href="#constants">Constants</a></li>
-<li><a href="#unions">Unions</a></li>
-</ul>
-</li>
-<li><a href="#lists-and-simple-kinds">Lists and Simple kinds</a></li>
-</ul>
-</li>
-<li><a href="#differing-representations">Differing Representations</a></li>
-<li><a href="#verbs-on-resources">Verbs on Resources</a><ul>
-<li><a href="#patch-operations">PATCH operations</a></li>
-</ul>
-</li>
-<li><a href="#idempotency">Idempotency</a></li>
-<li><a href="#optional-vs-required">Optional vs. Required</a></li>
-<li><a href="#defaulting">Defaulting</a></li>
-<li><a href="#late-initialization">Late Initialization</a></li>
-<li><a href="#concurrency-control-and-consistency">Concurrency Control and Consistency</a></li>
-<li><a href="#serialization-format">Serialization Format</a></li>
-<li><a href="#units">Units</a></li>
-<li><a href="#selecting-fields">Selecting Fields</a></li>
-<li><a href="#object-references">Object references</a></li>
-<li><a href="#http-status-codes">HTTP Status codes</a><ul>
-<li><a href="#success-codes">Success codes</a></li>
-<li><a href="#error-codes">Error codes</a></li>
-</ul>
-</li>
-<li><a href="#response-status-kind">Response Status Kind</a></li>
-<li><a href="#events">Events</a></li>
-<li><a href="#naming-conventions">Naming conventions</a></li>
-<li><a href="#label-selector-and-annotation-conventions">Label, selector, and annotation conventions</a></li>
-<li><a href="#websockets-and-spdy">WebSockets and SPDY</a></li>
-<li><a href="#validation">Validation</a></li>
-</ul>
+    <content><![CDATA[<p><em>本文翻译自<a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md" target="_blank" rel="noopener">API Conventions</a>，面向想要深入理解k8s结构和用户以及想要扩展k8s API的开发者。在<a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/object-management/" target="_blank" rel="noopener">对象管理概述</a>中可以找到将资源与kubectl一起使用的介绍。</em></p>
+<a id="more"></a>
+
 <p>K8S API的约定旨在简化客户端的开发，确保可以实施能够在各种用例中保持一致的配置机制。</p>
 <p>K8S API通用的方式是RESTful——客户端通过标准的HTTP动词（POST、PUT、DELETE和GET）创建，更新，删除或检索一个对象的描述——并且这些API优先接受并返回JSON。k8s也为非标准动词开房了其他端点，并允许使用其他内容类型。所有服务器接受和返回的JSON都有一个结构，用“kind”和“apiVersion”字段标识。如果HTTP header头里有这样的字段，则应该在JSON里镜像一份内容，而不是只在header头里。</p>
 <p>下面是一些术语的定义：</p>
@@ -94,6 +123,9 @@
 <p>另外两个子资源<code>proxy</code>和<code>portforward</code>提供对杰群资源的访问。</p>
 <p>术语“kind”是为那些“顶级”API类型暴露的。术语“type”应用于区分对象或子对象内的子类别。</p>
 ]]></content>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
   </entry>
   <entry>
     <title>k8s学习笔记-4 Pods</title>
@@ -1858,8 +1890,8 @@
         <category>《APUE》笔记</category>
       </categories>
       <tags>
-        <tag>I/O</tag>
         <tag>文件</tag>
+        <tag>I/O</tag>
       </tags>
   </entry>
   <entry>

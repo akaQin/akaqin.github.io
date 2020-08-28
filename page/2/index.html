@@ -75,6 +75,90 @@
     
     
     
+    <article id="post-《APUE》ch13——守护进程" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/01/20/%E3%80%8AAPUE%E3%80%8Bch13%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/"
+    >《APUE》ch13——守护进程</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/01/20/%E3%80%8AAPUE%E3%80%8Bch13%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/" class="article-date">
+  <time datetime="2020-01-20T13:39:09.000Z" itemprop="datePublished">2020-01-20</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E3%80%8AAPUE%E3%80%8B%E7%AC%94%E8%AE%B0/">《APUE》笔记</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>守护进程（daemon）是生存期长的一种进程。它们常常在系统引导装入时启动，仅在系统关闭时才终止。守护进程没有控制终端，终端名为问号。后台运行，大多数都以超级用户（root）特权运行。用户层守护进程的父进程是init。</p>
+<h2 id="编程规则"><a href="#编程规则" class="headerlink" title="编程规则"></a>编程规则</h2><ol>
+<li>调用umask将文件模式创建屏蔽字设置为一个已知值（通常是0）。</li>
+<li>调用fork，然后使父进程exit。</li>
+<li>调用setsid创建一个新会话。使调用进程：（a）成为新会话的首进程，（b）成为一个新进程组的组长进程，（c）没有控制终端。</li>
+<li>将当前工作目录更改为根目录。避免文件系统被卸载。</li>
+<li>关闭不再需要的文件描述符。</li>
+<li>某些守护进程打开/dev/null使其具有文件描述符0、1、2，这样任何一个试图读/写标准输入/输出/错误的库例程都不会产生任何效果。</li>
+</ol>
+      
+      <a class="article-more-link" href="/2020/01/20/%E3%80%8AAPUE%E3%80%8Bch13%E2%80%94%E2%80%94%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/daemon/" rel="tag">daemon</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
     <article id="post-理解inode" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -791,88 +875,6 @@
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/process/" rel="tag">process</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
-    <article id="post-优惠券服务拆分-反思总结" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2019/11/06/%E4%BC%98%E6%83%A0%E5%88%B8%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86-%E5%8F%8D%E6%80%9D%E6%80%BB%E7%BB%93/"
-    >反思总结：优惠券服务拆分</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2019/11/06/%E4%BC%98%E6%83%A0%E5%88%B8%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86-%E5%8F%8D%E6%80%9D%E6%80%BB%E7%BB%93/" class="article-date">
-  <time datetime="2019-11-06T10:35:09.000Z" itemprop="datePublished">2019-11-06</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E7%BB%8F%E9%AA%8C%E5%8F%8D%E6%80%9D/">经验反思</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="过程中出现的问题："><a href="#过程中出现的问题：" class="headerlink" title="过程中出现的问题："></a>过程中出现的问题：</h2><p><strong>思考问题</strong></p>
-<p>​    安全意识还是不够，不能因为这块是朝沛拆的就不怎么看，导致要上线了才发现回滚逻辑有这么多问题，临上线又重构代码，给测试也带来很多麻烦；想的不够细，有些逻辑靠衍雷提出来才想到，这一点感觉还是得靠多实践去改变。</p>
-<p><strong>买家端无法提供服务</strong></p>
-<p>​    虽然不是我的主要问题，但出问题时看到nginx的error_log：recv() failed (104: Connection reset by peer) while reading response header from upstream，应该能及时联想到是fpm的问题，然后随手ps下看看进程就能及时发现子进程只有5个；使用新机器时先看下机器配置。</p>
-<p><strong>一些要注意的点：</strong></p>
-<p>​    做服务这块一定要多了解业务，多思考可能存在的问题，心思要缜密，考虑全面，想的越多，出问题的概率才越小。尤其是涉及到事务相关的部分要考虑到成功失败的各种情况。</p>
-<p>​    涉及多项目的服务与接口代码上线，要保证各种case都测过没问题了，先把服务上了，再逐个上客户端。尽量避免后期改动服务的情况，一旦服务有改动，就得各项目都测一遍，带来不必不要的成本与风险。</p>
-<p>​    上线后及时的观察有没有各种异常，做好监控。</p>
-<p>​</p>
-
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/architecture/" rel="tag">architecture</a></li></ul>
 
 
     </footer>
