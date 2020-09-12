@@ -8,6 +8,8 @@
 <h3 id="fcsan"><a href="#fcsan" class="headerlink" title="fcsan"></a>fcsan</h3><p> <code>FC SAN</code>是采用光纤信道的SAN，也就是服务器透过光纤信道卡（FC HBA），连接光纤交换器（FC Switch），再连接后端的存储设备。<br> <code>FC SAN</code>是按块协议(Block Protocal)的传输方式,所以传输速度快,但是造价比较贵,随着客户端的数量增加,造价也随着上升;所以一般在大型网络的核心上都采用的<code>FC SAN</code>的存储结构; </p>
 <h3 id="IP-SAN"><a href="#IP-SAN" class="headerlink" title="IP SAN"></a>IP SAN</h3><p>随着以太网技术的发展,使IP SAN对SAN技术进一步的拓展, IP SAN降低了<code>FC SAN</code>的光纤造价.直接在IP网络上进行存储..而且实施起来更容易.<br>IP SAN和<code>FC SAN</code>一样,都是按块协议(Block Protocal) 的传输方式;</p>
 <h3 id="iSCSI-SAN"><a href="#iSCSI-SAN" class="headerlink" title="iSCSI SAN"></a>iSCSI SAN</h3><p>  iSCSI 可以算IP SAN发展的第三个里程碑, iSCSI是SCSI over IP的一项重要成就，使用IP技术代替FC对SCSI进行封装,它是由IBM与CISCO共同开发的协议标准，是一个供硬件设备使用的可以在IP协议的上层运行的SCSI指令集。iSCSI协议整合了存储和IP网络，使得通过IP网络完成存储数据块的传输成为现实。使其能够在诸如高速千兆以太网上进行路由选择。现在有向10G以太网发展的趋势.</p>
+<a id="more"></a>
+
 <h2 id="FC协议"><a href="#FC协议" class="headerlink" title="FC协议"></a>FC协议</h2><p>光纤通道协议（Fibre Channel Protocol，FCP）是一种类似于TCP的传输协议，大多用于在光纤通道上传输SCSI命令。</p>
 <p>FC协议其实并不能翻译成光纤协议，只是FC协议普遍采用光纤作为传输线缆而不是铜缆，因此很多人把FC称为光纤通道协议。在逻辑上，我们可以将FC看作是一种用于构造高性能信息传输的、双向的、点对点的串行数据通道。在物理上，FC是一到多对应的点对点的互连链路，每条链路终结于一个端口或转发器。FC的链路介质可以是光纤、双绞线或同轴电缆。</p>
 <p>** FC光纤通道 ** ：用于计算机设备之间数据传输，传输率达到2G（将来会达到4G）。光纤通道用于服务器共享存储设备的连接，存储控制器和驱动器之间的内部连接。</p>
