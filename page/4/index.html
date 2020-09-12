@@ -75,6 +75,160 @@
     
     
     
+    <article id="post-register、volatile、restrict和extern" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2019/04/15/register%E3%80%81volatile%E3%80%81restrict%E5%92%8Cextern/"
+    >register、volatile、restrict和extern</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2019/04/15/register%E3%80%81volatile%E3%80%81restrict%E5%92%8Cextern/" class="article-date">
+  <time datetime="2019-04-15T10:19:52.000Z" itemprop="datePublished">2019-04-15</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/">知识点总结</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h2 id="register"><a href="#register" class="headerlink" title="register"></a>register</h2><h3 id="含义："><a href="#含义：" class="headerlink" title="含义："></a>含义：</h3><p>这个关键字暗示编译器相应的变量将被频繁地使用，如果可能的话尽可能的将变量存在CPU内部寄存器中，而不是通过内存寻址访问，以提高效率。注意是尽可能，不是绝对。</p>
+<h3 id="补充："><a href="#补充：" class="headerlink" title="补充："></a>补充：</h3><p>首先，register变量必须是能被CPU所接受的类型。这通常意味着register变量必须是一个单个的值，并且长度应该小于或者等于整型的长度。不过，有些机器的寄存器也能存放浮点数。</p>
+      
+      <a class="article-more-link" href="/2019/04/15/register%E3%80%81volatile%E3%80%81restrict%E5%92%8Cextern/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
+    <article id="post-strlen与sizeof区别" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2019/03/02/strlen%E4%B8%8Esizeof%E5%8C%BA%E5%88%AB/"
+    >strlen与sizeof区别</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2019/03/02/strlen%E4%B8%8Esizeof%E5%8C%BA%E5%88%AB/" class="article-date">
+  <time datetime="2019-03-02T13:18:44.000Z" itemprop="datePublished">2019-03-02</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/">知识点总结</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <ul>
+<li>strlen计算不包含终止null字节的字符串长度，而sizeof则计算包括终止null字节的缓冲区长度</li>
+<li>strlen需要进行一次函数调用，而对于sizeof，缓冲区长度在编译时计算，是固定的</li>
+</ul>
+
+      
+      <!-- reward -->
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+
+    
     <article id="post-MySQL知识点整理" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -732,172 +886,6 @@
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARTS/" rel="tag">ARTS</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
-    <article id="post-arts-9" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2018/10/06/arts-9/"
-    >arts-9</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2018/10/06/arts-9/" class="article-date">
-  <time datetime="2018-10-06T05:52:34.000Z" itemprop="datePublished">2018-10-06</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/ARTS/">ARTS</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>The count-and-say sequence is the sequence of integers with the first five terms as following:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1.     1</span><br><span class="line">2.     11</span><br><span class="line">3.     21</span><br><span class="line">4.     1211</span><br><span class="line">5.     111221</span><br></pre></td></tr></table></figure>
-
-<p><code>1</code> is read off as <code>&quot;one 1&quot;</code> or <code>11</code>.<br><code>11</code> is read off as <code>&quot;two 1s&quot;</code> or <code>21</code>.<br><code>21</code> is read off as <code>&quot;one 2</code>, then <code>one 1&quot;</code> or <code>1211</code>.</p>
-<p>Given an integer <em>n</em> where 1 ≤ <em>n</em> ≤ 30, generate the <em>n</em> th term of the count-and-say sequence.</p>
-<p>Note: Each term of the sequence of integers will be represented as a string.</p>
-      
-      <a class="article-more-link" href="/2018/10/06/arts-9/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ARTS/" rel="tag">ARTS</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-
-    
-    <article id="post-关于Mac升级Mojave后的一些坑" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2018/10/04/%E5%85%B3%E4%BA%8EMac%E5%8D%87%E7%BA%A7Mojave%E5%90%8E%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/"
-    >关于Mac升级Mojave后的一些坑</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2018/10/04/%E5%85%B3%E4%BA%8EMac%E5%8D%87%E7%BA%A7Mojave%E5%90%8E%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/" class="article-date">
-  <time datetime="2018-10-04T05:58:18.000Z" itemprop="datePublished">2018-10-04</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/">踩坑记录</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <ol>
-<li><p>Git无法使用，原因是每次大版本升级后，CommandLineTools回被卸载，而Git这种命令行工具依赖于CommandLineTools，解决方案是重新安装CommandLineTools。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcode-select --install</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>gcc编译文件时找不到头文件，报类似于 stdio.h file not found 的错误，具体情况可以看<a href="https://stackoverflow.com/questions/52509602/cant-compile-c-program-on-a-mac-after-upgrade-to-mojave" target="_blank" rel="noopener">StackOverflow</a>上这个提问。解决方案是使用brew安装或升级gcc最新版本，并在你的IDE中配置它，这里给出CLion的<a href="https://www.jetbrains.com/help/clion/how-to-switch-compilers-in-clion.html" target="_blank" rel="noopener">配置教程</a>。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew install gcc</span><br><span class="line">brew upgrade gcc</span><br></pre></td></tr></table></figure>
-
-
-
-</li>
-</ol>
-<p>如果你遇到了一些其他问题，欢迎给我留言讨论。</p>
-
-      
-      <!-- reward -->
-      
-    </div>
-    
-
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/macOS/" rel="tag">macOS</a></li></ul>
 
 
     </footer>

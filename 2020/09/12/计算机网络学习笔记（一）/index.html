@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+   
+  <meta name="keywords" content="生活,旅行,思考,代码,博客" />
+   
+  <meta name="description" content="一座孤岛" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    计算机网络学习笔记（一） |  akaQin&#39;s Blog
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<script src="/js/pace.min.js"></script>
+
+
+  
+
+  
+
+<link rel="alternate" href="/atom.xml" title="akaQin's Blog" type="application/atom+xml">
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-计算机网络学习笔记（一）" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  计算机网络学习笔记（一）
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/" class="article-date">
+  <time datetime="2020-09-12T15:06:13.000Z" itemprop="datePublished">2020-09-12</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/">知识点总结</a>
+  </div>
+
+      
+      
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">1.1k字</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">3分钟</span>
+        </span>
+    </span>
+</div>
+
+      
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="计算机网络"><a href="#计算机网络" class="headerlink" title="计算机网络"></a><strong>计算机网络</strong></h1><h2 id="网络体系结构"><a href="#网络体系结构" class="headerlink" title="网络体系结构"></a>网络体系结构</h2><h3 id="协议层次"><a href="#协议层次" class="headerlink" title="协议层次"></a>协议层次</h3><ul>
+<li><p>协议</p>
+<ul>
+<li>同一层上对等实体之间所交换的数据包或报文的格式和含义</li>
+</ul>
+</li>
+<li><p>服务</p>
+<ul>
+<li>某一层向它上一层提供的一组原语（操作）</li>
+</ul>
+</li>
+<li><p>设计要点</p>
+<ul>
+<li><p>可靠性</p>
+</li>
+<li><p>可扩展性</p>
+</li>
+<li><p>资源分配</p>
+</li>
+<li><p>安全性</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="参考模型"><a href="#参考模型" class="headerlink" title="参考模型"></a>参考模型</h3><ul>
+<li><p>OSI 7层模型</p>
+<ul>
+<li><p>应用层-&gt;报文</p>
+<ul>
+<li>各种网络程序及协议</li>
+</ul>
+</li>
+<li><p>表示层</p>
+<ul>
+<li>关注传递信息的语法和语义</li>
+</ul>
+</li>
+<li><p>会话层</p>
+<ul>
+<li>允许不同机器上的用户建立会话</li>
+</ul>
+</li>
+<li><p>传输层-&gt;报文段</p>
+<ul>
+<li>在应用程序端点之间拆分并传送应用层报文</li>
+</ul>
+</li>
+<li><p>网络层-&gt;数据报</p>
+<ul>
+<li>控制子网的运行：将数据包从源端路由到接收方</li>
+</ul>
+</li>
+<li><p>数据链路层-&gt;帧</p>
+<ul>
+<li>讲一个原始的传输设施转变成一条没有漏检传输错误的线路</li>
+</ul>
+</li>
+<li><p>物理层</p>
+<ul>
+<li>关注在一条通信信道上传输原始比特</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>因特网 5层模型</p>
+</li>
+<li><p>TCP/IP 4层模型</p>
+</li>
+</ul>
+<h3 id="服务连接"><a href="#服务连接" class="headerlink" title="服务连接"></a>服务连接</h3><ul>
+<li><p>面向连接的服务</p>
+<ul>
+<li><p>可靠的报文流</p>
+<ul>
+<li>顺序页面</li>
+</ul>
+</li>
+<li><p>可靠的字节流</p>
+<ul>
+<li>移动下载</li>
+</ul>
+</li>
+<li><p>不可靠的连接</p>
+<ul>
+<li>IP语音</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>无连接的服务</p>
+<ul>
+<li><p>不可靠的数据报</p>
+<ul>
+<li>垃圾邮件</li>
+</ul>
+</li>
+<li><p>有确认的数据报</p>
+<ul>
+<li>文本消息</li>
+</ul>
+</li>
+<li><p>请求-应答</p>
+<ul>
+<li>数据库查询</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="IEEE-802标准"><a href="#IEEE-802标准" class="headerlink" title="IEEE 802标准"></a><strong>IEEE 802标准</strong></h2><h3 id="802-3"><a href="#802-3" class="headerlink" title="802.3"></a>802.3</h3><ul>
+<li><p>有线局域网</p>
+<ul>
+<li>以太网</li>
+</ul>
+</li>
+</ul>
+<h3 id="802-11"><a href="#802-11" class="headerlink" title="802.11"></a>802.11</h3><ul>
+<li><p>无线局域网</p>
+<ul>
+<li>WIFI（Wireless LAN &amp; Mesh）</li>
+</ul>
+</li>
+</ul>
+<h2 id="网络攻击"><a href="#网络攻击" class="headerlink" title="网络攻击"></a>网络攻击</h2><h3 id="恶意软件植入"><a href="#恶意软件植入" class="headerlink" title="恶意软件植入"></a>恶意软件植入</h3><ul>
+<li><p>病毒</p>
+</li>
+<li><p>蠕虫</p>
+</li>
+</ul>
+<h3 id="拒绝服务攻击"><a href="#拒绝服务攻击" class="headerlink" title="拒绝服务攻击"></a>拒绝服务攻击</h3><ul>
+<li><p>弱点攻击</p>
+</li>
+<li><p>带宽洪泛</p>
+</li>
+<li><p>连接洪泛</p>
+</li>
+</ul>
+<h3 id="嗅探分组"><a href="#嗅探分组" class="headerlink" title="嗅探分组"></a>嗅探分组</h3><ul>
+<li>中间人攻击</li>
+</ul>
+<h3 id="IP哄骗"><a href="#IP哄骗" class="headerlink" title="IP哄骗"></a>IP哄骗</h3><ul>
+<li>端点假冒</li>
+</ul>
+<h2 id="网络核心"><a href="#网络核心" class="headerlink" title="网络核心"></a>网络核心</h2><h3 id="分组交换"><a href="#分组交换" class="headerlink" title="分组交换"></a>分组交换</h3><ul>
+<li><p>存储转发传输报文</p>
+</li>
+<li><p>时延、丢包和吞吐量</p>
+<ul>
+<li><p>时延</p>
+<ul>
+<li><p>处理时延</p>
+<ul>
+<li>检查分组首部和决定将该分组导向何处所用的时间</li>
+</ul>
+</li>
+<li><p>排队时延</p>
+<ul>
+<li>在队列中等待向链路传输的时间</li>
+</ul>
+</li>
+<li><p>传输时延</p>
+<ul>
+<li>路由器将分组推向链路所需要的时间：L/R</li>
+</ul>
+</li>
+<li><p>传播时延</p>
+<ul>
+<li>一个比特从链路的起点到终点所需要的时间</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>丢包</p>
+<ul>
+<li>流量强度（La/R）&gt;1时会出现丢包</li>
+</ul>
+</li>
+<li><p>吞吐量</p>
+<ul>
+<li><p>平均吞吐量：F/T bps</p>
+</li>
+<li><p>简单情况下，链路吞吐量收瓶颈链路影响</p>
+</li>
+<li><p>多人使用时吞吐量会被均分</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>报文按需使用资源（缓存、链路传输速率</p>
+</li>
+<li><p>转发表和路由选择协议</p>
+</li>
+</ul>
+<h3 id="电路交换"><a href="#电路交换" class="headerlink" title="电路交换"></a>电路交换</h3><ul>
+<li><p>通信时创建一条专用的端到端连接</p>
+</li>
+<li><p>预留带宽，总带宽被多条电路均分</p>
+</li>
+<li><p>建立连接后以恒定速率传输数据</p>
+</li>
+<li><p>复用技术</p>
+<ul>
+<li><p>频分复用</p>
+</li>
+<li><p>时分复用</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h3><ul>
+<li><p>电路交换实时性好——电话、视频会议，适合人少的情况下用</p>
+</li>
+<li><p>分组交换有更好的带宽共享、更简单高效，适合人多的情况用</p>
+</li>
+</ul>
+<h3 id="互联网"><a href="#互联网" class="headerlink" title="互联网"></a>互联网</h3><ul>
+<li><p>ISP</p>
+<ul>
+<li>网络提供商，按服务范围可以多级</li>
+</ul>
+</li>
+<li><p>POP</p>
+<ul>
+<li>数据包进入ISP网络使用其服务的位置称为ISP存点</li>
+</ul>
+</li>
+<li><p>多宿</p>
+<ul>
+<li>一个客户ISP与多个提供商ISP连接</li>
+</ul>
+</li>
+<li><p>IXP</p>
+<ul>
+<li>ISP之间进行流量交换的点称为Internet交换点</li>
+</ul>
+</li>
+<li><p>Peer</p>
+<ul>
+<li>相互连接的ISP被认为彼此对等</li>
+</ul>
+</li>
+<li><p>IDC</p>
+<ul>
+<li><p>互联网数据中心</p>
+<ul>
+<li><p>谷歌</p>
+</li>
+<li><p>雅虎</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="网络边缘"><a href="#网络边缘" class="headerlink" title="网络边缘"></a>网络边缘</h2><h3 id="接入类型"><a href="#接入类型" class="headerlink" title="接入类型"></a>接入类型</h3><p>端系统物理连接到边缘路由器的网络</p>
+<ul>
+<li><p>电话线拨号上网（DSL）</p>
+</li>
+<li><p>复用有线电视的线缆</p>
+</li>
+<li><p>光纤入户FTTH</p>
+</li>
+<li><p>RFID（个域无线接入</p>
+<ul>
+<li><p>IC卡</p>
+</li>
+<li><p>Apple Pay</p>
+</li>
+<li><p>信用卡</p>
+</li>
+<li><p>护照</p>
+</li>
+<li><p>动物跟踪</p>
+</li>
+<li><p>供应链</p>
+</li>
+</ul>
+</li>
+<li><p>WIFI（局域无线接入</p>
+</li>
+<li><p>3G蜂窝网络（广域无线接入</p>
+</li>
+</ul>
+<h3 id="物理媒体"><a href="#物理媒体" class="headerlink" title="物理媒体"></a>物理媒体</h3><ul>
+<li><p>引导型媒体</p>
+<ul>
+<li><p>双绞铜线</p>
+</li>
+<li><p>同轴电缆</p>
+</li>
+<li><p>光纤</p>
+</li>
+</ul>
+</li>
+<li><p>非引导型媒体</p>
+<ul>
+<li><p>陆地无线电信道</p>
+</li>
+<li><p>卫星无线电信道</p>
+<ul>
+<li><p>同步卫星</p>
+</li>
+<li><p>近地轨道卫星</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="网络分类"><a href="#网络分类" class="headerlink" title="网络分类"></a>网络分类</h2><h3 id="传输技术"><a href="#传输技术" class="headerlink" title="传输技术"></a>传输技术</h3><ul>
+<li><p>单播（点对点）</p>
+</li>
+<li><p>组播</p>
+</li>
+<li><p>广播</p>
+</li>
+</ul>
+<h3 id="网络尺度"><a href="#网络尺度" class="headerlink" title="网络尺度"></a>网络尺度</h3><ul>
+<li><p>个域网</p>
+</li>
+<li><p>局域网（LAN）</p>
+<ul>
+<li>虚拟局域网（VLAN）</li>
+</ul>
+</li>
+<li><p>城域网</p>
+</li>
+<li><p>广域网</p>
+<ul>
+<li><p>构成</p>
+<ul>
+<li><p>主机（端系统）</p>
+</li>
+<li><p>通信子网</p>
+<ul>
+<li><p>传输线路</p>
+</li>
+<li><p>交换机（路由器）</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>类型</p>
+<ul>
+<li><p>虚拟专用网络（VPN）</p>
+<ul>
+<li>底层使用Interrnet链路</li>
+</ul>
+</li>
+<li><p>ISP网络</p>
+<ul>
+<li>底层使用提供商自己的链路</li>
+</ul>
+</li>
+<li><p>其他使用无线技术的广域网</p>
+<ul>
+<li><p>卫星系统</p>
+</li>
+<li><p>蜂窝移动电话网络</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>互联网</p>
+<ul>
+<li>因特网</li>
+</ul>
+</li>
+</ul>
+
+      
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+        <div class="declare">
+          <ul class="post-copyright">
+            <li>
+              <i class="ri-copyright-line"></i>
+              <strong>版权声明： </strong s>
+              本博客所有文章除特别声明外，均采用 <a href="https://www.apache.org/licenses/LICENSE-2.0.html" rel="external nofollow"
+                target="_blank">Apache License 2.0</a> 许可协议。转载请注明出处！
+            </li>
+          </ul>
+        </div>
+        
+    <footer class="article-footer">
+      
+          
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://akaqin.github.io/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/network/" rel="tag">network</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+    
+      <a href="/2020/08/29/Docker%E7%BD%91%E7%BB%9C/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Docker网络</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        app_id: 'X2Yrs2HgM1dBr94LBlfP7Jsj-gzGzoHsz',
+        app_key: 'x2WQjNYF5CQseEAN1iSqXOLQ',
+        path: window.location.pathname,
+        notify: 'true',
+        verify: 'false',
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2019-2020
+        Aaron Qin
+      </li>
+      <li>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <span>
+  <i>PV:<span id="busuanzi_value_page_pv"></span></i>
+  <i>UV:<span id="busuanzi_value_site_uv"></span></i>
+</span>
+        
+      </li>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+    <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+      <aside class="sidebar">
+        <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="akaQin&#39;s Blog"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about/me">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+      </aside>
+      <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+      
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<script src="/js/share.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script>
+  try {
+    var typed = new Typed("#subtitle", {
+    strings: ['面朝大海，春暖花开','愿你一生努力，一生被爱','想要的都拥有，得不到的都释怀'],
+    startDelay: 0,
+    typeSpeed: 200,
+    loop: true,
+    backSpeed: 100,
+    showCursor: true
+    });
+  } catch (err) {
+  }
+  
+</script>
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer:'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    onClick: (e) => {
+      $('.toc-link').removeClass('is-active-link');
+      $(`a[href=${e.target.hash}]`).addClass('is-active-link');
+      $(e.target.hash).scrollIntoView();
+      return false;
+    }
+  });
+</script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: false
+  }
+</script>
+
+
+<script src="/js/ayer.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+  </div>
+</body>
+
+</html>

@@ -1,6 +1,410 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>计算机网络学习笔记（一）</title>
+    <url>/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/</url>
+    <content><![CDATA[<h1 id="计算机网络"><a href="#计算机网络" class="headerlink" title="计算机网络"></a><strong>计算机网络</strong></h1><h2 id="网络体系结构"><a href="#网络体系结构" class="headerlink" title="网络体系结构"></a>网络体系结构</h2><h3 id="协议层次"><a href="#协议层次" class="headerlink" title="协议层次"></a>协议层次</h3><ul>
+<li><p>协议</p>
+<ul>
+<li>同一层上对等实体之间所交换的数据包或报文的格式和含义</li>
+</ul>
+</li>
+<li><p>服务</p>
+<ul>
+<li>某一层向它上一层提供的一组原语（操作）</li>
+</ul>
+</li>
+<li><p>设计要点</p>
+<ul>
+<li><p>可靠性</p>
+</li>
+<li><p>可扩展性</p>
+</li>
+<li><p>资源分配</p>
+</li>
+<li><p>安全性</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="参考模型"><a href="#参考模型" class="headerlink" title="参考模型"></a>参考模型</h3><ul>
+<li><p>OSI 7层模型</p>
+<ul>
+<li><p>应用层-&gt;报文</p>
+<ul>
+<li>各种网络程序及协议</li>
+</ul>
+</li>
+<li><p>表示层</p>
+<ul>
+<li>关注传递信息的语法和语义</li>
+</ul>
+</li>
+<li><p>会话层</p>
+<ul>
+<li>允许不同机器上的用户建立会话</li>
+</ul>
+</li>
+<li><p>传输层-&gt;报文段</p>
+<ul>
+<li>在应用程序端点之间拆分并传送应用层报文</li>
+</ul>
+</li>
+<li><p>网络层-&gt;数据报</p>
+<ul>
+<li>控制子网的运行：将数据包从源端路由到接收方</li>
+</ul>
+</li>
+<li><p>数据链路层-&gt;帧</p>
+<ul>
+<li>讲一个原始的传输设施转变成一条没有漏检传输错误的线路</li>
+</ul>
+</li>
+<li><p>物理层</p>
+<ul>
+<li>关注在一条通信信道上传输原始比特</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>因特网 5层模型</p>
+</li>
+<li><p>TCP/IP 4层模型</p>
+</li>
+</ul>
+<h3 id="服务连接"><a href="#服务连接" class="headerlink" title="服务连接"></a>服务连接</h3><ul>
+<li><p>面向连接的服务</p>
+<ul>
+<li><p>可靠的报文流</p>
+<ul>
+<li>顺序页面</li>
+</ul>
+</li>
+<li><p>可靠的字节流</p>
+<ul>
+<li>移动下载</li>
+</ul>
+</li>
+<li><p>不可靠的连接</p>
+<ul>
+<li>IP语音</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>无连接的服务</p>
+<ul>
+<li><p>不可靠的数据报</p>
+<ul>
+<li>垃圾邮件</li>
+</ul>
+</li>
+<li><p>有确认的数据报</p>
+<ul>
+<li>文本消息</li>
+</ul>
+</li>
+<li><p>请求-应答</p>
+<ul>
+<li>数据库查询</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="IEEE-802标准"><a href="#IEEE-802标准" class="headerlink" title="IEEE 802标准"></a><strong>IEEE 802标准</strong></h2><h3 id="802-3"><a href="#802-3" class="headerlink" title="802.3"></a>802.3</h3><ul>
+<li><p>有线局域网</p>
+<ul>
+<li>以太网</li>
+</ul>
+</li>
+</ul>
+<h3 id="802-11"><a href="#802-11" class="headerlink" title="802.11"></a>802.11</h3><ul>
+<li><p>无线局域网</p>
+<ul>
+<li>WIFI（Wireless LAN &amp; Mesh）</li>
+</ul>
+</li>
+</ul>
+<h2 id="网络攻击"><a href="#网络攻击" class="headerlink" title="网络攻击"></a>网络攻击</h2><h3 id="恶意软件植入"><a href="#恶意软件植入" class="headerlink" title="恶意软件植入"></a>恶意软件植入</h3><ul>
+<li><p>病毒</p>
+</li>
+<li><p>蠕虫</p>
+</li>
+</ul>
+<h3 id="拒绝服务攻击"><a href="#拒绝服务攻击" class="headerlink" title="拒绝服务攻击"></a>拒绝服务攻击</h3><ul>
+<li><p>弱点攻击</p>
+</li>
+<li><p>带宽洪泛</p>
+</li>
+<li><p>连接洪泛</p>
+</li>
+</ul>
+<h3 id="嗅探分组"><a href="#嗅探分组" class="headerlink" title="嗅探分组"></a>嗅探分组</h3><ul>
+<li>中间人攻击</li>
+</ul>
+<h3 id="IP哄骗"><a href="#IP哄骗" class="headerlink" title="IP哄骗"></a>IP哄骗</h3><ul>
+<li>端点假冒</li>
+</ul>
+<h2 id="网络核心"><a href="#网络核心" class="headerlink" title="网络核心"></a>网络核心</h2><h3 id="分组交换"><a href="#分组交换" class="headerlink" title="分组交换"></a>分组交换</h3><ul>
+<li><p>存储转发传输报文</p>
+</li>
+<li><p>时延、丢包和吞吐量</p>
+<ul>
+<li><p>时延</p>
+<ul>
+<li><p>处理时延</p>
+<ul>
+<li>检查分组首部和决定将该分组导向何处所用的时间</li>
+</ul>
+</li>
+<li><p>排队时延</p>
+<ul>
+<li>在队列中等待向链路传输的时间</li>
+</ul>
+</li>
+<li><p>传输时延</p>
+<ul>
+<li>路由器将分组推向链路所需要的时间：L/R</li>
+</ul>
+</li>
+<li><p>传播时延</p>
+<ul>
+<li>一个比特从链路的起点到终点所需要的时间</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>丢包</p>
+<ul>
+<li>流量强度（La/R）&gt;1时会出现丢包</li>
+</ul>
+</li>
+<li><p>吞吐量</p>
+<ul>
+<li><p>平均吞吐量：F/T bps</p>
+</li>
+<li><p>简单情况下，链路吞吐量收瓶颈链路影响</p>
+</li>
+<li><p>多人使用时吞吐量会被均分</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>报文按需使用资源（缓存、链路传输速率</p>
+</li>
+<li><p>转发表和路由选择协议</p>
+</li>
+</ul>
+<h3 id="电路交换"><a href="#电路交换" class="headerlink" title="电路交换"></a>电路交换</h3><ul>
+<li><p>通信时创建一条专用的端到端连接</p>
+</li>
+<li><p>预留带宽，总带宽被多条电路均分</p>
+</li>
+<li><p>建立连接后以恒定速率传输数据</p>
+</li>
+<li><p>复用技术</p>
+<ul>
+<li><p>频分复用</p>
+</li>
+<li><p>时分复用</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h3><ul>
+<li><p>电路交换实时性好——电话、视频会议，适合人少的情况下用</p>
+</li>
+<li><p>分组交换有更好的带宽共享、更简单高效，适合人多的情况用</p>
+</li>
+</ul>
+<h3 id="互联网"><a href="#互联网" class="headerlink" title="互联网"></a>互联网</h3><ul>
+<li><p>ISP</p>
+<ul>
+<li>网络提供商，按服务范围可以多级</li>
+</ul>
+</li>
+<li><p>POP</p>
+<ul>
+<li>数据包进入ISP网络使用其服务的位置称为ISP存点</li>
+</ul>
+</li>
+<li><p>多宿</p>
+<ul>
+<li>一个客户ISP与多个提供商ISP连接</li>
+</ul>
+</li>
+<li><p>IXP</p>
+<ul>
+<li>ISP之间进行流量交换的点称为Internet交换点</li>
+</ul>
+</li>
+<li><p>Peer</p>
+<ul>
+<li>相互连接的ISP被认为彼此对等</li>
+</ul>
+</li>
+<li><p>IDC</p>
+<ul>
+<li><p>互联网数据中心</p>
+<ul>
+<li><p>谷歌</p>
+</li>
+<li><p>雅虎</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="网络边缘"><a href="#网络边缘" class="headerlink" title="网络边缘"></a>网络边缘</h2><h3 id="接入类型"><a href="#接入类型" class="headerlink" title="接入类型"></a>接入类型</h3><p>端系统物理连接到边缘路由器的网络</p>
+<ul>
+<li><p>电话线拨号上网（DSL）</p>
+</li>
+<li><p>复用有线电视的线缆</p>
+</li>
+<li><p>光纤入户FTTH</p>
+</li>
+<li><p>RFID（个域无线接入</p>
+<ul>
+<li><p>IC卡</p>
+</li>
+<li><p>Apple Pay</p>
+</li>
+<li><p>信用卡</p>
+</li>
+<li><p>护照</p>
+</li>
+<li><p>动物跟踪</p>
+</li>
+<li><p>供应链</p>
+</li>
+</ul>
+</li>
+<li><p>WIFI（局域无线接入</p>
+</li>
+<li><p>3G蜂窝网络（广域无线接入</p>
+</li>
+</ul>
+<h3 id="物理媒体"><a href="#物理媒体" class="headerlink" title="物理媒体"></a>物理媒体</h3><ul>
+<li><p>引导型媒体</p>
+<ul>
+<li><p>双绞铜线</p>
+</li>
+<li><p>同轴电缆</p>
+</li>
+<li><p>光纤</p>
+</li>
+</ul>
+</li>
+<li><p>非引导型媒体</p>
+<ul>
+<li><p>陆地无线电信道</p>
+</li>
+<li><p>卫星无线电信道</p>
+<ul>
+<li><p>同步卫星</p>
+</li>
+<li><p>近地轨道卫星</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="网络分类"><a href="#网络分类" class="headerlink" title="网络分类"></a>网络分类</h2><h3 id="传输技术"><a href="#传输技术" class="headerlink" title="传输技术"></a>传输技术</h3><ul>
+<li><p>单播（点对点）</p>
+</li>
+<li><p>组播</p>
+</li>
+<li><p>广播</p>
+</li>
+</ul>
+<h3 id="网络尺度"><a href="#网络尺度" class="headerlink" title="网络尺度"></a>网络尺度</h3><ul>
+<li><p>个域网</p>
+</li>
+<li><p>局域网（LAN）</p>
+<ul>
+<li>虚拟局域网（VLAN）</li>
+</ul>
+</li>
+<li><p>城域网</p>
+</li>
+<li><p>广域网</p>
+<ul>
+<li><p>构成</p>
+<ul>
+<li><p>主机（端系统）</p>
+</li>
+<li><p>通信子网</p>
+<ul>
+<li><p>传输线路</p>
+</li>
+<li><p>交换机（路由器）</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>类型</p>
+<ul>
+<li><p>虚拟专用网络（VPN）</p>
+<ul>
+<li>底层使用Interrnet链路</li>
+</ul>
+</li>
+<li><p>ISP网络</p>
+<ul>
+<li>底层使用提供商自己的链路</li>
+</ul>
+</li>
+<li><p>其他使用无线技术的广域网</p>
+<ul>
+<li><p>卫星系统</p>
+</li>
+<li><p>蜂窝移动电话网络</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>互联网</p>
+<ul>
+<li>因特网</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>知识点总结</category>
+      </categories>
+      <tags>
+        <tag>network</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Docker网络</title>
+    <url>/2020/08/29/Docker%E7%BD%91%E7%BB%9C/</url>
+    <content><![CDATA[<h2 id="网络驱动"><a href="#网络驱动" class="headerlink" title="网络驱动"></a>网络驱动</h2><ul>
+<li><code>bridge</code>：默认的网络驱动。当应用程序需要在容器中独立运行时通常使用<code>Bridge</code>网络。</li>
+<li><code>host</code>：对于独立容器，删除容器和主机之间的网络隔离，让容器直接使用主机的网络。</li>
+<li><code>overlay</code>：覆盖网络将多个Docker守护进程连接在一起，使集群服务能够相互通信。</li>
+<li><code>macvlan</code>：允许为容器分配MAC地址，让它在网络中像一台物理设备。</li>
+<li><code>none</code>：禁用所有网络。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>知识点总结</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>netwrok</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>动态卷供应</title>
     <url>/2020/08/27/%E5%8A%A8%E6%80%81%E5%8D%B7%E4%BE%9B%E5%BA%94/</url>
     <content><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>我们目前使用的存储服务是<code>MooseFS</code>，部署工具会在启动k8s前为每个节点挂载好共享路径<code>/mnt/shareroot</code>。<br>当应用有存储需求时，需要手动在Pod中声明类型为<code>hostpath</code>的<code>volume</code>，并在<code>.containers.volumeMounts</code>中进行映射。</p>
