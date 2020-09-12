@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+   
+  <meta name="keywords" content="生活,旅行,思考,代码,博客" />
+   
+  <meta name="description" content="一座孤岛" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    指针学习笔记 |  akaQin&#39;s Blog
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<script src="/js/pace.min.js"></script>
+
+
+  
+
+  
+
+<link rel="alternate" href="/atom.xml" title="akaQin's Blog" type="application/atom+xml">
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-指针学习笔记" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  指针学习笔记
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2018/09/09/%E6%8C%87%E9%92%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="article-date">
+  <time datetime="2018-09-09T02:36:27.000Z" itemprop="datePublished">2018-09-09</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/">知识点总结</a>
+  </div>
+
+      
+      
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">4.8k字</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">17分钟</span>
+        </span>
+    </span>
+</div>
+
+      
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="C语言指针的总结"><a href="#C语言指针的总结" class="headerlink" title="C语言指针的总结"></a>C语言指针的总结</h1><p>原文出自xx_cc</p>
+<p>链接：<a href="https://www.jianshu.com/p/63f3bfb58687" target="_blank" rel="noopener">https://www.jianshu.com/p/63f3bfb58687</a></p>
+<h2 id="1-变量"><a href="#1-变量" class="headerlink" title="1. 变量"></a>1. 变量</h2><ol>
+<li>不同类型的变量在内存中占据不同的字节空间。</li>
+<li>内存中存储数据的最小基本单位是字节，每一个字节都有一个内存地址，这个地址是一个十六进制的数。</li>
+<li>声明一个变量，在内存中是从高字节向低字节分配连续的指定字节数的空间。</li>
+<li>任何数据在内存中都是以其二进制的补码形式存储的，低位存储在低字节，高位存储在高字节。</li>
+<li>变量的值：存储在变量中的数据，叫做变量的值。</li>
+<li>变量的地址：一个变量是由一个或者多个字节组成的，组成这个变量的低字节的地址，就是这个变量的地址。</li>
+<li>如何取出变量的地址：使用&amp;（取地址运算符）运算符，&amp;变量名；这个表达式的值就是这个变量的地址。使用%p控制度输出变量的地址。</li>
+<li>什么是指针：变量的地址叫做指针，指针就是地址，地址就是指针。</li>
+</ol>
+<p>下面通过一张图可以更直观的理解内存中的地址</p>
+<p><img src="https:////upload-images.jianshu.io/upload_images/1434508-3146d4e4c4362be7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/925/format/webp" alt="img"></p>
+<p>内存中的地址演示图</p>
+<a id="more"></a>
+
+<h2 id="2-指针"><a href="#2-指针" class="headerlink" title="2. 指针"></a>2. 指针</h2><ol>
+<li>指针是C语言的灵魂。指针变量占据8个字节。</li>
+<li>变量在内存中的存储。<br> 变量的值：存储在变量中的数据，叫做变量的值。<br> 变量的地址：组成这个变量的低字节的地址，就是这个变量的地址。</li>
+<li>取出变量的地址，用&amp;运算符 %p输出变量的地址。</li>
+<li>变量的地址就叫做指针，我们可以使用一个指针变量来存储变量的地址。</li>
+</ol>
+<h5 id="指针变量："><a href="#指针变量：" class="headerlink" title="指针变量："></a>指针变量：</h5><ol>
+<li>指针变量就是专门用来存储 <strong>地址</strong> 的变量，那么我们就说指针变量指向了另外一个变量，存储着另外一个变量的地址。</li>
+<li>指针可以使访问一个变量的方式分为两种。<br> a. 直接访问<br> b. 可以通过指针变量，找到这个指针指向的变量<br> 所以通过指针变量可以间接的访问指针变量指向的另外一个变量。</li>
+<li><strong>如何声明一个专门用来存储地址的指针变量</strong><br> 数据类型  <code>*</code> 指针变量的名称   — <code>int * p1;</code><br> 指针变量的名字叫做p1，这个指针变量的类型是<code>int*</code> 读作int指针。<br> <code>*</code>表示这个变量不是一个普通变量，而是一个专门用来存储地址的指针变量，所以有哪些普通的数据类型，就可以有哪些类型的指针。<br> 声明的时候注意，<code>*</code>的位置 建议  <code>int* p</code>这样提醒我们这是一个<code>int*</code>类型的指针。<br> ** 一个指针变量并不是可以存储任意类型的变量的地址，而是有限定的，只能存储和这个指针类型相同的普通变量的地址。** 所以<code>p</code> 指针变量中只能存储<code>int</code>类型变量的地址。</li>
+<li>指针变量的初始化</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">int num &#x3D; 10;</span><br><span class="line">int *p &#x3D;  &amp;num; 建议int* p &#x3D; &amp;num;这样写</span><br></pre></td></tr></table></figure>
+
+<p>p指针指向了num变量。因为p指针的值就是num变量的地址，不能直接赋值一个非地址类型的常量数据，也不能直接赋值一个变量给指针。</p>
+<ol>
+<li>p指针自己也有地址， 因为指针变量也是一个变量，&amp;p取到指针p的地址。</li>
+<li>p操作的是p这个指针变量，可以取p得值，也可以为p赋值</li>
+<li><strong>指针变量的使用</strong><br> 可以使用指针间接的操作指针指向的变量。<br> <code>*p</code> 代表 <code>p</code> 指针指向的变量。<br> <code>*p</code> 完全等价于<code>num</code> 即 <code>*p = 100</code> 完全等价于 <code>num = 100</code>。<br> <code>*p = 100;</code> 表示将100赋值给p指针指向的变量，也就是num变量</li>
+</ol>
+<p>使用指针变量的时候注意点<br> <code>int* p1 ,p2, p3 ;</code> 此时<code>p1</code>是<code>int *</code>指针，而<code>p2,p3</code>是<code>int</code>类型数据 如果希望全部都是指针需要 <code>int *p1, * p2, * p3;</code></p>
+<ol>
+<li><strong>野指针</strong><br> 我们声明一个指针变量，如果没有为其初始化，那么这个时候这个指针变量中是有值的，是<strong>垃圾值，随机数</strong>。因为这个时候，这个指针变量有可能指向了一块<strong>随机的空间</strong>，这个空间可能无人使用，也可能别的程序在用，也可能系统在用，这个时候，去访问指针指向的的变量的时候，就会报错。<strong>BAD_ACCESS</strong>坏地址访问错误，像这样的指针我们就叫做野指针。</li>
+<li>NULL值 完全等价于0<br> 为了防止野指针的产生，建议声明一个指针变量后，最好为其初始化，如果没有变量的地址初始化给这个指针变量。那么就初始化一个<strong>NULL</strong>值。NULL值代表指针变量不指向内存中的任何地址，这样就不会出现野指针，<strong>NULL完全等价于0</strong>，所以也可以直接赋值给一个指针变量0。<br> 如果一个指针变量的值是NULL，那么去访问这个指针指向的变量的时候一定会报错。</li>
+<li>多个指针指向同一个变量，修改其中一个所有指针指向的值都会改变。因为多个个指针指向的是同一块地址。即 <code>*</code> 会使指针间接的操作指针指向的变量。</li>
+<li><strong>指针作为函数的参数</strong><br> 如果函数的参数是一个指针，那么就必须要为这个<strong>指针</strong>传递一个和<strong>指针类型相同的普通变量的地址</strong>，这个时候，在函数的内部去访问参数指针的变量的时候，其实访问的就是实参变量</li>
+<li><strong>指针作为函数的参数，可以实现什么效果？</strong><br> 函数的内部可以修改实参变量的值。那么什么时候使用指针作为参数呢？<br> 一般函数只能返回一个数据，那么当函数需要返回<strong>多个数据</strong>的时候就可以使用<strong>指针作为参数</strong>，让<strong>调用者将自己的变量的地址传递给函数内部，函数内部通过指针就可以修改参数</strong>，函数无需将数值传回来，就已经修改了参数的值。其实scanf函数传递的就是指针，<strong>因此当函数需要多个返回值的时候就可以使用指针作为参数。</strong></li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 从下面代码中就可以看出，我们可以直接在函数中修改两个变量的值。相当于函数有两个返回值。</span><br><span class="line">void  changeValue (int* p1 ,int* p2)&#123;</span><br><span class="line">    *p1 &#x3D; 100;</span><br><span class="line">    *p2 &#x3D; 200;</span><br><span class="line">&#125;</span><br><span class="line">int main(int argc, const char * argv[]) &#123;</span><br><span class="line">    int num1 &#x3D; 1;</span><br><span class="line">    int num2 &#x3D; 2;</span><br><span class="line">    changeValue(&amp;num1, &amp;num2);</span><br><span class="line">    printf(&quot;num1 &#x3D; %d\n&quot;,num1);</span><br><span class="line">    printf(&quot;num2 &#x3D; %d&quot;,num2);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>指针为什么要分类型</strong><br> <strong>指针变量既然是一个变量就要在内存中占用字节空间</strong><br> 指针变量在内存中占据多少字节数？<br> <strong>无论指针是什么类型在内存中都是占据8个字节。</strong><br> 那为什么指针还要分类呢？<br> p指针变量中存储的是num变量的地址，也就是num变量低字节的地址，<strong>通过p指针只能找到这个地址的字节</strong>，这个时候，通过p指针找到这个字节，操作的时候，操作多少个字节是则是根据<strong>指针的类型</strong>来决定的。<br> <strong>所以指针变量的类型决定了通过这个指针找到字节以后，连续操作多少个字节空间。</strong><br> int 指针 连续操作4个字节空间<br> double 指针 连续操作8个字节空间<br> float 指针  连续操作4个字节空间<br> char 指针  连续操作1个字节空间<br> 因此，指针的类型如果不和指向的变量的类型相同的话，那么通过指针就无法正确的操作指向的变量，所以，<strong>指针的变量一定要指向一个和自己类型相同的普通变量才可以。</strong></li>
+</ol>
+<p>   <img src="https:////upload-images.jianshu.io/upload_images/1434508-a35b6912864b9740.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/676/format/webp" alt="img"></p>
+<p>   指针为什么要分类型？</p>
+<ol start="2">
+<li><p>多级指针<br> 一个指针变量中存储的是一个一级指针的地址，那么它就是二级指针，一个指针变量中存储的是一个二级指针的地址，那么它就是三级指针。<br> 二级指针：<code>数据类型 ** 指针名</code><br> 二级指针只能存储一级指针变量的地址。<br> 多级指针在开发中很少用到，遇到多级指针耐心分析一定可以理清其中的关系。</p>
+</li>
+<li><p>指针与整数的加减法<br> 指针可以和整数进行加减运算，指针+1并不是在指针地址的基础之上加一个字节的地址，而是在这个<strong>指针地址的基础之上加一个单位变量占用的字节数</strong>，例如：如果指针类型是<code>int *</code> 则+1代表加4个字节地址，以此类推。</p>
+</li>
+<li><p><strong>指针与数组</strong><br> 我们可以使用指针来遍历数组，因为数组的本质其实就是指针，当我们创建数组的时候，系统会在内存中由高地址向低地址分配连续的类型所占的空间字节数 * 数组内元素的个数的字节控件。而数组名则代表了数组的低字节地址，也就是数组的地址。<br> 1). 使用指针遍历数组的第一种方式.<br> int arr[7] = {10,20,30,40,50,60,70}; //在内存中高地址向低地址分配连续的 类型所占的空间字节数 * 数组内元素的个数 7 * 4 = 28 个字节空间<br> int* p1 = arr;    //p1指针指向了数组的第0个元素.<br> for(int i = 0; i &lt; 7; i++)<br> {<br> printf(“%d\n”,*(p1+i));<br> }</p>
+<p>2). 使用指针遍历数组的第二种方式.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">int arr[7] &#x3D; &#123;10,20,30,40,50,60,70&#125;;</span><br><span class="line">for(int i &#x3D; 0; i &lt; 7; i++)</span><br><span class="line">&#123;</span><br><span class="line">   printf(&quot;%d\n&quot;,*(arr+i));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3). 使用指针遍历数组的第三种方式.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">int arr[7] &#x3D; &#123;10,20,30,40,50,60,70&#125;;</span><br><span class="line">int* p1 &#x3D; arr;</span><br><span class="line">for(int i &#x3D; 0; i &lt; 7; i++)</span><br><span class="line">&#123;</span><br><span class="line">   printf(&quot;%d\n&quot;,*(p1++));</span><br><span class="line">&#125;</span><br><span class="line">注意的地方,每次循环,p1的值都会变化。</span><br><span class="line">最后1次执行完毕之后,p1指针指向数组外面去了,p1就不再执行数组中的任何元素了。</span><br></pre></td></tr></table></figure>
+
+<p>注意: 数组名代表数组的地址，而数组一旦创建，数组的地址就确定了，不能改变。<br> 所以，我们不能为数组名赋值也不能修改数组名的值，但是可以使用数组名的值。<br> <strong>arr是数组的地址，也是数组中第0个元素的地址，arr+1就是数组中第一个元素的地址，数据名就是一个地址常量，无法改变。</strong></p>
+</li>
+<li><p><strong>数组作为函数的参数的本质</strong><br> 当数组作为函数的参数的时候，在声明这个参数数组的时候，并不是去创建一个数组，而是去创建一个用来存储地址的指针变量，如果我们为函数写了一个数组作为参数，其实编译器在编译的时候，已经把这个数组变成了指针，这也就是为什么我们通过sizeof计算参数数组得到的永远都是8，所以以后我们的函数如果带了一个数组参数，建议直接写一个指向数组的第0个元素的指针，在传入数组的长度</p>
+</li>
+<li><p><strong>索引的本质</strong><br> <strong>指针变量后面可以使用中括号，在中括弧中写上下标来访问数据。</strong><br> <code>p[n];</code>前提<code>p</code>是一个指针变量，完全等价于<code>*(p + n);</code><br> 所以<code>arr[0]</code> 就等价于 <code>* [arr + 0]</code>。<br> 操作数组我们虽然使用中括弧下标来操作，实际上内部本质仍然是使用的指针来操作。</p>
+</li>
+<li><p>存储指针的数组<br> 如果一个数组是用来存储指针类型的数据的话，那么这个数组就叫做存储指针的数组<br> 格式 ：<code>元素类型 数组名[数组长度];</code> <code>int * arr[3];</code><br> arr数组里面存储int指针数据，最多存储3个。</p>
+</li>
+<li><p>指针与指针之间的减法运算<br> 指针与指针之间可以做减法运算，结果是一个long类型的数据，<br> 结果的意义代表两个指针指向的变量之间相差多少个单位变量，绝大多数情况下，我们用在判断数组的两个元素之间相差多少个元素<br> 如果参与减法运算的两个指针不指向同一个数组，结果就会出现问题<br> <strong>结果 = 两个指针的差 / 每一个指针变量对应的普通变量占用的字节数。</strong><br> 并且只能做减法运算，<strong>用在数组当中判断两个元素之间相差多少个元素。</strong></p>
+</li>
+<li><p>指针与指针在之间的比较运算 <code>&lt;, &lt;=, &gt;, &gt;=, ==, !=</code>都可以使用<br> 可以用来判断两个指针指向的变量的字节，谁在高字节，谁在低字节。或者两个指针的地址是不是同一个地址。</p>
+</li>
+<li><p><strong>指针和字符变量</strong><br> <code>char *name = &quot;jack&quot;;</code>表示直接将一个字符串数据初始化给一个字符指针。</p>
+<p><strong>字符指针存储和字符数组存储的区别</strong></p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 字符数组存储：将字符串数据的每一个字符存储到字符数组的元素中，并追加一个 \n 表示结束</span><br><span class="line">char name[5] &#x3D; &quot;jack&quot;;</span><br><span class="line">&#x2F;&#x2F; 直接为字符指针初始化一个字符串数据</span><br><span class="line">char *name &#x3D; &quot;jack&quot;;</span><br><span class="line">1.) 当他们都是局部变量的时候</span><br></pre></td></tr></table></figure>
+
+<p><strong>字符数组</strong>是申请在栈区的，字符串的每一个字符存储在字符数组的每一个元素中。<br> <strong>指针变量</strong>是声明在栈区的。但是此时字符串数据是以字符数组的形式存储在<strong>常量区</strong>的。此时<strong>指针变量中存储的是字符串在常量区的地址</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2.) 当他们作为全局变量的时候</span><br></pre></td></tr></table></figure>
+
+<p><strong>字符数组</strong>是存储在常量区的，字符串的每一个字符存储在这个数组中的每一个元素中。<br> <strong>字符指针</strong>也是存储在常量区，字符串也是以字符数组的形式存储在常量区，<strong>指针中存储的是字符串在常量区的地址。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">**以字符数组存储的字符串数据，可以修改字符数组的元素。可变</span><br><span class="line">以字符指针的形式存储字符串数据，这个时候字符指针指向的字符串数据是无法修改的，不可变**</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p><strong>字符串的恒定型</strong><br> 前提：<strong>以字符指针形式存储的字符串</strong><br> 1.) 当我们以字符指针的形式存储字符串的时候，无论如何，字符串数据是存储在常量区的，并且，一旦存储到常量去中去，这个字符串数据就无法更改。</p>
+<p>2.) 当我们以字符指针的形式要将字符串数据存储到常量区的时候，并不是直接将字符串存储到常量区，而是先检查常量区中是否有相同内容的字符串，如果有，直接将这个字符串的地址拿过来返回，如果没有，才会将这个字符串数据存储到常量区中。</p>
+<p>3.) 当我们重新为字符指针初始化一个字符串的时候，并不是修改原来的字符串，因为原来的字符串数据是不可更改的，而是重新的创建了一个字符串，把这个新的字符串的地址赋给他。建议使用字符指针来存储字符串数据。优势：长度任意。</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">char *name &#x3D; &quot;jack&quot;;</span><br><span class="line">nsme &#x3D; &quot;rose&quot;;</span><br><span class="line">&#x2F;&#x2F; 这样可以 但是并不是把jack改成了rose，而是重新创建了一个&quot;rose&quot;,把rose地址赋值给name</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>字符串数组<br> <code>char *names[4] = {&quot;aa&quot;,&quot;bb&quot;,&quot;cc&quot;,&quot;dd&quot;};</code><br> names数组的元素的类型是char指针，初始化给元素的字符串数据是存储在常量区的。元素中存储的是<strong>字符串在常量区的地址</strong><br> 因此这是一个存储指针的数组，每一个元素的类型是一个指针，占用得内存为8个字节。</li>
+<li>指向函数的指针。<br> 程序在运行的时候，会将程序加载到内存，内存的代码段中主要存储的就是程序的代码，而程序的代码就包括函数。<strong>既然函数要存储在内存中，那么肯定要用1块空间来存储，那么这个块空间一定有1个地址。</strong><br> 因此我们就可以<strong>声明1个指针用来存储这个函数的地址</strong>，也就是说让这个指针指向这个函数。这样我们就可以使用<strong>指针来间接的调用函数</strong>。<br> 优势: 调用函数有了两种方式。<br> 1.) 直接使用函数名调用<br> 2.) 使用指向函数的指针间接调用.</li>
+<li>指向函数的指针的声明<br> 一个指向函数的指针，并不是任意的函数都可以指向，而是有限定的，要求指向的<strong>函数的返回值类型和参数描述必须要与指针的描述一样</strong>。<br> 声明语法</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">返回值类型 (*指针名)([参数列表]);</span><br><span class="line">void (*pFunction)();</span><br><span class="line">&#x2F;&#x2F; 表示声明了1个指向函数的指针,名字叫做pFunction。</span><br><span class="line">&#x2F;&#x2F; 这个指针只能指向没有返回值,并且没有参数的函数。</span><br><span class="line">int (*pFun)(int num1,int num2);</span><br><span class="line">&#x2F;&#x2F; 表示声明了1个指向函数的指针,名字叫做pFun.</span><br><span class="line">&#x2F;&#x2F; 这个指针只能指向返回值为int类型 并且有两个整型的参数的函数.</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><strong>指向函数的指针的初始化</strong><br><strong>函数的名称就代表函数的地址，因此我们直接将符合条件的函数的名称赋值给这个指针。</strong><br>并且我们有两种方法可以通过指针来调用这个函数。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">int MaxValue (int a, int b)&#123;</span><br><span class="line">       return a &gt; b ? a : b;</span><br><span class="line">&#125;</span><br><span class="line">int main(int argc, const char * argv[]) &#123;    </span><br><span class="line">       int(*pMaxValue)(int a, int b) &#x3D; MaxValue; &#x2F;&#x2F; 创建一个返回int 并且有两个int型参数的函数指针，并赋值。</span><br><span class="line">       printf(&quot;%d\n&quot;, pMaxValue(5,10)); &#x2F;&#x2F; 通过指针调用函数方法1</span><br><span class="line">       printf(&quot;%d\n&quot;,(*pMaxValue)(6,9)); &#x2F;&#x2F; 通过指针调用函数方法2</span><br><span class="line">       printf(&quot;%d\n&quot;,MaxValue(9, 13)); &#x2F;&#x2F; 调用函数</span><br><span class="line">       printf(&quot;%p\n&quot;,MaxValue); &#x2F;&#x2F; 输出函数的地址</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+        <div class="declare">
+          <ul class="post-copyright">
+            <li>
+              <i class="ri-copyright-line"></i>
+              <strong>版权声明： </strong s>
+              本博客所有文章除特别声明外，均采用 <a href="https://www.apache.org/licenses/LICENSE-2.0.html" rel="external nofollow"
+                target="_blank">Apache License 2.0</a> 许可协议。转载请注明出处！
+            </li>
+          </ul>
+        </div>
+        
+    <footer class="article-footer">
+      
+          
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://akaqin.github.io/2018/09/09/%E6%8C%87%E9%92%88%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pointer/" rel="tag">pointer</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+      <a href="/2018/09/16/arts-6/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            arts-6.md
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2018/08/12/arts-5/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">arts-5</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        app_id: 'X2Yrs2HgM1dBr94LBlfP7Jsj-gzGzoHsz',
+        app_key: 'x2WQjNYF5CQseEAN1iSqXOLQ',
+        path: window.location.pathname,
+        notify: 'true',
+        verify: 'false',
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2019-2020
+        Aaron Qin
+      </li>
+      <li>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <span>
+  <i>PV:<span id="busuanzi_value_page_pv"></span></i>
+  <i>UV:<span id="busuanzi_value_site_uv"></span></i>
+</span>
+        
+      </li>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+    <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+      <aside class="sidebar">
+        <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="akaQin&#39;s Blog"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about/me">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+      </aside>
+      <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+      
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<script src="/js/share.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script>
+  try {
+    var typed = new Typed("#subtitle", {
+    strings: ['Look, if you had one shot or one opportunity','To seize everything you ever wanted in one moment','Would you capture it, or just let it slip? Yo'],
+    startDelay: 0,
+    typeSpeed: 200,
+    loop: true,
+    backSpeed: 100,
+    showCursor: true
+    });
+  } catch (err) {
+  }
+  
+</script>
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer:'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    onClick: (e) => {
+      $('.toc-link').removeClass('is-active-link');
+      $(`a[href=${e.target.hash}]`).addClass('is-active-link');
+      $(e.target.hash).scrollIntoView();
+      return false;
+    }
+  });
+</script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: false
+  }
+</script>
+
+
+<script src="/js/ayer.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+  </div>
+</body>
+
+</html>
