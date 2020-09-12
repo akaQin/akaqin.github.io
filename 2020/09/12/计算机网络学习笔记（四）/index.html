@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    计算机网络学习笔记（一） |  akaQin&#39;s Blog
+    计算机网络学习笔记（四） |  akaQin&#39;s Blog
   </title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   
@@ -36,7 +36,7 @@
   <div id="app">
     <main class="content">
       <section class="outer">
-  <article id="post-计算机网络学习笔记（一）" class="article article-type-post" itemscope
+  <article id="post-计算机网络学习笔记（四）" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -44,7 +44,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  计算机网络学习笔记（一）
+  计算机网络学习笔记（四）
 </h1>
   
 
@@ -53,8 +53,8 @@
 
     
     <div class="article-meta">
-      <a href="/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/" class="article-date">
-  <time datetime="2020-09-12T15:06:13.000Z" itemprop="datePublished">2020-09-12</time>
+      <a href="/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89/" class="article-date">
+  <time datetime="2020-09-12T15:14:48.000Z" itemprop="datePublished">2020-09-12</time>
 </a>
       
   <div class="article-category">
@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.1k字</span>
+            <span class="post-count">1.2k字</span>
         </span>
     </span>
 
@@ -77,7 +77,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">3分钟</span>
+            <span class="post-count">4分钟</span>
         </span>
     </span>
 </div>
@@ -104,380 +104,373 @@
       
 
       
-      <h1 id="计算机网络"><a href="#计算机网络" class="headerlink" title="计算机网络"></a><strong>计算机网络</strong></h1><h2 id="网络体系结构"><a href="#网络体系结构" class="headerlink" title="网络体系结构"></a>网络体系结构</h2><h3 id="协议层次"><a href="#协议层次" class="headerlink" title="协议层次"></a>协议层次</h3><ul>
-<li><p>协议</p>
+      <h1 id="网络层"><a href="#网络层" class="headerlink" title="网络层"></a><strong>网络层</strong></h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><h3 id="两个平面"><a href="#两个平面" class="headerlink" title="两个平面"></a>两个平面</h3><ul>
+<li><p>数据平面</p>
 <ul>
-<li>同一层上对等实体之间所交换的数据包或报文的格式和含义</li>
+<li>从输入链路向其输出链路转发数据报</li>
 </ul>
 </li>
-<li><p>服务</p>
+<li><p>控制平面</p>
 <ul>
-<li>某一层向它上一层提供的一组原语（操作）</li>
+<li>协调这些本地路由器的转发动作，使数据报沿着路径进行端到端传送</li>
 </ul>
 </li>
-<li><p>设计要点</p>
+</ul>
+<h3 id="两个功能"><a href="#两个功能" class="headerlink" title="两个功能"></a>两个功能</h3><ul>
+<li><p>转发</p>
 <ul>
-<li><p>可靠性</p>
+<li>将分组从一个输入链路接口转移到适当的输出链路接口的路由器本地动作</li>
+</ul>
 </li>
-<li><p>可扩展性</p>
-</li>
-<li><p>资源分配</p>
-</li>
-<li><p>安全性</p>
-</li>
+<li><p>路由选择</p>
+<ul>
+<li>确定分组从源到目的地所采取的路径的网络范围处理过程</li>
 </ul>
 </li>
 </ul>
 <a id="more"></a>
 
-<h3 id="参考模型"><a href="#参考模型" class="headerlink" title="参考模型"></a>参考模型</h3><ul>
-<li><p>OSI 7层模型</p>
+<h3 id="两种交换机"><a href="#两种交换机" class="headerlink" title="两种交换机"></a>两种交换机</h3><ul>
+<li><p>分组交换机</p>
 <ul>
-<li><p>应用层-&gt;报文</p>
+<li>一台通用分组交换设备，根据分组首部的值，从输入链路接口转移分组到输出链路接口</li>
+</ul>
+</li>
+<li><p>链路层交换机</p>
 <ul>
-<li>各种网络程序及协议</li>
+<li>基于链路层帧中的字段值作出转发决定。</li>
 </ul>
 </li>
-<li><p>表示层</p>
+</ul>
+<h2 id="路由器工作原理"><a href="#路由器工作原理" class="headerlink" title="路由器工作原理"></a>路由器工作原理</h2><h3 id="路由器体系结构"><a href="#路由器体系结构" class="headerlink" title="路由器体系结构"></a>路由器体系结构</h3><ul>
+<li><p>输入端口</p>
+</li>
+<li><p>交换结构</p>
+</li>
+<li><p>输出端口</p>
+</li>
+<li><p>路由选择处理器</p>
+</li>
+</ul>
+<h3 id="转发表的配置"><a href="#转发表的配置" class="headerlink" title="转发表的配置"></a>转发表的配置</h3><ul>
+<li><p>传统方法</p>
 <ul>
-<li>关注传递信息的语法和语义</li>
+<li>路由选择算法运行在每台路由器中</li>
 </ul>
 </li>
-<li><p>会话层</p>
+<li><p>SDN方法</p>
 <ul>
-<li>允许不同机器上的用户建立会话</li>
+<li>通过远程控制器计算转发表并与路由器交互</li>
 </ul>
 </li>
-<li><p>传输层-&gt;报文段</p>
+</ul>
+<h3 id="转发方式（输入端中）"><a href="#转发方式（输入端中）" class="headerlink" title="转发方式（输入端中）"></a>转发方式（输入端中）</h3><ul>
+<li><p>基于目的地转发</p>
 <ul>
-<li>在应用程序端点之间拆分并传送应用层报文</li>
+<li>按最长前缀匹配规则在转发表中查找输出端口</li>
 </ul>
 </li>
-<li><p>网络层-&gt;数据报</p>
+</ul>
+<h3 id="交换方式"><a href="#交换方式" class="headerlink" title="交换方式"></a>交换方式</h3><ul>
+<li><p>经内存交换</p>
 <ul>
-<li>控制子网的运行：将数据包从源端路由到接收方</li>
+<li>像操作系统中的I/O设备一样，通过中断方式发信号，将分组从输入端口复制到内存中，再复制到输出端口的缓存</li>
 </ul>
 </li>
-<li><p>数据链路层-&gt;帧</p>
+<li><p>经总线交换</p>
 <ul>
-<li>讲一个原始的传输设施转变成一条没有漏检传输错误的线路</li>
+<li>经一根共享总线将分组直接传送到输出端口</li>
 </ul>
 </li>
-<li><p>物理层</p>
+<li><p>经互联网络交换</p>
+</li>
+</ul>
+<h3 id="排队与调度"><a href="#排队与调度" class="headerlink" title="排队与调度"></a>排队与调度</h3><ul>
+<li><p>何处出现排队</p>
 <ul>
-<li>关注在一条通信信道上传输原始比特</li>
-</ul>
+<li><p>输入排队</p>
+</li>
+<li><p>输出排队</p>
 </li>
 </ul>
 </li>
-<li><p>因特网 5层模型</p>
-</li>
-<li><p>TCP/IP 4层模型</p>
-</li>
-</ul>
-<h3 id="服务连接"><a href="#服务连接" class="headerlink" title="服务连接"></a>服务连接</h3><ul>
-<li><p>面向连接的服务</p>
+<li><p>分组调度</p>
 <ul>
-<li><p>可靠的报文流</p>
+<li><p>先进先出</p>
+</li>
+<li><p>优先权排队</p>
+</li>
+<li><p>循环和加权公平排队</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="网际协议"><a href="#网际协议" class="headerlink" title="网际协议"></a>网际协议</h2><h3 id="IPv4"><a href="#IPv4" class="headerlink" title="IPv4"></a>IPv4</h3><ul>
+<li><p>数据报格式</p>
 <ul>
-<li>顺序页面</li>
-</ul>
+<li><p>版本</p>
 </li>
-<li><p>可靠的字节流</p>
+<li><p>首部长度</p>
 <ul>
-<li>移动下载</li>
+<li>一般都是20字节</li>
 </ul>
 </li>
-<li><p>不可靠的连接</p>
+<li><p>服务类型（TOS）</p>
+</li>
+<li><p>数据报长度</p>
 <ul>
-<li>IP语音</li>
-</ul>
+<li><p>指加上首部的总长度</p>
+</li>
+<li><p>最大65535字节</p>
+</li>
+<li><p>但一般不超过1500字节的以太网帧的载荷</p>
 </li>
 </ul>
 </li>
-<li><p>无连接的服务</p>
+<li><p>标识、标志、片偏移</p>
+</li>
+<li><p>寿命</p>
+</li>
+<li><p>协议</p>
+</li>
+<li><p>首部检验和</p>
+</li>
+<li><p>源和目的IP地址</p>
+</li>
+<li><p>选项</p>
+</li>
+<li><p>数据</p>
+</li>
+</ul>
+</li>
+<li><p>数据报分片</p>
 <ul>
-<li><p>不可靠的数据报</p>
+<li><p>将过大的数据报（IP分组）挤进链路层帧的有效载荷字段时，路由器会对它进行分片</p>
+</li>
+<li><p>组装工作由端系统处理，路由器不负责组装</p>
+</li>
+</ul>
+</li>
+<li><p>IPv4编址</p>
 <ul>
-<li>垃圾邮件</li>
-</ul>
-</li>
-<li><p>有确认的数据报</p>
+<li><p>接口</p>
 <ul>
-<li>文本消息</li>
+<li><p>主机与物理链路之间的边界叫做接口</p>
+</li>
+<li><p>一个IP地址与一个接口相关联，而不是与包括该接口的主机或路由器相关联</p>
+</li>
 </ul>
 </li>
-<li><p>请求-应答</p>
+<li><p>子网与</p>
 <ul>
-<li>数据库查询</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h2 id="IEEE-802标准"><a href="#IEEE-802标准" class="headerlink" title="IEEE 802标准"></a><strong>IEEE 802标准</strong></h2><h3 id="802-3"><a href="#802-3" class="headerlink" title="802.3"></a>802.3</h3><ul>
-<li><p>有线局域网</p>
+<li><p>子网</p>
 <ul>
-<li>以太网</li>
+<li>a.b.c.d/x</li>
 </ul>
 </li>
+<li><p>子网掩码</p>
+</li>
 </ul>
-<h3 id="802-11"><a href="#802-11" class="headerlink" title="802.11"></a>802.11</h3><ul>
-<li><p>无线局域网</p>
+</li>
+<li><p>因特网地址分配策略</p>
 <ul>
-<li>WIFI（Wireless LAN &amp; Mesh）</li>
-</ul>
+<li><p>无类别域间路由选择</p>
 </li>
-</ul>
-<h2 id="网络攻击"><a href="#网络攻击" class="headerlink" title="网络攻击"></a>网络攻击</h2><h3 id="恶意软件植入"><a href="#恶意软件植入" class="headerlink" title="恶意软件植入"></a>恶意软件植入</h3><ul>
-<li><p>病毒</p>
-</li>
-<li><p>蠕虫</p>
-</li>
-</ul>
-<h3 id="拒绝服务攻击"><a href="#拒绝服务攻击" class="headerlink" title="拒绝服务攻击"></a>拒绝服务攻击</h3><ul>
-<li><p>弱点攻击</p>
-</li>
-<li><p>带宽洪泛</p>
-</li>
-<li><p>连接洪泛</p>
-</li>
-</ul>
-<h3 id="嗅探分组"><a href="#嗅探分组" class="headerlink" title="嗅探分组"></a>嗅探分组</h3><ul>
-<li>中间人攻击</li>
-</ul>
-<h3 id="IP哄骗"><a href="#IP哄骗" class="headerlink" title="IP哄骗"></a>IP哄骗</h3><ul>
-<li>端点假冒</li>
-</ul>
-<h2 id="网络核心"><a href="#网络核心" class="headerlink" title="网络核心"></a>网络核心</h2><h3 id="分组交换"><a href="#分组交换" class="headerlink" title="分组交换"></a>分组交换</h3><ul>
-<li><p>存储转发传输报文</p>
-</li>
-<li><p>时延、丢包和吞吐量</p>
+<li><p>地址聚合/路由聚合/路由摘要</p>
 <ul>
-<li><p>时延</p>
+<li>使用单个网络前缀通告多个网络的能力</li>
+</ul>
+</li>
+<li><p>分类编织</p>
 <ul>
-<li><p>处理时延</p>
+<li><p>A类网络</p>
 <ul>
-<li>检查分组首部和决定将该分组导向何处所用的时间</li>
+<li>a.b.c.d/8</li>
 </ul>
 </li>
-<li><p>排队时延</p>
+<li><p>B类网络</p>
 <ul>
-<li>在队列中等待向链路传输的时间</li>
+<li>a.b.c.d/16</li>
 </ul>
 </li>
-<li><p>传输时延</p>
+<li><p>C类网络</p>
 <ul>
-<li>路由器将分组推向链路所需要的时间：L/R</li>
+<li>a.b.c.d/24</li>
 </ul>
 </li>
-<li><p>传播时延</p>
+</ul>
+</li>
+<li><p>广播地址</p>
 <ul>
-<li>一个比特从链路的起点到终点所需要的时间</li>
+<li>255.255.255.255</li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p>丢包</p>
+<li><p>获取IP的方式</p>
 <ul>
-<li>流量强度（La/R）&gt;1时会出现丢包</li>
-</ul>
+<li><p>因特网名字和编号分配机构（ICANN）</p>
 </li>
-<li><p>吞吐量</p>
+<li><p>向ISP申请</p>
+</li>
+<li><p>动态主机配置协议DHCP</p>
 <ul>
-<li><p>平均吞吐量：F/T bps</p>
+<li><p>DHCP服务发现</p>
 </li>
-<li><p>简单情况下，链路吞吐量收瓶颈链路影响</p>
+<li><p>DHCP服务器提供</p>
 </li>
-<li><p>多人使用时吞吐量会被均分</p>
+<li><p>DHCP请求</p>
+</li>
+<li><p>DHCP ACK</p>
+</li>
+</ul>
 </li>
 </ul>
 </li>
-</ul>
-</li>
-<li><p>报文按需使用资源（缓存、链路传输速率</p>
-</li>
-<li><p>转发表和路由选择协议</p>
-</li>
-</ul>
-<h3 id="电路交换"><a href="#电路交换" class="headerlink" title="电路交换"></a>电路交换</h3><ul>
-<li><p>通信时创建一条专用的端到端连接</p>
-</li>
-<li><p>预留带宽，总带宽被多条电路均分</p>
-</li>
-<li><p>建立连接后以恒定速率传输数据</p>
-</li>
-<li><p>复用技术</p>
+<li><p>网络地址转换NAT</p>
 <ul>
-<li><p>频分复用</p>
-</li>
-<li><p>时分复用</p>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h3><ul>
-<li><p>电路交换实时性好——电话、视频会议，适合人少的情况下用</p>
-</li>
-<li><p>分组交换有更好的带宽共享、更简单高效，适合人多的情况用</p>
-</li>
-</ul>
-<h3 id="互联网"><a href="#互联网" class="headerlink" title="互联网"></a>互联网</h3><ul>
-<li><p>ISP</p>
+<li><p>专用网络</p>
 <ul>
-<li>网络提供商，按服务范围可以多级</li>
-</ul>
-</li>
-<li><p>POP</p>
+<li><p>24-bit block</p>
 <ul>
-<li>数据包进入ISP网络使用其服务的位置称为ISP存点</li>
+<li>10.0.0.0 – 10.255.255.255</li>
 </ul>
 </li>
-<li><p>多宿</p>
+<li><p>20-bit block</p>
 <ul>
-<li>一个客户ISP与多个提供商ISP连接</li>
+<li>172.16.0.0 – 172.31.255.255</li>
 </ul>
 </li>
-<li><p>IXP</p>
+<li><p>16-bit block</p>
 <ul>
-<li>ISP之间进行流量交换的点称为Internet交换点</li>
+<li>192.168.0.0 – 192.168.255.255</li>
 </ul>
 </li>
-<li><p>Peer</p>
+</ul>
+</li>
+<li><p>NAT转换表</p>
+</li>
+<li><p>弊端</p>
 <ul>
-<li>相互连接的ISP被认为彼此对等</li>
+<li><p>端口号是用于进程寻址的，而不是用于主机寻址的</p>
+</li>
+<li><p>路由器是网络层设备，应当处理只能达到网络层的分组。</p>
+</li>
+<li><p>NAT违反主机应当直接彼此对话这个原则，没有干涉节点修改IP地址</p>
+</li>
 </ul>
 </li>
-<li><p>IDC</p>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="IPv6"><a href="#IPv6" class="headerlink" title="IPv6"></a>IPv6</h3><ul>
+<li><p>数据报格式</p>
 <ul>
-<li><p>互联网数据中心</p>
+<li><p>扩大的地址容量128bit</p>
+</li>
+<li><p>简化高效的40字节首部</p>
+</li>
+<li><p>流标签</p>
+</li>
+<li><p>版本</p>
+</li>
+<li><p>流量类型</p>
+</li>
+<li><p>流标签</p>
+</li>
+<li><p>有效载荷长度</p>
+</li>
+<li><p>下一个首部</p>
+</li>
+<li><p>跳限制</p>
+</li>
+<li><p>源地址和目的地址</p>
+</li>
+<li><p>数据</p>
+</li>
+</ul>
+</li>
+<li><p>v6中不存在的内容</p>
 <ul>
-<li><p>谷歌</p>
+<li><p>数据报分片</p>
 </li>
-<li><p>雅虎</p>
+<li><p>首部校验和</p>
 </li>
-</ul>
-</li>
-</ul>
+<li><p>选项</p>
 </li>
 </ul>
-<h2 id="网络边缘"><a href="#网络边缘" class="headerlink" title="网络边缘"></a>网络边缘</h2><h3 id="接入类型"><a href="#接入类型" class="headerlink" title="接入类型"></a>接入类型</h3><p>端系统物理连接到边缘路由器的网络</p>
+</li>
+<li><p>v4迁移v6的方法</p>
 <ul>
-<li><p>电话线拨号上网（DSL）</p>
+<li>建隧道</li>
+</ul>
 </li>
-<li><p>复用有线电视的线缆</p>
-</li>
-<li><p>光纤入户FTTH</p>
-</li>
-<li><p>RFID（个域无线接入</p>
+</ul>
+<h2 id="通用转发"><a href="#通用转发" class="headerlink" title="通用转发"></a>通用转发</h2><h3 id="匹配"><a href="#匹配" class="headerlink" title="匹配"></a>匹配</h3><ul>
+<li><p>能够对协议栈的多个首部字段进行“匹配”，这些首部字段是与不同层次的不同协议相关联</p>
 <ul>
-<li><p>IC卡</p>
+<li><p>入端口</p>
 </li>
-<li><p>Apple Pay</p>
-</li>
-<li><p>信用卡</p>
-</li>
-<li><p>护照</p>
-</li>
-<li><p>动物跟踪</p>
-</li>
-<li><p>供应链</p>
-</li>
-</ul>
-</li>
-<li><p>WIFI（局域无线接入</p>
-</li>
-<li><p>3G蜂窝网络（广域无线接入</p>
-</li>
-</ul>
-<h3 id="物理媒体"><a href="#物理媒体" class="headerlink" title="物理媒体"></a>物理媒体</h3><ul>
-<li><p>引导型媒体</p>
+<li><p>链路层</p>
 <ul>
-<li><p>双绞铜线</p>
+<li><p>源MAC</p>
 </li>
-<li><p>同轴电缆</p>
+<li><p>目的MAC</p>
 </li>
-<li><p>光纤</p>
+<li><p>以太网类型</p>
+</li>
+<li><p>VLAN ID</p>
+</li>
+<li><p>VLAN 优先权</p>
 </li>
 </ul>
 </li>
-<li><p>非引导型媒体</p>
+<li><p>网络层</p>
 <ul>
-<li><p>陆地无线电信道</p>
+<li><p>IP源</p>
 </li>
-<li><p>卫星无线电信道</p>
+<li><p>IP目的</p>
+</li>
+<li><p>IP协议</p>
+</li>
+<li><p>IP TOS</p>
+</li>
+</ul>
+</li>
+<li><p>运输层</p>
 <ul>
-<li><p>同步卫星</p>
+<li><p>TCP/UDP源端口</p>
 </li>
-<li><p>近地轨道卫星</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h2 id="网络分类"><a href="#网络分类" class="headerlink" title="网络分类"></a>网络分类</h2><h3 id="传输技术"><a href="#传输技术" class="headerlink" title="传输技术"></a>传输技术</h3><ul>
-<li><p>单播（点对点）</p>
-</li>
-<li><p>组播</p>
-</li>
-<li><p>广播</p>
-</li>
-</ul>
-<h3 id="网络尺度"><a href="#网络尺度" class="headerlink" title="网络尺度"></a>网络尺度</h3><ul>
-<li><p>个域网</p>
-</li>
-<li><p>局域网（LAN）</p>
-<ul>
-<li>虚拟局域网（VLAN）</li>
-</ul>
-</li>
-<li><p>城域网</p>
-</li>
-<li><p>广域网</p>
-<ul>
-<li><p>构成</p>
-<ul>
-<li><p>主机（端系统）</p>
-</li>
-<li><p>通信子网</p>
-<ul>
-<li><p>传输线路</p>
-</li>
-<li><p>交换机（路由器）</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>类型</p>
-<ul>
-<li><p>虚拟专用网络（VPN）</p>
-<ul>
-<li>底层使用Interrnet链路</li>
-</ul>
-</li>
-<li><p>ISP网络</p>
-<ul>
-<li>底层使用提供商自己的链路</li>
-</ul>
-</li>
-<li><p>其他使用无线技术的广域网</p>
-<ul>
-<li><p>卫星系统</p>
-</li>
-<li><p>蜂窝移动电话网络</p>
+<li><p>TCP/UDP目的端口</p>
 </li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
+<h3 id="动作"><a href="#动作" class="headerlink" title="动作"></a>动作</h3><ul>
+<li><p>将分组转发到一个或多个输出端口</p>
 </li>
-<li><p>互联网</p>
-<ul>
-<li>因特网</li>
+<li><p>跨越多个通向服务的离开接口进行负载均衡分组</p>
+</li>
+<li><p>重写首部值</p>
+</li>
+<li><p>有意识地阻挡/丢弃某个分组</p>
+</li>
+<li><p>为进一步处理和动作而向某个特定的服务器发送一个分组</p>
+</li>
 </ul>
+<h3 id="使用分组交换机"><a href="#使用分组交换机" class="headerlink" title="使用分组交换机"></a>使用分组交换机</h3><ul>
+<li>而不是第三层“路由器”或第二层“交换机”</li>
+</ul>
+<h3 id="匹配加动作转发表——流表"><a href="#匹配加动作转发表——流表" class="headerlink" title="匹配加动作转发表——流表"></a>匹配加动作转发表——流表</h3><ul>
+<li><p>首部字段值的结合</p>
+</li>
+<li><p>计数器集合</p>
+</li>
+<li><p>当分组匹配流表项时所采取的动作集合</p>
 </li>
 </ul>
 
@@ -549,7 +542,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://akaqin.github.io/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://akaqin.github.io/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -567,19 +560,10 @@
   
   <nav class="article-nav">
     
-      <a href="/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            计算机网络学习笔记（二）
-          
-        </div>
-      </a>
     
-    
-      <a href="/2020/08/29/Docker%E7%BD%91%E7%BB%9C/" class="article-nav-link">
+      <a href="/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">Docker网络</div>
+        <div class="article-nav-title">计算机网络学习笔记（三）</div>
       </a>
     
   </nav>
