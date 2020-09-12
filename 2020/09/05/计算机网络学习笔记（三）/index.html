@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    计算机网络学习笔记（二） |  akaQin&#39;s Blog
+    计算机网络学习笔记（三） |  akaQin&#39;s Blog
   </title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   
@@ -36,7 +36,7 @@
   <div id="app">
     <main class="content">
       <section class="outer">
-  <article id="post-计算机网络学习笔记（二）" class="article article-type-post" itemscope
+  <article id="post-计算机网络学习笔记（三）" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -44,7 +44,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  计算机网络学习笔记（二）
+  计算机网络学习笔记（三）
 </h1>
   
 
@@ -53,8 +53,8 @@
 
     
     <div class="article-meta">
-      <a href="/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/" class="article-date">
-  <time datetime="2020-09-12T15:13:12.000Z" itemprop="datePublished">2020-09-12</time>
+      <a href="/2020/09/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/" class="article-date">
+  <time datetime="2020-09-05T15:14:35.000Z" itemprop="datePublished">2020-09-05</time>
 </a>
       
   <div class="article-category">
@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">416字</span>
+            <span class="post-count">1.1k字</span>
         </span>
     </span>
 
@@ -77,7 +77,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1分钟</span>
+            <span class="post-count">3分钟</span>
         </span>
     </span>
 </div>
@@ -104,200 +104,340 @@
       
 
       
-      <h1 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a><strong>应用层</strong></h1><h2 id="体系结构"><a href="#体系结构" class="headerlink" title="体系结构"></a>体系结构</h2><h3 id="CS"><a href="#CS" class="headerlink" title="CS"></a>CS</h3><h3 id="P2P"><a href="#P2P" class="headerlink" title="P2P"></a>P2P</h3><h2 id="使用的运输服务"><a href="#使用的运输服务" class="headerlink" title="使用的运输服务"></a>使用的运输服务</h2><a id="more"></a>
+      <h1 id="运输层"><a href="#运输层" class="headerlink" title="运输层"></a><strong>运输层</strong></h1><h2 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><ul>
+<li><p>面向连接的全双工服务</p>
+</li>
+<li><p>MTU</p>
+<ul>
+<li><p>最大传输单元</p>
+<ul>
+<li>默认1500字节</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>MSS</p>
+<ul>
+<li><p>最大报文段长度</p>
+<ul>
+<li>默认1460字节</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>发送缓存与接收缓存</p>
+</li>
+<li><p>RTT</p>
+<ul>
+<li>往返时间</li>
+</ul>
+</li>
+</ul>
+<a id="more"></a>
 
-<h3 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h3><ul>
-<li><p>面向连接的服务</p>
-</li>
-<li><p>可靠的数据传送服务</p>
-</li>
-</ul>
-<h3 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h3><ul>
-<li>不提供不必要服务的轻量级运输</li>
-</ul>
-<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><h3 id="WEB"><a href="#WEB" class="headerlink" title="WEB"></a>WEB</h3><ul>
-<li><p>HTTP（拉协议</p>
+<h3 id="报文段结构"><a href="#报文段结构" class="headerlink" title="报文段结构"></a>报文段结构</h3><ul>
+<li><p>首部字段（40字节</p>
 <ul>
-<li><p>超文本传输协议</p>
+<li><p>源端口号-2字节</p>
 </li>
-<li><p>无状态</p>
+<li><p>目的端口号-2字节</p>
+</li>
+<li><p>序号Seq-4字节</p>
 <ul>
-<li>交互使用cookie</li>
+<li>该报文段首字节的字节流编号</li>
 </ul>
 </li>
-<li><p>结构</p>
+<li><p>确认号ACK-4字节</p>
 <ul>
-<li><p>请求行</p>
+<li>主机正在等待的数据的下一个字节序号</li>
+</ul>
 </li>
-<li><p>请求头</p>
+<li><p>接收窗口-2字节</p>
 </li>
-<li><p>请求体</p>
+<li><p>首部长度-4比特</p>
+</li>
+<li><p>其他。。</p>
 </li>
 </ul>
 </li>
+<li><p>数据字段</p>
+</li>
 </ul>
-</li>
-<li><p>URL和URI</p>
-</li>
-<li><p>WEB缓存（代理服务器</p>
+<h3 id="可靠数据传输"><a href="#可靠数据传输" class="headerlink" title="可靠数据传输"></a>可靠数据传输</h3><ul>
+<li><p>定义</p>
 <ul>
-<li>条件GET</li>
+<li>确保一个进程从其接受缓存中读出的数据流是无损坏、无间隙、非冗余和按序的数据流</li>
 </ul>
 </li>
-<li><p>MIME类型</p>
-</li>
-</ul>
-<h3 id="电子邮件"><a href="#电子邮件" class="headerlink" title="电子邮件"></a>电子邮件</h3><ul>
-<li><p>SMTP</p>
-</li>
-<li><p>组成</p>
+<li><p>可靠传输原理</p>
 <ul>
-<li><p>用户代理</p>
+<li><p>校验和</p>
 </li>
-<li><p>邮件服务器</p>
+<li><p>定时器</p>
+</li>
+<li><p>序号</p>
+</li>
+<li><p>确认</p>
+</li>
+<li><p>否定确认</p>
+</li>
+<li><p>窗口、流水线</p>
+</li>
+</ul>
+</li>
+<li><p>特殊机制</p>
 <ul>
-<li><p>内部有报文队列</p>
+<li><p>超时时不会重传小于当前ACK的报文段</p>
 </li>
-<li><p>通常由ISP进行维护</p>
+<li><p>对于同一个报文段每次重传间隔翻倍</p>
 </li>
-</ul>
+<li><p>收到3个冗余ACK就执行快速重传</p>
 </li>
-<li><p>传输协议</p>
+<li><p>差错恢复机制</p>
 <ul>
-<li><p>SMTP</p>
+<li><p>回退N步（GBN</p>
+</li>
+<li><p>选择确认（SR</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="流量控制"><a href="#流量控制" class="headerlink" title="流量控制"></a>流量控制</h3><ul>
+<li><p>速度匹配服务：消除发送方使接收方缓存溢出的可能性</p>
+</li>
+<li><p>通过让发送方维护一个接受窗口实现</p>
+</li>
+<li><p>rwnd = RcvBuffer - [ LastByteRcvd - LastByteRead ]</p>
+</li>
+<li><p>当接受窗口为0时，只发一个字节用来试探接收方接收方是否清空缓存</p>
+</li>
+</ul>
+<h3 id="连接管理"><a href="#连接管理" class="headerlink" title="连接管理"></a>连接管理</h3><ul>
+<li><p>三次握手</p>
 <ul>
-<li><p>推协议（异步发送与重试</p>
+<li><p>Client-&gt; SYN=1, seq=client_isn</p>
 </li>
-<li><p>每个报文采用7比特ASCII码格式</p>
+<li><p>Server-&gt; SYN=1, seq=server_isn, ack=client_isn+1</p>
+</li>
+<li><p>Client-&gt; SYN=0, seq=client_isn+1, ack=server_isn+1</p>
 </li>
 </ul>
 </li>
-<li><p>POP3</p>
+<li><p>四次挥手</p>
 <ul>
-<li>第三版邮局协议</li>
+<li><p>Client-&gt; FIN</p>
+</li>
+<li><p>Server-&gt; ACK</p>
+</li>
+<li><p>Server-&gt; FIN</p>
+</li>
+<li><p>Client-&gt; ACK</p>
+</li>
 </ul>
 </li>
-<li><p>IMAP</p>
+<li><p>客户端状态</p>
 <ul>
-<li>因特网邮件访问协议</li>
+<li><p>CLOSED</p>
+</li>
+<li><p>SYN_SENT</p>
+</li>
+<li><p>ESTABLISHED</p>
+</li>
+<li><p>FIN_WAIT_1</p>
+</li>
+<li><p>FIN_WAIT_2</p>
+</li>
+<li><p>TIME_WAIT</p>
+</li>
 </ul>
 </li>
-<li><p>HTTP</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="DNS（因特网的目录服务"><a href="#DNS（因特网的目录服务" class="headerlink" title="DNS（因特网的目录服务"></a>DNS（因特网的目录服务</h3><ul>
-<li><p>构成</p>
+<li><p>服务端状态</p>
 <ul>
-<li><p>一个由分层的DNS服务器实现的分布式数据库</p>
+<li><p>CLOSED</p>
+</li>
+<li><p>LISTEN</p>
+</li>
+<li><p>SYN_RCVD</p>
+</li>
+<li><p>ESTABLISHED</p>
+</li>
+<li><p>CLOSE_WAIT</p>
+</li>
+<li><p>LAST_ACK</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h3><ul>
+<li><p>定义</p>
 <ul>
-<li><p>根DNS服务器</p>
-</li>
-<li><p>顶级域DNS服务器</p>
-</li>
-<li><p>权威DNS服务器</p>
-</li>
+<li>发送方因为IP网络的拥塞而遏制放松速率</li>
 </ul>
 </li>
-<li><p>一个使得主机能够查询分布式数据库的应用层协议</p>
-</li>
-<li><p>本地DNS服务器（默认服务器</p>
-</li>
-</ul>
-</li>
-<li><p>运行在UDP之上，53端口</p>
-</li>
-<li><p>查询方式</p>
+<li><p>拥塞的代价</p>
 <ul>
-<li><p>递归查询</p>
+<li><p>分组到达速率接近链路容量时，经历巨大排队时延</p>
 </li>
-<li><p>迭代查询</p>
+<li><p>发送方必须执行重传以补偿因缓存溢出而丢弃的分组</p>
+</li>
+<li><p>发送方在遇到大时延时所进行的不必要的重传会引起路由器利用其链路带宽来转发不必要的分组副本</p>
+</li>
+<li><p>一个分组沿一条链路被丢弃时，每个上游路由器因转发该分组而使用的传输容量都被浪费掉了</p>
 </li>
 </ul>
 </li>
-<li><p>DNS缓存</p>
-</li>
-<li><p>DNS记录</p>
+<li><p>拥塞控制的方法</p>
 <ul>
-<li><p>Name</p>
+<li><p>端到端拥塞控制</p>
 </li>
-<li><p>Value</p>
+<li><p>网络辅助的拥塞控制</p>
 </li>
-<li><p>Type</p>
+</ul>
+</li>
+<li><p>发送方如何限制发送速率</p>
 <ul>
-<li><p>A</p>
+<li><p>使用拥塞窗口，发送方中未确认的数据量不会超过cwnd与rwnd的最小值</p>
 <ul>
-<li><p>Name:主机名</p>
-</li>
-<li><p>Value:IP地址</p>
+<li>LastByteSent - LastByteAcked &lt;= min {cwnd, rwnd}</li>
+</ul>
 </li>
 </ul>
 </li>
-<li><p>NS</p>
+<li><p>发送方如何感知路径存在拥塞</p>
 <ul>
-<li><p>Name是个域（foo.com</p>
-</li>
-<li><p>Value是个知道如何获得该域中主机IP地址的权威DNS服务器的主机名</p>
-</li>
-</ul>
-</li>
-<li><p>CNAME</p>
+<li><p>定义“丢包事件”</p>
 <ul>
-<li><p>Name是主机名</p>
+<li><p>超时</p>
 </li>
-<li><p>Value是Name对应的规范主机名</p>
+<li><p>3个冗余ACK</p>
 </li>
 </ul>
 </li>
-<li><p>MX</p>
+<li><p>出现丢包就认为出现了阻塞</p>
+</li>
+</ul>
+</li>
+<li><p>感知到拥塞时，采用何种算法来改变速率</p>
 <ul>
-<li><p>Name是别名</p>
-</li>
-<li><p>Value是别名为Name的邮件服务器的规范主机名</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>TTL</p>
-</li>
-</ul>
-</li>
-<li><p>DNS报文</p>
+<li><p>基本原则</p>
 <ul>
-<li><p>12字节的首部区域</p>
+<li><p>丢包意味着拥塞，降低速率</p>
 </li>
-<li><p>问题区域</p>
+<li><p>确认ACK意味着不拥塞，增大窗口长度</p>
+</li>
+</ul>
+</li>
+<li><p>拥塞控制算法</p>
 <ul>
-<li><p>名字字段</p>
+<li><p>慢启动</p>
+<ul>
+<li><p>cwnd以1个MSS开始</p>
 </li>
-<li><p>类型字段</p>
+<li><p>每当报文段被首次确认就加一个MSS（指数增长</p>
+</li>
+<li><p>结束增长</p>
+<ul>
+<li><p>超时导致的丢包：ssthresh=cwnd/2，cwnd置为1重新开始慢启动</p>
+</li>
+<li><p>到达ssthresh阈值时进入拥塞避免</p>
+</li>
+<li><p>3个冗余ACK：进入快速重传</p>
+</li>
+</ul>
 </li>
 </ul>
 </li>
-<li><p>回答区域</p>
+<li><p>拥塞避免</p>
+<ul>
+<li><p>每个RTT只将cwnd的值增加一个MSS</p>
 </li>
-<li><p>权威区域</p>
+<li><p>超时进入慢启动，ssthresh=cwnd/2</p>
 </li>
-<li><p>附加区域</p>
+<li><p>3个冗余ACK进入快速重传</p>
+</li>
+</ul>
+</li>
+<li><p>快速重传</p>
+<ul>
+<li><p>对收到的每个冗余ACK，cwnd增加一个MSS</p>
+</li>
+<li><p>丢失的报文段都到达时进入拥塞避免</p>
+</li>
+<li><p>超时进入慢启动，ssthresh=cwnd/2</p>
 </li>
 </ul>
 </li>
 </ul>
-<h3 id="P2P文件分发"><a href="#P2P文件分发" class="headerlink" title="P2P文件分发"></a>P2P文件分发</h3><ul>
-<li>BitTorrent</li>
-</ul>
-<h3 id="视频流"><a href="#视频流" class="headerlink" title="视频流"></a>视频流</h3><ul>
-<li><p>HTTP</p>
-</li>
-<li><p>DASH</p>
 </li>
 </ul>
-<h3 id="内容分发"><a href="#内容分发" class="headerlink" title="内容分发"></a>内容分发</h3><ul>
-<li>CDN</li>
+</li>
+</ul>
+<h2 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h2><h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul>
+<li><p>关于发送什么数据以及何时发送的应用层控制更为精细</p>
+</li>
+<li><p>无需建立连接</p>
+</li>
+<li><p>无连接状态</p>
+</li>
+<li><p>分组首部开销小</p>
+</li>
+</ul>
+<h3 id="报文结构"><a href="#报文结构" class="headerlink" title="报文结构"></a>报文结构</h3><ul>
+<li><p>首部（8字节）</p>
+<ul>
+<li><p>源端口号</p>
+</li>
+<li><p>目的端口号</p>
+</li>
+<li><p>长度</p>
+</li>
+<li><p>校验和</p>
+</li>
+</ul>
+</li>
+<li><p>报文</p>
+<ul>
+<li>应用数据</li>
+</ul>
+</li>
+</ul>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><h3 id="套接字"><a href="#套接字" class="headerlink" title="套接字"></a>套接字</h3><ul>
+<li><p>UDP套接字</p>
+<ul>
+<li><p>二元组</p>
+<ul>
+<li><p>源端口号</p>
+</li>
+<li><p>目的端口号</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>TCP套接字</p>
+<ul>
+<li><p>四元组</p>
+<ul>
+<li><p>源ip地址</p>
+</li>
+<li><p>源端口号</p>
+</li>
+<li><p>目的ip地址</p>
+</li>
+<li><p>目的端口号</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="多路分解"><a href="#多路分解" class="headerlink" title="多路分解"></a>多路分解</h3><h3 id="多路复用"><a href="#多路复用" class="headerlink" title="多路复用"></a>多路复用</h3><h3 id="与网络层关系"><a href="#与网络层关系" class="headerlink" title="与网络层关系"></a>与网络层关系</h3><ul>
+<li><p>网络层提供主机之间的逻辑通信</p>
+</li>
+<li><p>运输层为运行在不同主机上的进程提供逻辑通信</p>
+</li>
 </ul>
 
       
@@ -368,7 +508,7 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://akaqin.github.io/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://akaqin.github.io/2020/09/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -386,19 +526,19 @@
   
   <nav class="article-nav">
     
-      <a href="/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/" class="article-nav-link">
+      <a href="/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89/" class="article-nav-link">
         <strong class="article-nav-caption">上一篇</strong>
         <div class="article-nav-title">
           
-            计算机网络学习笔记（三）
+            计算机网络学习笔记（四）
           
         </div>
       </a>
     
     
-      <a href="/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/" class="article-nav-link">
+      <a href="/2020/08/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">计算机网络学习笔记（一）</div>
+        <div class="article-nav-title">计算机网络学习笔记（二）</div>
       </a>
     
   </nav>

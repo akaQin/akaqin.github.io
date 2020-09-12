@@ -407,7 +407,7 @@
   </entry>
   <entry>
     <title>计算机网络学习笔记（三）</title>
-    <url>/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/</url>
+    <url>/2020/09/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/</url>
     <content><![CDATA[<h1 id="运输层"><a href="#运输层" class="headerlink" title="运输层"></a><strong>运输层</strong></h1><h2 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><ul>
 <li><p>面向连接的全双工服务</p>
 </li>
@@ -753,7 +753,7 @@
   </entry>
   <entry>
     <title>计算机网络学习笔记（二）</title>
-    <url>/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
+    <url>/2020/08/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
     <content><![CDATA[<h1 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a><strong>应用层</strong></h1><h2 id="体系结构"><a href="#体系结构" class="headerlink" title="体系结构"></a>体系结构</h2><h3 id="CS"><a href="#CS" class="headerlink" title="CS"></a>CS</h3><h3 id="P2P"><a href="#P2P" class="headerlink" title="P2P"></a>P2P</h3><h2 id="使用的运输服务"><a href="#使用的运输服务" class="headerlink" title="使用的运输服务"></a>使用的运输服务</h2><a id="more"></a>
 
 <h3 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h3><ul>
@@ -958,8 +958,100 @@
       </tags>
   </entry>
   <entry>
+    <title>Docker网络</title>
+    <url>/2020/08/29/Docker%E7%BD%91%E7%BB%9C/</url>
+    <content><![CDATA[<h2 id="网络驱动"><a href="#网络驱动" class="headerlink" title="网络驱动"></a>网络驱动</h2><ul>
+<li><code>bridge</code>：默认的网络驱动。当应用程序需要在容器中独立运行时通常使用<code>Bridge</code>网络。</li>
+<li><code>host</code>：对于独立容器，删除容器和主机之间的网络隔离，让容器直接使用主机的网络。</li>
+<li><code>overlay</code>：覆盖网络将多个Docker守护进程连接在一起，使集群服务能够相互通信。</li>
+<li><code>macvlan</code>：允许为容器分配MAC地址，让它在网络中像一台物理设备。</li>
+<li><code>none</code>：禁用所有网络。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>知识点总结</category>
+      </categories>
+      <tags>
+        <tag>docker</tag>
+        <tag>netwrok</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>动态卷供应</title>
+    <url>/2020/08/27/%E5%8A%A8%E6%80%81%E5%8D%B7%E4%BE%9B%E5%BA%94/</url>
+    <content><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>我们目前使用的存储服务是<code>MooseFS</code>，部署工具会在启动k8s前为每个节点挂载好共享路径<code>/mnt/shareroot</code>。<br>当应用有存储需求时，需要手动在Pod中声明类型为<code>hostpath</code>的<code>volume</code>，并在<code>.containers.volumeMounts</code>中进行映射。</p>
+<p>这种方案有以下弊端：</p>
+<ul>
+<li>需要为每个应用手动的在yaml中声明PV</li>
+<li>无法对卷的访问模式和容量进行限制及扩展</li>
+</ul>
+<p>为此，我们引入 Kubernetes 中的<code>PVC</code>和<code>StorageClass</code>两个重要的资源对象来实现对存储的管理。</p>
+<a id="more"></a>
+
+<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><h3 id="PVC"><a href="#PVC" class="headerlink" title="PVC"></a>PVC</h3><p><code>PVC</code>的全称是：PersistentVolumeClaim（持久化卷声明），PVC 是用户存储的一种声明，PVC 和 Pod 比较类似，Pod 消耗的是节点，PVC 消耗的是 PV 资源，Pod 可以请求 CPU 和内存，而 PVC 可以请求特定的存储空间和访问模式。</p>
+<p>对于真正使用存储的用户不需要关心底层的存储实现细节，只需要直接使用 PVC 即可。但是通过 PVC 请求到一定的存储空间也很有可能不足以满足应用对于存储设备的各种需求，而且不同的应用程序对于存储性能的要求可能也不尽相同，比如读写速度、并发性能等。</p>
+<p><strong>Volume和Claim的生命周期</strong></p>
+<ul>
+<li>供应<ul>
+<li>静态供应</li>
+<li>动态供应</li>
+</ul>
+</li>
+<li>绑定</li>
+<li>使用中（附加保护状态，延迟删除）</li>
+<li>回收<ul>
+<li>保留：PVC被删除，PV的状态是<code>released</code>，需要管理员手动处理</li>
+<li>删除：PV和PVC都被删除</li>
+<li>回收：PVC被删除，PV的状态是<code>avaliable</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="StorageClass"><a href="#StorageClass" class="headerlink" title="StorageClass"></a>StorageClass</h3><p>为了解决这一问题，Kubernetes 又为我们引入了一个新的资源对象：<code>StorageClass</code>，通过<code>StorageClass</code>的定义，管理员可以将存储资源定义为某种类型的资源，比如快速存储、慢速存储等，用户根据<code>StorageClass</code>的描述就可以非常直观的知道各种存储资源的具体特性了，这样就可以根据应用的特性去申请合适的存储资源了。</p>
+<h3 id="动态卷供应"><a href="#动态卷供应" class="headerlink" title="动态卷供应"></a>动态卷供应</h3><p>动态卷供应允许按需创建PV。 如果没有动态供应，集群管理员必须手动地联系他们的云或存储提供商来创建新的PV， 然后在 Kubernetes 集群创建<code>PersistentVolume</code>对象来表示这些卷。 动态供应功能消除了集群管理员预先配置存储的需要。 相反，它在用户请求时自动供应存储。</p>
+<p>动态卷供应的实现基于<code>storage.k8s.io</code>API 组中的<code>StorageClass</code>API 对象。 集群管理员可以根据需要定义多个<code>StorageClass</code>对象，每个对象指定一个卷插件（又名<code>Provisioner</code>）， 卷插件向卷供应商提供在创建卷时需要的数据卷信息及相关参数。</p>
+<p>集群管理员可以在集群中定义和公开多种存储（来自相同或不同的存储系统），每种都具有自定义参数集。 该设计也确保终端用户不必担心存储供应的复杂性和细微差别，但仍然能够从多个存储选项中进行选择。</p>
+<h2 id="设计方案"><a href="#设计方案" class="headerlink" title="设计方案"></a>设计方案</h2><p>第一版依旧使用dfs以<code>hostpath</code>类型的<code>volume</code>提供存储服务，后面会考虑以实现<code>CSI</code>的方式对接其他存储服务。</p>
+<p>下面是一套完整的运转流程：</p>
+<ol>
+<li>所有节点上挂载好dfs</li>
+<li>集群中安装<code>provisioner</code>组件，创建对应的<code>StorageClass</code>资源</li>
+<li>创建<code>PVC</code></li>
+<li><code>provisioner</code>处理<code>PVC</code><ol>
+<li>创建满足配额和权限限制的底层资源（对于当前实现只是mkdir）</li>
+<li>创建<code>PV</code></li>
+<li>将<code>PV</code>和<code>PVC</code>绑定</li>
+</ol>
+</li>
+<li>使用了<code>PVC</code>的pod被创建</li>
+<li><code>kubelet</code>监测到新的pod被调度到当前节点<ol>
+<li>准备挂载（因为SC声明的类型是<code>hostpath</code>，所以实际上无需操作）</li>
+<li>pod被启动，进入<code>Runing</code>阶段</li>
+</ol>
+</li>
+<li><code>PV</code>或<code>PVC</code>被删除<ol>
+<li>如果当前有pod在使用此<code>PVC</code>，则不会立即删除，而是等到不再有pod使用此<code>PVC</code></li>
+<li>同理，如果有<code>PVC</code>在和<code>PV</code>绑定，<code>PV</code>的删除事件也会推迟到与<code>PVC</code>解绑</li>
+<li>当上述1或2满足时，<code>StorageClass</code>的回收策略默认是delete，<code>Provisioner</code>会删除底层资源（对于当前实现是rm dir）</li>
+</ol>
+</li>
+</ol>
+<h2 id="技术实现"><a href="#技术实现" class="headerlink" title="技术实现"></a>技术实现</h2><h3 id="实现Provisioner"><a href="#实现Provisioner" class="headerlink" title="实现Provisioner"></a>实现<code>Provisioner</code></h3><p>我们第一版的卷插件暂不使用第三方的存储服务，当<code>Provisioner</code>监测到有指定我们的<code>StorageClass</code>的<code>PVC</code>时，只是在本地为其创建个文件夹，例如<code>/mnt/shareroot/pv-data/pv-xxx</code>。</p>
+<p>下面是核心代码:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> provisionerName = <span class="string">"example.com/hostpath"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// provisioner 创建底层资源和PV</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *hostPathProvisioner)</span> <span class="title">Provision</span><span class="params">(ctx context.Context, options controller.ProvisionOptions)</span> <span class="params">(*v1.PersistentVolume, controller.ProvisioningState, error)</span></span> &#123;</span><br><span class="line">	path := path.Join(p.pvDir, options.PVName)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := os.MkdirAll(path, <span class="number">0777</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, controller.ProvisioningFinished, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	pv := &amp;v1.PersistentVolume&#123;</span><br><span class="line">		ObjectMeta: metav1.ObjectMeta&#123;</span><br><span class="line">			Name: options.PVName,</span><br><span class="line">			Annotations: <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>&#123;</span><br><span class="line">				<span class="string">"hostPathProvisionerIdentity"</span>: p.identity,</span><br><span class="line">			&#125;,</span><br><span class="line">		&#125;,</span><br><span class="line">		Spec: v1.PersistentVolumeSpec&#123;</span><br><span class="line">			PersistentVolumeReclaimPolicy: *options.StorageClass.ReclaimPolicy,</span><br><span class="line">			AccessModes:                   options.PVC.Spec.AccessModes,</span><br><span class="line">			Capacity: v1.ResourceList&#123;</span><br><span class="line">				v1.ResourceName(v1.ResourceStorage): options.PVC.Spec.Resources.Requests[v1.ResourceName(v1.ResourceStorage)],</span><br><span class="line">			&#125;,</span><br><span class="line">			PersistentVolumeSource: v1.PersistentVolumeSource&#123;</span><br><span class="line">				HostPath: &amp;v1.HostPathVolumeSource&#123;</span><br><span class="line">					Path: path,</span><br><span class="line">				&#125;,</span><br><span class="line">			&#125;,</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> pv, controller.ProvisioningFinished, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// provisioner 处理PV的删除逻辑</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *hostPathProvisioner)</span> <span class="title">Delete</span><span class="params">(ctx context.Context, volume *v1.PersistentVolume)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	ann, ok := volume.Annotations[<span class="string">"hostPathProvisionerIdentity"</span>]</span><br><span class="line">	<span class="keyword">if</span> !ok &#123;</span><br><span class="line">		<span class="keyword">return</span> errors.New(<span class="string">"identity annotation not found on PV"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ann != p.identity &#123;</span><br><span class="line">		<span class="keyword">return</span> &amp;controller.IgnoredError&#123;Reason: <span class="string">"identity annotation on PV does not match ours"</span>&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	path := path.Join(p.pvDir, volume.Name)</span><br><span class="line">	<span class="keyword">if</span> err := os.RemoveAll(path); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="启用动态卷供应"><a href="#启用动态卷供应" class="headerlink" title="启用动态卷供应"></a>启用动态卷供应</h3><p>要启用动态供应功能，集群管理员需要为用户预先创建一个或多个 StorageClass 对象。 StorageClass 对象定义当动态供应被调用时，哪一个驱动将被使用和哪些参数将被传递给驱动。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">storage.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">StorageClass</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">fhmc-sc</span></span><br><span class="line"><span class="attr">provisioner:</span> <span class="string">hostpathProvisioner</span></span><br><span class="line"><span class="attr">parameters:</span></span><br><span class="line">  <span class="attr">foo:</span> <span class="string">bar</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="使用动态卷供应"><a href="#使用动态卷供应" class="headerlink" title="使用动态卷供应"></a>使用动态卷供应</h3><p>用户通过在<code>PersistentVolumeClaim</code>中包含存储类来请求动态供应的存储。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">claim1</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">fhmcStorageClass</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">30Gi</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>k8s</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>计算机网络学习笔记（一）</title>
-    <url>/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/</url>
+    <url>/2020/08/22/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/</url>
     <content><![CDATA[<h1 id="计算机网络"><a href="#计算机网络" class="headerlink" title="计算机网络"></a><strong>计算机网络</strong></h1><h2 id="网络体系结构"><a href="#网络体系结构" class="headerlink" title="网络体系结构"></a>网络体系结构</h2><h3 id="协议层次"><a href="#协议层次" class="headerlink" title="协议层次"></a>协议层次</h3><ul>
 <li><p>协议</p>
 <ul>
@@ -1342,98 +1434,6 @@
       </categories>
       <tags>
         <tag>network</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Docker网络</title>
-    <url>/2020/08/29/Docker%E7%BD%91%E7%BB%9C/</url>
-    <content><![CDATA[<h2 id="网络驱动"><a href="#网络驱动" class="headerlink" title="网络驱动"></a>网络驱动</h2><ul>
-<li><code>bridge</code>：默认的网络驱动。当应用程序需要在容器中独立运行时通常使用<code>Bridge</code>网络。</li>
-<li><code>host</code>：对于独立容器，删除容器和主机之间的网络隔离，让容器直接使用主机的网络。</li>
-<li><code>overlay</code>：覆盖网络将多个Docker守护进程连接在一起，使集群服务能够相互通信。</li>
-<li><code>macvlan</code>：允许为容器分配MAC地址，让它在网络中像一台物理设备。</li>
-<li><code>none</code>：禁用所有网络。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>知识点总结</category>
-      </categories>
-      <tags>
-        <tag>docker</tag>
-        <tag>netwrok</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>动态卷供应</title>
-    <url>/2020/08/27/%E5%8A%A8%E6%80%81%E5%8D%B7%E4%BE%9B%E5%BA%94/</url>
-    <content><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>我们目前使用的存储服务是<code>MooseFS</code>，部署工具会在启动k8s前为每个节点挂载好共享路径<code>/mnt/shareroot</code>。<br>当应用有存储需求时，需要手动在Pod中声明类型为<code>hostpath</code>的<code>volume</code>，并在<code>.containers.volumeMounts</code>中进行映射。</p>
-<p>这种方案有以下弊端：</p>
-<ul>
-<li>需要为每个应用手动的在yaml中声明PV</li>
-<li>无法对卷的访问模式和容量进行限制及扩展</li>
-</ul>
-<p>为此，我们引入 Kubernetes 中的<code>PVC</code>和<code>StorageClass</code>两个重要的资源对象来实现对存储的管理。</p>
-<a id="more"></a>
-
-<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><h3 id="PVC"><a href="#PVC" class="headerlink" title="PVC"></a>PVC</h3><p><code>PVC</code>的全称是：PersistentVolumeClaim（持久化卷声明），PVC 是用户存储的一种声明，PVC 和 Pod 比较类似，Pod 消耗的是节点，PVC 消耗的是 PV 资源，Pod 可以请求 CPU 和内存，而 PVC 可以请求特定的存储空间和访问模式。</p>
-<p>对于真正使用存储的用户不需要关心底层的存储实现细节，只需要直接使用 PVC 即可。但是通过 PVC 请求到一定的存储空间也很有可能不足以满足应用对于存储设备的各种需求，而且不同的应用程序对于存储性能的要求可能也不尽相同，比如读写速度、并发性能等。</p>
-<p><strong>Volume和Claim的生命周期</strong></p>
-<ul>
-<li>供应<ul>
-<li>静态供应</li>
-<li>动态供应</li>
-</ul>
-</li>
-<li>绑定</li>
-<li>使用中（附加保护状态，延迟删除）</li>
-<li>回收<ul>
-<li>保留：PVC被删除，PV的状态是<code>released</code>，需要管理员手动处理</li>
-<li>删除：PV和PVC都被删除</li>
-<li>回收：PVC被删除，PV的状态是<code>avaliable</code></li>
-</ul>
-</li>
-</ul>
-<h3 id="StorageClass"><a href="#StorageClass" class="headerlink" title="StorageClass"></a>StorageClass</h3><p>为了解决这一问题，Kubernetes 又为我们引入了一个新的资源对象：<code>StorageClass</code>，通过<code>StorageClass</code>的定义，管理员可以将存储资源定义为某种类型的资源，比如快速存储、慢速存储等，用户根据<code>StorageClass</code>的描述就可以非常直观的知道各种存储资源的具体特性了，这样就可以根据应用的特性去申请合适的存储资源了。</p>
-<h3 id="动态卷供应"><a href="#动态卷供应" class="headerlink" title="动态卷供应"></a>动态卷供应</h3><p>动态卷供应允许按需创建PV。 如果没有动态供应，集群管理员必须手动地联系他们的云或存储提供商来创建新的PV， 然后在 Kubernetes 集群创建<code>PersistentVolume</code>对象来表示这些卷。 动态供应功能消除了集群管理员预先配置存储的需要。 相反，它在用户请求时自动供应存储。</p>
-<p>动态卷供应的实现基于<code>storage.k8s.io</code>API 组中的<code>StorageClass</code>API 对象。 集群管理员可以根据需要定义多个<code>StorageClass</code>对象，每个对象指定一个卷插件（又名<code>Provisioner</code>）， 卷插件向卷供应商提供在创建卷时需要的数据卷信息及相关参数。</p>
-<p>集群管理员可以在集群中定义和公开多种存储（来自相同或不同的存储系统），每种都具有自定义参数集。 该设计也确保终端用户不必担心存储供应的复杂性和细微差别，但仍然能够从多个存储选项中进行选择。</p>
-<h2 id="设计方案"><a href="#设计方案" class="headerlink" title="设计方案"></a>设计方案</h2><p>第一版依旧使用dfs以<code>hostpath</code>类型的<code>volume</code>提供存储服务，后面会考虑以实现<code>CSI</code>的方式对接其他存储服务。</p>
-<p>下面是一套完整的运转流程：</p>
-<ol>
-<li>所有节点上挂载好dfs</li>
-<li>集群中安装<code>provisioner</code>组件，创建对应的<code>StorageClass</code>资源</li>
-<li>创建<code>PVC</code></li>
-<li><code>provisioner</code>处理<code>PVC</code><ol>
-<li>创建满足配额和权限限制的底层资源（对于当前实现只是mkdir）</li>
-<li>创建<code>PV</code></li>
-<li>将<code>PV</code>和<code>PVC</code>绑定</li>
-</ol>
-</li>
-<li>使用了<code>PVC</code>的pod被创建</li>
-<li><code>kubelet</code>监测到新的pod被调度到当前节点<ol>
-<li>准备挂载（因为SC声明的类型是<code>hostpath</code>，所以实际上无需操作）</li>
-<li>pod被启动，进入<code>Runing</code>阶段</li>
-</ol>
-</li>
-<li><code>PV</code>或<code>PVC</code>被删除<ol>
-<li>如果当前有pod在使用此<code>PVC</code>，则不会立即删除，而是等到不再有pod使用此<code>PVC</code></li>
-<li>同理，如果有<code>PVC</code>在和<code>PV</code>绑定，<code>PV</code>的删除事件也会推迟到与<code>PVC</code>解绑</li>
-<li>当上述1或2满足时，<code>StorageClass</code>的回收策略默认是delete，<code>Provisioner</code>会删除底层资源（对于当前实现是rm dir）</li>
-</ol>
-</li>
-</ol>
-<h2 id="技术实现"><a href="#技术实现" class="headerlink" title="技术实现"></a>技术实现</h2><h3 id="实现Provisioner"><a href="#实现Provisioner" class="headerlink" title="实现Provisioner"></a>实现<code>Provisioner</code></h3><p>我们第一版的卷插件暂不使用第三方的存储服务，当<code>Provisioner</code>监测到有指定我们的<code>StorageClass</code>的<code>PVC</code>时，只是在本地为其创建个文件夹，例如<code>/mnt/shareroot/pv-data/pv-xxx</code>。</p>
-<p>下面是核心代码:</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> provisionerName = <span class="string">"example.com/hostpath"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// provisioner 创建底层资源和PV</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *hostPathProvisioner)</span> <span class="title">Provision</span><span class="params">(ctx context.Context, options controller.ProvisionOptions)</span> <span class="params">(*v1.PersistentVolume, controller.ProvisioningState, error)</span></span> &#123;</span><br><span class="line">	path := path.Join(p.pvDir, options.PVName)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := os.MkdirAll(path, <span class="number">0777</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, controller.ProvisioningFinished, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	pv := &amp;v1.PersistentVolume&#123;</span><br><span class="line">		ObjectMeta: metav1.ObjectMeta&#123;</span><br><span class="line">			Name: options.PVName,</span><br><span class="line">			Annotations: <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>&#123;</span><br><span class="line">				<span class="string">"hostPathProvisionerIdentity"</span>: p.identity,</span><br><span class="line">			&#125;,</span><br><span class="line">		&#125;,</span><br><span class="line">		Spec: v1.PersistentVolumeSpec&#123;</span><br><span class="line">			PersistentVolumeReclaimPolicy: *options.StorageClass.ReclaimPolicy,</span><br><span class="line">			AccessModes:                   options.PVC.Spec.AccessModes,</span><br><span class="line">			Capacity: v1.ResourceList&#123;</span><br><span class="line">				v1.ResourceName(v1.ResourceStorage): options.PVC.Spec.Resources.Requests[v1.ResourceName(v1.ResourceStorage)],</span><br><span class="line">			&#125;,</span><br><span class="line">			PersistentVolumeSource: v1.PersistentVolumeSource&#123;</span><br><span class="line">				HostPath: &amp;v1.HostPathVolumeSource&#123;</span><br><span class="line">					Path: path,</span><br><span class="line">				&#125;,</span><br><span class="line">			&#125;,</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> pv, controller.ProvisioningFinished, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// provisioner 处理PV的删除逻辑</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *hostPathProvisioner)</span> <span class="title">Delete</span><span class="params">(ctx context.Context, volume *v1.PersistentVolume)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	ann, ok := volume.Annotations[<span class="string">"hostPathProvisionerIdentity"</span>]</span><br><span class="line">	<span class="keyword">if</span> !ok &#123;</span><br><span class="line">		<span class="keyword">return</span> errors.New(<span class="string">"identity annotation not found on PV"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ann != p.identity &#123;</span><br><span class="line">		<span class="keyword">return</span> &amp;controller.IgnoredError&#123;Reason: <span class="string">"identity annotation on PV does not match ours"</span>&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	path := path.Join(p.pvDir, volume.Name)</span><br><span class="line">	<span class="keyword">if</span> err := os.RemoveAll(path); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="启用动态卷供应"><a href="#启用动态卷供应" class="headerlink" title="启用动态卷供应"></a>启用动态卷供应</h3><p>要启用动态供应功能，集群管理员需要为用户预先创建一个或多个 StorageClass 对象。 StorageClass 对象定义当动态供应被调用时，哪一个驱动将被使用和哪些参数将被传递给驱动。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">storage.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">StorageClass</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">fhmc-sc</span></span><br><span class="line"><span class="attr">provisioner:</span> <span class="string">hostpathProvisioner</span></span><br><span class="line"><span class="attr">parameters:</span></span><br><span class="line">  <span class="attr">foo:</span> <span class="string">bar</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="使用动态卷供应"><a href="#使用动态卷供应" class="headerlink" title="使用动态卷供应"></a>使用动态卷供应</h3><p>用户通过在<code>PersistentVolumeClaim</code>中包含存储类来请求动态供应的存储。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">PersistentVolumeClaim</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">claim1</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">accessModes:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">ReadWriteOnce</span></span><br><span class="line">  <span class="attr">storageClassName:</span> <span class="string">fhmcStorageClass</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">    <span class="attr">requests:</span></span><br><span class="line">      <span class="attr">storage:</span> <span class="string">30Gi</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>k8s</tag>
       </tags>
   </entry>
   <entry>

@@ -90,10 +90,10 @@
   
   <entry>
     <title>计算机网络学习笔记（三）</title>
-    <link href="https://akaqin.github.io/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/"/>
-    <id>https://akaqin.github.io/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/</id>
-    <published>2020-09-12T15:14:35.000Z</published>
-    <updated>2020-09-12T15:17:50.539Z</updated>
+    <link href="https://akaqin.github.io/2020/09/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/"/>
+    <id>https://akaqin.github.io/2020/09/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/</id>
+    <published>2020-09-05T15:14:35.000Z</published>
+    <updated>2020-09-12T15:24:30.701Z</updated>
     
     <content type="html"><![CDATA[<h1 id="运输层"><a href="#运输层" class="headerlink" title="运输层"></a><strong>运输层</strong></h1><h2 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><ul><li><p>面向连接的全双工服务</p></li><li><p>MTU</p><ul><li><p>最大传输单元</p><ul><li>默认1500字节</li></ul></li></ul></li><li><p>MSS</p><ul><li><p>最大报文段长度</p><ul><li>默认1460字节</li></ul></li></ul></li><li><p>发送缓存与接收缓存</p></li><li><p>RTT</p><ul><li>往返时间</li></ul></li></ul><a id="more"></a><h3 id="报文段结构"><a href="#报文段结构" class="headerlink" title="报文段结构"></a>报文段结构</h3><ul><li><p>首部字段（40字节</p><ul><li><p>源端口号-2字节</p></li><li><p>目的端口号-2字节</p></li><li><p>序号Seq-4字节</p><ul><li>该报文段首字节的字节流编号</li></ul></li><li><p>确认号ACK-4字节</p><ul><li>主机正在等待的数据的下一个字节序号</li></ul></li><li><p>接收窗口-2字节</p></li><li><p>首部长度-4比特</p></li><li><p>其他。。</p></li></ul></li><li><p>数据字段</p></li></ul><h3 id="可靠数据传输"><a href="#可靠数据传输" class="headerlink" title="可靠数据传输"></a>可靠数据传输</h3><ul><li><p>定义</p><ul><li>确保一个进程从其接受缓存中读出的数据流是无损坏、无间隙、非冗余和按序的数据流</li></ul></li><li><p>可靠传输原理</p><ul><li><p>校验和</p></li><li><p>定时器</p></li><li><p>序号</p></li><li><p>确认</p></li><li><p>否定确认</p></li><li><p>窗口、流水线</p></li></ul></li><li><p>特殊机制</p><ul><li><p>超时时不会重传小于当前ACK的报文段</p></li><li><p>对于同一个报文段每次重传间隔翻倍</p></li><li><p>收到3个冗余ACK就执行快速重传</p></li><li><p>差错恢复机制</p><ul><li><p>回退N步（GBN</p></li><li><p>选择确认（SR</p></li></ul></li></ul></li></ul><h3 id="流量控制"><a href="#流量控制" class="headerlink" title="流量控制"></a>流量控制</h3><ul><li><p>速度匹配服务：消除发送方使接收方缓存溢出的可能性</p></li><li><p>通过让发送方维护一个接受窗口实现</p></li><li><p>rwnd = RcvBuffer - [ LastByteRcvd - LastByteRead ]</p></li><li><p>当接受窗口为0时，只发一个字节用来试探接收方接收方是否清空缓存</p></li></ul><h3 id="连接管理"><a href="#连接管理" class="headerlink" title="连接管理"></a>连接管理</h3><ul><li><p>三次握手</p><ul><li><p>Client-&gt; SYN=1, seq=client_isn</p></li><li><p>Server-&gt; SYN=1, seq=server_isn, ack=client_isn+1</p></li><li><p>Client-&gt; SYN=0, seq=client_isn+1, ack=server_isn+1</p></li></ul></li><li><p>四次挥手</p><ul><li><p>Client-&gt; FIN</p></li><li><p>Server-&gt; ACK</p></li><li><p>Server-&gt; FIN</p></li><li><p>Client-&gt; ACK</p></li></ul></li><li><p>客户端状态</p><ul><li><p>CLOSED</p></li><li><p>SYN_SENT</p></li><li><p>ESTABLISHED</p></li><li><p>FIN_WAIT_1</p></li><li><p>FIN_WAIT_2</p></li><li><p>TIME_WAIT</p></li></ul></li><li><p>服务端状态</p><ul><li><p>CLOSED</p></li><li><p>LISTEN</p></li><li><p>SYN_RCVD</p></li><li><p>ESTABLISHED</p></li><li><p>CLOSE_WAIT</p></li><li><p>LAST_ACK</p></li></ul></li></ul><h3 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h3><ul><li><p>定义</p><ul><li>发送方因为IP网络的拥塞而遏制放松速率</li></ul></li><li><p>拥塞的代价</p><ul><li><p>分组到达速率接近链路容量时，经历巨大排队时延</p></li><li><p>发送方必须执行重传以补偿因缓存溢出而丢弃的分组</p></li><li><p>发送方在遇到大时延时所进行的不必要的重传会引起路由器利用其链路带宽来转发不必要的分组副本</p></li><li><p>一个分组沿一条链路被丢弃时，每个上游路由器因转发该分组而使用的传输容量都被浪费掉了</p></li></ul></li><li><p>拥塞控制的方法</p><ul><li><p>端到端拥塞控制</p></li><li><p>网络辅助的拥塞控制</p></li></ul></li><li><p>发送方如何限制发送速率</p><ul><li><p>使用拥塞窗口，发送方中未确认的数据量不会超过cwnd与rwnd的最小值</p><ul><li>LastByteSent - LastByteAcked &lt;= min {cwnd, rwnd}</li></ul></li></ul></li><li><p>发送方如何感知路径存在拥塞</p><ul><li><p>定义“丢包事件”</p><ul><li><p>超时</p></li><li><p>3个冗余ACK</p></li></ul></li><li><p>出现丢包就认为出现了阻塞</p></li></ul></li><li><p>感知到拥塞时，采用何种算法来改变速率</p><ul><li><p>基本原则</p><ul><li><p>丢包意味着拥塞，降低速率</p></li><li><p>确认ACK意味着不拥塞，增大窗口长度</p></li></ul></li><li><p>拥塞控制算法</p><ul><li><p>慢启动</p><ul><li><p>cwnd以1个MSS开始</p></li><li><p>每当报文段被首次确认就加一个MSS（指数增长</p></li><li><p>结束增长</p><ul><li><p>超时导致的丢包：ssthresh=cwnd/2，cwnd置为1重新开始慢启动</p></li><li><p>到达ssthresh阈值时进入拥塞避免</p></li><li><p>3个冗余ACK：进入快速重传</p></li></ul></li></ul></li><li><p>拥塞避免</p><ul><li><p>每个RTT只将cwnd的值增加一个MSS</p></li><li><p>超时进入慢启动，ssthresh=cwnd/2</p></li><li><p>3个冗余ACK进入快速重传</p></li></ul></li><li><p>快速重传</p><ul><li><p>对收到的每个冗余ACK，cwnd增加一个MSS</p></li><li><p>丢失的报文段都到达时进入拥塞避免</p></li><li><p>超时进入慢启动，ssthresh=cwnd/2</p></li></ul></li></ul></li></ul></li></ul><h2 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h2><h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul><li><p>关于发送什么数据以及何时发送的应用层控制更为精细</p></li><li><p>无需建立连接</p></li><li><p>无连接状态</p></li><li><p>分组首部开销小</p></li></ul><h3 id="报文结构"><a href="#报文结构" class="headerlink" title="报文结构"></a>报文结构</h3><ul><li><p>首部（8字节）</p><ul><li><p>源端口号</p></li><li><p>目的端口号</p></li><li><p>长度</p></li><li><p>校验和</p></li></ul></li><li><p>报文</p><ul><li>应用数据</li></ul></li></ul><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><h3 id="套接字"><a href="#套接字" class="headerlink" title="套接字"></a>套接字</h3><ul><li><p>UDP套接字</p><ul><li><p>二元组</p><ul><li><p>源端口号</p></li><li><p>目的端口号</p></li></ul></li></ul></li><li><p>TCP套接字</p><ul><li><p>四元组</p><ul><li><p>源ip地址</p></li><li><p>源端口号</p></li><li><p>目的ip地址</p></li><li><p>目的端口号</p></li></ul></li></ul></li></ul><h3 id="多路分解"><a href="#多路分解" class="headerlink" title="多路分解"></a>多路分解</h3><h3 id="多路复用"><a href="#多路复用" class="headerlink" title="多路复用"></a>多路复用</h3><h3 id="与网络层关系"><a href="#与网络层关系" class="headerlink" title="与网络层关系"></a>与网络层关系</h3><ul><li><p>网络层提供主机之间的逻辑通信</p></li><li><p>运输层为运行在不同主机上的进程提供逻辑通信</p></li></ul>]]></content>
     
@@ -141,62 +141,16 @@
   
   <entry>
     <title>计算机网络学习笔记（二）</title>
-    <link href="https://akaqin.github.io/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/"/>
-    <id>https://akaqin.github.io/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/</id>
-    <published>2020-09-12T15:13:12.000Z</published>
-    <updated>2020-09-12T15:14:25.614Z</updated>
+    <link href="https://akaqin.github.io/2020/08/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/"/>
+    <id>https://akaqin.github.io/2020/08/29/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%BA%8C%EF%BC%89/</id>
+    <published>2020-08-29T15:13:12.000Z</published>
+    <updated>2020-09-12T15:24:49.539Z</updated>
     
     <content type="html"><![CDATA[<h1 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a><strong>应用层</strong></h1><h2 id="体系结构"><a href="#体系结构" class="headerlink" title="体系结构"></a>体系结构</h2><h3 id="CS"><a href="#CS" class="headerlink" title="CS"></a>CS</h3><h3 id="P2P"><a href="#P2P" class="headerlink" title="P2P"></a>P2P</h3><h2 id="使用的运输服务"><a href="#使用的运输服务" class="headerlink" title="使用的运输服务"></a>使用的运输服务</h2><a id="more"></a><h3 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h3><ul><li><p>面向连接的服务</p></li><li><p>可靠的数据传送服务</p></li></ul><h3 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h3><ul><li>不提供不必要服务的轻量级运输</li></ul><h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><h3 id="WEB"><a href="#WEB" class="headerlink" title="WEB"></a>WEB</h3><ul><li><p>HTTP（拉协议</p><ul><li><p>超文本传输协议</p></li><li><p>无状态</p><ul><li>交互使用cookie</li></ul></li><li><p>结构</p><ul><li><p>请求行</p></li><li><p>请求头</p></li><li><p>请求体</p></li></ul></li></ul></li><li><p>URL和URI</p></li><li><p>WEB缓存（代理服务器</p><ul><li>条件GET</li></ul></li><li><p>MIME类型</p></li></ul><h3 id="电子邮件"><a href="#电子邮件" class="headerlink" title="电子邮件"></a>电子邮件</h3><ul><li><p>SMTP</p></li><li><p>组成</p><ul><li><p>用户代理</p></li><li><p>邮件服务器</p><ul><li><p>内部有报文队列</p></li><li><p>通常由ISP进行维护</p></li></ul></li><li><p>传输协议</p><ul><li><p>SMTP</p><ul><li><p>推协议（异步发送与重试</p></li><li><p>每个报文采用7比特ASCII码格式</p></li></ul></li><li><p>POP3</p><ul><li>第三版邮局协议</li></ul></li><li><p>IMAP</p><ul><li>因特网邮件访问协议</li></ul></li><li><p>HTTP</p></li></ul></li></ul></li></ul><h3 id="DNS（因特网的目录服务"><a href="#DNS（因特网的目录服务" class="headerlink" title="DNS（因特网的目录服务"></a>DNS（因特网的目录服务</h3><ul><li><p>构成</p><ul><li><p>一个由分层的DNS服务器实现的分布式数据库</p><ul><li><p>根DNS服务器</p></li><li><p>顶级域DNS服务器</p></li><li><p>权威DNS服务器</p></li></ul></li><li><p>一个使得主机能够查询分布式数据库的应用层协议</p></li><li><p>本地DNS服务器（默认服务器</p></li></ul></li><li><p>运行在UDP之上，53端口</p></li><li><p>查询方式</p><ul><li><p>递归查询</p></li><li><p>迭代查询</p></li></ul></li><li><p>DNS缓存</p></li><li><p>DNS记录</p><ul><li><p>Name</p></li><li><p>Value</p></li><li><p>Type</p><ul><li><p>A</p><ul><li><p>Name:主机名</p></li><li><p>Value:IP地址</p></li></ul></li><li><p>NS</p><ul><li><p>Name是个域（foo.com</p></li><li><p>Value是个知道如何获得该域中主机IP地址的权威DNS服务器的主机名</p></li></ul></li><li><p>CNAME</p><ul><li><p>Name是主机名</p></li><li><p>Value是Name对应的规范主机名</p></li></ul></li><li><p>MX</p><ul><li><p>Name是别名</p></li><li><p>Value是别名为Name的邮件服务器的规范主机名</p></li></ul></li></ul></li><li><p>TTL</p></li></ul></li><li><p>DNS报文</p><ul><li><p>12字节的首部区域</p></li><li><p>问题区域</p><ul><li><p>名字字段</p></li><li><p>类型字段</p></li></ul></li><li><p>回答区域</p></li><li><p>权威区域</p></li><li><p>附加区域</p></li></ul></li></ul><h3 id="P2P文件分发"><a href="#P2P文件分发" class="headerlink" title="P2P文件分发"></a>P2P文件分发</h3><ul><li>BitTorrent</li></ul><h3 id="视频流"><a href="#视频流" class="headerlink" title="视频流"></a>视频流</h3><ul><li><p>HTTP</p></li><li><p>DASH</p></li></ul><h3 id="内容分发"><a href="#内容分发" class="headerlink" title="内容分发"></a>内容分发</h3><ul><li>CDN</li></ul>]]></content>
     
     <summary type="html">
     
       &lt;h1 id=&quot;应用层&quot;&gt;&lt;a href=&quot;#应用层&quot; class=&quot;headerlink&quot; title=&quot;应用层&quot;&gt;&lt;/a&gt;&lt;strong&gt;应用层&lt;/strong&gt;&lt;/h1&gt;&lt;h2 id=&quot;体系结构&quot;&gt;&lt;a href=&quot;#体系结构&quot; class=&quot;headerlink&quot; title=&quot;体系结构&quot;&gt;&lt;/a&gt;体系结构&lt;/h2&gt;&lt;h3 id=&quot;CS&quot;&gt;&lt;a href=&quot;#CS&quot; class=&quot;headerlink&quot; title=&quot;CS&quot;&gt;&lt;/a&gt;CS&lt;/h3&gt;&lt;h3 id=&quot;P2P&quot;&gt;&lt;a href=&quot;#P2P&quot; class=&quot;headerlink&quot; title=&quot;P2P&quot;&gt;&lt;/a&gt;P2P&lt;/h3&gt;&lt;h2 id=&quot;使用的运输服务&quot;&gt;&lt;a href=&quot;#使用的运输服务&quot; class=&quot;headerlink&quot; title=&quot;使用的运输服务&quot;&gt;&lt;/a&gt;使用的运输服务&lt;/h2&gt;
-    
-    </summary>
-    
-    
-      <category term="知识点总结" scheme="https://akaqin.github.io/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/"/>
-    
-    
-      <category term="network" scheme="https://akaqin.github.io/tags/network/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>计算机网络学习笔记（一）</title>
-    <link href="https://akaqin.github.io/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/"/>
-    <id>https://akaqin.github.io/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/</id>
-    <published>2020-09-12T15:06:13.000Z</published>
-    <updated>2020-09-12T15:12:17.677Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="计算机网络"><a href="#计算机网络" class="headerlink" title="计算机网络"></a><strong>计算机网络</strong></h1><h2 id="网络体系结构"><a href="#网络体系结构" class="headerlink" title="网络体系结构"></a>网络体系结构</h2><h3 id="协议层次"><a href="#协议层次" class="headerlink" title="协议层次"></a>协议层次</h3><ul><li><p>协议</p><ul><li>同一层上对等实体之间所交换的数据包或报文的格式和含义</li></ul></li><li><p>服务</p><ul><li>某一层向它上一层提供的一组原语（操作）</li></ul></li><li><p>设计要点</p><ul><li><p>可靠性</p></li><li><p>可扩展性</p></li><li><p>资源分配</p></li><li><p>安全性</p></li></ul></li></ul><a id="more"></a><h3 id="参考模型"><a href="#参考模型" class="headerlink" title="参考模型"></a>参考模型</h3><ul><li><p>OSI 7层模型</p><ul><li><p>应用层-&gt;报文</p><ul><li>各种网络程序及协议</li></ul></li><li><p>表示层</p><ul><li>关注传递信息的语法和语义</li></ul></li><li><p>会话层</p><ul><li>允许不同机器上的用户建立会话</li></ul></li><li><p>传输层-&gt;报文段</p><ul><li>在应用程序端点之间拆分并传送应用层报文</li></ul></li><li><p>网络层-&gt;数据报</p><ul><li>控制子网的运行：将数据包从源端路由到接收方</li></ul></li><li><p>数据链路层-&gt;帧</p><ul><li>讲一个原始的传输设施转变成一条没有漏检传输错误的线路</li></ul></li><li><p>物理层</p><ul><li>关注在一条通信信道上传输原始比特</li></ul></li></ul></li><li><p>因特网 5层模型</p></li><li><p>TCP/IP 4层模型</p></li></ul><h3 id="服务连接"><a href="#服务连接" class="headerlink" title="服务连接"></a>服务连接</h3><ul><li><p>面向连接的服务</p><ul><li><p>可靠的报文流</p><ul><li>顺序页面</li></ul></li><li><p>可靠的字节流</p><ul><li>移动下载</li></ul></li><li><p>不可靠的连接</p><ul><li>IP语音</li></ul></li></ul></li><li><p>无连接的服务</p><ul><li><p>不可靠的数据报</p><ul><li>垃圾邮件</li></ul></li><li><p>有确认的数据报</p><ul><li>文本消息</li></ul></li><li><p>请求-应答</p><ul><li>数据库查询</li></ul></li></ul></li></ul><h2 id="IEEE-802标准"><a href="#IEEE-802标准" class="headerlink" title="IEEE 802标准"></a><strong>IEEE 802标准</strong></h2><h3 id="802-3"><a href="#802-3" class="headerlink" title="802.3"></a>802.3</h3><ul><li><p>有线局域网</p><ul><li>以太网</li></ul></li></ul><h3 id="802-11"><a href="#802-11" class="headerlink" title="802.11"></a>802.11</h3><ul><li><p>无线局域网</p><ul><li>WIFI（Wireless LAN &amp; Mesh）</li></ul></li></ul><h2 id="网络攻击"><a href="#网络攻击" class="headerlink" title="网络攻击"></a>网络攻击</h2><h3 id="恶意软件植入"><a href="#恶意软件植入" class="headerlink" title="恶意软件植入"></a>恶意软件植入</h3><ul><li><p>病毒</p></li><li><p>蠕虫</p></li></ul><h3 id="拒绝服务攻击"><a href="#拒绝服务攻击" class="headerlink" title="拒绝服务攻击"></a>拒绝服务攻击</h3><ul><li><p>弱点攻击</p></li><li><p>带宽洪泛</p></li><li><p>连接洪泛</p></li></ul><h3 id="嗅探分组"><a href="#嗅探分组" class="headerlink" title="嗅探分组"></a>嗅探分组</h3><ul><li>中间人攻击</li></ul><h3 id="IP哄骗"><a href="#IP哄骗" class="headerlink" title="IP哄骗"></a>IP哄骗</h3><ul><li>端点假冒</li></ul><h2 id="网络核心"><a href="#网络核心" class="headerlink" title="网络核心"></a>网络核心</h2><h3 id="分组交换"><a href="#分组交换" class="headerlink" title="分组交换"></a>分组交换</h3><ul><li><p>存储转发传输报文</p></li><li><p>时延、丢包和吞吐量</p><ul><li><p>时延</p><ul><li><p>处理时延</p><ul><li>检查分组首部和决定将该分组导向何处所用的时间</li></ul></li><li><p>排队时延</p><ul><li>在队列中等待向链路传输的时间</li></ul></li><li><p>传输时延</p><ul><li>路由器将分组推向链路所需要的时间：L/R</li></ul></li><li><p>传播时延</p><ul><li>一个比特从链路的起点到终点所需要的时间</li></ul></li></ul></li><li><p>丢包</p><ul><li>流量强度（La/R）&gt;1时会出现丢包</li></ul></li><li><p>吞吐量</p><ul><li><p>平均吞吐量：F/T bps</p></li><li><p>简单情况下，链路吞吐量收瓶颈链路影响</p></li><li><p>多人使用时吞吐量会被均分</p></li></ul></li></ul></li><li><p>报文按需使用资源（缓存、链路传输速率</p></li><li><p>转发表和路由选择协议</p></li></ul><h3 id="电路交换"><a href="#电路交换" class="headerlink" title="电路交换"></a>电路交换</h3><ul><li><p>通信时创建一条专用的端到端连接</p></li><li><p>预留带宽，总带宽被多条电路均分</p></li><li><p>建立连接后以恒定速率传输数据</p></li><li><p>复用技术</p><ul><li><p>频分复用</p></li><li><p>时分复用</p></li></ul></li></ul><h3 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h3><ul><li><p>电路交换实时性好——电话、视频会议，适合人少的情况下用</p></li><li><p>分组交换有更好的带宽共享、更简单高效，适合人多的情况用</p></li></ul><h3 id="互联网"><a href="#互联网" class="headerlink" title="互联网"></a>互联网</h3><ul><li><p>ISP</p><ul><li>网络提供商，按服务范围可以多级</li></ul></li><li><p>POP</p><ul><li>数据包进入ISP网络使用其服务的位置称为ISP存点</li></ul></li><li><p>多宿</p><ul><li>一个客户ISP与多个提供商ISP连接</li></ul></li><li><p>IXP</p><ul><li>ISP之间进行流量交换的点称为Internet交换点</li></ul></li><li><p>Peer</p><ul><li>相互连接的ISP被认为彼此对等</li></ul></li><li><p>IDC</p><ul><li><p>互联网数据中心</p><ul><li><p>谷歌</p></li><li><p>雅虎</p></li></ul></li></ul></li></ul><h2 id="网络边缘"><a href="#网络边缘" class="headerlink" title="网络边缘"></a>网络边缘</h2><h3 id="接入类型"><a href="#接入类型" class="headerlink" title="接入类型"></a>接入类型</h3><p>端系统物理连接到边缘路由器的网络</p><ul><li><p>电话线拨号上网（DSL）</p></li><li><p>复用有线电视的线缆</p></li><li><p>光纤入户FTTH</p></li><li><p>RFID（个域无线接入</p><ul><li><p>IC卡</p></li><li><p>Apple Pay</p></li><li><p>信用卡</p></li><li><p>护照</p></li><li><p>动物跟踪</p></li><li><p>供应链</p></li></ul></li><li><p>WIFI（局域无线接入</p></li><li><p>3G蜂窝网络（广域无线接入</p></li></ul><h3 id="物理媒体"><a href="#物理媒体" class="headerlink" title="物理媒体"></a>物理媒体</h3><ul><li><p>引导型媒体</p><ul><li><p>双绞铜线</p></li><li><p>同轴电缆</p></li><li><p>光纤</p></li></ul></li><li><p>非引导型媒体</p><ul><li><p>陆地无线电信道</p></li><li><p>卫星无线电信道</p><ul><li><p>同步卫星</p></li><li><p>近地轨道卫星</p></li></ul></li></ul></li></ul><h2 id="网络分类"><a href="#网络分类" class="headerlink" title="网络分类"></a>网络分类</h2><h3 id="传输技术"><a href="#传输技术" class="headerlink" title="传输技术"></a>传输技术</h3><ul><li><p>单播（点对点）</p></li><li><p>组播</p></li><li><p>广播</p></li></ul><h3 id="网络尺度"><a href="#网络尺度" class="headerlink" title="网络尺度"></a>网络尺度</h3><ul><li><p>个域网</p></li><li><p>局域网（LAN）</p><ul><li>虚拟局域网（VLAN）</li></ul></li><li><p>城域网</p></li><li><p>广域网</p><ul><li><p>构成</p><ul><li><p>主机（端系统）</p></li><li><p>通信子网</p><ul><li><p>传输线路</p></li><li><p>交换机（路由器）</p></li></ul></li></ul></li><li><p>类型</p><ul><li><p>虚拟专用网络（VPN）</p><ul><li>底层使用Interrnet链路</li></ul></li><li><p>ISP网络</p><ul><li>底层使用提供商自己的链路</li></ul></li><li><p>其他使用无线技术的广域网</p><ul><li><p>卫星系统</p></li><li><p>蜂窝移动电话网络</p></li></ul></li></ul></li></ul></li><li><p>互联网</p><ul><li>因特网</li></ul></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;计算机网络&quot;&gt;&lt;a href=&quot;#计算机网络&quot; class=&quot;headerlink&quot; title=&quot;计算机网络&quot;&gt;&lt;/a&gt;&lt;strong&gt;计算机网络&lt;/strong&gt;&lt;/h1&gt;&lt;h2 id=&quot;网络体系结构&quot;&gt;&lt;a href=&quot;#网络体系结构&quot; class=&quot;headerlink&quot; title=&quot;网络体系结构&quot;&gt;&lt;/a&gt;网络体系结构&lt;/h2&gt;&lt;h3 id=&quot;协议层次&quot;&gt;&lt;a href=&quot;#协议层次&quot; class=&quot;headerlink&quot; title=&quot;协议层次&quot;&gt;&lt;/a&gt;协议层次&lt;/h3&gt;&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;协议&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;同一层上对等实体之间所交换的数据包或报文的格式和含义&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;服务&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;某一层向它上一层提供的一组原语（操作）&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;设计要点&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;可靠性&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;可扩展性&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;资源分配&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;安全性&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
     
     </summary>
     
@@ -261,6 +215,52 @@
     
     
       <category term="k8s" scheme="https://akaqin.github.io/tags/k8s/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机网络学习笔记（一）</title>
+    <link href="https://akaqin.github.io/2020/08/22/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/"/>
+    <id>https://akaqin.github.io/2020/08/22/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/</id>
+    <published>2020-08-22T15:06:13.000Z</published>
+    <updated>2020-09-12T15:24:58.917Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="计算机网络"><a href="#计算机网络" class="headerlink" title="计算机网络"></a><strong>计算机网络</strong></h1><h2 id="网络体系结构"><a href="#网络体系结构" class="headerlink" title="网络体系结构"></a>网络体系结构</h2><h3 id="协议层次"><a href="#协议层次" class="headerlink" title="协议层次"></a>协议层次</h3><ul><li><p>协议</p><ul><li>同一层上对等实体之间所交换的数据包或报文的格式和含义</li></ul></li><li><p>服务</p><ul><li>某一层向它上一层提供的一组原语（操作）</li></ul></li><li><p>设计要点</p><ul><li><p>可靠性</p></li><li><p>可扩展性</p></li><li><p>资源分配</p></li><li><p>安全性</p></li></ul></li></ul><a id="more"></a><h3 id="参考模型"><a href="#参考模型" class="headerlink" title="参考模型"></a>参考模型</h3><ul><li><p>OSI 7层模型</p><ul><li><p>应用层-&gt;报文</p><ul><li>各种网络程序及协议</li></ul></li><li><p>表示层</p><ul><li>关注传递信息的语法和语义</li></ul></li><li><p>会话层</p><ul><li>允许不同机器上的用户建立会话</li></ul></li><li><p>传输层-&gt;报文段</p><ul><li>在应用程序端点之间拆分并传送应用层报文</li></ul></li><li><p>网络层-&gt;数据报</p><ul><li>控制子网的运行：将数据包从源端路由到接收方</li></ul></li><li><p>数据链路层-&gt;帧</p><ul><li>讲一个原始的传输设施转变成一条没有漏检传输错误的线路</li></ul></li><li><p>物理层</p><ul><li>关注在一条通信信道上传输原始比特</li></ul></li></ul></li><li><p>因特网 5层模型</p></li><li><p>TCP/IP 4层模型</p></li></ul><h3 id="服务连接"><a href="#服务连接" class="headerlink" title="服务连接"></a>服务连接</h3><ul><li><p>面向连接的服务</p><ul><li><p>可靠的报文流</p><ul><li>顺序页面</li></ul></li><li><p>可靠的字节流</p><ul><li>移动下载</li></ul></li><li><p>不可靠的连接</p><ul><li>IP语音</li></ul></li></ul></li><li><p>无连接的服务</p><ul><li><p>不可靠的数据报</p><ul><li>垃圾邮件</li></ul></li><li><p>有确认的数据报</p><ul><li>文本消息</li></ul></li><li><p>请求-应答</p><ul><li>数据库查询</li></ul></li></ul></li></ul><h2 id="IEEE-802标准"><a href="#IEEE-802标准" class="headerlink" title="IEEE 802标准"></a><strong>IEEE 802标准</strong></h2><h3 id="802-3"><a href="#802-3" class="headerlink" title="802.3"></a>802.3</h3><ul><li><p>有线局域网</p><ul><li>以太网</li></ul></li></ul><h3 id="802-11"><a href="#802-11" class="headerlink" title="802.11"></a>802.11</h3><ul><li><p>无线局域网</p><ul><li>WIFI（Wireless LAN &amp; Mesh）</li></ul></li></ul><h2 id="网络攻击"><a href="#网络攻击" class="headerlink" title="网络攻击"></a>网络攻击</h2><h3 id="恶意软件植入"><a href="#恶意软件植入" class="headerlink" title="恶意软件植入"></a>恶意软件植入</h3><ul><li><p>病毒</p></li><li><p>蠕虫</p></li></ul><h3 id="拒绝服务攻击"><a href="#拒绝服务攻击" class="headerlink" title="拒绝服务攻击"></a>拒绝服务攻击</h3><ul><li><p>弱点攻击</p></li><li><p>带宽洪泛</p></li><li><p>连接洪泛</p></li></ul><h3 id="嗅探分组"><a href="#嗅探分组" class="headerlink" title="嗅探分组"></a>嗅探分组</h3><ul><li>中间人攻击</li></ul><h3 id="IP哄骗"><a href="#IP哄骗" class="headerlink" title="IP哄骗"></a>IP哄骗</h3><ul><li>端点假冒</li></ul><h2 id="网络核心"><a href="#网络核心" class="headerlink" title="网络核心"></a>网络核心</h2><h3 id="分组交换"><a href="#分组交换" class="headerlink" title="分组交换"></a>分组交换</h3><ul><li><p>存储转发传输报文</p></li><li><p>时延、丢包和吞吐量</p><ul><li><p>时延</p><ul><li><p>处理时延</p><ul><li>检查分组首部和决定将该分组导向何处所用的时间</li></ul></li><li><p>排队时延</p><ul><li>在队列中等待向链路传输的时间</li></ul></li><li><p>传输时延</p><ul><li>路由器将分组推向链路所需要的时间：L/R</li></ul></li><li><p>传播时延</p><ul><li>一个比特从链路的起点到终点所需要的时间</li></ul></li></ul></li><li><p>丢包</p><ul><li>流量强度（La/R）&gt;1时会出现丢包</li></ul></li><li><p>吞吐量</p><ul><li><p>平均吞吐量：F/T bps</p></li><li><p>简单情况下，链路吞吐量收瓶颈链路影响</p></li><li><p>多人使用时吞吐量会被均分</p></li></ul></li></ul></li><li><p>报文按需使用资源（缓存、链路传输速率</p></li><li><p>转发表和路由选择协议</p></li></ul><h3 id="电路交换"><a href="#电路交换" class="headerlink" title="电路交换"></a>电路交换</h3><ul><li><p>通信时创建一条专用的端到端连接</p></li><li><p>预留带宽，总带宽被多条电路均分</p></li><li><p>建立连接后以恒定速率传输数据</p></li><li><p>复用技术</p><ul><li><p>频分复用</p></li><li><p>时分复用</p></li></ul></li></ul><h3 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h3><ul><li><p>电路交换实时性好——电话、视频会议，适合人少的情况下用</p></li><li><p>分组交换有更好的带宽共享、更简单高效，适合人多的情况用</p></li></ul><h3 id="互联网"><a href="#互联网" class="headerlink" title="互联网"></a>互联网</h3><ul><li><p>ISP</p><ul><li>网络提供商，按服务范围可以多级</li></ul></li><li><p>POP</p><ul><li>数据包进入ISP网络使用其服务的位置称为ISP存点</li></ul></li><li><p>多宿</p><ul><li>一个客户ISP与多个提供商ISP连接</li></ul></li><li><p>IXP</p><ul><li>ISP之间进行流量交换的点称为Internet交换点</li></ul></li><li><p>Peer</p><ul><li>相互连接的ISP被认为彼此对等</li></ul></li><li><p>IDC</p><ul><li><p>互联网数据中心</p><ul><li><p>谷歌</p></li><li><p>雅虎</p></li></ul></li></ul></li></ul><h2 id="网络边缘"><a href="#网络边缘" class="headerlink" title="网络边缘"></a>网络边缘</h2><h3 id="接入类型"><a href="#接入类型" class="headerlink" title="接入类型"></a>接入类型</h3><p>端系统物理连接到边缘路由器的网络</p><ul><li><p>电话线拨号上网（DSL）</p></li><li><p>复用有线电视的线缆</p></li><li><p>光纤入户FTTH</p></li><li><p>RFID（个域无线接入</p><ul><li><p>IC卡</p></li><li><p>Apple Pay</p></li><li><p>信用卡</p></li><li><p>护照</p></li><li><p>动物跟踪</p></li><li><p>供应链</p></li></ul></li><li><p>WIFI（局域无线接入</p></li><li><p>3G蜂窝网络（广域无线接入</p></li></ul><h3 id="物理媒体"><a href="#物理媒体" class="headerlink" title="物理媒体"></a>物理媒体</h3><ul><li><p>引导型媒体</p><ul><li><p>双绞铜线</p></li><li><p>同轴电缆</p></li><li><p>光纤</p></li></ul></li><li><p>非引导型媒体</p><ul><li><p>陆地无线电信道</p></li><li><p>卫星无线电信道</p><ul><li><p>同步卫星</p></li><li><p>近地轨道卫星</p></li></ul></li></ul></li></ul><h2 id="网络分类"><a href="#网络分类" class="headerlink" title="网络分类"></a>网络分类</h2><h3 id="传输技术"><a href="#传输技术" class="headerlink" title="传输技术"></a>传输技术</h3><ul><li><p>单播（点对点）</p></li><li><p>组播</p></li><li><p>广播</p></li></ul><h3 id="网络尺度"><a href="#网络尺度" class="headerlink" title="网络尺度"></a>网络尺度</h3><ul><li><p>个域网</p></li><li><p>局域网（LAN）</p><ul><li>虚拟局域网（VLAN）</li></ul></li><li><p>城域网</p></li><li><p>广域网</p><ul><li><p>构成</p><ul><li><p>主机（端系统）</p></li><li><p>通信子网</p><ul><li><p>传输线路</p></li><li><p>交换机（路由器）</p></li></ul></li></ul></li><li><p>类型</p><ul><li><p>虚拟专用网络（VPN）</p><ul><li>底层使用Interrnet链路</li></ul></li><li><p>ISP网络</p><ul><li>底层使用提供商自己的链路</li></ul></li><li><p>其他使用无线技术的广域网</p><ul><li><p>卫星系统</p></li><li><p>蜂窝移动电话网络</p></li></ul></li></ul></li></ul></li><li><p>互联网</p><ul><li>因特网</li></ul></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;计算机网络&quot;&gt;&lt;a href=&quot;#计算机网络&quot; class=&quot;headerlink&quot; title=&quot;计算机网络&quot;&gt;&lt;/a&gt;&lt;strong&gt;计算机网络&lt;/strong&gt;&lt;/h1&gt;&lt;h2 id=&quot;网络体系结构&quot;&gt;&lt;a href=&quot;#网络体系结构&quot; class=&quot;headerlink&quot; title=&quot;网络体系结构&quot;&gt;&lt;/a&gt;网络体系结构&lt;/h2&gt;&lt;h3 id=&quot;协议层次&quot;&gt;&lt;a href=&quot;#协议层次&quot; class=&quot;headerlink&quot; title=&quot;协议层次&quot;&gt;&lt;/a&gt;协议层次&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;协议&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;同一层上对等实体之间所交换的数据包或报文的格式和含义&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;服务&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;某一层向它上一层提供的一组原语（操作）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;设计要点&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;可靠性&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;可扩展性&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;资源分配&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;安全性&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+    
+    </summary>
+    
+    
+      <category term="知识点总结" scheme="https://akaqin.github.io/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/"/>
+    
+    
+      <category term="network" scheme="https://akaqin.github.io/tags/network/"/>
     
   </entry>
   
