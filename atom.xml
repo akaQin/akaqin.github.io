@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://akaqin.github.io/"/>
-  <updated>2020-09-12T15:18:16.586Z</updated>
+  <updated>2020-09-12T15:23:45.539Z</updated>
   <id>https://akaqin.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>存储笔记</title>
+    <link href="https://akaqin.github.io/2020/09/12/%E5%AD%98%E5%82%A8%E7%AC%94%E8%AE%B0/"/>
+    <id>https://akaqin.github.io/2020/09/12/%E5%AD%98%E5%82%A8%E7%AC%94%E8%AE%B0/</id>
+    <published>2020-09-12T15:19:04.000Z</published>
+    <updated>2020-09-12T15:23:45.539Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="存储笔记"><a href="#存储笔记" class="headerlink" title="存储笔记"></a>存储笔记</h1><h2 id="nas"><a href="#nas" class="headerlink" title="nas"></a>nas</h2><p>NAS本身可以做为一台网络设备</p><h2 id="san"><a href="#san" class="headerlink" title="san"></a>san</h2><p>SAN是一种传输协议,它比NAS更低层面上存储技术,它并不关心通道上传输的是哪种操作系统.<br>SAN是关联存储设备和服务器的网络，它和以太网有类似的架构。</p><h3 id="fcsan"><a href="#fcsan" class="headerlink" title="fcsan"></a>fcsan</h3><p> <code>FC SAN</code>是采用光纤信道的SAN，也就是服务器透过光纤信道卡（FC HBA），连接光纤交换器（FC Switch），再连接后端的存储设备。<br> <code>FC SAN</code>是按块协议(Block Protocal)的传输方式,所以传输速度快,但是造价比较贵,随着客户端的数量增加,造价也随着上升;所以一般在大型网络的核心上都采用的<code>FC SAN</code>的存储结构; </p><h3 id="IP-SAN"><a href="#IP-SAN" class="headerlink" title="IP SAN"></a>IP SAN</h3><p>随着以太网技术的发展,使IP SAN对SAN技术进一步的拓展, IP SAN降低了<code>FC SAN</code>的光纤造价.直接在IP网络上进行存储..而且实施起来更容易.<br>IP SAN和<code>FC SAN</code>一样,都是按块协议(Block Protocal) 的传输方式;</p><h3 id="iSCSI-SAN"><a href="#iSCSI-SAN" class="headerlink" title="iSCSI SAN"></a>iSCSI SAN</h3><p>  iSCSI 可以算IP SAN发展的第三个里程碑, iSCSI是SCSI over IP的一项重要成就，使用IP技术代替FC对SCSI进行封装,它是由IBM与CISCO共同开发的协议标准，是一个供硬件设备使用的可以在IP协议的上层运行的SCSI指令集。iSCSI协议整合了存储和IP网络，使得通过IP网络完成存储数据块的传输成为现实。使其能够在诸如高速千兆以太网上进行路由选择。现在有向10G以太网发展的趋势.</p><h2 id="FC协议"><a href="#FC协议" class="headerlink" title="FC协议"></a>FC协议</h2><p>光纤通道协议（Fibre Channel Protocol，FCP）是一种类似于TCP的传输协议，大多用于在光纤通道上传输SCSI命令。</p><p>FC协议其实并不能翻译成光纤协议，只是FC协议普遍采用光纤作为传输线缆而不是铜缆，因此很多人把FC称为光纤通道协议。在逻辑上，我们可以将FC看作是一种用于构造高性能信息传输的、双向的、点对点的串行数据通道。在物理上，FC是一到多对应的点对点的互连链路，每条链路终结于一个端口或转发器。FC的链路介质可以是光纤、双绞线或同轴电缆。</p><p>** FC光纤通道 ** ：用于计算机设备之间数据传输，传输率达到2G（将来会达到4G）。光纤通道用于服务器共享存储设备的连接，存储控制器和驱动器之间的内部连接。</p><h2 id="SCSI"><a href="#SCSI" class="headerlink" title="SCSI"></a>SCSI</h2><p>SCSI是小型计算机系统接口（Small Computer System Interface）的简称，于1979首次提出，是为小型机研制的一种接口技术，现在已完全普及到了小型机，高低端服务器以及普通PC上</p><p>iSCSI（互联网小型计算机系统接口）是一种在TCP/IP上进行数据块传输的标准。它是由Cisco和IBM两家发起的，并且得到了各大存储厂商的大力支持。iSCSI可以实现在IP网络上运行SCSI协议，使其能够在诸如高速千兆以太网上进行快速的数据存取备份操作。</p><p>FC协议由于其协议特性，网络建完后，加入新的存储子网时，必须要重新配置整个网络，这也是FC网络扩展的障碍。</p><h2 id="HBA"><a href="#HBA" class="headerlink" title="HBA"></a>HBA</h2><p>HBA的全称为Host Bus Adapter，即主机总线适配器。<br>a、总线适配器是个什么东西呢？<br>我们首先要了解一下主机的结构，一台计算机内部多半由两条总线串在起来(当然实际情况会有不同，这里只讨论常见的，简单的情况)，一条总线叫系统总线，一条叫I/O总线。系统总线上接了CPU，MEmory，cache什么的，I/O总线上接的就是外围设备，现如今最常见的就是PCI总线了。这两条总线之间用桥接的芯片或者说电路连接起来。举个形象的例子，就好比一个城市里，有两条主干道，一条属于行政区，一条属于商业区，中间有个环岛，将两条主干道连接到了一起，系统总线就好比行政区里的主干道，而I/O总线就好比商业区的主干道。系统总线和I/O总线的带宽的单位都是以Gbyte来记，但是显而易见的是，行政区的主干道和商业区的主干道相比的话，前者肯定更“核心”，更宽，更顺畅，设计的要求也高。<br>HBA就是指Host和I/O BUS直接的一个适配器，也好比一个水管工常说的“双通”。 </p><h2 id="lun"><a href="#lun" class="headerlink" title="lun"></a>lun</h2><p>   lun的全称是logical unit number，也就是逻辑单元号。我们知道scsi总线上可挂接的设备数量是有限的，一般为6个或者15个，我们可以用target ID(也有称为scsi id的)来描述这些设备，设备只要一加入系统，就有一个代号，我们在区别设备的时候,只要说几号几号就ok了。 </p><p>VOLUME = 分区 ≤ 主机设备管理器中的磁盘 = LUN ≤ RAID ≤ 存储设备中硬盘的总容量。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;存储笔记&quot;&gt;&lt;a href=&quot;#存储笔记&quot; class=&quot;headerlink&quot; title=&quot;存储笔记&quot;&gt;&lt;/a&gt;存储笔记&lt;/h1&gt;&lt;h2 id=&quot;nas&quot;&gt;&lt;a href=&quot;#nas&quot; class=&quot;headerlink&quot; title=&quot;nas&quot;&gt;&lt;/a&gt;na
+      
+    
+    </summary>
+    
+    
+      <category term="知识点总结" scheme="https://akaqin.github.io/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/"/>
+    
+    
+      <category term="storage" scheme="https://akaqin.github.io/tags/storage/"/>
+    
+  </entry>
   
   <entry>
     <title>计算机网络学习笔记（四）</title>

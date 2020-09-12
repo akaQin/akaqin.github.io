@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-    计算机网络学习笔记（四） |  akaQin&#39;s Blog
+    存储笔记 |  akaQin&#39;s Blog
   </title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   
@@ -36,7 +36,7 @@
   <div id="app">
     <main class="content">
       <section class="outer">
-  <article id="post-计算机网络学习笔记（四）" class="article article-type-post" itemscope
+  <article id="post-存储笔记" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -44,7 +44,7 @@
     <header class="article-header">
        
 <h1 class="article-title sea-center" style="border-left:0" itemprop="name">
-  计算机网络学习笔记（四）
+  存储笔记
 </h1>
   
 
@@ -53,8 +53,8 @@
 
     
     <div class="article-meta">
-      <a href="/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89/" class="article-date">
-  <time datetime="2020-09-12T15:14:48.000Z" itemprop="datePublished">2020-09-12</time>
+      <a href="/2020/09/12/%E5%AD%98%E5%82%A8%E7%AC%94%E8%AE%B0/" class="article-date">
+  <time datetime="2020-09-12T15:19:04.000Z" itemprop="datePublished">2020-09-12</time>
 </a>
       
   <div class="article-category">
@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">1.2k字</span>
+            <span class="post-count">1.3k字</span>
         </span>
     </span>
 
@@ -104,375 +104,20 @@
       
 
       
-      <h1 id="网络层"><a href="#网络层" class="headerlink" title="网络层"></a><strong>网络层</strong></h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><h3 id="两个平面"><a href="#两个平面" class="headerlink" title="两个平面"></a>两个平面</h3><ul>
-<li><p>数据平面</p>
-<ul>
-<li>从输入链路向其输出链路转发数据报</li>
-</ul>
-</li>
-<li><p>控制平面</p>
-<ul>
-<li>协调这些本地路由器的转发动作，使数据报沿着路径进行端到端传送</li>
-</ul>
-</li>
-</ul>
-<h3 id="两个功能"><a href="#两个功能" class="headerlink" title="两个功能"></a>两个功能</h3><ul>
-<li><p>转发</p>
-<ul>
-<li>将分组从一个输入链路接口转移到适当的输出链路接口的路由器本地动作</li>
-</ul>
-</li>
-<li><p>路由选择</p>
-<ul>
-<li>确定分组从源到目的地所采取的路径的网络范围处理过程</li>
-</ul>
-</li>
-</ul>
-<a id="more"></a>
-
-<h3 id="两种交换机"><a href="#两种交换机" class="headerlink" title="两种交换机"></a>两种交换机</h3><ul>
-<li><p>分组交换机</p>
-<ul>
-<li>一台通用分组交换设备，根据分组首部的值，从输入链路接口转移分组到输出链路接口</li>
-</ul>
-</li>
-<li><p>链路层交换机</p>
-<ul>
-<li>基于链路层帧中的字段值作出转发决定。</li>
-</ul>
-</li>
-</ul>
-<h2 id="路由器工作原理"><a href="#路由器工作原理" class="headerlink" title="路由器工作原理"></a>路由器工作原理</h2><h3 id="路由器体系结构"><a href="#路由器体系结构" class="headerlink" title="路由器体系结构"></a>路由器体系结构</h3><ul>
-<li><p>输入端口</p>
-</li>
-<li><p>交换结构</p>
-</li>
-<li><p>输出端口</p>
-</li>
-<li><p>路由选择处理器</p>
-</li>
-</ul>
-<h3 id="转发表的配置"><a href="#转发表的配置" class="headerlink" title="转发表的配置"></a>转发表的配置</h3><ul>
-<li><p>传统方法</p>
-<ul>
-<li>路由选择算法运行在每台路由器中</li>
-</ul>
-</li>
-<li><p>SDN方法</p>
-<ul>
-<li>通过远程控制器计算转发表并与路由器交互</li>
-</ul>
-</li>
-</ul>
-<h3 id="转发方式（输入端中）"><a href="#转发方式（输入端中）" class="headerlink" title="转发方式（输入端中）"></a>转发方式（输入端中）</h3><ul>
-<li><p>基于目的地转发</p>
-<ul>
-<li>按最长前缀匹配规则在转发表中查找输出端口</li>
-</ul>
-</li>
-</ul>
-<h3 id="交换方式"><a href="#交换方式" class="headerlink" title="交换方式"></a>交换方式</h3><ul>
-<li><p>经内存交换</p>
-<ul>
-<li>像操作系统中的I/O设备一样，通过中断方式发信号，将分组从输入端口复制到内存中，再复制到输出端口的缓存</li>
-</ul>
-</li>
-<li><p>经总线交换</p>
-<ul>
-<li>经一根共享总线将分组直接传送到输出端口</li>
-</ul>
-</li>
-<li><p>经互联网络交换</p>
-</li>
-</ul>
-<h3 id="排队与调度"><a href="#排队与调度" class="headerlink" title="排队与调度"></a>排队与调度</h3><ul>
-<li><p>何处出现排队</p>
-<ul>
-<li><p>输入排队</p>
-</li>
-<li><p>输出排队</p>
-</li>
-</ul>
-</li>
-<li><p>分组调度</p>
-<ul>
-<li><p>先进先出</p>
-</li>
-<li><p>优先权排队</p>
-</li>
-<li><p>循环和加权公平排队</p>
-</li>
-</ul>
-</li>
-</ul>
-<h2 id="网际协议"><a href="#网际协议" class="headerlink" title="网际协议"></a>网际协议</h2><h3 id="IPv4"><a href="#IPv4" class="headerlink" title="IPv4"></a>IPv4</h3><ul>
-<li><p>数据报格式</p>
-<ul>
-<li><p>版本</p>
-</li>
-<li><p>首部长度</p>
-<ul>
-<li>一般都是20字节</li>
-</ul>
-</li>
-<li><p>服务类型（TOS）</p>
-</li>
-<li><p>数据报长度</p>
-<ul>
-<li><p>指加上首部的总长度</p>
-</li>
-<li><p>最大65535字节</p>
-</li>
-<li><p>但一般不超过1500字节的以太网帧的载荷</p>
-</li>
-</ul>
-</li>
-<li><p>标识、标志、片偏移</p>
-</li>
-<li><p>寿命</p>
-</li>
-<li><p>协议</p>
-</li>
-<li><p>首部检验和</p>
-</li>
-<li><p>源和目的IP地址</p>
-</li>
-<li><p>选项</p>
-</li>
-<li><p>数据</p>
-</li>
-</ul>
-</li>
-<li><p>数据报分片</p>
-<ul>
-<li><p>将过大的数据报（IP分组）挤进链路层帧的有效载荷字段时，路由器会对它进行分片</p>
-</li>
-<li><p>组装工作由端系统处理，路由器不负责组装</p>
-</li>
-</ul>
-</li>
-<li><p>IPv4编址</p>
-<ul>
-<li><p>接口</p>
-<ul>
-<li><p>主机与物理链路之间的边界叫做接口</p>
-</li>
-<li><p>一个IP地址与一个接口相关联，而不是与包括该接口的主机或路由器相关联</p>
-</li>
-</ul>
-</li>
-<li><p>子网与</p>
-<ul>
-<li><p>子网</p>
-<ul>
-<li>a.b.c.d/x</li>
-</ul>
-</li>
-<li><p>子网掩码</p>
-</li>
-</ul>
-</li>
-<li><p>因特网地址分配策略</p>
-<ul>
-<li><p>无类别域间路由选择</p>
-</li>
-<li><p>地址聚合/路由聚合/路由摘要</p>
-<ul>
-<li>使用单个网络前缀通告多个网络的能力</li>
-</ul>
-</li>
-<li><p>分类编织</p>
-<ul>
-<li><p>A类网络</p>
-<ul>
-<li>a.b.c.d/8</li>
-</ul>
-</li>
-<li><p>B类网络</p>
-<ul>
-<li>a.b.c.d/16</li>
-</ul>
-</li>
-<li><p>C类网络</p>
-<ul>
-<li>a.b.c.d/24</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>广播地址</p>
-<ul>
-<li>255.255.255.255</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>获取IP的方式</p>
-<ul>
-<li><p>因特网名字和编号分配机构（ICANN）</p>
-</li>
-<li><p>向ISP申请</p>
-</li>
-<li><p>动态主机配置协议DHCP</p>
-<ul>
-<li><p>DHCP服务发现</p>
-</li>
-<li><p>DHCP服务器提供</p>
-</li>
-<li><p>DHCP请求</p>
-</li>
-<li><p>DHCP ACK</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>网络地址转换NAT</p>
-<ul>
-<li><p>专用网络</p>
-<ul>
-<li><p>24-bit block</p>
-<ul>
-<li>10.0.0.0 – 10.255.255.255</li>
-</ul>
-</li>
-<li><p>20-bit block</p>
-<ul>
-<li>172.16.0.0 – 172.31.255.255</li>
-</ul>
-</li>
-<li><p>16-bit block</p>
-<ul>
-<li>192.168.0.0 – 192.168.255.255</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>NAT转换表</p>
-</li>
-<li><p>弊端</p>
-<ul>
-<li><p>端口号是用于进程寻址的，而不是用于主机寻址的</p>
-</li>
-<li><p>路由器是网络层设备，应当处理只能达到网络层的分组。</p>
-</li>
-<li><p>NAT违反主机应当直接彼此对话这个原则，没有干涉节点修改IP地址</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="IPv6"><a href="#IPv6" class="headerlink" title="IPv6"></a>IPv6</h3><ul>
-<li><p>数据报格式</p>
-<ul>
-<li><p>扩大的地址容量128bit</p>
-</li>
-<li><p>简化高效的40字节首部</p>
-</li>
-<li><p>流标签</p>
-</li>
-<li><p>版本</p>
-</li>
-<li><p>流量类型</p>
-</li>
-<li><p>流标签</p>
-</li>
-<li><p>有效载荷长度</p>
-</li>
-<li><p>下一个首部</p>
-</li>
-<li><p>跳限制</p>
-</li>
-<li><p>源地址和目的地址</p>
-</li>
-<li><p>数据</p>
-</li>
-</ul>
-</li>
-<li><p>v6中不存在的内容</p>
-<ul>
-<li><p>数据报分片</p>
-</li>
-<li><p>首部校验和</p>
-</li>
-<li><p>选项</p>
-</li>
-</ul>
-</li>
-<li><p>v4迁移v6的方法</p>
-<ul>
-<li>建隧道</li>
-</ul>
-</li>
-</ul>
-<h2 id="通用转发"><a href="#通用转发" class="headerlink" title="通用转发"></a>通用转发</h2><h3 id="匹配"><a href="#匹配" class="headerlink" title="匹配"></a>匹配</h3><ul>
-<li><p>能够对协议栈的多个首部字段进行“匹配”，这些首部字段是与不同层次的不同协议相关联</p>
-<ul>
-<li><p>入端口</p>
-</li>
-<li><p>链路层</p>
-<ul>
-<li><p>源MAC</p>
-</li>
-<li><p>目的MAC</p>
-</li>
-<li><p>以太网类型</p>
-</li>
-<li><p>VLAN ID</p>
-</li>
-<li><p>VLAN 优先权</p>
-</li>
-</ul>
-</li>
-<li><p>网络层</p>
-<ul>
-<li><p>IP源</p>
-</li>
-<li><p>IP目的</p>
-</li>
-<li><p>IP协议</p>
-</li>
-<li><p>IP TOS</p>
-</li>
-</ul>
-</li>
-<li><p>运输层</p>
-<ul>
-<li><p>TCP/UDP源端口</p>
-</li>
-<li><p>TCP/UDP目的端口</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="动作"><a href="#动作" class="headerlink" title="动作"></a>动作</h3><ul>
-<li><p>将分组转发到一个或多个输出端口</p>
-</li>
-<li><p>跨越多个通向服务的离开接口进行负载均衡分组</p>
-</li>
-<li><p>重写首部值</p>
-</li>
-<li><p>有意识地阻挡/丢弃某个分组</p>
-</li>
-<li><p>为进一步处理和动作而向某个特定的服务器发送一个分组</p>
-</li>
-</ul>
-<h3 id="使用分组交换机"><a href="#使用分组交换机" class="headerlink" title="使用分组交换机"></a>使用分组交换机</h3><ul>
-<li>而不是第三层“路由器”或第二层“交换机”</li>
-</ul>
-<h3 id="匹配加动作转发表——流表"><a href="#匹配加动作转发表——流表" class="headerlink" title="匹配加动作转发表——流表"></a>匹配加动作转发表——流表</h3><ul>
-<li><p>首部字段值的结合</p>
-</li>
-<li><p>计数器集合</p>
-</li>
-<li><p>当分组匹配流表项时所采取的动作集合</p>
-</li>
-</ul>
+      <h1 id="存储笔记"><a href="#存储笔记" class="headerlink" title="存储笔记"></a>存储笔记</h1><h2 id="nas"><a href="#nas" class="headerlink" title="nas"></a>nas</h2><p>NAS本身可以做为一台网络设备</p>
+<h2 id="san"><a href="#san" class="headerlink" title="san"></a>san</h2><p>SAN是一种传输协议,它比NAS更低层面上存储技术,它并不关心通道上传输的是哪种操作系统.<br>SAN是关联存储设备和服务器的网络，它和以太网有类似的架构。</p>
+<h3 id="fcsan"><a href="#fcsan" class="headerlink" title="fcsan"></a>fcsan</h3><p> <code>FC SAN</code>是采用光纤信道的SAN，也就是服务器透过光纤信道卡（FC HBA），连接光纤交换器（FC Switch），再连接后端的存储设备。<br> <code>FC SAN</code>是按块协议(Block Protocal)的传输方式,所以传输速度快,但是造价比较贵,随着客户端的数量增加,造价也随着上升;所以一般在大型网络的核心上都采用的<code>FC SAN</code>的存储结构; </p>
+<h3 id="IP-SAN"><a href="#IP-SAN" class="headerlink" title="IP SAN"></a>IP SAN</h3><p>随着以太网技术的发展,使IP SAN对SAN技术进一步的拓展, IP SAN降低了<code>FC SAN</code>的光纤造价.直接在IP网络上进行存储..而且实施起来更容易.<br>IP SAN和<code>FC SAN</code>一样,都是按块协议(Block Protocal) 的传输方式;</p>
+<h3 id="iSCSI-SAN"><a href="#iSCSI-SAN" class="headerlink" title="iSCSI SAN"></a>iSCSI SAN</h3><p>  iSCSI 可以算IP SAN发展的第三个里程碑, iSCSI是SCSI over IP的一项重要成就，使用IP技术代替FC对SCSI进行封装,它是由IBM与CISCO共同开发的协议标准，是一个供硬件设备使用的可以在IP协议的上层运行的SCSI指令集。iSCSI协议整合了存储和IP网络，使得通过IP网络完成存储数据块的传输成为现实。使其能够在诸如高速千兆以太网上进行路由选择。现在有向10G以太网发展的趋势.</p>
+<h2 id="FC协议"><a href="#FC协议" class="headerlink" title="FC协议"></a>FC协议</h2><p>光纤通道协议（Fibre Channel Protocol，FCP）是一种类似于TCP的传输协议，大多用于在光纤通道上传输SCSI命令。</p>
+<p>FC协议其实并不能翻译成光纤协议，只是FC协议普遍采用光纤作为传输线缆而不是铜缆，因此很多人把FC称为光纤通道协议。在逻辑上，我们可以将FC看作是一种用于构造高性能信息传输的、双向的、点对点的串行数据通道。在物理上，FC是一到多对应的点对点的互连链路，每条链路终结于一个端口或转发器。FC的链路介质可以是光纤、双绞线或同轴电缆。</p>
+<p>** FC光纤通道 ** ：用于计算机设备之间数据传输，传输率达到2G（将来会达到4G）。光纤通道用于服务器共享存储设备的连接，存储控制器和驱动器之间的内部连接。</p>
+<h2 id="SCSI"><a href="#SCSI" class="headerlink" title="SCSI"></a>SCSI</h2><p>SCSI是小型计算机系统接口（Small Computer System Interface）的简称，于1979首次提出，是为小型机研制的一种接口技术，现在已完全普及到了小型机，高低端服务器以及普通PC上</p>
+<p>iSCSI（互联网小型计算机系统接口）是一种在TCP/IP上进行数据块传输的标准。它是由Cisco和IBM两家发起的，并且得到了各大存储厂商的大力支持。iSCSI可以实现在IP网络上运行SCSI协议，使其能够在诸如高速千兆以太网上进行快速的数据存取备份操作。</p>
+<p>FC协议由于其协议特性，网络建完后，加入新的存储子网时，必须要重新配置整个网络，这也是FC网络扩展的障碍。</p>
+<h2 id="HBA"><a href="#HBA" class="headerlink" title="HBA"></a>HBA</h2><p>HBA的全称为Host Bus Adapter，即主机总线适配器。<br>a、总线适配器是个什么东西呢？<br>我们首先要了解一下主机的结构，一台计算机内部多半由两条总线串在起来(当然实际情况会有不同，这里只讨论常见的，简单的情况)，一条总线叫系统总线，一条叫I/O总线。系统总线上接了CPU，MEmory，cache什么的，I/O总线上接的就是外围设备，现如今最常见的就是PCI总线了。这两条总线之间用桥接的芯片或者说电路连接起来。举个形象的例子，就好比一个城市里，有两条主干道，一条属于行政区，一条属于商业区，中间有个环岛，将两条主干道连接到了一起，系统总线就好比行政区里的主干道，而I/O总线就好比商业区的主干道。系统总线和I/O总线的带宽的单位都是以Gbyte来记，但是显而易见的是，行政区的主干道和商业区的主干道相比的话，前者肯定更“核心”，更宽，更顺畅，设计的要求也高。<br>HBA就是指Host和I/O BUS直接的一个适配器，也好比一个水管工常说的“双通”。 </p>
+<h2 id="lun"><a href="#lun" class="headerlink" title="lun"></a>lun</h2><p>   lun的全称是logical unit number，也就是逻辑单元号。我们知道scsi总线上可挂接的设备数量是有限的，一般为6个或者15个，我们可以用target ID(也有称为scsi id的)来描述这些设备，设备只要一加入系统，就有一个代号，我们在区别设备的时候,只要说几号几号就ok了。 </p>
+<p>VOLUME = 分区 ≤ 主机设备管理器中的磁盘 = LUN ≤ RAID ≤ 存储设备中硬盘的总容量。</p>
 
       
       <!-- reward -->
@@ -542,14 +187,14 @@
     <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://akaqin.github.io/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89/" alt="微信分享二维码">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://akaqin.github.io/2020/09/12/%E5%AD%98%E5%82%A8%E7%AC%94%E8%AE%B0/" alt="微信分享二维码">
     </div>
 </div>
 
 <div id="share-mask"></div>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/network/" rel="tag">network</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/storage/" rel="tag">storage</a></li></ul>
 
 
     </footer>
@@ -560,19 +205,10 @@
   
   <nav class="article-nav">
     
-      <a href="/2020/09/12/%E5%AD%98%E5%82%A8%E7%AC%94%E8%AE%B0/" class="article-nav-link">
-        <strong class="article-nav-caption">上一篇</strong>
-        <div class="article-nav-title">
-          
-            存储笔记
-          
-        </div>
-      </a>
     
-    
-      <a href="/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%89%EF%BC%89/" class="article-nav-link">
+      <a href="/2020/09/12/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E5%9B%9B%EF%BC%89/" class="article-nav-link">
         <strong class="article-nav-caption">下一篇</strong>
-        <div class="article-nav-title">计算机网络学习笔记（三）</div>
+        <div class="article-nav-title">计算机网络学习笔记（四）</div>
       </a>
     
   </nav>
