@@ -45,13 +45,13 @@
     
   <div class="cover-frame">
     <div class="bg-box">
-      <img src="/images/cover3.jpg" alt="image frame" />
+      <img src="/images/eminem.jpg" alt="image frame" />
     </div>
     <div class="cover-inner text-center text-white">
       <h1><a href="/">akaQin&#39;s Blog</a></h1>
       <div id="subtitle-box">
         
-        <span id="subtitle"></span>
+          <span id="subtitle"></span>
         
       </div>
       <div>
@@ -65,8 +65,6 @@
 </section>
 
 
-
-<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js"></script>
 
 <div id="main">
   <section class="outer">
@@ -111,36 +109,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h2><p>Go语言的自动圾收集器是如何知道一个变量是何时可以被回收的呢?这里我们可以避开 完整的技术细节，基本的实现思路是，从每个包级的变量和每个当前运行函数的每一个局部 变量开始，通过指针或引用的访问路径遍历，是否可以找到该变量。如果不存在这样的访问 路径，那么说明该变量是不可达的，也就是说它是否存在并不会影响程序后续的计算结果。<br>因为一个变量的有效周期只取决于是否可达，因此一个循环迭代内部的局部变量的生命周期 可能超出其局部作用域。同时，局部变量可能在函数返回之后依然存在。<br>编译器会自动选择在栈上还是在堆上分配局部变量的存储空间，但可能令人惊讶的是，这个 选择并不是由用var还是new声明变量的方式决定的。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> global *<span class="keyword">int</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> x <span class="keyword">int</span></span><br><span class="line">    x=<span class="number">1</span></span><br><span class="line">    global = &amp;x</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">g</span><span class="params">()</span></span> &#123;</span><br><span class="line">    y := <span class="built_in">new</span>(<span class="keyword">int</span>)</span><br><span class="line">    *y = <span class="number">1</span></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-
-<p>f函数里的x变量必须在堆上分配，因为它在函数退出后依然可以通过包一级的global变量找 到，虽然它是在函数内部定义的;用Go语言的术语说，这个x局部变量从函数f中逃逸了。相 反，当g函数返回时，变量 *y 将是不可达的，也就是说可以马上被回收的。因此，*y 并没 有从函数g中逃逸，编译器可以选择在栈上分配 *y 的存储空间(也可以选择在堆上分 配，然后由Go语言的GC回收这个变量的内存空间)，虽然这里用的是new方式。其实在任何 时候，你并不需为了编写正确的代码而要考虑变量的逃逸行为，要记住的是，逃逸的变量需 要额外分配内存，同时对性能的优化可能会产生细微的影响。</p>
-<p>Go语言的自动垃圾收集器对编写正确的代码是一个巨大的帮助，但也并不是说你完全不用考 虑内存了。你虽然不需要显式地分配和释放内存，但是要编写高效的程序你依然需要了解变 量的生命周期。例如，如果将指向短生命周期对象的指针保存到具有长生命周期的对象中， 特别是保存到全局变量时，会阻止对短生命周期对象的垃圾回收(从而可能影响程序的性能)。</p>
-<h2 id="生命周期与作用域"><a href="#生命周期与作用域" class="headerlink" title="生命周期与作用域"></a>生命周期与作用域</h2><p>不要将作用域和生命周期混为一谈。声明语句的作用域对应的是一个源代码的文本区域;它 是一个编译时的属性。一个变量的生命周期是指程序运行时变量存在的有效时间段，在此时 间区域内它可以被程序的其他部分引用;是一个运行时的概念。</p>
-<h2 id="字符串与字节Slice"><a href="#字符串与字节Slice" class="headerlink" title="字符串与字节Slice"></a>字符串与字节Slice</h2><p>一个字符串是包含的只读字节数组，一旦创建，是不可变的。相比之下，一个字节slice的元 素则可以自由地修改。</p>
-<p>字符串和字节slice之间可以相互转换:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">s := <span class="string">"abc"</span></span><br><span class="line">b := []<span class="keyword">byte</span>(s)</span><br><span class="line">s2 := <span class="keyword">string</span>(b)</span><br></pre></td></tr></table></figure>
-<p>从概念上讲，一个[]byte(s)转换是分配了一个新的字节数组用于保存字符串数据的拷贝，然后 引用这个底层的字节数组。编译器的优化可以避免在一些场景下分配和复制字符串数据，但 总的来说需要确保在变量b被修改的情况下，原始的s字符串也不会改变。将一个字节slice转 到字符串的string(b)操作则是构造一个字符串拷贝，以确保s2字符串是只读的。</p>
-<h2 id="数组和切片Slice"><a href="#数组和切片Slice" class="headerlink" title="数组和切片Slice"></a>数组和切片Slice</h2><p>slice和数组的字面值 语法很类似，它们都是用花括弧包含一系列的初始化元素，但是对于slice并没有指明序列的 长度。这会隐式地创建一个合适大小的数组，然后slice的指针指向底层的数组。就像数组字面值一样，slice的字面值也可以按顺序指定初始化值序列，或者是通过索引和元素值指定，或者的两种风格的混合语法初始化。</p>
-<p>和数组不同的是，<strong>slice之间不能比较</strong>，因此我们不能使用==操作符来判断两个slice是否含有 全部相等元素。不过标准库提供了高度优化的bytes.Equal函数来判断两个字节型slice是否相 等([]byte)，但是对于其他类型的slice，我们必须自己展开每个元素进行比较:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">equal</span><span class="params">(x, y []<span class="keyword">string</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(x) != <span class="built_in">len</span>(y) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> i := <span class="keyword">range</span> x &#123;</span><br><span class="line">        <span class="keyword">if</span> x[i] != y[i] &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上面关于两个slice的深度相等测试，运行的时间并不比支持==操作的数组或字符串更多，但 是为何slice不直接支持比较运算符呢?这方面有两个原因。第一个原因，一个slice的元素是 间接引用的，一个slice甚至可以包含自身。虽然有很多办法处理这种情形，但是没有一个是 简单有效的。</p>
-<p>第二个原因，因为slice的元素是间接引用的，一个固定值的slice在不同的时间可能包含不同 的元素，因为底层数组的元素可能会被修改。并且Go语言中map等哈希表之类的数据结构的 key只做简单的浅拷贝，它要求在整个声明周期中相等的key必须对相同的元素。对于像指针 或chan之类的引用类型，==相等测试可以判断两个是否是引用相同的对象。一个针对slice的 浅相等测试的==操作符可能是有一定用处的，也能临时解决map类型的key问题，但是slice和 数组不同的相等测试行为会让人困惑。因此，安全的做法是直接禁止slice之间的比较操作。<br>slice唯一合法的比较操作是和nil比较，例如:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> summer == <span class="literal">nil</span> &#123; <span class="comment">/* ... */</span> &#125;</span><br></pre></td></tr></table></figure>
-<p> 一个零值的slice等于nil。一个nil值的slice并没有底层数组。一个nil值的slice的长度和容量都 是0，但是也有非nil值的slice的长度和容量也是0的，例如[]int{}或make([]int, 3)[3:]。</p>
-
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -202,23 +170,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>Given a string, find the length of the <strong>longest substring</strong> without repeating characters.</p>
-<p><strong>Example 1:</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: &quot;abcabcbb&quot;</span><br><span class="line">Output: 3</span><br><span class="line">Explanation: The answer is &quot;abc&quot;, with the length of 3.</span><br></pre></td></tr></table></figure>
-      
-      <a class="article-more-link" href="/2018/10/29/arts-12/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -280,24 +231,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>You are given two <strong>non-empty</strong> linked lists representing two non-negative integers. The digits are stored in <strong>reverse order</strong> and each of their nodes contain a single digit. Add the two numbers and return it as a linked list.</p>
-<p>You may assume the two numbers do not contain any leading zero, except the number 0 itself.</p>
-<p><strong>Example:</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: (2 -&gt; 4 -&gt; 3) + (5 -&gt; 6 -&gt; 4)</span><br><span class="line">Output: 7 -&gt; 0 -&gt; 8</span><br><span class="line">Explanation: 342 + 465 &#x3D; 807.</span><br></pre></td></tr></table></figure>
-      
-      <a class="article-more-link" href="/2018/10/16/arts-11/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -359,31 +292,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>Given an integer array <code>nums</code>, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.</p>
-<p><strong>Example:</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Input: [-2,1,-3,4,-1,2,1,-5,4],</span><br><span class="line">Output: 6</span><br><span class="line">Explanation: [4,-1,2,1] has the largest sum &#x3D; 6.</span><br></pre></td></tr></table></figure>
-
-<p><strong>Follow up:</strong></p>
-<p>If you have figured out the O(<em>n</em>) solution, try coding another solution using the divide and conquer approach, which is more subtle.</p>
-<p><strong>Summary:</strong></p>
-<p>想问题没有思路时可以试着把负责的问题简单化，比如这道题求<code>maxSubArray(int A[], int i, int j)</code>，我们可以简化成求<code>maxSubArray(int A[], int i)</code>，也就是<code>A[0:i ]</code>——以A[0]开头A[i]结尾的最大子集，然后再观察总结，我们得出：</p>
-<blockquote>
-<p>maxSubArray(A, i) = maxSubArray(A, i - 1) &gt; 0 ? maxSubArray(A, i - 1) : 0 + A[i];</p>
-</blockquote>
-      
-      <a class="article-more-link" href="/2018/10/07/arts-10/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -445,26 +353,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>The count-and-say sequence is the sequence of integers with the first five terms as following:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1.     1</span><br><span class="line">2.     11</span><br><span class="line">3.     21</span><br><span class="line">4.     1211</span><br><span class="line">5.     111221</span><br></pre></td></tr></table></figure>
-
-<p><code>1</code> is read off as <code>&quot;one 1&quot;</code> or <code>11</code>.<br><code>11</code> is read off as <code>&quot;two 1s&quot;</code> or <code>21</code>.<br><code>21</code> is read off as <code>&quot;one 2</code>, then <code>one 1&quot;</code> or <code>1211</code>.</p>
-<p>Given an integer <em>n</em> where 1 ≤ <em>n</em> ≤ 30, generate the <em>n</em> th term of the count-and-say sequence.</p>
-<p>Note: Each term of the sequence of integers will be represented as a string.</p>
-      
-      <a class="article-more-link" href="/2018/10/06/arts-9/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -526,30 +414,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <ol>
-<li><p>Git无法使用，原因是每次大版本升级后，CommandLineTools回被卸载，而Git这种命令行工具依赖于CommandLineTools，解决方案是重新安装CommandLineTools。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcode-select --install</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>gcc编译文件时找不到头文件，报类似于 stdio.h file not found 的错误，具体情况可以看<a href="https://stackoverflow.com/questions/52509602/cant-compile-c-program-on-a-mac-after-upgrade-to-mojave" target="_blank" rel="noopener">StackOverflow</a>上这个提问。解决方案是使用brew安装或升级gcc最新版本，并在你的IDE中配置它，这里给出CLion的<a href="https://www.jetbrains.com/help/clion/how-to-switch-compilers-in-clion.html" target="_blank" rel="noopener">配置教程</a>。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew install gcc</span><br><span class="line">brew upgrade gcc</span><br></pre></td></tr></table></figure>
-
-
-
-</li>
-</ol>
-<p>如果你遇到了一些其他问题，欢迎给我留言讨论。</p>
-
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -611,24 +475,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>Given a sorted array <em>nums</em>, remove the duplicates <a href="https://en.wikipedia.org/wiki/In-place_algorithm" target="_blank" rel="noopener"><strong>in-place</strong></a> such that each element appear only <em>once</em> and return the new length.</p>
-<p>Do not allocate extra space for another array, you must do this by <strong>modifying the input array in-place</strong> with O(1) extra memory.</p>
-<p><strong>Example 1:</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Given nums &#x3D; [1,1,2],</span><br><span class="line"></span><br><span class="line">Your function should return length &#x3D; 2, with the first two elements of nums being 1 and 2 respectively.</span><br><span class="line"></span><br><span class="line">It doesn&#39;t matter what you leave beyond the returned length.</span><br></pre></td></tr></table></figure>
-      
-      <a class="article-more-link" href="/2018/10/03/arts-8/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -690,26 +536,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h1 id="异步网络模型"><a href="#异步网络模型" class="headerlink" title="异步网络模型"></a>异步网络模型</h1><p>异步网络模型在服务开发中应用非常广泛，相关资料和开源库也非常多。项目中，使用现成的轮子提高了开发效率，除了能使用轮子，还是有必要了解一下轮子的内部构造。</p>
-<p>这篇文章从最基础的5种I/O模型切入，到I/O事件处理模型，再到并发模式，最后以Swoole开源库来做具体分析，逐步深入。文中提到的模型都是一些通用的模型，在《linux高性能服务器编程》中也都有涉及。文章不涉及模型的实现细节，最重要的是去理解各个模型的工作模式以及其优缺点。</p>
-<p>读后感：</p>
-<p>所谓异步：</p>
-<p>1.(fd)阻塞调用 + select/pool, epool  （IO事件通知方式：IO复用）</p>
-<p>2.(fd)非阻塞调用 + SIGIO （IO事件通知方式：SIGIO 信号）</p>
-      
-      <a class="article-more-link" href="/2018/09/24/%E5%BC%82%E6%AD%A5%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -771,23 +597,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>Merge two sorted linked lists and return it as a new list. The new list should be made by splicing together the nodes of the first two lists.</p>
-<p><strong>Example:</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: 1-&gt;2-&gt;4, 1-&gt;3-&gt;4</span><br><span class="line">Output: 1-&gt;1-&gt;2-&gt;3-&gt;4-&gt;4</span><br></pre></td></tr></table></figure>
-      
-      <a class="article-more-link" href="/2018/09/23/arts-7/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -849,35 +658,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="Algorithm"><a href="#Algorithm" class="headerlink" title="Algorithm"></a>Algorithm</h2><p>Given a string containing just the characters <code>&#39;(&#39;</code>, <code>&#39;)&#39;</code>, <code>&#39;{&#39;</code>, <code>&#39;}&#39;</code>, <code>&#39;[&#39;</code> and <code>&#39;]&#39;</code>, determine if the input string is valid.</p>
-<p>An input string is valid if:</p>
-<ol>
-<li>Open brackets must be closed by the same type of brackets.</li>
-<li>Open brackets must be closed in the correct order.</li>
-</ol>
-<p>Note that an empty string is also considered valid.</p>
-<p><strong>Example 1:</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: &quot;()&quot;</span><br><span class="line">Output: true</span><br></pre></td></tr></table></figure>
-
-<p><strong>Example 2:</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: &quot;()[]&#123;&#125;&quot;</span><br><span class="line">Output: true</span><br></pre></td></tr></table></figure>
-
-<p><strong>Example 3:</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input: &quot;(]&quot;</span><br><span class="line">Output: false</span><br></pre></td></tr></table></figure>
-      
-      <a class="article-more-link" href="/2018/09/16/arts-6/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -1047,21 +827,6 @@
 
 
 
-
-<script>
-  try {
-    var typed = new Typed("#subtitle", {
-    strings: ['Look, if you had one shot or one opportunity','To seize everything you ever wanted in one moment','Would you capture it, or just let it slip? Yo'],
-    startDelay: 0,
-    typeSpeed: 400,
-    loop: false,
-    backSpeed: 200,
-    showCursor: true
-    });
-  } catch (err) {
-  }
-  
-</script>
 
 
 

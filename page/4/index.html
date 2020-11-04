@@ -45,13 +45,13 @@
     
   <div class="cover-frame">
     <div class="bg-box">
-      <img src="/images/cover3.jpg" alt="image frame" />
+      <img src="/images/eminem.jpg" alt="image frame" />
     </div>
     <div class="cover-inner text-center text-white">
       <h1><a href="/">akaQin&#39;s Blog</a></h1>
       <div id="subtitle-box">
         
-        <span id="subtitle"></span>
+          <span id="subtitle"></span>
         
       </div>
       <div>
@@ -65,8 +65,6 @@
 </section>
 
 
-
-<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js"></script>
 
 <div id="main">
   <section class="outer">
@@ -111,27 +109,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="文件描述符"><a href="#文件描述符" class="headerlink" title="文件描述符"></a>文件描述符</h2><p>对于内核而言，所有打开的文件都通过文件描述符引用。文件描述符是一个非负整数。当打开一个现有文件或创建一个新文件时，内核向进程返回一个文件描述符。</p>
-<ul>
-<li>0 - STDIN_FILENO - 标准输入</li>
-<li>1 - STDOUT_FILENO - 标准输出</li>
-<li>2 - STDERR_FILENO - 标准错误</li>
-</ul>
-<h2 id="不带缓冲的I-O函数"><a href="#不带缓冲的I-O函数" class="headerlink" title="不带缓冲的I/O函数"></a>不带缓冲的I/O函数</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">open</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">int</span> oflag, ...<span class="comment">/* mode_t mode */</span>)</span></span>; <span class="comment">//打开或创建一个文件</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">openat</span> <span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">int</span> oflag, ...<span class="comment">/* mode_t mode */</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">creat</span> <span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *path, <span class="keyword">mode_t</span> mode)</span></span>; <span class="comment">//创建一个文件</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">close</span> <span class="params">(<span class="keyword">int</span> fd)</span></span>; <span class="comment">//关闭一个文件</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">off_t</span> <span class="title">lseek</span> <span class="params">(<span class="keyword">int</span> fd, <span class="keyword">off_t</span> offset, <span class="keyword">int</span> whence)</span></span>; <span class="comment">//设置偏移量</span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">read</span> <span class="params">(<span class="keyword">int</span> fd, <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> nbytes)</span></span>; <span class="comment">//读</span></span><br><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">write</span> <span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> nbytes)</span></span>; <span class="comment">//写</span></span><br></pre></td></tr></table></figure>
-      
-      <a class="article-more-link" href="/2019/09/11/%E3%80%8AAPUE%E3%80%8Bch3%E2%80%94%E2%80%94%E6%96%87%E4%BB%B6I-O/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -193,23 +170,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="UNIX标准化"><a href="#UNIX标准化" class="headerlink" title="UNIX标准化"></a>UNIX标准化</h2><h3 id="ISO-C"><a href="#ISO-C" class="headerlink" title="ISO C"></a>ISO C</h3><p>ISO（国际标准化组织） C标准的意图是提供C程序的可移植性，使其能适合于大量不同的操作系统，而不只是适合UNIX系统。此标准不仅定了C程序设计语言的语法和语义，还定义了其标准库。</p>
-<h3 id="IEEE-POSIX"><a href="#IEEE-POSIX" class="headerlink" title="IEEE POSIX"></a>IEEE POSIX</h3><p>POSIX是由IEEE（电气和电子工程师学会）指定的标准族。POSIX指的是可移植操作系统接口。</p>
-<h3 id="Single-UNIX-Specification"><a href="#Single-UNIX-Specification" class="headerlink" title="Single UNIX Specification"></a>Single UNIX Specification</h3><p>Single UNIX Specification（SUS，单一UNIX规范）是POSIX.1标准的一个超集，它定义了一些附加接口扩展了POSIX.1规范提供的功能。POSIX.1相当于Single UNIX Specification中的基本规范部分。</p>
-      
-      <a class="article-more-link" href="/2019/08/27/%E3%80%8AAPUE%E3%80%8Bch2%E2%80%94%E2%80%94UNIX%E6%A0%87%E5%87%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -271,21 +231,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="UNIX-体系结构"><a href="#UNIX-体系结构" class="headerlink" title="UNIX 体系结构"></a>UNIX 体系结构</h2><p>严格意义上说，可将操作系统定义为一种软件，它控制计算机硬件资源，提供程序运行环境。我们称这种软件为内核，内核的接口被称为 <strong>系统调用（system call）</strong>。<br>广义上说，操作系统包括了内核和一些其他软件，这些软件使得计算机能够发挥作用，使其具有自己的特性。这里说的软件包括系统实用程序、应用程序、shell以及公用函数库等。<br>例如，Linux是GNU操作系统使用的内核。<br><img src="1-1.png" alt=""></p>
-      
-      <a class="article-more-link" href="/2019/08/13/%E3%80%8AAPUE%E3%80%8Bch1%E2%80%94%E2%80%94UNIX%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -347,22 +292,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>关于最近的问题：</p>
-<p>1、要解决问题，首先得学会分析一个问题具体出在哪个环节，越细越好</p>
-<p>2、每个人都有犯错的机会，但是犯同类的错误会降低别人对你的信任，一定要会反思</p>
-<p>3、你对每一个问题的责任心和态度都会有人记在心上，尽量给每个关注问题的人及时的反馈</p>
-
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -424,22 +353,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="register"><a href="#register" class="headerlink" title="register"></a>register</h2><h3 id="含义："><a href="#含义：" class="headerlink" title="含义："></a>含义：</h3><p>这个关键字暗示编译器相应的变量将被频繁地使用，如果可能的话尽可能的将变量存在CPU内部寄存器中，而不是通过内存寻址访问，以提高效率。注意是尽可能，不是绝对。</p>
-<h3 id="补充："><a href="#补充：" class="headerlink" title="补充："></a>补充：</h3><p>首先，register变量必须是能被CPU所接受的类型。这通常意味着register变量必须是一个单个的值，并且长度应该小于或者等于整型的长度。不过，有些机器的寄存器也能存放浮点数。</p>
-      
-      <a class="article-more-link" href="/2019/04/15/register%E3%80%81volatile%E3%80%81restrict%E5%92%8Cextern/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -501,22 +414,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <ul>
-<li>strlen计算不包含终止null字节的字符串长度，而sizeof则计算包括终止null字节的缓冲区长度</li>
-<li>strlen需要进行一次函数调用，而对于sizeof，缓冲区长度在编译时计算，是固定的</li>
-</ul>
-
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -578,40 +475,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h3 id="InnoDB与MyISAM区别："><a href="#InnoDB与MyISAM区别：" class="headerlink" title="InnoDB与MyISAM区别："></a>InnoDB与MyISAM区别：</h3><ul>
-<li><p>InnoDB支持事务，MyISAM不支持，对于InnoDB每一条SQL语言都默认封装成事务，自动提交，这样会影响速度，所以最好把多条SQL语言放在begin和commit之间，组成一个事务</p>
-</li>
-<li><p>InnoDB支持外键，而MyISAM不支持。对一个包含外键的InnoDB表转为MYISAM会失败</p>
-</li>
-<li><p>InnoDB是聚集索引，数据文件是和索引绑在一起的，必须要有主键，通过主键索引效率很高。但是辅助索引需要两次查询，先查询到主键，然后再通过主键查询到数据。因此，主键不应该过大，因为主键太大，其他索引也都会很大。而MyISAM是非聚集索引，数据文件是分离的，索引保存的是数据文件的指针。主键索引和辅助索引是独立的。</p>
-</li>
-<li><p>InnoDB不保存表的具体行数，执行select count(*) from table时需要全表扫描。而MyISAM用一个变量保存了整个表的行数，执行上述语句时只需要读出该变量即可，速度很快</p>
-</li>
-<li><p>Innodb不支持全文索引，而MyISAM支持全文索引，查询效率上MyISAM要高；</p>
-</li>
-</ul>
-<h3 id="如何选择："><a href="#如何选择：" class="headerlink" title="如何选择："></a>如何选择：</h3><ul>
-<li><p>是否要支持事务，如果要请选择innodb，如果不需要可以考虑MyISAM；</p>
-</li>
-<li><p>如果表中绝大多数都只是读查询，可以考虑MyISAM，如果既有读写也挺频繁，请使用InnoDB。</p>
-</li>
-<li><p>系统奔溃后，MyISAM恢复起来更困难，能否接受；</p>
-</li>
-</ul>
-      
-      <a class="article-more-link" href="/2019/03/01/MySQL%E7%9F%A5%E8%AF%86%E7%82%B9%E6%95%B4%E7%90%86/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -673,30 +536,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <p>说 HashTable 是PHP的灵魂，一点也不为过。在Zend引擎中，比如变量表、常量表、函数表、数组，以及资源管理、线程安全等，其实现都有HashTable的身影。HashTable 是一种查找性能极高的数据结构，理想情况下其算法复杂度是O(1)。</p>
-<h3 id="PHP-HashTable-概述"><a href="#PHP-HashTable-概述" class="headerlink" title="PHP HashTable 概述"></a>PHP HashTable 概述</h3><ul>
-<li>有两部分组成，Bucket 和 HashTable，而且均为结构体(struct)。</li>
-<li>Bucket 是存储数据的单元，用于保存具体的数据内容；HashTable 用于保存整个哈希表需要的基本信息。</li>
-<li>二者关系可以简单理解为：HashTable = Array(); HashTable[‘arBuckets’] = [Bucket1, Bucket2, Bucket3, …]。</li>
-<li>HashTable 的目的就是通过索引把每个Bucket元素分散到唯一的位置。</li>
-<li>PHP 内核通过HashTable 结构管理Bucket 数组。</li>
-<li>相比普通HashTable，PHP的HashTable同时维护一个双向链表。在HashTable.arBuckets 存储的是包含多个Bucket指针的向量，每个指针又指向一个双向链表(多个bucket组成)。</li>
-</ul>
-<h2 id="HashTable-源码展示"><a href="#HashTable-源码展示" class="headerlink" title="HashTable 源码展示"></a>HashTable 源码展示</h2><p>在Zend/zend_hash.h的line 55~83 中定义了结构体 Bucket 和 HashTable。注意 Bucket 和 HashTable 是别名，分别对应结构体 bucket 和 _hashtable。</p>
-      
-      <a class="article-more-link" href="/2019/02/23/PHP%E5%86%85%E6%A0%B8%E8%A7%A3%E6%9E%90HashTable/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -758,22 +597,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h3 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h3><p>​    最近准备将跑PHP5的老项目升PHP7，用的是CI2.x的框架，烂的一笔。主要障碍是php7删除了mysqli的相关函数，于是准备自己封装一个DAO层。看了一下主流的 <a href="https://github.com/doctrine/orm/" target="_blank" rel="noopener">doctrine/orm</a> ORM封装，发现用法特别繁琐，要在代码里描述每个表的每个字段：</p>
-<figure class="highlight php7"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">// src/Product.php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Product</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@var</span> int</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> $id;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@var</span> string</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">protected</span> $name;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getId</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getName</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setName</span><span class="params">($name)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;name = $name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-      <a class="article-more-link" href="/2019/01/08/ORM%E5%92%8CQueryBuilder%E5%93%AA%E4%B8%AA%E5%A5%BD/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -835,28 +658,6 @@
     
 
     
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <h2 id="Algorithim"><a href="#Algorithim" class="headerlink" title="Algorithim"></a>Algorithim</h2><p>Given a linked list, determine if it has a cycle in it.</p>
-<p>Follow up:<br>Can you solve it without using extra space?</p>
-<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><p><strong>Approach:1</strong></p>
-<p>Imagine two runners running on a track at different speed. What happens when the track is actually a circle?</p>
-<p>The space complexity can be reduced to O(1)O(1) by considering two pointers at <strong>different speed</strong> - a slow pointer and a fast pointer. The slow pointer moves one step at a time while the fast pointer moves two steps at a time.</p>
-<p>If there is no cycle in the list, the fast pointer will eventually reach the end and we can return false in this case.</p>
-<p>Now consider a cyclic list and imagine the slow and fast pointers are two runners racing around a circle track. The fast runner will eventually meet the slow runner. Why? Consider this case (we name it case A) - The fast runner is just one step behind the slow runner. In the next iteration, they both increment one and two steps respectively and meet each other.</p>
-<p>How about other cases? For example, we have not considered cases where the fast runner is two or three steps behind the slow runner yet. This is simple, because in the next or next’s next iteration, this case will be reduced to case A mentioned above.</p>
-      
-      <a class="article-more-link" href="/2018/11/12/arts-13/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
     
 
       <!-- copyright -->
@@ -1026,21 +827,6 @@
 
 
 
-
-<script>
-  try {
-    var typed = new Typed("#subtitle", {
-    strings: ['Look, if you had one shot or one opportunity','To seize everything you ever wanted in one moment','Would you capture it, or just let it slip? Yo'],
-    startDelay: 0,
-    typeSpeed: 400,
-    loop: false,
-    backSpeed: 200,
-    showCursor: true
-    });
-  } catch (err) {
-  }
-  
-</script>
 
 
 
