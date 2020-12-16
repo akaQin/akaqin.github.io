@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://akaqin.github.io/"/>
-  <updated>2020-09-12T15:26:07.902Z</updated>
+  <updated>2020-12-16T03:32:23.287Z</updated>
   <id>https://akaqin.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Kubernetes in action 读书笔记</title>
+    <link href="https://akaqin.github.io/2020/12/16/Kubernetes-in-action-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+    <id>https://akaqin.github.io/2020/12/16/Kubernetes-in-action-%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</id>
+    <published>2020-12-16T03:13:56.000Z</published>
+    <updated>2020-12-16T03:32:23.287Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Kubernetes简介"><a href="#Kubernetes简介" class="headerlink" title="Kubernetes简介"></a>Kubernetes简介</h1><p>大多数软件应用最初都是巨大的单体应用，以单进程运行或分散在多个物理机上的多个进程这样的形式运行。内部组件互相依赖，开发难，部署难，维护难。</p><h2 id="拆分微服务"><a href="#拆分微服务" class="headerlink" title="拆分微服务"></a>拆分微服务</h2><p>每个微服务作为独立组件开发、部署，减少组件间依赖。服务间通过同步协议（如HTTP）或异步协议（如AMQP）通信。无状态的组件可以横向扩容到多个机器的多个进程里，不能横向扩容的也可以通过给单节点加cpu、加内存进行纵向扩容。</p><p>微服务也有缺点，随着组件的增多，决策相互关联组件的部署方案以及管理组件的多版本外部依赖变得越来越难；部署时，需要将所有组件进行正确的配置；遇到故障时的问题定位也变得复杂。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;Kubernetes简介&quot;&gt;&lt;a href=&quot;#Kubernetes简介&quot; class=&quot;headerlink&quot; title=&quot;Kubernetes简介&quot;&gt;&lt;/a&gt;Kubernetes简介&lt;/h1&gt;&lt;p&gt;大多数软件应用最初都是巨大的单体应用，以单进程运行或分散在多
+      
+    
+    </summary>
+    
+    
+      <category term="《Kubernetes in action》笔记" scheme="https://akaqin.github.io/categories/%E3%80%8AKubernetes-in-action%E3%80%8B%E7%AC%94%E8%AE%B0/"/>
+    
+    
+      <category term="k8s" scheme="https://akaqin.github.io/tags/k8s/"/>
+    
+  </entry>
   
   <entry>
     <title>存储笔记</title>
