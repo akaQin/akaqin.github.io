@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">242字</span>
+            <span class="post-count">626字</span>
         </span>
     </span>
 
@@ -77,7 +77,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">1分钟</span>
+            <span class="post-count">2分钟</span>
         </span>
     </span>
 </div>
@@ -105,8 +105,24 @@
 
       
       <h1 id="Kubernetes简介"><a href="#Kubernetes简介" class="headerlink" title="Kubernetes简介"></a>Kubernetes简介</h1><p>大多数软件应用最初都是巨大的单体应用，以单进程运行或分散在多个物理机上的多个进程这样的形式运行。内部组件互相依赖，开发难，部署难，维护难。</p>
+<p>对一个组件的改动需要重新部署整个应用，随着时间流逝，组件间对硬性边界的缺乏会导致复杂性上升，并且因为组件间无限制的依赖增长，会导致整个系统的质量下降。</p>
 <h2 id="拆分微服务"><a href="#拆分微服务" class="headerlink" title="拆分微服务"></a>拆分微服务</h2><p>每个微服务作为独立组件开发、部署，减少组件间依赖。服务间通过同步协议（如HTTP）或异步协议（如AMQP）通信。无状态的组件可以横向扩容到多个机器的多个进程里，不能横向扩容的也可以通过给单节点加cpu、加内存进行纵向扩容。</p>
-<p>微服务也有缺点，随着组件的增多，决策相互关联组件的部署方案以及管理组件的多版本外部依赖变得越来越难；部署时，需要将所有组件进行正确的配置；遇到故障时的问题定位也变得复杂。</p>
+<p>微服务也有缺点，随着组件的增多，决策相互关联组件的部署方案以及管理组件的多版本外部依赖变得越来越难；部署时，需要将所有组件进行正确的配置；遇到故障时的问题定位也变得复杂；还需要处理不同环境问题。</p>
+<h2 id="持续交付：DevOps-和-NoOps"><a href="#持续交付：DevOps-和-NoOps" class="headerlink" title="持续交付：DevOps 和 NoOps"></a>持续交付：DevOps 和 NoOps</h2><p>开发者参与开发、部署、维护工作，然而开发者也并不了解也不想了解基础设施、底层架构的细节，也不想和运维团队打交道。</p>
+<p>所以Kubernetes诞生了，它抽象底层硬件并将它们暴露成一个可部署和运行应用的平台。让开发者不需要系统管理员的帮助就可以配置、部署他们的应用，让系统管理员专注于基础架构的正常运行，而不用了解上层运行的任何应用。</p>
+<h2 id="容器技术"><a href="#容器技术" class="headerlink" title="容器技术"></a>容器技术</h2><p>Docker 三个关键概念：镜像、容器、仓库。</p>
+<p>镜像是分层的，每层都是只读、且唯一的，可被多个镜像共享。这样带来两个好处：</p>
+<ol>
+<li><p>提高传输速度，已经存在的layer不会被传输</p>
+</li>
+<li><p>多个容器可以共享底层文件、libraries。写时复制——容器运行时在最上方有个可写层，要写底层的文件时，实际是在最上层写它的副本。</p>
+</li>
+</ol>
+<p><strong>注意</strong>：</p>
+<ul>
+<li>容器用的是host的内核</li>
+<li>镜像不能跨平台，但Mac对arm有支持。（如果跨平台，不Run命令也没关系）</li>
+</ul>
 
       
       <!-- reward -->
