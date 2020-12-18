@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://akaqin.github.io/"/>
-  <updated>2020-12-18T14:35:41.787Z</updated>
+  <updated>2020-12-18T15:23:43.008Z</updated>
   <id>https://akaqin.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一次踩坑记录——Go交叉编译</title>
+    <link href="https://akaqin.github.io/2020/12/18/%E4%B8%80%E6%AC%A1%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95%E2%80%94%E2%80%94Go%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91/"/>
+    <id>https://akaqin.github.io/2020/12/18/%E4%B8%80%E6%AC%A1%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95%E2%80%94%E2%80%94Go%E4%BA%A4%E5%8F%89%E7%BC%96%E8%AF%91/</id>
+    <published>2020-12-18T14:42:12.000Z</published>
+    <updated>2020-12-18T15:23:43.008Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>平常交叉编译代码:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">docker run --rm -it $ADD_HOST \</span><br><span class="line">-e &quot;GOOS&#x3D;$GOOS&quot; \</span><br><span class="line">-e &quot;GOARCH&#x3D;$GOARCH&quot; \</span><br><span class="line">-e &quot;INJECT_GO_VERSION_VAR&#x3D;$INJECT_GO_VERSION_VAR&quot; \</span><br><span class="line">-e &quot;INJECT_GO_OS_ARCH_VAR&#x3D;$INJECT_GO_OS_ARCH_VAR&quot; \</span><br><span class="line">-e &quot;LDFLAGS&#x3D;$LDFLAGS&quot; \</span><br><span class="line">-e &quot;BUILDFLAGS&#x3D;$BUILDFLAGS&quot; \</span><br><span class="line">-e &quot;CGO_ENABLED&#x3D;$CGO_ENABLED&quot; \</span><br><span class="line">-e &quot;GOPROXY&#x3D;$EICAS_PKGCACHE_GO&quot; \</span><br><span class="line">-e &quot;GOSUMDB&#x3D;sum.golang.google.cn&quot; \</span><br><span class="line">-e &quot;GONOPROXY&#x3D;$EICAS_GOPKG_DOMAIN&quot; \</span><br><span class="line">-e &quot;GONOSUMDB&#x3D;$EICAS_GOPKG_DOMAIN&quot; \</span><br><span class="line">-e &quot;GO111MODULE&#x3D;on&quot; \</span><br><span class="line">-w &#x2F;go&#x2F;src&#x2F;project \</span><br><span class="line">-v $SHARE_VOLUME_NAME:&#x2F;go \</span><br><span class="line">$GOLANG_IMAGE \</span><br><span class="line">&#x2F;go&#x2F;_go-compile_ &quot;$@&quot;</span><br><span class="line"></span><br><span class="line">go build $BUILDFLAGS -ldflags &quot;$LDFLAGS&quot; -o &quot;$OUT&quot; &quot;$MAIN&quot;</span><br></pre></td></tr></table></figure><p>存在交叉编译的情况时，cgo 工具是不可用的。在标准go命令的上下文环境中，交叉编译意味着程序构建环境的目标计算架构的标识与程序运行环境的目标计算架构的标识不同，或者程序构建环境的目标操作系统的标识与程序运行环境的目标操作系统的标识不同。</p><p>对接Ceph的块存储时，用到了<a href="https://github.com/ceph/go-ceph" target="_blank" rel="noopener">go-ceph</a>这个组件，里面用到了cgo库，于是想尝试静态链接，但里面有个包用到了<code>internal</code>关键字，无法导出，于是只能尝试分别在x86和arm架构上分别动态链接编译，然后在包含对应libraries的容器中运行。</p><p>参考资料：</p><p>CGO_ENABLE</p><p><a href="https://johng.cn/cgo-enabled-affect-go-static-compile/" target="_blank" rel="noopener">https://johng.cn/cgo-enabled-affect-go-static-compile/</a></p><p><a href="https://www.cnblogs.com/yongfengnice/p/11789651.html" target="_blank" rel="noopener">https://www.cnblogs.com/yongfengnice/p/11789651.html</a></p><p><a href="https://segmentfault.com/a/1190000013989448" target="_blank" rel="noopener">https://segmentfault.com/a/1190000013989448</a></p><p>Go 内部包 internal</p><p><a href="https://www.bitlogs.tech/2019/10/go%E8%AF%AD%E8%A8%80%E5%86%85%E9%83%A8%E5%8C%85internal/" target="_blank" rel="noopener">https://www.bitlogs.tech/2019/10/go%E8%AF%AD%E8%A8%80%E5%86%85%E9%83%A8%E5%8C%85internal/</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;起因&quot;&gt;&lt;a href=&quot;#起因&quot; class=&quot;headerlink&quot; title=&quot;起因&quot;&gt;&lt;/a&gt;起因&lt;/h2&gt;&lt;p&gt;平常交叉编译代码:&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gu
+      
+    
+    </summary>
+    
+    
+      <category term="踩坑记录" scheme="https://akaqin.github.io/categories/%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/"/>
+    
+    
+      <category term="Go" scheme="https://akaqin.github.io/tags/Go/"/>
+    
+  </entry>
   
   <entry>
     <title>Kubernetes in action 读书笔记</title>
