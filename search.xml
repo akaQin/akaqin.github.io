@@ -45,6 +45,13 @@
 <li>容器用的是host的内核</li>
 <li>镜像不能跨平台，但Mac对arm有支持。（如果跨平台，不Run命令也没关系）</li>
 </ul>
+<h2 id="理解Kubernetes的好处"><a href="#理解Kubernetes的好处" class="headerlink" title="理解Kubernetes的好处"></a>理解Kubernetes的好处</h2><ul>
+<li>简化应用部署</li>
+<li>更好的利用硬件资源</li>
+<li>健康检查和自我修复</li>
+<li>自动伸缩</li>
+<li>简化应用开发</li>
+</ul>
 ]]></content>
       <categories>
         <category>《Kubernetes in action》笔记</category>
