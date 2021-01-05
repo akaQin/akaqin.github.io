@@ -52,6 +52,25 @@
 <li>自动伸缩</li>
 <li>简化应用开发</li>
 </ul>
+<h1 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h1><h2 id="POD"><a href="#POD" class="headerlink" title="POD"></a>POD</h2><ul>
+<li>Pod内的容器共享各类资源（Network、UTS、IPC等）除了文件系统</li>
+<li>Pod内的容器有相同的还回网络接口</li>
+<li>Pod间通信直接使用对应的IP，无需NAT</li>
+<li>为pod起一个本地的端口代理<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl port-forward &lt;pod-name&gt; &lt;<span class="built_in">local</span>-port&gt;:&lt;pod-port&gt;</span><br></pre></td></tr></table></figure></li>
+<li>使用label筛选pod<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">kubectl get po -l creation_method=manual</span><br></pre></td></tr></table></figure></li>
+<li>namespaces是否提供网络隔离取决于k8s部署的网络方案</li>
+</ul>
+<h2 id="Replications-and-Others"><a href="#Replications-and-Others" class="headerlink" title="Replications and Others"></a>Replications and Others</h2><h3 id="健康检测"><a href="#健康检测" class="headerlink" title="健康检测"></a>健康检测</h3><ul>
+<li>K8s使用<code>liveness probes</code>和<code>readness probes</code>，<code>liveness probes</code>有三种方式：<ul>
+<li>HTTP GET probe</li>
+<li>TCP Socket probe</li>
+<li>Exec probe</li>
+</ul>
+</li>
+<li>要设置delay时间，避免刚启动就失败</li>
+<li>exit code 137 = 128 + 9(SIGKILL)</li>
+<li>exit code 143 = 128 + 15(SIGTERM)</li>
+</ul>
 ]]></content>
       <categories>
         <category>《Kubernetes in action》笔记</category>
