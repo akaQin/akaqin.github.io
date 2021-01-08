@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">830字</span>
+            <span class="post-count">903字</span>
         </span>
     </span>
 
@@ -77,7 +77,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">2分钟</span>
+            <span class="post-count">3分钟</span>
         </span>
     </span>
 </div>
@@ -148,6 +148,22 @@
 <li>要设置delay时间，避免刚启动就失败</li>
 <li>exit code 137 = 128 + 9(SIGKILL)</li>
 <li>exit code 143 = 128 + 15(SIGTERM)</li>
+</ul>
+<h3 id="ReplicationController"><a href="#ReplicationController" class="headerlink" title="ReplicationController"></a>ReplicationController</h3><ul>
+<li>组成<ul>
+<li>Pod selector</li>
+<li>Replicas count</li>
+<li>Pod template</li>
+</ul>
+</li>
+<li>好处<ul>
+<li>总是起新的pod代替旧的</li>
+<li>节点故障时，上面的pod调度到其他节点</li>
+<li>横向伸缩更简单</li>
+</ul>
+</li>
+<li>pod不与RC直接绑定，只通过label selector进行关联</li>
+<li>除了RC外的其他controller不允许修改label selector</li>
 </ul>
 
       
