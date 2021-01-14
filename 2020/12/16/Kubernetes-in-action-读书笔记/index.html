@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">903字</span>
+            <span class="post-count">992字</span>
         </span>
     </span>
 
@@ -164,6 +164,14 @@
 </li>
 <li>pod不与RC直接绑定，只通过label selector进行关联</li>
 <li>除了RC外的其他controller不允许修改label selector</li>
+</ul>
+<h3 id="ReplicaSet"><a href="#ReplicaSet" class="headerlink" title="ReplicaSet"></a>ReplicaSet</h3><ul>
+<li>标签选择功能更丰富，可以按key匹配，或模糊匹配value</li>
+</ul>
+<h3 id="DaemonSet"><a href="#DaemonSet" class="headerlink" title="DaemonSet"></a>DaemonSet</h3><ul>
+<li>没有副本数的概念，DaemonSet按node-Selector去匹配node，保证每个对应的node上一个pod</li>
+<li>删除node不会重建pod，删除pod会在该节点重建</li>
+<li>DaemonSet管理的pod不受Scheduler约束，即使节点不可调度，也能在节点上运行</li>
 </ul>
 
       
