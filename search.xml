@@ -95,6 +95,11 @@
 <li>删除node不会重建pod，删除pod会在该节点重建</li>
 <li>DaemonSet管理的pod不受Scheduler约束，即使节点不可调度，也能在节点上运行</li>
 </ul>
+<h3 id="Job-CronJob"><a href="#Job-CronJob" class="headerlink" title="Job/CronJob"></a>Job/CronJob</h3><ul>
+<li>正常情况下每个CronJob会创建一个Job，但有时候会创建多个或一个也不创建</li>
+<li>对于第一种情况，要确保Job的业务逻辑是幂等的——执行多次和执行一次效果一样</li>
+<li>对于第二种情况，要确保下一个任务会执行上一个任务缺失的逻辑</li>
+</ul>
 ]]></content>
       <categories>
         <category>《Kubernetes in action》笔记</category>
