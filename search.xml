@@ -112,6 +112,16 @@
 <li>Ingress的操作在应用层（HTTP），可以实现基于cookie的会话亲和等功能</li>
 <li>要是用Ingress，需要确保Ingress controller在运行。</li>
 </ul>
+<h4 id="解决问题思路"><a href="#解决问题思路" class="headerlink" title="解决问题思路"></a>解决问题思路</h4><ul>
+<li>确保连接的cluster IP在集群内，而不是集群外</li>
+<li>不要尝试ping service IP来验证服务能否访问，服务的cluster IP是一个虚拟IP，不能ping</li>
+<li>如果定义了readiness probe，确保它是成功的</li>
+<li>通过查看相关ep（<code>kubectl get endpoints</code>）的方式验证pod是否属于某个服务</li>
+<li>如果通过FQDN访问不通，则尝试通过FQDN对应的cluster IP进行访问</li>
+<li>检查访问的port是服务暴露的port，而不是target port</li>
+<li>尝试直接连接到Pod IP，以确认Pod在正确的端口上接受连接</li>
+<li>如果通过pod IP都无法访问应用，确保应用不只是跟localhost进行绑定</li>
+</ul>
 ]]></content>
       <categories>
         <category>《Kubernetes in action》笔记</category>
