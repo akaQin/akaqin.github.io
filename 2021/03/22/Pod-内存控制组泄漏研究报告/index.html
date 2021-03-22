@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+   
+  <meta name="keywords" content="生活,旅行,思考,代码,博客" />
+   
+  <meta name="description" content="一座孤岛" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Pod 内存控制组泄漏研究报告 |  akaQin&#39;s Blog
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<script src="/js/pace.min.js"></script>
+
+
+  
+
+  
+
+<link rel="alternate" href="/atom.xml" title="akaQin's Blog" type="application/atom+xml">
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-Pod-内存控制组泄漏研究报告" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Pod 内存控制组泄漏研究报告
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2021/03/22/Pod-%E5%86%85%E5%AD%98%E6%8E%A7%E5%88%B6%E7%BB%84%E6%B3%84%E6%BC%8F%E7%A0%94%E7%A9%B6%E6%8A%A5%E5%91%8A/" class="article-date">
+  <time datetime="2021-03-22T11:56:34.000Z" itemprop="datePublished">2021-03-22</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/">踩坑记录</a>
+  </div>
+
+      
+      
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2.1k字</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">9分钟</span>
+        </span>
+    </span>
+</div>
+
+      
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <h1 id="Pod-内存控制组泄漏研究报告"><a href="#Pod-内存控制组泄漏研究报告" class="headerlink" title="Pod 内存控制组泄漏研究报告"></a>Pod 内存控制组泄漏研究报告</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">VERSION: v0.1.0</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-现象"><a href="#1-现象" class="headerlink" title="1. 现象"></a>1. 现象</h2><p>容器不断因为 cgroup oom 重启，同时系统日志显示，每一次内核 kill 容器进程时，都会出现上千条 <code>Memory cgroup stats for /kubepods/burstable/pod&lt;%pod_id%&gt;/&lt;%container_id%&gt;</code> 日志，如下图所示：<br>![系统日志](memory cgroup stats for.png “系统日志”)</p>
+<h2 id="2-研究背景"><a href="#2-研究背景" class="headerlink" title="2. 研究背景"></a>2. 研究背景</h2><p>数场基础系统出现根分区只读的情况。查看现场系统日志，发现如上所述现象，推测是导致根分区只读的部分原因。</p>
+<h2 id="3-查找问题"><a href="#3-查找问题" class="headerlink" title="3. 查找问题"></a>3. 查找问题</h2><h3 id="3-1-猜想"><a href="#3-1-猜想" class="headerlink" title="3.1 猜想"></a>3.1 猜想</h3><p>根据网上找到的资料得知，系统内核在开启 <strong>kmem accounting</strong> 功能时，内存控制组（memory cgroup，以下简称 memcg）因为 cgroup oom 被删除后，其内存对象有可能不会被回收，随着 memcg 的不断创建，memcg 内存对象会不断累积。</p>
+<blockquote>
+<p>社区文章：<a href="http://dockone.io/article/4797" target="_blank" rel="noopener">http://dockone.io/article/4797</a><br>k8s github issue：<a href="https://github.com/kubernetes/kubernetes/issues/61937" target="_blank" rel="noopener">https://github.com/kubernetes/kubernetes/issues/61937</a><br>moby github issue：<a href="https://github.com/moby/moby/issues/29638" target="_blank" rel="noopener">https://github.com/moby/moby/issues/29638</a></p>
+</blockquote>
+<p>结合上述我们遇到的问题，提出猜想：因为容器实际申请的内存大小超过了资源限制，内核 kill 容器进程，导致容器不断重启。而在重启的过程中又会给新的容器创建 memcg，循环往复，残存的 memcg 内存对象不断累积。当容器进程因为 cgroup oom 被 kill 时，内核遍历了 pod 所有子辈 memcg 的内存对象并将对象信息写入系统日志。当残存的内存对象足够多时，系统日志中就会出现大量 <code>Memory cgroup stats for</code> 日志。</p>
+<h3 id="3-2-复现"><a href="#3-2-复现" class="headerlink" title="3.2 复现"></a>3.2 复现</h3><p>环境：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@master:~# uname -a</span><br><span class="line">Linux master 4.4.131-20191129.kylin.x86-generic #kylin SMP Wed Dec 4 17:33:30 CST 2019 x86_64 x86_64 x86_64 GNU&#x2F;Linux</span><br></pre></td></tr></table></figure>
+
+<p>方法：创建一个限制内存为 2G 的 pod，pod 中唯一的容器在运行时申请 3G 内存，以此构建一个不断因为 cgroup oom 重启的容器：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">test</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">testapp:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">testapp:</span> <span class="string">test</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">nodeName:</span> <span class="string">master</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">main</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">www.eicas.com.cn:10500/third-part/base-image/centos:v7.6.1810-arm64</span></span><br><span class="line">        <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">        <span class="attr">command:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">/root/a.out</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">-m</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">"3000"</span></span><br><span class="line">        <span class="attr">resources:</span></span><br><span class="line">          <span class="attr">limits:</span></span><br><span class="line">            <span class="attr">memory:</span> <span class="string">2000Mi</span></span><br><span class="line">          <span class="attr">requests:</span></span><br><span class="line">            <span class="attr">memory:</span> <span class="string">2000Mi</span></span><br><span class="line">        <span class="attr">volumeMounts:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">mountPath:</span> <span class="string">/root</span></span><br><span class="line">          <span class="attr">name:</span> <span class="string">test</span></span><br><span class="line">      <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">hostPath:</span></span><br><span class="line">          <span class="attr">path:</span> <span class="string">/root</span></span><br><span class="line">          <span class="attr">type:</span> <span class="string">Directory</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">test</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>a.out 是通过编译 alloc.c 得到的可执行文件，参数 -m 表示申请内存的数量，单位为 Mi。alloc.c 已上传至附件。</p>
+</blockquote>
+<p>经过容器不断重启，复现了系统日志中出现大量 <code>Memory cgroup stats for /kubepods/burstable/pod&lt;%pod_id%&gt;/&lt;%container_id%&gt;</code> 的现象，而且此类日志的数量几乎在某一次容器重启时都在累加，并且在 <code>/sys/fs/cgroup/memory/kubepods/burstable/pod&lt;%pod_id%&gt;</code> 目录下除了 pause 容器所占用的 memcg，其他容器的 memcg 均不存在。</p>
+<blockquote>
+<p>与现场情况不同的是，在实际的复现过程中，随着容器的不断重启，每次 cgroup oom 时系统日志最多只会打印 10+ 条的 <code>Memory cgroup stats for</code> 日志，而没有像现场那样出现上千条。可以观察到，随着容器的不断重启，残留的 memcg 有一部分会消失，原因暂且不明。</p>
+</blockquote>
+<p>考虑到<a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy" target="_blank" rel="noopener">容器的重启策略</a>使得容器的重启时间有延迟（最高 5 分钟）以及 memcg 的内存对象的大小是 KB 级别的，暂不尝试复现系统 OOM 导致根分区只读的现象。理论上，当时间足够长，或者足够多的 pod 中的容器不断重启，最终都会导致内存泄露量足够大，以致系统 OOM。以上，证明猜想正确。</p>
+<h2 id="4-kmem-accounting-概述"><a href="#4-kmem-accounting-概述" class="headerlink" title="4. kmem accounting 概述"></a>4. kmem accounting 概述</h2><p>kmem accounting 是内核为了限制恶意进程的使用（如 “fork bomb”）而对 cgroup 中的 kmem 容量进行限制的一种机制。 kmem accounting 为控制组的内存增加了stack pages（例如新进程创建）、slab pages（SLAB/SLUB 分配器使用的内存）、 sockets memory pressure、 tcp memory pressure 等限制。</p>
+<p><a href="https://www.bookstack.cn/read/kubernetes-practice-guide/troubleshooting-summary-cgroup-leaking.md" target="_blank" rel="noopener">参考资料</a>提到， kmem accounting 在内核 3.x 版本中是一个实验特性，直到 4.3 之前都存在内存泄露问题。但经过在银河麒麟 4.0.2（内核版本：<code>4.4.131</code>）和 Ubuntu 16.04（内核版本：<code>4.13.0</code>）上测试发现内存泄露的问题依然存在。</p>
+<h2 id="5-解决方案"><a href="#5-解决方案" class="headerlink" title="5. 解决方案"></a>5. 解决方案</h2><p>查阅相关的参考文章并通过具体的实践我们发现 memcg 中，在自己不主动开启 kmem accounting 功能的情况下，是否开启此功能继承自父辈控制组，因此解决方案为：</p>
+<ul>
+<li>内核默认不开启 kmem accouting;</li>
+<li>kubelet 不开启 kmem accounting，以确保所创建 pod 的控制组不开启 kmem accouting；</li>
+<li>docker 不开启 kmem accounting，以确保在 pod 中创建的容器不开启 kmem accouting。</li>
+</ul>
+<blockquote>
+<p>默认不开启和默认关闭是两个概念。</p>
+</blockquote>
+<h3 id="5-1-怎样关闭-kmem-accounting"><a href="#5-1-怎样关闭-kmem-accounting" class="headerlink" title="5.1 怎样关闭 kmem accounting"></a>5.1 怎样关闭 kmem accounting</h3><p>验证是否关闭 kmem accounting 的方法是使用 <code>cat</code> 命令查看其所创建的 memcg 中的 <code>memory.kmem.slabinfo</code> 文件，如果得到的结果为:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat: &lt;path-to-memcg&gt;&#x2F;memory.kmem.slabinfo: Input&#x2F;output error</span><br></pre></td></tr></table></figure>
+
+<p>则证明没有开启。</p>
+<h4 id="5-1-1-内核"><a href="#5-1-1-内核" class="headerlink" title="5.1.1 内核"></a>5.1.1 内核</h4><p>目前已测试的三个系统：</p>
+<ul>
+<li>银河麒麟 4.0.2（内核版本：<code>4.4.131</code>）</li>
+<li>CentOS 7.4（内核版本：<code>3.10.0</code>）</li>
+<li>Ubuntu 16.04（内核版本：<code>4.13.0</code>）</li>
+</ul>
+<blockquote>
+<p>执行 <code>cat /sys/fs/cgroup/memory/memory.kmem.slabinfo</code> 可以验证内核是否默认开启了 kmem accounting 功能。</p>
+</blockquote>
+<p>其中仅内核版本为 <code>3.10.0</code> 的 CentOS 7.4 默认不开启 kmem accounting 功能。根据<a href="http://www.xuyasong.com/?p=2049" target="_blank" rel="noopener">参考文章</a>，我们尝试在银河麒麟 4.0.2 和 Ubuntu 16.04 系统启动引导项中增加 <code>cgroup.memory=nokmem</code> 参数，让系统启动时不开启 kmem accounting 功能，但并不起作用。咨询银河麒麟的开发人员，他们表示没有办法在系统启动时关闭此功能。</p>
+<h4 id="5-1-2-kubelet"><a href="#5-1-2-kubelet" class="headerlink" title="5.1.2 kubelet"></a>5.1.2 kubelet</h4><p>方法：</p>
+<ul>
+<li>下载相应版本的 k8s 源码，在项目根目录下执行 <code>make GOFLAGS=&quot;-tags=nokmem&quot; WHAT=&quot;cmd/kubelet&quot;</code> 以编译不开启 kmem accounting 功能的 kubelet</li>
+<li>停止 kubelet 服务： <code>systemctl stop kubelet.service</code></li>
+<li>停止 docker 服务： <code>systemctl stop docker.service</code></li>
+<li>删除 /sys/fs/cgroup/memory/kubepods 目录（如果存在的话）：<code>cgdelete -r memory:kubepods</code></li>
+<li>将重新编译的 kubelet 替换掉之前的 kubelet，之前的 kubelet 所在的位置可以通过 <code>kubelet.service</code> 文件找到</li>
+<li>开启 docker 服务： <code>systemctl start docker.service</code></li>
+<li>开启 kubelet 服务： <code>systemctl start kubelet.service</code></li>
+</ul>
+<blockquote>
+<p>执行 <code>cat /sys/fs/cgroup/memory/kubepods/pod&lt;%pod_id%&gt;/memory.kmem.slabinfo</code> 可以验证 kubelet 是否了开启 kmem accounting 功能。</p>
+</blockquote>
+<h4 id="5-1-3-docker"><a href="#5-1-3-docker" class="headerlink" title="5.1.3 docker"></a>5.1.3 docker</h4><p><a href="https://pingcap.com/blog/try-to-fix-two-linux-kernel-bugs-while-testing-tidb-operator-in-k8s" target="_blank" rel="noopener">参考文章</a>中讲到 docker 在 <code>18.09.1</code> 及之后的版本（测试环境下使用的 docker 版本为 <code>18.09.9</code>）已默认不开启 kmem accounting 功能，所以建议先验证再决定是否重新编译 runc。</p>
+<ul>
+<li>下载和 docker 版本兼容的 runc 源码，在项目根目录下执行：<code>make BUILDTAGS=&#39;seccomp selinux apparmor nokmem&#39;</code></li>
+<li>停止 docker 服务：<code>systemctl stop docker.service</code></li>
+<li>将重新编译的 runc 替换掉之前的 runc，之前的 runc 所在的位置可以通过 <code>which runc</code> 命令查找</li>
+<li>开启 docker 服务：<code>systemctl start docker.service</code></li>
+</ul>
+<blockquote>
+<p>执行 <code>cat /sys/fs/cgroup/memory/kubepods/pod&lt;%pod_id%&gt;/&lt;%container_id%&gt;/memory.kmem.slabinfo</code> 来验证 docker 是否了开启 kmem accounting 功能。</p>
+</blockquote>
+<h3 id="5-2-最终验证"><a href="#5-2-最终验证" class="headerlink" title="5.2 最终验证"></a>5.2 最终验证</h3><p>重试 3.2 中的方法，此时：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@node3 kubepods]# cat &#x2F;sys&#x2F;fs&#x2F;cgroup&#x2F;memory&#x2F;kubepods&#x2F;&lt;%pod_id%&gt;&#x2F;&lt;%container_id%&gt;&#x2F;memory.kmem.slabinfo</span><br><span class="line">cat: &#x2F;sys&#x2F;fs&#x2F;cgroup&#x2F;memory&#x2F;kubepods&#x2F;&lt;%pod_id%&gt;&#x2F;&lt;%container_id%&gt;&#x2F;memory.kmem.slabinfo: Input&#x2F;output error</span><br></pre></td></tr></table></figure>
+
+<p>系统日志中，在每次容器被杀掉时，有且只有两条 <code>Memory cgroup stats for /kubepods/burstable/pod&lt;%pod_id%&gt;/&lt;%container_id%&gt;</code> 日志:<br><img src="/%E5%90%88%E7%90%86%E7%9A%84%E7%B3%BB%E7%BB%9F%E6%97%A5%E5%BF%97.png" alt="合理的系统日志" title="合理的系统日志"></p>
+<p>以上证明解决方案有效。</p>
+<h2 id="6-未解决的问题"><a href="#6-未解决的问题" class="headerlink" title="6. 未解决的问题"></a>6. 未解决的问题</h2><ul>
+<li>关于银河麒麟系统（内核版本: <code>4.4.131-20191129</code>），尚未找到在系统启动阶段就不开启 kmem accounting 功能的方法；</li>
+<li>目前能找到的 kmem accounting 资料较少且大多是早期开发此功能时对实现的讨论，暂不明确它的实现原理，所以只能按照在社区中查到的方法以及修改前后系统日志的对比去验证解决方案是否有效。</li>
+</ul>
+<h2 id="7-参考文档"><a href="#7-参考文档" class="headerlink" title="7. 参考文档"></a>7. 参考文档</h2><ul>
+<li><a href="http://dockone.io/article/4797" target="_blank" rel="noopener">http://dockone.io/article/4797</a></li>
+<li><a href="https://github.com/kubernetes/kubernetes/issues/61937" target="_blank" rel="noopener">https://github.com/kubernetes/kubernetes/issues/61937</a></li>
+<li><a href="https://github.com/moby/moby/issues/29638" target="_blank" rel="noopener">https://github.com/moby/moby/issues/29638</a></li>
+<li><a href="https://blog.witd.in/2019/12/09/kmem-accounting%E5%AF%BC%E8%87%B4%E7%9A%84cgroup%E6%B3%84%E6%BC%8F%E9%97%AE%E9%A2%98/" target="_blank" rel="noopener">https://blog.witd.in/2019/12/09/kmem-accounting%E5%AF%BC%E8%87%B4%E7%9A%84cgroup%E6%B3%84%E6%BC%8F%E9%97%AE%E9%A2%98/</a></li>
+<li><a href="https://www.bookstack.cn/read/kubernetes-practice-guide/troubleshooting-summary-cgroup-leaking.md" target="_blank" rel="noopener">https://www.bookstack.cn/read/kubernetes-practice-guide/troubleshooting-summary-cgroup-leaking.md</a></li>
+<li><a href="https://pingcap.com/blog/try-to-fix-two-linux-kernel-bugs-while-testing-tidb-operator-in-k8s" target="_blank" rel="noopener">https://pingcap.com/blog/try-to-fix-two-linux-kernel-bugs-while-testing-tidb-operator-in-k8s</a></li>
+<li><a href="https://lwn.net/Articles/484056/" target="_blank" rel="noopener">https://lwn.net/Articles/484056/</a></li>
+<li><a href="https://lkml.org/lkml/2014/9/15/169" target="_blank" rel="noopener">https://lkml.org/lkml/2014/9/15/169</a></li>
+</ul>
+
+      
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+
+      <!-- copyright -->
+      
+        <div class="declare">
+          <ul class="post-copyright">
+            <li>
+              <i class="ri-copyright-line"></i>
+              <strong>版权声明： </strong s>
+              本博客所有文章除特别声明外，均采用 <a href="https://www.apache.org/licenses/LICENSE-2.0.html" rel="external nofollow"
+                target="_blank">Apache License 2.0</a> 许可协议。转载请注明出处！
+            </li>
+          </ul>
+        </div>
+        
+    <footer class="article-footer">
+      
+          
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://akaqin.github.io/2021/03/22/Pod-%E5%86%85%E5%AD%98%E6%8E%A7%E5%88%B6%E7%BB%84%E6%B3%84%E6%BC%8F%E7%A0%94%E7%A9%B6%E6%8A%A5%E5%91%8A/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/k8s/" rel="tag">k8s</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+    
+      <a href="/2021/02/01/%E8%AE%B0%E4%B8%80%E6%AC%A1k8s-rbd%E5%8D%B7%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">记一次k8s/rbd卷故障排查</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        app_id: 'X2Yrs2HgM1dBr94LBlfP7Jsj-gzGzoHsz',
+        app_key: 'x2WQjNYF5CQseEAN1iSqXOLQ',
+        path: window.location.pathname,
+        notify: 'true',
+        verify: 'false',
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2019-2021
+        Aaron Qin
+      </li>
+      <li>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <span>
+  <i>PV:<span id="busuanzi_value_page_pv"></span></i>
+  <i>UV:<span id="busuanzi_value_site_uv"></span></i>
+</span>
+        
+      </li>
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+    <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+      <aside class="sidebar">
+        <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="akaQin&#39;s Blog"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about/me">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+      </aside>
+      <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+      
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+<script src="/js/share.js"></script>
+
+
+
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer:'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    onClick: (e) => {
+      $('.toc-link').removeClass('is-active-link');
+      $(`a[href=${e.target.hash}]`).addClass('is-active-link');
+      $(e.target.hash).scrollIntoView();
+      return false;
+    }
+  });
+</script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: false
+  }
+</script>
+
+
+<script src="/js/ayer.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+  </div>
+</body>
+
+</html>
