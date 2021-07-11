@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://akaqin.github.io/"/>
-  <updated>2021-03-22T12:03:25.021Z</updated>
+  <updated>2021-07-10T01:39:27.162Z</updated>
   <id>https://akaqin.github.io/</id>
   
   <author>
@@ -15,6 +15,59 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>容器云对接FC SAN块存储复盘记录</title>
+    <link href="https://akaqin.github.io/2021/07/09/%E5%AE%B9%E5%99%A8%E4%BA%91%E5%AF%B9%E6%8E%A5FC-SAN%E5%9D%97%E5%AD%98%E5%82%A8%E5%A4%8D%E7%9B%98%E8%AE%B0%E5%BD%95/"/>
+    <id>https://akaqin.github.io/2021/07/09/%E5%AE%B9%E5%99%A8%E4%BA%91%E5%AF%B9%E6%8E%A5FC-SAN%E5%9D%97%E5%AD%98%E5%82%A8%E5%A4%8D%E7%9B%98%E8%AE%B0%E5%BD%95/</id>
+    <published>2021-07-09T08:23:37.000Z</published>
+    <updated>2021-07-10T01:39:27.162Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="FC-SAN"><a href="#FC-SAN" class="headerlink" title="FC SAN"></a>FC SAN</h3><p><strong>HBA卡</strong></p><p>Block storage, sometimes referred to as block-level storage, is a technology that is used to store data files on Storage Area Networks (SANs) or cloud-based storage environments. Developers favor block storage for computing situations where they require fast, efficient, and reliable data transportation.</p><p>Block storage breaks up data into blocks and then stores those blocks as separate pieces, each with a unique identifier. The SAN places those blocks of data wherever it is most efficient. That means it can store those blocks across different systems and each block can be configured (or partitioned) to work with different operating systems.</p><p>Block storage also decouples data from user environments, allowing that data to be spread across multiple environments. This creates multiple paths to the data and allows the user to retrieve it quickly. When a user or application requests data from a block storage system, the underlying storage system reassembles the data blocks and presents the data to the user or application.</p><ul><li>FC</li></ul><p>Fabric – A Fibre Channel fabric is simply a network consisting of one or more Fibre Channel switches.  If you have just one switch that’s ok it’s still a fabric.  In larger networks you would interconnect many switches in a topology to provide higher throughput and availability in the event one or more switches fail.</p><p>Initiator – An initiator is the consumer of storage, typically a server with an adapter card in it called a Host Bus Adapter (HBA).  The initiator “initiates” a connection over the fabric to one or more ports on your storage system which are called target ports.</p><p>Target – Target ports are the ports on your storage system which deliver storage volumes (called target devices or LUNs) to the initiators</p><p>WWN – In Fibre Channel there’s a special term for a port identifier, specifically WWN or World Wide Name.  Just as every network card as a unique MAC address for each NIC port, every single FC port has a unique 64bit port WWN.  For example, a FC port WWN might look like this: 20:00:00:81:23:45:ac:01 and though I’ve used the colon (:) as a separator/delimiter it’s just as common to see the 16 hex digits separated by hyphens (-).</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;FC-SAN&quot;&gt;&lt;a href=&quot;#FC-SAN&quot; class=&quot;headerlink&quot; title=&quot;FC SAN&quot;&gt;&lt;/a&gt;FC SAN&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;HBA卡&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Block storage, sometimes 
+      
+    
+    </summary>
+    
+    
+      <category term="踩坑记录" scheme="https://akaqin.github.io/categories/%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95/"/>
+    
+    
+      <category term="k8s" scheme="https://akaqin.github.io/tags/k8s/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>存储知识点笔记</title>
+    <link href="https://akaqin.github.io/2021/07/07/%E5%AD%98%E5%82%A8%E7%9F%A5%E8%AF%86%E7%82%B9%E7%AC%94%E8%AE%B0/"/>
+    <id>https://akaqin.github.io/2021/07/07/%E5%AD%98%E5%82%A8%E7%9F%A5%E8%AF%86%E7%82%B9%E7%AC%94%E8%AE%B0/</id>
+    <published>2021-07-07T01:35:03.000Z</published>
+    <updated>2021-07-11T13:24:22.102Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="存储知识点笔记"><a href="#存储知识点笔记" class="headerlink" title="存储知识点笔记"></a>存储知识点笔记</h1><h2 id="1-数据存储的载体——硬盘"><a href="#1-数据存储的载体——硬盘" class="headerlink" title="1 数据存储的载体——硬盘"></a>1 数据存储的载体——硬盘</h2><p>硬盘之所以叫硬盘，是因为它的核心部分是一块或多块由坚硬金属材料制成的盘片。盘片上面涂抹了磁性介质，两面都可以记录信息。在盘面上读/写数据的，是磁头。</p><p><img src="9.jpeg" alt=""></p><p>现在主流的硬盘，扇区密度是一致的，也就是说，越靠外侧，扇区数越多。每个扇区的大小是4K字节，用一个逻辑块编号寻址（LBA，Logical Block Addressing）。以扇区为基础，一个或多个连续的扇区组成一个块，叫做物理块。所以，硬盘往往又叫块设备（Block Device）。</p><p>为了方便管理，我们可以将硬盘这样的物理块设备，分割成多个逻辑块设备。或者，我们也可以将多个物理块设备，组合成一个容量更大的逻辑块设备。<br><img src="8.jpeg" alt=""></p><h2 id="2-什么是DAS-NAS-SAN"><a href="#2-什么是DAS-NAS-SAN" class="headerlink" title="2. 什么是DAS/NAS/SAN"></a>2. 什么是DAS/NAS/SAN</h2><p>外挂存储分为两种，一种是 <strong>直连式存储（DAS，Direct Attached Storage）</strong> ，还有一种是 <strong>网络存储（FAS，Fabric Attached Storage）</strong> 。<br><img src="2.jpeg" alt=""></p><h3 id="2-1-DAS"><a href="#2-1-DAS" class="headerlink" title="2.1 DAS"></a>2.1 DAS</h3><p>DAS直连式存储，一般是使用专用线缆（例如SCSI），与存储设备（例如磁盘阵列）进行直连。<br><img src="1.jpeg" alt=""></p><p>虽然数据存储设备看似在外部，但直接挂接在服务器内部总线上，是整个服务器结构的一部分。</p><p>DAS的缺点是存储设备只能连接到一台主机使用，无法共享，成本较高，且安全性可靠性较低。</p><h3 id="2-2-NAS"><a href="#2-2-NAS" class="headerlink" title="2.2 NAS"></a>2.2 NAS</h3><p><strong>NAS</strong>: NETWORK ATTACHED STORAGE  网络附加存储</p><p><img src="3.jpeg" alt=""></p><p>NAS与DAS相比，最大的特点是非直连。它可以通过IP网络，实现多台主机与存储设备之间的连接。</p><p>NAS大大提高了存储的安全性、共享性和成本。但是I/O（输入输出）渐渐成为性能瓶颈。随着应用服务器的不断增加，网络系统效率会急剧下降。而SAN并不存在这个问题。</p><h3 id="2-3-SAN"><a href="#2-3-SAN" class="headerlink" title="2.3 SAN"></a>2.3 SAN</h3><p><strong>SAN</strong>: STORAGE AREA NETWORK    存储区域网络</p><p>SAN是一种传输协议,它比NAS更低层面上存储技术,它并不关心通道上传输的是哪种操作系统.<br>SAN是关联存储设备和服务器的网络，它和以太网有类似的架构。</p><h3 id="2-3-1-FC-SAN"><a href="#2-3-1-FC-SAN" class="headerlink" title="2.3.1 FC SAN"></a>2.3.1 FC SAN</h3><p><code>FC SAN</code>是采用光纤信道的SAN，也就是服务器透过光纤信道卡（FC HBA），连接光纤交换器（FC Switch），再连接后端的存储设备。<br><code>FC SAN</code>是按块协议(Block Protocal)的传输方式,所以传输速度快,但是造价比较贵,随着客户端的数量增加,造价也随着上升;所以一般在大型网络的核心上都采用的<code>FC SAN</code>的存储结构; </p><p><img src="4.jpeg" alt=""></p><p>早期的SAN架构专指FC SAN，它通过专用光纤通道交换机访问数据，采用FC协议。FC（光纤通道）的带宽明显高于NAS的以太网，而且稳定性也更好。</p><h3 id="2-3-2-IP-SAN"><a href="#2-3-2-IP-SAN" class="headerlink" title="2.3.2 IP SAN"></a>2.3.2 IP SAN</h3><p>后来，有了iSCSI协议（Internet SCSI，2003年正式成为标准）并且主流操作系统开始支持，就有了IP SAN（使用IP网络和设备）。</p><p>随着以太网技术的发展,使IP SAN对SAN技术进一步的拓展, IP SAN降低了<code>FC SAN</code>的光纤造价.直接在IP网络上进行存储..而且实施起来更容易.<br><code>IP SAN</code>和<code>FC SAN</code>一样,都是按块协议(Block Protocal) 的传输方式;<br>。</p><p>说白了，iSCSI就是走IP网络的SCSI，也叫<strong>IP SAN</strong>。一方面扩大了连接距离，另一方面增加了连接的服务器数量（原来的SCSI-3的上限是15）。</p><h3 id="2-4-NAS-与-SAN-的对比"><a href="#2-4-NAS-与-SAN-的对比" class="headerlink" title="2.4 NAS 与 SAN 的对比"></a>2.4 NAS 与 SAN 的对比</h3><p><img src="5.jpeg" alt=""><br><img src="6.jpeg" alt=""></p><ul><li>NAS的成本比SAN低很多。前端只使用以太网接口即可，FC适配卡以及交换机的成本相对以太网卡和交换机来说非常高的。</li><li>NAS可以解决主机服务器上的CPU和内存资源。NAS适用于cpu密集的应用环境，对于大块顺序IO密集的环境，要比SAN慢一大截。</li><li>NAS由于利用了以太网，所以可扩展性很强，且容易部署。</li><li>NAS一般使用NFS或CIFS访问协议，而SAN是FC或iSCSI</li><li>NAS可以在一台盘阵上实现多台客户端的共享访问，包括同时访问某个目录或文件。而SAN方式下，除非所有的客户端都安装了专门的集群管理软件，否则不能将某个lun共享，强制共享会损坏数据。</li></ul><h2 id="3-网卡"><a href="#3-网卡" class="headerlink" title="3. 网卡"></a>3. 网卡</h2><p>网卡是大家常提到的一个类型设备的总称，是指安装在主机里，通过网络连接线（双绞线、光纤线缆、同轴电缆等）与网络交换机（以太网交换机、FC交换机、ISCSI交换机等）、或与其它网络设备（存储设备、服务器、工作站等）连接，从而形成一个网络的硬件设备。因传输协议的不同的，网卡可分为三种，一是以太网卡，二是FC网卡，三是ISCSI网卡。</p><h3 id="3-1-以太网卡"><a href="#3-1-以太网卡" class="headerlink" title="3.1 以太网卡"></a>3.1 以太网卡</h3><p>以太网卡：学名Ethernet Adapter,传输协议为IP协议,一般通过光纤线缆或双绞线与以太网交换机连接。接口类型分为光口和电口。光口一般都是通过光纤线缆来进行数据传输，接口模块一般为SFP（传输率2Gb/s）和GBIC（1Gb/s）,对应的接口为SC、ST和LC。电口目前常用接口类型为<strong>RJ45</strong>,用来与双绞线连接，也有与同轴电缆连接的接口，不过现在已经用的比较少了。</p><h3 id="3-2-光纤网卡"><a href="#3-2-光纤网卡" class="headerlink" title="3.2 光纤网卡"></a>3.2 光纤网卡</h3><p>光纤网卡，也叫FC网卡，学名Fibre Channel HBA。传输协议为光纤通道协议，一般通过光纤线缆与光纤通道交换机连接。接口类型分为光口和电口。光口一般都是通过光纤线缆来进行数据传输，接口模块一般为SFP（传输率2Gb/s）和GBIC（1Gb/s）,对应的接口为SC和LC。电口的接口类型一般为DB9针或HSSDC。</p><p><strong>HBA</strong></p><p>HBA物理上你可以把它当作网卡一样插在PCI或者PCI-E槽位里。HBA卡有FC-HBA和iSCSI HBA将来还有其他HBA卡，有的iSCSI HBA卡就可以当作普通网卡来用当然有点奢侈了，FC－HBA就只能连接FC－Switch了。</p><h3 id="3-3-iSCSI网卡"><a href="#3-3-iSCSI网卡" class="headerlink" title="3.3 iSCSI网卡"></a>3.3 iSCSI网卡</h3><p>ISCSI网卡：学名ISCSI HBA。传输ISCSI协议。接口类型与以太网卡相同</p><h2 id="4-其他概念"><a href="#4-其他概念" class="headerlink" title="4. 其他概念"></a>4. 其他概念</h2><p><img src="10.png" alt=""></p><p><strong>Initiator</strong> – An initiator is the consumer of storage, typically a server with an adapter card in it called a Host Bus Adapter (HBA).  The initiator “initiates” a connection over the fabric to one or more ports on your storage system which are called target ports.</p><p><strong>Target</strong> – Target ports are the ports on your storage system which deliver storage volumes (called target devices or LUNs) to the initiators</p><p><strong>WWN</strong> – In Fibre Channel there’s a special term for a port identifier, specifically WWN or World Wide Name.  Just as every network card as a unique MAC address for each NIC port, every single FC port has a unique 64bit port WWN.  For example, a FC port WWN might look like this: 20:00:00:81:23:45:ac:01 and though I’ve used the colon (:) as a separator/delimiter it’s just as common to see the 16 hex digits separated by hyphens (-).</p><p>All FC devices have a unique identity that is called a worldwide name (WWN). This identification can be compared with Ethernet cards and MAC addresses. Each Node Port has its own WWN, but it is also possible for a device with more than one Fibre Channel adapted to have its own WWN as well. <strong>WWN is 64-bit address, and if two WWN addresses are put into the frame header, this leave 16 bytes of data just for identyfying the destination and source address.</strong> So 64-bit addresses can affect routing performance. Each device in the SAN is identified by a unique WWN. The WWN contains vendor identifier field, which is defined and maintened by the IEEE.</p><p><strong>WWNN vs WWPN</strong></p><p>A worldwide node name (WWNN) is a globally unique 64-bit identifier that is assigned to each Fibre Channel node or device. For servers and hosts, WWNN is unique for each HBA (host bus adapter), and in a case of a server with two HBAs, they have two WWNNs. For a SAN switch, the WWNN is a common for the chassis. For storage, the WWNN is common for each controller unit of midrage storage. In case of high-end enterprise storage, the WWNN is unique for the entire array.</p><p>A worldwide port number (WWPN) is unique identifier for each FC port of any Fibre Channel device. For server, we have a WWPN for each port of the HBA. For a SAN switch, the WWPN is available for each port in the chassis. For Storage, each host port has an individual WWPN.</p><p><strong>Zoning</strong></p><p>So to keep those chatty initiators from communicating with all the target ports on your fabric you’ve got to put them into what are called zones, and that’s the heart of it all. Fabric management is all about restricting access to groups of initiator and target ports through zoning.</p><p>A zone is simply a list of IDs containing an initiator port ID and one or more target port IDs.  It’s like setting up virtual cabling or paths so that there’s a data path from the initiators to the targets.  Delete the zone for a given group and those paths which that zone allowed are deleted and the associated traffic for those paths stops.  If no zones exist, no traffic is allowed to flow through the fabric.</p><blockquote><p>存储科普 <a href="https://www.zhihu.com/search?q=%E5%B0%8F%E6%9E%A3%E5%90%9B%20%E5%AD%98%E5%82%A8&amp;utm_content=search_history&amp;type=content" target="_blank" rel="noopener">https://www.zhihu.com/search?q=%E5%B0%8F%E6%9E%A3%E5%90%9B%20%E5%AD%98%E5%82%A8&amp;utm_content=search_history&amp;type=content</a><br>Block Storage <a href="https://www.ibm.com/cloud/learn/block-storage#toc-what-is-bl-FugUvNFG" target="_blank" rel="noopener">https://www.ibm.com/cloud/learn/block-storage#toc-what-is-bl-FugUvNFG</a><br>SAN 和 NAS <a href="https://www.cnblogs.com/shijingxiang/articles/4444090.html" target="_blank" rel="noopener">https://www.cnblogs.com/shijingxiang/articles/4444090.html</a><br>FC <a href="https://blog.osnexus.com/2012/03/20/understanding-fc-fabric-configuration-5-paragraphs/" target="_blank" rel="noopener">https://blog.osnexus.com/2012/03/20/understanding-fc-fabric-configuration-5-paragraphs/</a><br>HBA网卡 <a href="https://zhuanlan.zhihu.com/p/30799016" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/30799016</a><br>Fibire <a href="https://www.storagefreak.net/2014/10/fibre-channel-addressing" target="_blank" rel="noopener">https://www.storagefreak.net/2014/10/fibre-channel-addressing</a></p></blockquote>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;存储知识点笔记&quot;&gt;&lt;a href=&quot;#存储知识点笔记&quot; class=&quot;headerlink&quot; title=&quot;存储知识点笔记&quot;&gt;&lt;/a&gt;存储知识点笔记&lt;/h1&gt;&lt;h2 id=&quot;1-数据存储的载体——硬盘&quot;&gt;&lt;a href=&quot;#1-数据存储的载体——硬盘&quot; class
+      
+    
+    </summary>
+    
+    
+      <category term="知识点总结" scheme="https://akaqin.github.io/categories/%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/"/>
+    
+    
+      <category term="storage" scheme="https://akaqin.github.io/tags/storage/"/>
+    
+  </entry>
   
   <entry>
     <title>Pod 内存控制组泄漏研究报告</title>
