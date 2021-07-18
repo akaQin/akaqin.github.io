@@ -68,7 +68,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-quill-pen-line"></i>
             <span class="post-meta-item-text"> 字数统计:</span>
-            <span class="post-count">375字</span>
+            <span class="post-count">1.1k字</span>
         </span>
     </span>
 
@@ -77,7 +77,7 @@
         <span class="post-meta-item-icon">
             <i class="ri-book-open-line"></i>
             <span class="post-meta-item-text"> 阅读时长≈</span>
-            <span class="post-count">2分钟</span>
+            <span class="post-count">3分钟</span>
         </span>
     </span>
 </div>
@@ -104,17 +104,41 @@
       
 
       
-      <h3 id="FC-SAN"><a href="#FC-SAN" class="headerlink" title="FC SAN"></a>FC SAN</h3><p><strong>HBA卡</strong></p>
-<p>Block storage, sometimes referred to as block-level storage, is a technology that is used to store data files on Storage Area Networks (SANs) or cloud-based storage environments. Developers favor block storage for computing situations where they require fast, efficient, and reliable data transportation.</p>
-<p>Block storage breaks up data into blocks and then stores those blocks as separate pieces, each with a unique identifier. The SAN places those blocks of data wherever it is most efficient. That means it can store those blocks across different systems and each block can be configured (or partitioned) to work with different operating systems.</p>
-<p>Block storage also decouples data from user environments, allowing that data to be spread across multiple environments. This creates multiple paths to the data and allows the user to retrieve it quickly. When a user or application requests data from a block storage system, the underlying storage system reassembles the data blocks and presents the data to the user or application.</p>
-<ul>
-<li>FC</li>
-</ul>
-<p>Fabric – A Fibre Channel fabric is simply a network consisting of one or more Fibre Channel switches.  If you have just one switch that’s ok it’s still a fabric.  In larger networks you would interconnect many switches in a topology to provide higher throughput and availability in the event one or more switches fail.</p>
-<p>Initiator – An initiator is the consumer of storage, typically a server with an adapter card in it called a Host Bus Adapter (HBA).  The initiator “initiates” a connection over the fabric to one or more ports on your storage system which are called target ports.</p>
-<p>Target – Target ports are the ports on your storage system which deliver storage volumes (called target devices or LUNs) to the initiators</p>
-<p>WWN – In Fibre Channel there’s a special term for a port identifier, specifically WWN or World Wide Name.  Just as every network card as a unique MAC address for each NIC port, every single FC port has a unique 64bit port WWN.  For example, a FC port WWN might look like this: 20:00:00:81:23:45:ac:01 and though I’ve used the colon (:) as a separator/delimiter it’s just as common to see the 16 hex digits separated by hyphens (-).</p>
+      <h1 id="容器云对接FC-SAN块存储复盘记录"><a href="#容器云对接FC-SAN块存储复盘记录" class="headerlink" title="容器云对接FC SAN块存储复盘记录"></a>容器云对接FC SAN块存储复盘记录</h1><h2 id="1-需求背景"><a href="#1-需求背景" class="headerlink" title="1. 需求背景"></a>1. 需求背景</h2><p>用户现场买了一套FC SAN的块设备，与之进行对接。需要不影响已上云的业务，并要支持多副本，保证服务可用性（服务漂移，块设备自动挂载）以及数据完整性（漂移时数据及时罗盘）。</p>
+<h2 id="2-方案分析"><a href="#2-方案分析" class="headerlink" title="2. 方案分析"></a>2. 方案分析</h2><p>一开始对厂商的块设备不了解，不确定能否拆分，能否多节点挂载，需要从两方面考虑。如果都不支持，那所有用块的服务都需要集中到一个节点上，那就会造成两个问题，需要提前说清楚：</p>
+<ol>
+<li>存储失去隔离性，所有业务都能访问整个块设备</li>
+<li>所有业务都调度到一个节点上，不管上64核还是128核的cpu都不够用，计算资源成为瓶颈。</li>
+</ol>
+<p>如果能拆分，则需要对以下逻辑进行验证：</p>
+<ol>
+<li>一个卷能否支持多节点挂载</li>
+<li>如果支持，挂载需要的信息是否一致，能否实现自动化</li>
+<li>如果支持，多节点写入会有什么问题，如何处理冲突</li>
+<li>一个节点挂掉时，是否需要与对应的卷进行解绑</li>
+<li>pod调度时是否有flush或sync机制，保证数据完整性。</li>
+</ol>
+<h2 id="3-逻辑验证"><a href="#3-逻辑验证" class="headerlink" title="3. 逻辑验证"></a>3. 逻辑验证</h2><h3 id="3-1-多节点挂载可行性"><a href="#3-1-多节点挂载可行性" class="headerlink" title="3.1 多节点挂载可行性"></a>3.1 多节点挂载可行性</h3><p><strong>双实例</strong>：服务器A上的pod写入数据后，重启服务器B上的pod即可看到A写入的内入 <br><strong>三实例</strong>：服务器A和B上的pod都写入数据，重启服务器C上的pod后只能看到前两者中后写入的数据</p>
+<h3 id="3-2-服务漂移可行性"><a href="#3-2-服务漂移可行性" class="headerlink" title="3.2 服务漂移可行性"></a>3.2 服务漂移可行性</h3><h4 id="3-2-1-验证环境："><a href="#3-2-1-验证环境：" class="headerlink" title="3.2.1 验证环境："></a>3.2.1 验证环境：</h4><p>三台arm64架构银河麒麟4.0.2SP系统的服务器组成的集群，每台服务器通过一根光纤直连到同有的FCSAN存储，型号为A1600</p>
+<h4 id="3-2-2-验证步骤："><a href="#3-2-2-验证步骤：" class="headerlink" title="3.2.2 验证步骤："></a>3.2.2 验证步骤：</h4><ol>
+<li>在厂商的web平台上创建存储池、存储卷、主机</li>
+<li>在平台上将每个主机与存储卷进行映射，建立绑定关系</li>
+<li>在每台服务器上执行一些命令使服务器能够发现存储卷</li>
+<li>声明FC类型的Volume，其中需要填写 targetWWNs （WWPN） 和 lun 字段，值从 /dev/disk/by-path 路径下获取 官方示例： <a href="https://github.com/kubernetes/examples/tree/master/staging/volumes/fibre_channel" target="_blank" rel="noopener">https://github.com/kubernetes/examples/tree/master/staging/volumes/fibre_channel</a> </li>
+</ol>
+<h4 id="3-2-3-现象："><a href="#3-2-3-现象：" class="headerlink" title="3.2.3 现象："></a>3.2.3 现象：</h4><ol>
+<li>因为每台服务器直连一个存储设备的光纤端口，所以看到的WWPN是不一样的，这就导致根据当前服务器看到的WWPN声明的Volume只能给当前服务器使用，如果使用它的服务飘到了别的节点 ，则该WWPN无法使用，需要根据新节点上看到的WWPN重新生成Volume。</li>
+<li>Lun 字段的值是由存储系统将存储卷与服务器进行映射的时候指定的，且每个服务器不同。比如将存储卷1与服务器1映射的Lun是0，存储卷1与服务器2映射的Lun是1，存储卷1与服务器3映射的Lun是2。这导致了与现象1同样的问题——每台服务器看到的WWPN与LUN不同，根据这两个值生成的Volume只能给当前服务器用，无法漂移。</li>
+</ol>
+<h4 id="3-2-4-结论："><a href="#3-2-4-结论：" class="headerlink" title="3.2.4 结论："></a>3.2.4 结论：</h4><ol>
+<li>现象1的问题可以通过加一个光交换机解决，前提是现场要有</li>
+<li>现象2的问题是由厂商的系统逻辑导致，那使用这些设备的服务需要在启动前就指定好要调度到哪台服务器，且不可更改</li>
+</ol>
+<h3 id="4-0-方案制定"><a href="#4-0-方案制定" class="headerlink" title="4.0 方案制定"></a>4.0 方案制定</h3><ol>
+<li>事先将块设备按业务需要拆分成多个卷，每个卷映射到一台服务器。这个绑定关系不可更改，卷的容量不可更改。</li>
+<li>数据单元存储这些绑定关系，并根据这些绑定关系将每个卷初始化为一个FC类型的外部数据单元</li>
+<li>当服务框架那边要启动服务时调数据单元接口并指定要使用的数据单元名称，数据单元这边根据名称找到相关的卷信息，并返回对应的Volume以及Hostname</li>
+</ol>
 
       
       <!-- reward -->
